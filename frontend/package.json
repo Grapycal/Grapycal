@@ -1,0 +1,26 @@
+{
+  "name": "grapycal-client",
+  "version": "0.1.0",
+  "main": "app.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@web/dev-server": "^0.1.35",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "scripts": {
+    "app": "npx webpack serve",
+    "monitor": "npx webpack serve --port 9000 --entry ./node_modules/chatroom-client/src/testApp.ts"
+  },
+  "dependencies": {
+    "@types/uuid": "^9.0.1",
+    "objectsync-client": "file:../../ObjectSyncClient_ts",
+    "uuid": "^9.0.0"
+  },
+  "include": [
+    "src/css.d.ts"
+  ]
+}
