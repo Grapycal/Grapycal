@@ -7,6 +7,7 @@ export class CompSObject extends SObject implements IComponentable {
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id);
     }
+
     public get parent(): CompSObject {
         return as(super.parent, CompSObject);
     }

@@ -1,6 +1,7 @@
 import threading
 import time
 from typing import Any, Callable, Dict
+from grapycal.sobjects.port import InputPort, OutputPort
 import objectsync
 import asyncio
 import signal
@@ -9,12 +10,14 @@ from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
 
 class Workspace:
-    def __init__(self, port) -> None:
+    def __init__(self, port, host) -> None:
 
         self._background_runner = BackgroundRunner()
 
-        self._objectsync = objectsync.Server(port,prebuild_kwargs={'workspace':self})
+        self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
         self._objectsync.register(Node)
+        self._objectsync.register(InputPort)
+        self._objectsync.register(OutputPort)
 
         self._objectsync.create_object(Node)
         self._objectsync.create_object(Node)
@@ -43,7 +46,8 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--host', type=str, default='localhost')
     args = parser.parse_args()
 
-    workspace = Workspace(args.port)
+    workspace = Workspace(args.port,args.host)
     workspace.run()

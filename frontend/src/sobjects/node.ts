@@ -1,6 +1,6 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic} from 'objectsync-client'
 import { editor } from '../app'
-import { HtmlHierarchyItem } from '../component/htmlHierarchyItem'
+import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 
@@ -9,42 +9,53 @@ export class Node extends CompSObject {
     shape: StringTopic = this.getAttribute('shape', StringTopic) // round, block, blockNamed, hideBody
     output: StringTopic = this.getAttribute('output', StringTopic)
     label: StringTopic = this.getAttribute('label', StringTopic)
-    pos: StringTopic = this.getAttribute('pos', StringTopic)
+    translation: StringTopic = this.getAttribute('translation', StringTopic)
     is_preview: IntTopic = this.getAttribute('is_preview', IntTopic)
+    in_ports: ListTopic = this.getAttribute('in_ports', ListTopic)
     
-    _element = document.createElement('div')
-    get element() {
-        return this._element
-    }
+    element = document.createElement('div')
 
-    htmlHierarchyItem: HtmlHierarchyItem = new HtmlHierarchyItem(this, this._element)
+    htmlItem: HtmlItem;
     transform: Transform;
 
+    template: string = `
+    <div class="Node">
+        <div id="label">
 
-    labelElement: HTMLElement = this._element.appendChild(document.createElement('div'))
+        </div>
+        <div id="slot_default">
+    </div>
+    `
 
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
 
-        // Create UI
-        this.element.classList.add('Node')
-
         // Add Components
+        this.htmlItem = new HtmlItem(this)
         this.transform = new Transform(this)
+        this.htmlItem.applyTemplate(this.template)
 
         // Bind attributes to UI
         this.shape.onSet.add(this.reshape.bind(this))
         this.label.onSet.add((label: string) => {
-            this.labelElement.innerText = label
+            this.htmlItem.getById('label').innerText = label
+        })
+        this.translation.onSet.add((translation: string) => {
+            const [x, y] = translation.split(',').map(parseFloat)
+            this.transform.translation={x:x, y:y}
+        })
+        this.transform.translationChanged.add((x: number, y: number) => {
+            this.translation.set(`${x},${y}`)
         })
 
         // Initialize UI
         this.reshape('block')
-        this.transform.makeDraggable()
+        this.transform.draggable = true
     }
 
     onParentChanged(oldValue: SObject | undefined, newValue: SObject): void {
-        this.htmlHierarchyItem.setParent(this.getComponentInAncestors(HtmlHierarchyItem) || editor.htmlHierarchyItem)
+        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
+        console.log('set parent', this.htmlItem.parent)
     }
 
     reshape(shape: string) {

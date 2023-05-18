@@ -1,6 +1,7 @@
 import { Null, print } from "../devUtils"
+import { Action } from "../utils"
 import { Component, IComponentable } from "./component"
-import { HtmlHierarchyItem } from "./htmlHierarchyItem"
+import { HtmlItem } from "./htmlItem"
 
 export class TransformRoot extends Component{
     scale: number = 1;
@@ -8,11 +9,13 @@ export class TransformRoot extends Component{
     pivot: {x: number, y: number} = {x: 0.5, y: 0.5};
 }
 
-// Dependency: HtmlHierarchyItem
+// Dependency: HtmlItem
 export class Transform extends Component{
-    htmlHierarchyItem: HtmlHierarchyItem = Null();
+    htmlItem: HtmlItem = Null();
     parent: Transform | TransformRoot = Null();
-    baseElement: HTMLElement = Null();
+    targetElement: HTMLElement = Null();
+    specifiedTargetElement: HTMLElement = Null();
+    specifiedEventEl: HTMLElement = Null();
     eventEl: HTMLElement = Null();
     _pivot: {x: number, y: number} = {x: 0.5, y: 0.5};
     _scale: number = 1;
@@ -21,27 +24,64 @@ export class Transform extends Component{
     get pivot(){return this._pivot;}
     set pivot(pivot: {x: number, y: number}){
         this._pivot = pivot;
-        this.baseElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
+        this.targetElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
         this.updateUI();
     }
     
     get scale(){return this._scale;}
+    scaleChanged = new Action<[number]>();
     set scale(scale: number){
+        this._scale = scale;
+        this.updateUI();
+        this.scaleChanged.invoke(scale);
+    }
+    setscale(scale: number){
         this._scale = scale;
         this.updateUI();
     }
     
     get translation(){return this._translation;}
+    translationChanged = new Action<[number, number]>();
     set translation(translation: {x: number, y: number}){
         this._translation = translation;
         this.updateUI();
+        this.translationChanged.invoke(translation.x, translation.y);
+    }
+    settranslation(translation: {x: number, y: number}){
+        this._translation = translation;
+        this.updateUI();
+    }
+
+    _draggable: boolean = false;
+    get draggable(){return this._draggable;}
+    set draggable(draggable: boolean){
+        this._draggable = draggable;
+        if (draggable){
+            if (this.eventEl !== Null())
+                this.makeDraggable();
+            this.targetElement.style.position = 'absolute';
+        }
+        else
+            this.eventEl.onmousedown = null;
     }
     
-    constructor(object:IComponentable, eventEl?: HTMLElement){
+    constructor(object:IComponentable, targetElement:HTMLElement=Null(), eventEl: HTMLElement=Null()){
         super(object);
-        this.htmlHierarchyItem = this.getComponent(HtmlHierarchyItem);
-        this.baseElement = this.getComponent(HtmlHierarchyItem).baseElement;
-        this.eventEl = eventEl || this.baseElement;
+        this.htmlItem = this.getComponent(HtmlItem);
+        this.specifiedTargetElement = targetElement;
+        this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
+        this.specifiedEventEl = eventEl;
+        this.eventEl = this.specifiedEventEl || this.targetElement;
+
+        this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
+        
+        this.updateParent();
+        this.updateUI();
+    }
+
+    private templateChanged(){
+        this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
+        this.eventEl = this.specifiedEventEl || this.targetElement;
         this.updateUI();
     }
 
@@ -58,7 +98,6 @@ export class Transform extends Component{
                 y: this.translation.y + (mouseLocal.y - startMouseLocal.y)*this.scale
             }
             mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            //print(mouseLocal)
         }
         this.eventEl.onmousedown = (e) => {
             e.stopPropagation();
@@ -89,12 +128,27 @@ export class Transform extends Component{
         }
     }
 
+    public translate(translation: {x: number, y: number}){  
+        this.translation = {
+            x: this.translation.x + translation.x,
+            y: this.translation.y + translation.y
+        }
+        this.updateUI();
+    }
+
+    public scaleBy(scale: number){
+        this.scale *= scale;
+        this.updateUI();
+    }
+
 
     private updateParent(){
-        this.parent = this.htmlHierarchyItem.findTransformParent() || new TransformRoot(this.object);
+        this.parent = this.htmlItem.findTransformParent() || new TransformRoot(this.object);
     }
 
     private updateUI(){
+        if (this.targetElement === null)
+            return;
         this.updateParent();
         let transformString = ''
         //if(this.parent !== null)
@@ -102,12 +156,12 @@ export class Transform extends Component{
         transformString += `translate(${this.pivot.x*-100}%,${this.pivot.y*-100}%)`
         transformString += `translate(${this._translation.x}px,${this._translation.y}px)`;
         transformString += `scale(${this._scale})`
-        this.baseElement.style.transform = transformString;
+        this.targetElement.style.transform = transformString;
     }
 
     public getAbsoluteOrigin(){
         this.updateUI();
-        let rect = this.baseElement.getBoundingClientRect()
+        let rect = this.targetElement.getBoundingClientRect()
         // print('origin',{
         //     'x':rect.x + rect.width*this.pivot.x,
         //     'y':rect.y + rect.height*this.pivot.y
@@ -121,10 +175,10 @@ export class Transform extends Component{
     public getAbsoluteScale(){
         this.updateUI();
         // Only works if element size is not zero
-        let rect = this.baseElement.getBoundingClientRect()
+        let rect = this.targetElement.getBoundingClientRect()
         return {
-            'x':rect.width/this.baseElement.offsetWidth,
-            'y':rect.height/this.baseElement.offsetHeight
+            'x':rect.width/this.targetElement.offsetWidth,
+            'y':rect.height/this.targetElement.offsetHeight
         };
     }
 

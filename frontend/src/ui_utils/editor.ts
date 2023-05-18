@@ -1,28 +1,30 @@
 import { ComponentManager, IComponentable } from "../component/component"
-import { HtmlHierarchyItem } from "../component/htmlHierarchyItem"
+import { HtmlItem } from "../component/htmlItem"
 import { Transform } from "../component/transform"
 
 export class Editor implements IComponentable{
-    viewport: HTMLElement = document.createElement('div');
-    editor: HTMLElement = document.createElement('div');
-    transformBase: HTMLElement = document.createElement('div');
+    template: string = `
+    <div class="Viewport" id="Viewport" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+        <div style="position:absolute;top:50%;left:50%">
+            <div id="slot_default" class="Editor" style="position:absolute;top:50%;left:50%;width:1px;height:1px;">
+            </div>
+        </div>
+    </div>
+    `;
 
     componentManager = new ComponentManager();
-    htmlHierarchyItem: HtmlHierarchyItem = new HtmlHierarchyItem(this,this.editor,this.editor);
-    transform: Transform = new Transform(this,this.viewport);
+    htmlItem: HtmlItem;
+    transform: Transform;
     
     constructor(){
-        this.viewport.classList.add('Viewport');
-        this.editor.classList.add('Editor');
-        this.editor.id = 'Editor';
-        document.body.appendChild(this.viewport);
-        this.viewport.appendChild(this.transformBase)
-        this.transformBase.appendChild(this.editor);
-        this.transformBase.style.position = 'absolute';
-        this.transformBase.style.top = '50%';
-        this.transformBase.style.left = '50%';
-        this.transformBase.style.width = '1px';
-        this.transformBase.style.height = '1px';
+        this.htmlItem = new HtmlItem(this, document.body);
+        this.htmlItem.applyTemplate(this.template);
+        let viewport = this.htmlItem.getById('Viewport')
+        let editor = this.htmlItem.getById('slot_default')
+        this.transform = new Transform(this,editor,viewport);
+
+        document.body.appendChild(viewport);
+        
         this.transform.makeDraggable();
     }
 }
