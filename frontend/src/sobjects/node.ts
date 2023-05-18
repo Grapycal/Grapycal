@@ -1,8 +1,12 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic} from 'objectsync-client'
 import { editor } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
+import { print } from '../devUtils'
+import { Port } from './port'
+import { glowDiv as glowDiv, glowText } from '../ui_utils/effects'
+import { as } from '../utils'
 
 export class Node extends CompSObject {
 
@@ -11,21 +15,25 @@ export class Node extends CompSObject {
     label: StringTopic = this.getAttribute('label', StringTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
     is_preview: IntTopic = this.getAttribute('is_preview', IntTopic)
-    in_ports: ListTopic = this.getAttribute('in_ports', ListTopic)
+
+    in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
+    out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
     
     element = document.createElement('div')
 
     htmlItem: HtmlItem;
     transform: Transform;
 
-    template: string = `
-    <div class="Node">
-        <div id="label">
-
+    readonly templates: {[key: string]: string} = {
+    block: 
+    `<div class="Node flex-horiz space-between" style="min-width:150px;">
+        <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+        <div class="full-width flex-vert space-evenly"> 
+            <div id="label" class="center" ></div>
         </div>
-        <div id="slot_default">
-    </div>
-    `
+        <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+    </div>`,
+    }
 
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
@@ -33,7 +41,6 @@ export class Node extends CompSObject {
         // Add Components
         this.htmlItem = new HtmlItem(this)
         this.transform = new Transform(this)
-        this.htmlItem.applyTemplate(this.template)
 
         // Bind attributes to UI
         this.shape.onSet.add(this.reshape.bind(this))
@@ -48,18 +55,41 @@ export class Node extends CompSObject {
             this.translation.set(`${x},${y}`)
         })
 
+        this.in_ports.onInsert.add((port: SObject) => {
+            this.reshapePort(as(port,Port))
+        })
+
+        this.out_ports.onInsert.add((port: SObject) => {
+            this.reshapePort(as(port,Port))
+        })
+
         // Initialize UI
+
         this.reshape('block')
         this.transform.draggable = true
     }
 
     onParentChanged(oldValue: SObject | undefined, newValue: SObject): void {
+        super.onParentChanged(oldValue, newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
-        console.log('set parent', this.htmlItem.parent)
     }
 
     reshape(shape: string) {
-        
+        this.htmlItem.applyTemplate(this.templates[shape])
+        glowDiv(this.htmlItem.baseElement)
+        //glow text
+        for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
+            glowText(div)
+        }
+        for(const port of this.in_ports){
+            this.reshapePort(port)
+        }
+    }
+
+    reshapePort(port:Port){
+        if(this.shape.getValue() == 'block'){
+            port.displayLabel = false
+        }
     }
 }
 

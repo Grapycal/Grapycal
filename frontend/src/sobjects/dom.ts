@@ -19,6 +19,7 @@ export abstract class ElementObject extends SObject{
         return this._element
     }
     onParentChanged(oldParent: SObject, newParent: SObject): void{
+        super.onParentChanged(oldParent,newParent);
         let htmlParent = newParent;
         while(!(htmlParent instanceof ElementObject)){
             if (htmlParent.isRoot){

@@ -64,6 +64,19 @@ export class Transform extends Component{
         else
             this.eventEl.onmousedown = null;
     }
+
+    _scrollable: boolean = false;
+    get scrollable(){return this._scrollable;}
+    set scrollable(scrollable: boolean){
+        this._scrollable = scrollable;
+        if (scrollable){
+            if (this.eventEl !== Null())
+                this.makeScrollable();
+            this.targetElement.style.position = 'absolute';
+        }
+        else
+            this.eventEl.onwheel = null;
+    }
     
     constructor(object:IComponentable, targetElement:HTMLElement=Null(), eventEl: HTMLElement=Null()){
         super(object);
@@ -80,25 +93,26 @@ export class Transform extends Component{
     }
 
     private templateChanged(){
+        // remove callback
+        if (this.draggable && this.eventEl !== Null()){       
+            this.eventEl.onwheel = null;
+            this.eventEl.onmousedown = null;
+        }
+
         this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
         this.eventEl = this.specifiedEventEl || this.targetElement;
+
+        if (this.draggable)
+            this.makeDraggable();
+
+        if (this.scrollable)
+            this.makeScrollable();
+            
         this.updateUI();
     }
 
     // strategy: fix mouse local position
     makeDraggable(){
-        this.eventEl.onwheel = (e) => {
-            e.stopPropagation();
-            let startMouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            this.scale *= Math.exp(-0.001*e.deltaY);
-            this.updateUI();
-            let mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            this.translation = {
-                x: this.translation.x + (mouseLocal.x - startMouseLocal.x)*this.scale,
-                y: this.translation.y + (mouseLocal.y - startMouseLocal.y)*this.scale
-            }
-            mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-        }
         this.eventEl.onmousedown = (e) => {
             e.stopPropagation();
             let startMouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
@@ -125,6 +139,21 @@ export class Transform extends Component{
             }
             document.addEventListener('mousemove',onmousemove);
             document.addEventListener('mouseup',onmouseup);
+        }
+    }
+
+    makeScrollable(){
+        this.eventEl.onwheel = (e) => {
+            e.stopPropagation();
+            let startMouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
+            this.scale *= Math.exp(-0.001*e.deltaY);
+            this.updateUI();
+            let mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
+            this.translation = {
+                x: this.translation.x + (mouseLocal.x - startMouseLocal.x)*this.scale,
+                y: this.translation.y + (mouseLocal.y - startMouseLocal.y)*this.scale
+            }
+            mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
         }
     }
 

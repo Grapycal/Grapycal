@@ -3,16 +3,18 @@ body{
     font-family: Consolas, Courier, monospace;
     font-size: 16px;
     color: #e7e7e7;
-    background-color: #21262C;
+    background-color: #000000;
     /*no scroll*/
     overflow: hidden;
 }
 
 .Node{
+    box-sizing: border-box;
     position: absolute;
     font-size: 24px;
-    border: #EBC95B solid 3px;
-    border-radius: 5px;
+    background-color: #121113;
+    border: #4eafa8 solid 2px;
+    border-radius: 3px;
     padding: 5px;
     width: fit-content;
     block-size: fit-content;
@@ -21,7 +23,9 @@ body{
 }
 
 .Node:hover{
-    border: #ddc987 solid 3px;
+
+    box-sizing: border-box;
+    border: #4eafa8 solid 2.5px;
 }
 
 .Node:focus{
@@ -40,4 +44,62 @@ body{
     width: 100%;
     height: 100%;
     transform-origin: 50% 50%;
+}
+
+.Knob{
+    position: relative;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color : #2B292A;
+}
+
+.OutPort{
+    margin: 3px 1.4px;
+}
+
+.InPort{
+    margin: 3px -1.4px;
+}
+
+.flex-vert {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column; 
+}
+
+.flex-horiz {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+}
+
+.space-evenly { 
+  justify-content: space-evenly; 
+}
+
+.space-between { 
+  justify-content: space-between; 
+}  
+
+.full-width {
+  width: 100%;
+}
+
+.no-width {
+  width: 0;
+}
+
+.middle {
+    vertical-align: middle;
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

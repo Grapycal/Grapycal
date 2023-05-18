@@ -50,8 +50,6 @@ export class HtmlItem extends Component{
     }
 
     getById(id: string): HTMLElement{
-        console.log(this.baseElement);
-        console.log(id);
         const element = this.baseElement.querySelector(`#${id}`);
         //check baseElement
         if (this.baseElement.id === id)
