@@ -1,16 +1,17 @@
 import { Null, print } from "../devUtils"
-import { Action, as, defined } from "../utils"
+import { Action, Constructor, as, defined } from "../utils"
 import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
 
 export class HtmlItem extends Component{
-    baseElement: HTMLElement;
+    baseElement: Element;
     parent_slot: HTMLElement;
     slots: Map<string,HTMLElement> = new Map();
     parent_: HtmlItem;
+    get parent(){return this.parent_;}
+    children: HtmlItem[] = [];
     readonly templateChanged = new Action<[]>();
 
-    get parent(){return this.parent_;}
     constructor(object:IComponentable, specifiedParentElement: HTMLElement = Null()){
         super(object);
         this.baseElement = Null();
@@ -25,7 +26,7 @@ export class HtmlItem extends Component{
 
         const templateElement = document.createElement('template');
         templateElement.innerHTML = template;
-        this.baseElement = as(templateElement.content.firstElementChild,HTMLElement);
+        this.baseElement = defined(templateElement.content.firstElementChild);
 
         this.parent_slot?.appendChild(this.baseElement);
 
@@ -49,19 +50,40 @@ export class HtmlItem extends Component{
         this.parent_slot = slot;
     }
 
-    getById(id: string): HTMLElement{
+    getHtmlEl(id: string): HTMLElement{
         const element = this.baseElement.querySelector(`#${id}`);
         //check baseElement
         if (this.baseElement.id === id)
-            return this.baseElement;
+            return as(this.baseElement,HTMLElement);
         if (element === null)
             throw new Error(`Element with id ${id} not found`);
         return as(element,HTMLElement);
     }
 
+    getEl<T extends Element>(id: string,type?:Constructor<T>): T{
+        const element = this.baseElement.querySelector(`#${id}`);
+        //check baseElement
+        if (this.baseElement.id === id)
+            if(type === undefined){
+                return this.baseElement as any;
+            }else{
+                return as(this.baseElement,type);
+            }
+        if (element === null)
+            throw new Error(`Element with id ${id} not found`);
+        if(type === undefined){
+            return element as any;
+        }else{
+            return as(element,type);
+        }
+    }
+
     setParent(parent: HtmlItem, slot: string = 'default'): void{
+        if (this.parent_ !== Null())
+            this.parent_.children = this.parent_.children.filter(i => i !== this);
         this.moveToSlot(parent.getSlot(slot));
         this.parent_ = parent;
+        parent.children.push(this);
     }
     addSlot(name: string, element: HTMLElement){
         this.slots.set(name,element);
@@ -83,5 +105,28 @@ export class HtmlItem extends Component{
             i = i.parent;
         }
         return null;
+    }
+    findTransformChildren(): Transform[]{
+        const transforms: Transform[] = [];
+        for (let child of this.children){
+            if (child.componentManager.hasComponent(Transform))
+                transforms.push(child.getComponent(Transform));
+            else
+                transforms.push(...child.findTransformChildren());
+        }
+        return transforms;
+    }
+
+    get position(){
+        if (this.hasComponent(Transform)){
+            const transform = this.getComponent(Transform);
+            return transform.worldPosition;
+        }
+        const rect = this.baseElement.getBoundingClientRect();
+        return {x:rect.left+rect.width/2, y:rect.top+rect.height/2};
+    }
+
+    onDestroy(){
+        this.parent_slot?.removeChild(this.baseElement);
     }
 }

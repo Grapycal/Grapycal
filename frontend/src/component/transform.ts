@@ -1,28 +1,46 @@
 import { Null, print } from "../devUtils"
-import { Action } from "../utils"
+import { Action, Vector2 } from "../utils"
 import { Component, IComponentable } from "./component"
+import { EventDispatcher } from "./eventDispatcher"
 import { HtmlItem } from "./htmlItem"
 
 export class TransformRoot extends Component{
     scale: number = 1;
-    translation: {x: number, y: number} = {x: 0, y: 0};
-    pivot: {x: number, y: number} = {x: 0.5, y: 0.5};
+    translation: Vector2 = Vector2.zero;
+    pivot: Vector2 = new Vector2(0.5, 0.5);
+    
+    onChange = new Action<[]>(); //dummy
+
+    worldToLocal(position: Vector2){
+        return position;
+    }
 }
+
 
 // Dependency: HtmlItem
 export class Transform extends Component{
     htmlItem: HtmlItem = Null();
     parent: Transform | TransformRoot = Null();
-    targetElement: HTMLElement = Null();
+    _targetElement: HTMLElement = Null();
+    get targetElement(){return this._targetElement;}
+    set targetElement(targetElement: HTMLElement){
+        this._targetElement = targetElement;
+        if(targetElement != Null() && this.draggable){
+            this.targetElement.style.position = 'absolute'
+            this.targetElement.style.left = '0px'
+            this.targetElement.style.top = '0px'
+        }
+    }
     specifiedTargetElement: HTMLElement = Null();
-    specifiedEventEl: HTMLElement = Null();
-    eventEl: HTMLElement = Null();
-    _pivot: {x: number, y: number} = {x: 0.5, y: 0.5};
-    _scale: number = 1;
-    _translation: {x: number, y: number} = {x: 0, y: 0};
+
+    onChange = new Action<[]>();
+
+    private _pivot: Vector2 = new Vector2(0.5, 0.5);
+    private _scale: number = 1;
+    private _translation: Vector2 = Vector2.zero;
 
     get pivot(){return this._pivot;}
-    set pivot(pivot: {x: number, y: number}){
+    set pivot(pivot: Vector2){
         this._pivot = pivot;
         this.targetElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
         this.updateUI();
@@ -42,12 +60,13 @@ export class Transform extends Component{
     
     get translation(){return this._translation;}
     translationChanged = new Action<[number, number]>();
-    set translation(translation: {x: number, y: number}){
+    set translation(translation: Vector2){
         this._translation = translation;
         this.updateUI();
         this.translationChanged.invoke(translation.x, translation.y);
+        this.onChange.invoke();
     }
-    settranslation(translation: {x: number, y: number}){
+    settranslation(translation: Vector2){
         this._translation = translation;
         this.updateUI();
     }
@@ -56,117 +75,106 @@ export class Transform extends Component{
     get draggable(){return this._draggable;}
     set draggable(draggable: boolean){
         this._draggable = draggable;
+
+        this.onDrag = this.onDrag.bind(this);
         if (draggable){
-            if (this.eventEl !== Null())
-                this.makeDraggable();
-            this.targetElement.style.position = 'absolute';
+            this.getComponent(EventDispatcher).onDrag.add(this.onDrag);
         }
         else
-            this.eventEl.onmousedown = null;
+            this.getComponent(EventDispatcher).onDrag.remove(this.onDrag);
     }
 
     _scrollable: boolean = false;
     get scrollable(){return this._scrollable;}
     set scrollable(scrollable: boolean){
         this._scrollable = scrollable;
+        this.onScroll = this.onScroll.bind(this);
         if (scrollable){
-            if (this.eventEl !== Null())
-                this.makeScrollable();
-            this.targetElement.style.position = 'absolute';
+            this.getComponent(EventDispatcher).onScroll.add(this.onScroll);
         }
         else
-            this.eventEl.onwheel = null;
+            this.getComponent(EventDispatcher).onScroll.remove(this.onScroll);
     }
+
+    get worldPosition(){
+        return this.getAbsoluteOrigin();
+    }
+
+    get parentPosition(){
+        return this.translation
+    }
+
+    get localCenter(){
+        return new Vector2(
+            this.targetElement.offsetWidth*(0.5-this.pivot.x),
+            this.targetElement.offsetHeight*(0.5-this.pivot.y)
+        );
+    }
+
+    get worldCenter(){
+        return this.localToWorld(this.localCenter);
+    }
+
+    // get worldCenter(){
+    //     return {
+    //         x: this.worldPosition.x + this.targetElement.clientWidth*(0.5-this.pivot.x),
+    //         y: this.worldPosition.y + this.targetElement.clientHeight*(0.5-this.pivot.y)
+    //     }
+    // }
     
     constructor(object:IComponentable, targetElement:HTMLElement=Null(), eventEl: HTMLElement=Null()){
         super(object);
         this.htmlItem = this.getComponent(HtmlItem);
         this.specifiedTargetElement = targetElement;
         this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
-        this.specifiedEventEl = eventEl;
-        this.eventEl = this.specifiedEventEl || this.targetElement;
 
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
         
+        //this.onChange.add(this.notifyChangeToChildren.bind(this));
+
         this.updateParent();
         this.updateUI();
     }
 
     private templateChanged(){
         // remove callback
-        if (this.draggable && this.eventEl !== Null()){       
-            this.eventEl.onwheel = null;
-            this.eventEl.onmousedown = null;
-        }
-
         this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
-        this.eventEl = this.specifiedEventEl || this.targetElement;
-
-        if (this.draggable)
-            this.makeDraggable();
-
-        if (this.scrollable)
-            this.makeScrollable();
-            
         this.updateUI();
     }
 
-    // strategy: fix mouse local position
-    makeDraggable(){
-        this.eventEl.onmousedown = (e) => {
-            e.stopPropagation();
-            let startMouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            let onmousemove = (e: MouseEvent) => {
-                e.stopPropagation();
-                this.updateParent();
-                let parentScale = this.parent.scale || 1;
-                let mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-                // mouseLocal has shifted now. Subtract the shift to get the translation
-                this.translation = {
-                    x: this.translation.x + 
-                    (mouseLocal.x - startMouseLocal.x)
-                    *this.scale, // local to parent space
-                    y: this.translation.y + (mouseLocal.y - startMouseLocal.y)*this.scale
-                }
-                //print(mouseLocal.x,startMouseLocal.x,this.translation.x)
-                mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-                this.updateUI();
-            }
-            let onmouseup = (e: MouseEvent) => {
-                e.stopPropagation();
-                document.removeEventListener('mousemove',onmousemove);
-                document.removeEventListener('mouseup',onmouseup);
-            }
-            document.addEventListener('mousemove',onmousemove);
-            document.addEventListener('mouseup',onmouseup);
-        }
+    onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
+        let startMouseLocal = this.worldToLocal(prevMousePos);
+        let mouseLocal = this.worldToLocal(mousePos);
+        this.translate(new Vector2(
+            (mouseLocal.x - startMouseLocal.x)*this.scale,
+            (mouseLocal.y - startMouseLocal.y)*this.scale
+        ));
+        mouseLocal = this.worldToLocal(mousePos);
+        this.updateUI();
     }
 
-    makeScrollable(){
-        this.eventEl.onwheel = (e) => {
-            e.stopPropagation();
-            let startMouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            this.scale *= Math.exp(-0.001*e.deltaY);
-            this.updateUI();
-            let mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-            this.translation = {
-                x: this.translation.x + (mouseLocal.x - startMouseLocal.x)*this.scale,
-                y: this.translation.y + (mouseLocal.y - startMouseLocal.y)*this.scale
-            }
-            mouseLocal = this.worldToLocal({x: e.clientX, y: e.clientY});
-        }
+    onScroll(e:WheelEvent){
+        e.stopPropagation();
+        let startMouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
+        this.scale *= Math.exp(-0.001*e.deltaY);
+        this.updateUI();
+        let mouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
+        this.translate(new Vector2(
+            (mouseLocal.x - startMouseLocal.x)*this.scale,
+            (mouseLocal.y - startMouseLocal.y)*this.scale
+        ));
+        mouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
     }
 
-    public translate(translation: {x: number, y: number}){  
-        this.translation = {
-            x: this.translation.x + translation.x,
-            y: this.translation.y + translation.y
-        }
+    public translate(translation: Vector2){  
+        this.translation = this.translation.add(translation);
+        this.onChange.invoke();
         this.updateUI();
     }
 
     public scaleBy(scale: number){
         this.scale *= scale;
+        this.onChange.invoke();
         this.updateUI();
     }
 
@@ -188,17 +196,19 @@ export class Transform extends Component{
         this.targetElement.style.transform = transformString;
     }
 
+    private notifyChangeToChildren(){
+        for(let child of this.htmlItem.findTransformChildren()){
+            child.onChange.invoke();
+        }
+    }
+
     public getAbsoluteOrigin(){
         this.updateUI();
         let rect = this.targetElement.getBoundingClientRect()
-        // print('origin',{
-        //     'x':rect.x + rect.width*this.pivot.x,
-        //     'y':rect.y + rect.height*this.pivot.y
-        // })
-        return {
-            'x':rect.x + rect.width*this.pivot.x,
-            'y':rect.y + rect.height*this.pivot.y
-        };
+        return new Vector2(
+            rect.x + rect.width*this.pivot.x,
+            rect.y + rect.height*this.pivot.y
+        );
     }
 
     public getAbsoluteScale(){
@@ -211,21 +221,25 @@ export class Transform extends Component{
         };
     }
 
-    public worldToLocal(pos: {x: number, y: number}){
+    public worldToLocal(pos: Vector2){
         let absOrigin = this.getAbsoluteOrigin();
         let absScale = this.getAbsoluteScale();
-        return {
-            x: (pos.x - absOrigin.x)/absScale.x,
-            y: (pos.y - absOrigin.y)/absScale.y
-        }
+        return new Vector2(
+            (pos.x - absOrigin.x)/absScale.x,
+            (pos.y - absOrigin.y)/absScale.y
+        )
     }
 
-    public localToWorld(pos: {x: number, y: number}){
+    public localToWorld(pos: Vector2){
         let absOrigin = this.getAbsoluteOrigin();
         let absScale = this.getAbsoluteScale();
-        return {
-            x: pos.x*absScale.x + absOrigin.x,
-            y: pos.y*absScale.y + absOrigin.y
-        }
+        return new Vector2(
+            pos.x*absScale.x + absOrigin.x,
+            pos.y*absScale.y + absOrigin.y
+        )
+    }
+
+    public othersToLocal(others: Transform){
+        return this.worldToLocal(others.worldPosition);
     }
 }

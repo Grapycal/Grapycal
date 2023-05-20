@@ -35,6 +35,9 @@ type Callback<ARGS extends any[], OUT> = (...args: ARGS) => OUT;
 
 export class Action<ARGS extends any[], OUT=void> {
     private _callbacks: Callback<ARGS, OUT>[] = [];
+    constructor(){
+        this.invoke = this.invoke.bind(this);
+    }
 
     add(callback: Callback<ARGS, OUT>) {
         this._callbacks.push(callback);
@@ -49,5 +52,54 @@ export class Action<ARGS extends any[], OUT=void> {
 
     invoke(...args: ARGS): OUT[] {
         return this._callbacks.map((callback) => callback(...args));
+    }
+}
+
+export class Vector2 {
+
+    static get zero(): Vector2{
+        return new Vector2(0, 0);
+    }
+
+    static get one(): Vector2{
+        return new Vector2(1, 1);
+    }
+
+    static get up(): Vector2{
+        return new Vector2(0, 1);
+    }
+
+    static get down(): Vector2{
+        return new Vector2(0, -1);
+    }
+
+    static get left(): Vector2{
+        return new Vector2(-1, 0);
+    }
+
+    static get right(): Vector2{
+        return new Vector2(1, 0);
+    }
+
+    x: number;
+    y: number;
+    constructor(x: number, y: number){
+        this.x = x;
+        this.y = y;
+    }
+    distanceTo(other: Vector2): number{
+        return Math.sqrt((this.x - other.x)**2 + (this.y - other.y)**2);
+    }
+    add(other: Vector2): Vector2{
+        return new Vector2(this.x + other.x, this.y + other.y);
+    }
+    sub(other: Vector2): Vector2{
+        return new Vector2(this.x - other.x, this.y - other.y);
+    }
+    mul(other: Vector2): Vector2{
+        return new Vector2(this.x * other.x, this.y * other.y);
+    }
+    mulScalar(scalar: number): Vector2{
+        return new Vector2(this.x * scalar, this.y * scalar);
     }
 }

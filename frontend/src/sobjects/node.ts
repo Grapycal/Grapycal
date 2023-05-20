@@ -6,7 +6,9 @@ import { CompSObject } from './compSObject'
 import { print } from '../devUtils'
 import { Port } from './port'
 import { glowDiv as glowDiv, glowText } from '../ui_utils/effects'
-import { as } from '../utils'
+import { Vector2, as } from '../utils'
+import { EventDispatcher } from '../component/eventDispatcher'
+import { MouseOverDetector } from '../component/mouseOverDetector'
 
 export class Node extends CompSObject {
 
@@ -18,12 +20,11 @@ export class Node extends CompSObject {
 
     in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
     out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
-    
-    element = document.createElement('div')
 
-    htmlItem: HtmlItem;
-    transform: Transform;
-
+    htmlItem: HtmlItem = new HtmlItem(this);
+    dragListener: EventDispatcher = new EventDispatcher(this)
+    transform: Transform = new Transform(this);
+    mouseOverDetector: MouseOverDetector
     readonly templates: {[key: string]: string} = {
     block: 
     `<div class="Node flex-horiz space-between" style="min-width:150px;">
@@ -38,51 +39,53 @@ export class Node extends CompSObject {
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
 
-        // Add Components
-        this.htmlItem = new HtmlItem(this)
-        this.transform = new Transform(this)
-
         // Bind attributes to UI
         this.shape.onSet.add(this.reshape.bind(this))
         this.label.onSet.add((label: string) => {
-            this.htmlItem.getById('label').innerText = label
+            this.htmlItem.getHtmlEl('label').innerText = label
         })
         this.translation.onSet.add((translation: string) => {
             const [x, y] = translation.split(',').map(parseFloat)
-            this.transform.translation={x:x, y:y}
+            this.transform.translation=new Vector2(x, y)
+            for(const port of this.in_ports){
+                this.reshapePort(port)
+            }
         })
         this.transform.translationChanged.add((x: number, y: number) => {
             this.translation.set(`${x},${y}`)
         })
 
-        this.in_ports.onInsert.add((port: SObject) => {
-            this.reshapePort(as(port,Port))
+        this.in_ports.onInsert.add((port: Port) => {
+            this.reshapePort(port)
         })
 
-        this.out_ports.onInsert.add((port: SObject) => {
-            this.reshapePort(as(port,Port))
+        this.out_ports.onInsert.add((port: Port) => {
+            this.reshapePort(port)
         })
+
 
         // Initialize UI
 
-        this.reshape('block')
+        
+        this.mouseOverDetector = new MouseOverDetector(this)
         this.transform.draggable = true
+
+        this.reshape('block')
     }
 
-    onParentChanged(oldValue: SObject | undefined, newValue: SObject): void {
-        super.onParentChanged(oldValue, newValue)
+    onParentChangedTo(newValue: SObject): void {
+        super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
     }
 
     reshape(shape: string) {
         this.htmlItem.applyTemplate(this.templates[shape])
-        glowDiv(this.htmlItem.baseElement)
+        this.dragListener.setEventElement(as(this.htmlItem.baseElement, HTMLElement))
+        this.mouseOverDetector.eventElement = this.htmlItem.baseElement
+        glowDiv(as(this.htmlItem.baseElement, HTMLElement))
         //glow text
         for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
             glowText(div)
-        }
-        for(const port of this.in_ports){
-            this.reshapePort(port)
         }
     }
 

@@ -1,5 +1,7 @@
 import { ComponentManager, IComponentable } from "../component/component"
+import { EventDispatcher as EventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
+import { MouseOverDetector } from "../component/mouseOverDetector"
 import { Transform } from "../component/transform"
 
 export class Editor implements IComponentable{
@@ -19,9 +21,13 @@ export class Editor implements IComponentable{
     constructor(){
         this.htmlItem = new HtmlItem(this, document.body);
         this.htmlItem.applyTemplate(this.template);
-        let viewport = this.htmlItem.getById('Viewport')
-        let editor = this.htmlItem.getById('slot_default')
+        let viewport = this.htmlItem.getHtmlEl('Viewport')
+        let editor = this.htmlItem.getHtmlEl('slot_default')
+        
         this.transform = new Transform(this,editor,viewport);
+
+        new EventDispatcher(this, viewport);
+        new MouseOverDetector(this, viewport);
 
         document.body.appendChild(viewport);
         

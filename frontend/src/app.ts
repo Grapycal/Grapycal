@@ -5,6 +5,7 @@ import { Editor } from './ui_utils/editor'
 import { Root } from './sobjects/root'
 import { expose } from './devUtils'
 import { Port } from './sobjects/port'
+import { Edge } from './sobjects/edge'
 
 export const editor = new Editor();
 
@@ -12,5 +13,6 @@ const client = new ObjectSyncClient('ws://192.168.245.187:8765');
 client.register(Root);
 client.register(Node);
 client.register(Port);
+client.register(Edge);
 
 expose('c',client)

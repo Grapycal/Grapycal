@@ -1,6 +1,7 @@
 import { ObjectSyncClient, SObject } from "objectsync-client"
 import { Component, ComponentManager, IComponentable } from "../component/component"
 import { Constructor, as } from "../utils"
+import { Null } from "../devUtils"
 
 export class CompSObject extends SObject implements IComponentable {
     componentManager: ComponentManager = new ComponentManager();
@@ -9,6 +10,8 @@ export class CompSObject extends SObject implements IComponentable {
     }
 
     public get parent(): CompSObject {
+        if (super.parent == null)
+            return Null();
         return as(super.parent, CompSObject);
     }
 
@@ -31,5 +34,9 @@ export class CompSObject extends SObject implements IComponentable {
     }
     public hasComponent<T extends Component>(type: Constructor<T>): boolean {
         return this.componentManager.hasComponent(type);
+    }
+    public onDestroy(): void {
+        super.onDestroy();
+        this.componentManager.onDestroy();
     }
 }

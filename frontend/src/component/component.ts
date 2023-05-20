@@ -20,6 +20,11 @@ export abstract class Component{
     removeComponent(component: Component): void{
         this.object.componentManager.removeComponent(component);
     }
+    hasComponent<T extends Component>(type:Constructor<T>): boolean{
+        return this.object.componentManager.hasComponent<T>(type);
+    }
+    onDestroy(): void{
+    }
 }
 
 export class ComponentManager{
@@ -47,6 +52,9 @@ export class ComponentManager{
     }
     hasComponent<T extends Component>(type:Constructor<T>): boolean{
         return this.components.some((component) => component.constructor.name === type.name);
+    }
+    onDestroy(): void{
+        this.components.forEach((component) => component.onDestroy());
     }
 }
 
