@@ -2,7 +2,11 @@ import threading
 import time
 from typing import Any, Callable, Dict
 from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.nodes.additionNode import AdditionNode
+from grapycal.sobjects.nodes.printNode import PrintNode
+from grapycal.sobjects.nodes.textInputNode import TextInputNode
 from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.nodes.textOutputNode import TextOutputNode
 import objectsync
 import asyncio
 import signal
@@ -16,19 +20,23 @@ class Workspace:
         self._background_runner = BackgroundRunner()
 
         self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
-        self._objectsync.register(Node)
+        self._objectsync.register(AdditionNode)
+        self._objectsync.register(TextOutputNode)
+        self._objectsync.register(PrintNode)
+        self._objectsync.register(TextInputNode)
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 
-        e1=self._objectsync.create_object(Edge)
-        n1=self._objectsync.create_object(Node)
-        n2=self._objectsync.create_object(Node)
-        e2 = self._objectsync.create_object(Edge)
-        e1.tail.set(n1.out_ports[0])
-        e1.head.set(n2.in_ports[0])
-        e2.tail.set(n1.out_ports[0])
-        e2.head.set(n2.in_ports[1])
+        self._objectsync.create_object(TextInputNode)
+        self._objectsync.create_object(TextInputNode)
+        self._objectsync.create_object(TextInputNode)
+        self._objectsync.create_object(PrintNode)
+        self._objectsync.create_object(PrintNode)
+        self._objectsync.create_object(PrintNode)
+        self._objectsync.create_object(AdditionNode)
+        self._objectsync.create_object(AdditionNode)
+        self._objectsync.create_object(AdditionNode)
 
     def communication_thread(self):
         asyncio.run(self._objectsync.serve())

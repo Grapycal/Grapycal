@@ -12,7 +12,7 @@ import { MouseOverDetector } from '../component/mouseOverDetector'
 
 export class Node extends CompSObject {
 
-    shape: StringTopic = this.getAttribute('shape', StringTopic) // round, block, blockNamed, hideBody
+    shape: StringTopic = this.getAttribute('shape', StringTopic) // round, block, frame
     output: StringTopic = this.getAttribute('output', StringTopic)
     label: StringTopic = this.getAttribute('label', StringTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
@@ -22,18 +22,35 @@ export class Node extends CompSObject {
     out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
 
     htmlItem: HtmlItem = new HtmlItem(this);
-    dragListener: EventDispatcher = new EventDispatcher(this)
+    eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = new Transform(this);
     mouseOverDetector: MouseOverDetector
-    readonly templates: {[key: string]: string} = {
+
+    protected readonly templates: {[key: string]: string} = {
     block: 
-    `<div class="Node flex-horiz space-between" style="min-width:150px;">
-        <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
-        <div class="full-width flex-vert space-evenly"> 
-            <div id="label" class="center" ></div>
-        </div>
-        <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
-    </div>`,
+        `<div class="Node BlockNode flex-horiz space-between">
+            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+            <div class="NodeContent full-width flex-vert space-evenly">
+                <div id="label" class="center" ></div>
+            </div>
+            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+        </div>`,
+    round:
+        `<div class="Node RoundNode flex-horiz space-between" >
+            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+            <div class="full-width flex-vert space-evenly"> 
+                <div id="label" class="center" style="font-size:36px"></div>
+            </div>
+            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+        </div>`,
+    frame:
+        `<div class="Node flex-horiz space-between" style="min-width:150px;">
+            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+            <div class="NodeContent full-width flex-vert space-evenly"> 
+                <div id="label" class="center" ></div>
+            </div>
+            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+        </div>`,
     }
 
     constructor(objectsync: ObjectSyncClient, id: string) {
@@ -41,9 +58,6 @@ export class Node extends CompSObject {
 
         // Bind attributes to UI
         this.shape.onSet.add(this.reshape.bind(this))
-        this.label.onSet.add((label: string) => {
-            this.htmlItem.getHtmlEl('label').innerText = label
-        })
         this.translation.onSet.add((translation: string) => {
             const [x, y] = translation.split(',').map(parseFloat)
             this.transform.translation=new Vector2(x, y)
@@ -53,6 +67,7 @@ export class Node extends CompSObject {
         })
         this.transform.translationChanged.add((x: number, y: number) => {
             this.translation.set(`${x},${y}`)
+            this.htmlItem.moveToFront()
         })
 
         this.in_ports.onInsert.add((port: Port) => {
@@ -63,6 +78,12 @@ export class Node extends CompSObject {
             this.reshapePort(port)
         })
 
+        this.link(this.label.onSet, (label: string) => {
+            print('label set', label)
+            this.htmlItem.getHtmlEl('label').innerText = label
+            print(this.htmlItem.getHtmlEl('label'),this)
+        })
+
 
         // Initialize UI
 
@@ -70,7 +91,13 @@ export class Node extends CompSObject {
         this.mouseOverDetector = new MouseOverDetector(this)
         this.transform.draggable = true
 
-        this.reshape('block')
+        this.link(this.eventDispatcher.onDoubleClick, () => {
+            this.emit('double_click')
+        })
+
+        this.link(this.onStart, () => {
+            this.reshape('block')
+        })
     }
 
     onParentChangedTo(newValue: SObject): void {
@@ -80,8 +107,9 @@ export class Node extends CompSObject {
 
     reshape(shape: string) {
         this.htmlItem.applyTemplate(this.templates[shape])
-        this.dragListener.setEventElement(as(this.htmlItem.baseElement, HTMLElement))
+        this.eventDispatcher.setEventElement(as(this.htmlItem.baseElement, HTMLElement))
         this.mouseOverDetector.eventElement = this.htmlItem.baseElement
+        
         glowDiv(as(this.htmlItem.baseElement, HTMLElement))
         //glow text
         for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
@@ -93,8 +121,11 @@ export class Node extends CompSObject {
         if(this.shape.getValue() == 'block'){
             port.displayLabel = false
         }
+        if(this.shape.getValue() == 'round'){
+            port.displayLabel = false
+        }
+        if(this.shape.getValue() == 'frame'){
+            port.displayLabel = false
+        }
     }
-}
-
-export class TextNode extends Node {
 }

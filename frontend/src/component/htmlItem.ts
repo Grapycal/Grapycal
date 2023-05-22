@@ -4,6 +4,8 @@ import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
 
 export class HtmlItem extends Component{
+    static templateIdGenerator: number = 0;
+
     baseElement: Element;
     parent_slot: HTMLElement;
     slots: Map<string,HTMLElement> = new Map();
@@ -11,6 +13,7 @@ export class HtmlItem extends Component{
     get parent(){return this.parent_;}
     children: HtmlItem[] = [];
     readonly templateChanged = new Action<[]>();
+    templateId: string='';
 
     constructor(object:IComponentable, specifiedParentElement: HTMLElement = Null()){
         super(object);
@@ -19,7 +22,7 @@ export class HtmlItem extends Component{
         this.parent_slot = specifiedParentElement;
     }
 
-    applyTemplate(template: string){
+    applyTemplate(template: string, order: "prepend"|"append" = "prepend"){
         // create element from template
         if (this.baseElement !== Null())
             this.parent_slot.removeChild(this.baseElement);
@@ -28,7 +31,16 @@ export class HtmlItem extends Component{
         templateElement.innerHTML = template;
         this.baseElement = defined(templateElement.content.firstElementChild);
 
-        this.parent_slot?.appendChild(this.baseElement);
+        // annotate element with template id
+        this.templateId = `template_${HtmlItem.templateIdGenerator++}`;
+        for(let element of this.baseElement.querySelectorAll('*')){
+            element.setAttribute('template_id',this.templateId);
+        }
+
+        if(order === "append")
+            this.parent_slot?.appendChild(this.baseElement);
+        else
+            this.parent_slot?.prepend(this.baseElement);
 
         // search for elements that id = slot_name
         // if found, add to slots:
@@ -42,16 +54,21 @@ export class HtmlItem extends Component{
         this.templateChanged.invoke();
     }
 
-    private moveToSlot(slot: HTMLElement){
+    private moveToSlot(slot: HTMLElement, order: "prepend"|"append" = "prepend"){
         if (this.baseElement !== Null()){
             this.parent_slot?.removeChild(this.baseElement);
-            slot.appendChild(this.baseElement);
+            if(order === "append")
+                slot.appendChild(this.baseElement);
+            else
+                slot.prepend(this.baseElement);
         }
         this.parent_slot = slot;
     }
 
     getHtmlEl(id: string): HTMLElement{
-        const element = this.baseElement.querySelector(`#${id}`);
+        //match id and template_id
+        const element = this.baseElement.querySelector(`[template_id="${this.templateId}"]#${id}`);
+        //const element = this.baseElement.querySelector(`#${id}`);
         //check baseElement
         if (this.baseElement.id === id)
             return as(this.baseElement,HTMLElement);
@@ -78,13 +95,22 @@ export class HtmlItem extends Component{
         }
     }
 
-    setParent(parent: HtmlItem, slot: string = 'default'): void{
+    setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="prepend"): void{
         if (this.parent_ !== Null())
             this.parent_.children = this.parent_.children.filter(i => i !== this);
-        this.moveToSlot(parent.getSlot(slot));
+        this.moveToSlot(parent.getSlot(slot),order);
         this.parent_ = parent;
         parent.children.push(this);
     }
+
+    moveToFront(){
+        this.parent_slot?.appendChild(this.baseElement);
+    }
+
+    moveToBack(){
+        this.parent_slot?.prepend(this.baseElement);
+    }
+
     addSlot(name: string, element: HTMLElement){
         this.slots.set(name,element);
     }

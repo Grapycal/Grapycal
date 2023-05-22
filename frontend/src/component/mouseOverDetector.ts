@@ -8,62 +8,90 @@ class MouseOverDetectorMaster{
             this._instance = new MouseOverDetectorMaster();
         return this._instance;
     }
-    _frontMostObject: IComponentable = Null();
-    get frontMostObject(): IComponentable{
-        return this._frontMostObject;
-    }
-    set frontMostObject(object: IComponentable){
-        this._frontMostObject = object;
-    }
-    _allObjects: IComponentable[] = [];
-    get allElements(): IComponentable[]{
-        return this._allObjects;
-    }
-    mouseEnter(object: IComponentable){
-        this._allObjects.push(object);
-    }
-    mouseLeave(object: IComponentable){
-        this._allObjects.splice(this._allObjects.indexOf(object), 1);
+
+    private _objectsUnderMouse: IComponentable[] = [];
+    private _elementsUnderMouse: Element[] = [];
+
+    get objectsUnderMouse(): IComponentable[]{
+        if(this.isDirty){
+            this.check()
+        }
+        return this._objectsUnderMouse;
     }
 
+    get elementsUnderMouse(): Element[]{
+        if(this.isDirty){
+            this.check()
+        }
+        return this._elementsUnderMouse;
+    }
+    private isDirty: boolean = false;
+    private allObjects = new Map<Element,IComponentable>();
+    private mousePos = {x: 0, y: 0};
+
+    constructor(){
+        document.addEventListener("mousemove", (event) => {
+            this.isDirty = true; 
+            this.mousePos = {x: event.clientX, y: event.clientY};
+        });
+    }
+
+    private check(){
+        // https://stackoverflow.com/questions/21051084/javascript-know-all-the-elements-under-your-mouse-pointer-multiple-z-axis-laye
+        
+        let stack = [], el: Element | null;
+        do {
+            el = document.elementFromPoint(this.mousePos.x, this.mousePos.y);
+            if(el == null) break;
+            stack.push(el);
+            el.classList.add('pointerEventsNone');
+        }while(el.tagName !== 'HTML');
+    
+        // clean up
+        for(var i  = 0; i < stack.length; i += 1)
+            stack[i].classList.remove('pointerEventsNone');
+    
+        this._elementsUnderMouse = stack.map(el => el);
+        this._objectsUnderMouse = this._elementsUnderMouse.map(el => this.allObjects.get(el)).filter(obj => obj != undefined).map(obj => obj!);
+        this.isDirty = false;
+    }
+
+    public add(object: IComponentable, element: Element){
+        this.allObjects.set(element, object);
+    }
+
+    public remove(object: IComponentable){
+        for(let [element, obj] of this.allObjects){
+            if(obj == object){
+                this.allObjects.delete(element);
+                return;
+            }
+        }
+    }
 }
 
 export class MouseOverDetector extends Component{
 
-    static get frontMostObject(): IComponentable{
-        return MouseOverDetectorMaster.instance.frontMostObject;
-    }
-    static get allObjects(): IComponentable[]{
-        return MouseOverDetectorMaster.instance.allElements;
+    static get objectsUnderMouse(): IComponentable[]{
+        return MouseOverDetectorMaster.instance.objectsUnderMouse;
     }
     _eventElement: Element = Null();
     get eventElement(): Element{
         return this._eventElement;
     }
     set eventElement(element: Element){
-        if(this._eventElement != Null()){
-            this._eventElement.removeEventListener("mouseenter", this.mouseEnter);
-            this._eventElement.removeEventListener("mouseleave", this.mouseLeave);
-        }
+        if(this._eventElement != Null())
+            MouseOverDetectorMaster.instance.remove(this.object);
         this._eventElement = element;
-        this._eventElement.addEventListener("mouseenter", this.mouseEnter);
-        this._eventElement.addEventListener("mouseleave", this.mouseLeave);
+        MouseOverDetectorMaster.instance.add(this.object, element);
     }
     constructor(object: IComponentable, eventElement: Element = Null()){
         super(object);
-        this.mouseEnter = this.mouseEnter.bind(this);
-        this.mouseLeave = this.mouseLeave.bind(this);
         if (eventElement != Null())
             this.eventElement = eventElement;
     }
-    mouseEnter(e:Event){
-        MouseOverDetectorMaster.instance.mouseEnter(this.object);
-        if(e.eventPhase == Event.AT_TARGET){
-            MouseOverDetectorMaster.instance.frontMostObject = this.object;
-        }
+    onDestroy(){
+        if(this._eventElement != Null())
+            MouseOverDetectorMaster.instance.remove(this.object);
     }
-    mouseLeave(e:Event){
-        MouseOverDetectorMaster.instance.mouseLeave(this.object);
-    }
-
 }

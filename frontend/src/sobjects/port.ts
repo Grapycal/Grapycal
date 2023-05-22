@@ -50,7 +50,7 @@ export class Port extends CompSObject {
         this.htmlItem.applyTemplate(this.template)
 
         let transform = new Transform(this,this.htmlItem.getHtmlEl('Knob'))
-        transform.pivot = new Vector2(0.5,0)
+        transform.pivot = new Vector2(0,0)
 
         let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Knob'))
         eventDispatcher.onDragStart.add(this.generateEdge.bind(this))
@@ -115,9 +115,14 @@ export class Port extends CompSObject {
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
             let newEdge = as(this.objectsync.createObject('Edge', this.parent.parent.id),Edge)
-            newEdge.tail.set(this)
-            newEdge.head.set(this.node.in_ports.getValue()[0])
-            print('new edge',newEdge)
+            if(this.is_input.getValue()){
+                newEdge.addTag('CreatingDragTail')
+                newEdge.head.set(this)
+            }
+            else{
+                newEdge.addTag('CreatingDragHead')
+                newEdge.tail.set(this)
+            }
         }),true)
     }
 }

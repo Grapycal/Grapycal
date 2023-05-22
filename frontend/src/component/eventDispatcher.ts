@@ -8,12 +8,47 @@ export interface ICanReceiveMouseEvent{
     addEventListener(type: 'mouseup', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: 'mouseover', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: 'wheel', listener: (event: WheelEvent) => void, options?: boolean | AddEventListenerOptions): void;
+    addEventListener(type: 'dblclick', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
 
     removeEventListener(type: 'mousedown', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'mousemove', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'mouseup', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'mouseover', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'wheel', listener: (event: WheelEvent) => void, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: 'dblclick', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
+}
+
+export class GlobalEventDispatcher{
+    static instance: GlobalEventDispatcher = new GlobalEventDispatcher();
+
+    public readonly onMove = new Action<[MouseEvent,Vector2]>();
+    public readonly onMouseDown = new Action<[MouseEvent]>();
+    public readonly onMouseUp = new Action<[MouseEvent]>();
+
+    private _mousePos: Vector2 = Vector2.zero;
+    get mousePos(){return this._mousePos;}
+    
+    constructor(){
+        this._onMouseMove = this._onMouseMove.bind(this);
+        document.addEventListener('mousemove', this._onMouseMove.bind(this));
+        this._onMouseDown = this._onMouseDown.bind(this);
+        document.addEventListener('mousedown', this._onMouseDown.bind(this));
+        this._onMouseUp = this._onMouseUp.bind(this);
+        document.addEventListener('mouseup', this._onMouseUp.bind(this));
+    }
+
+    private _onMouseMove(event: MouseEvent){
+        this._mousePos = new Vector2(event.clientX, event.clientY);
+        this.onMove.invoke(event, new Vector2(event.clientX, event.clientY));
+    }
+
+    private _onMouseDown(event: MouseEvent){
+        this.onMouseDown.invoke(event);
+    }
+
+    private _onMouseUp(event: MouseEvent){
+        this.onMouseUp.invoke(event);
+    }
 }
 
 export class EventDispatcher extends Component{
@@ -21,14 +56,16 @@ export class EventDispatcher extends Component{
     private prevMousePos: Vector2 = Vector2.zero;
     private fowardCalled: boolean = false;
 
-    private _mousePos: Vector2 = Vector2.zero;
-    get mousePos(){return this._mousePos;}
+    get mousePos(){return GlobalEventDispatcher.instance.mousePos;}
+    get onMove(){return GlobalEventDispatcher.instance.onMove;}
+    get onMouseDown(){return GlobalEventDispatcher.instance.onMouseDown;}
+    get onMouseUp(){return GlobalEventDispatcher.instance.onMouseUp;}
 
-    public onDragStart = new Action<[MouseEvent,Vector2]>();
-    public onDrag = new Action<[MouseEvent,Vector2,Vector2]>();
-    public onDragEnd = new Action<[MouseEvent,Vector2]>();
-    public onScroll = new Action<[WheelEvent]>();
-
+    public readonly onDragStart = new Action<[MouseEvent,Vector2]>();
+    public readonly onDrag = new Action<[MouseEvent,Vector2,Vector2]>();
+    public readonly onDragEnd = new Action<[MouseEvent,Vector2]>();
+    public readonly onScroll = new Action<[WheelEvent]>();
+    public readonly onDoubleClick = new Action<[MouseEvent]>();
 
     constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = Null()){
         super(object);
@@ -36,6 +73,7 @@ export class EventDispatcher extends Component{
         this._onMouseDown = this._onMouseDown.bind(this);
         this._onMouseMove = this._onMouseMove.bind(this);
         this._onMouseUp = this._onMouseUp.bind(this);
+        this._onDoubleClick = this._onDoubleClick.bind(this);
 
         this.eventElement = eventElement;
         if(this.eventElement){
@@ -49,9 +87,11 @@ export class EventDispatcher extends Component{
     public setEventElement(eventElement: ICanReceiveMouseEvent){
         this.eventElement?.removeEventListener('mousedown', this._onMouseDown);
         this.eventElement?.removeEventListener('wheel', this.onScroll.invoke);
+        this.eventElement?.removeEventListener('dblclick', this._onDoubleClick);
         this.eventElement = eventElement;
         this.eventElement.addEventListener('mousedown', this._onMouseDown);
         this.eventElement.addEventListener('wheel', this.onScroll.invoke);
+        this.eventElement.addEventListener('dblclick', this._onDoubleClick);
     }
 
     public forwardEvent(){
@@ -59,7 +99,6 @@ export class EventDispatcher extends Component{
     }
 
     private _onMouseDown(event: MouseEvent){ 
-        this._mousePos = new Vector2(event.clientX, event.clientY);
         this.fowardCalled = false;
         //this.eventElement.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mousemove', this._onMouseMove);
@@ -73,7 +112,6 @@ export class EventDispatcher extends Component{
     }
 
     private _onMouseMove(event: MouseEvent){
-        this._mousePos = new Vector2(event.clientX, event.clientY);
         this.fowardCalled = false;
         const mousePos = new Vector2(event.clientX, event.clientY);
         if(!this._isDragging){
@@ -88,7 +126,6 @@ export class EventDispatcher extends Component{
     }
 
     private _onMouseUp(event: MouseEvent){
-        this._mousePos = new Vector2(event.clientX, event.clientY);
         this.fowardCalled = false;
         this.onDragEnd.invoke(event, new Vector2(event.clientX, event.clientY));
         this._isDragging = false;
@@ -96,6 +133,14 @@ export class EventDispatcher extends Component{
         document.removeEventListener('mousemove', this._onMouseMove);
         //this.eventElement.removeEventListener('mouseup', this._onMouseUp);
         document.removeEventListener('mouseup', this._onMouseUp);
+        if (!this.fowardCalled){
+            event.stopPropagation();
+        }
+    }
+
+    private _onDoubleClick(event: MouseEvent){
+        this.fowardCalled = false;
+        this.onDoubleClick.invoke(event);
         if (!this.fowardCalled){
             event.stopPropagation();
         }

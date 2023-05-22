@@ -1,3 +1,5 @@
+export { Action } from "objectsync-client"
+
 export function defined<T>(value: T | undefined| null): T {
     if (value === undefined) {
         throw new Error("Value is undefined");
@@ -33,27 +35,7 @@ export abstract class ContextManager{
 
 type Callback<ARGS extends any[], OUT> = (...args: ARGS) => OUT;
 
-export class Action<ARGS extends any[], OUT=void> {
-    private _callbacks: Callback<ARGS, OUT>[] = [];
-    constructor(){
-        this.invoke = this.invoke.bind(this);
-    }
 
-    add(callback: Callback<ARGS, OUT>) {
-        this._callbacks.push(callback);
-    }
-    
-    remove(callback: Callback<ARGS, OUT>) {
-        const index = this._callbacks.indexOf(callback);
-        if (index >= 0) {
-            this._callbacks.splice(index, 1);
-        }
-    }
-
-    invoke(...args: ARGS): OUT[] {
-        return this._callbacks.map((callback) => callback(...args));
-    }
-}
 
 export class Vector2 {
 
