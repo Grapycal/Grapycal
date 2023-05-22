@@ -13,7 +13,7 @@ The installation process is a bit complicated because Grapycal involves the foll
 
 - [ChatroomClient_ts](https://github.com/eri24816/ChatRoomClient_ts) and [ObjectSyncClient_ts](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.
 
-The latter 4 packages is not yet uploaded the PYPI or the npm registry (I'll try to do that soon). You have to manually download their source code and install with `pip install -e` for the two python (backend) packages and `npm install` for the two npm (fontend) packages.
+The latter 4 packages is not yet uploaded the PYPI or the npm registry (I'll try to do that soon). You have to manually download their source code and install with `pip install -e` for all the python (backend) packages and `npm install` for all the npm (fontend) packages.
 
 While installing the npm packages, please use `npm link` and `npm link <package name>` to manually link `ChatroomClient_ts` to `ObjectSyncClient_ts`, and `ObjectSyncClient_ts` to `Grapycal`.
 
