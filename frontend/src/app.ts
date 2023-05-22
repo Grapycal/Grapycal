@@ -11,7 +11,8 @@ import { TextInputNode } from './sobjects/nodes/textInputNode'
 
 export const editor = new Editor();
 
-const objectsync = new ObjectSyncClient('ws://192.168.245.187:8765');
+//const objectsync = new ObjectSyncClient('ws://192.168.245.187:8765');
+const objectsync = new ObjectSyncClient('ws://localhost:8765');
 objectsync.register(Root);
 objectsync.register(Node);
 objectsync.register(TextInputNode);
