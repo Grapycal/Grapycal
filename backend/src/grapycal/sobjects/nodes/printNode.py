@@ -19,5 +19,4 @@ class PrintNode(Node):
         self.label.set(str(data))
 
     def input_edge_removed(self, edge: Edge, port: InputPort):
-        print('input_edge_removed')
         self.label.set('')
