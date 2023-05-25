@@ -21,11 +21,6 @@ body{
     -webkit-user-select: none;
 }
 
-.Node:hover{
-
-    box-sizing: border-box;
-    border: #4eafa8 solid 2.5px;
-}
 
 .Node:focus{
     outline: none;

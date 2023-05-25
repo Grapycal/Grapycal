@@ -14,6 +14,7 @@ export class Port extends CompSObject {
 
     name: StringTopic = this.getAttribute('name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
+    max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
     orientation: number=0;
 
     private node: Node = Null();
@@ -31,6 +32,9 @@ export class Port extends CompSObject {
             this.htmlItem.getHtmlEl('label').style.display = 'none'
         }
     }
+
+    // Managed by Edge class
+    public edges: Edge[] = []
 
     readonly template: string = `
     <div class="Port">
@@ -74,15 +78,6 @@ export class Port extends CompSObject {
         // Initialize UI
     }
 
-    // onParentChangedTp(oldValue: CompSObject | undefined, newValue: CompSObject| undefined): void {
-    //     super.onParentChangedTp(oldValue, newValue)
-    //     this.isInputChanged(this.is_input.getValue())
-    //     this.node = as(newValue, Node);
-    //     oldValue?.getComponent(Transform).onChange.remove(this.moved.invoke.bind(this.moved))
-    //     this.node.getComponent(Transform).onChange.add(this.moved.invoke.bind(this.moved))
-    //     this.moved.invoke()
-    // }
-
 
     protected onParentChangedFrom(oldValue: CompSObject): void {
         super.onParentChangedFrom(oldValue)
@@ -96,6 +91,12 @@ export class Port extends CompSObject {
         this.node = as(newValue, Node);
         this.node.getComponent(Transform).onChange.add(this.moved.invoke.bind(this.moved))
         this.moved.invoke()
+    }
+
+    public acceptsEdge(): boolean {
+        print(this.max_edges.getValue(),this.edges.length)
+        if(this.max_edges.getValue() > this.edges.length) return true
+        return false
     }
 
     private isInputChanged(is_input: number): void {

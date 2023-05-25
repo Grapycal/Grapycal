@@ -7,7 +7,7 @@ class PrintNode(Node):
     frontend_type = 'TextOutputNode'
     def build(self):
         super().build()
-        self.add_in_port('in')
+        self.add_in_port('in').max_edges.set(1)
         self.label.set('')
 
     def edge_activated(self, edge):

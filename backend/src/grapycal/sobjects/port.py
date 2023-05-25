@@ -9,14 +9,19 @@ class Port(SObject):
     frontend_type = 'Port'
     def pre_build(self, attribute_values: dict[str, Any] | None, workspace):
         self.name = self.add_attribute('name', StringTopic, 'port name')
+        self.max_edges = self.add_attribute('max_edges', IntTopic, 64)
     
         self.edges: List[Edge] = []
         self.node: Node
     
     def add_edge(self, edge):
+        if len(self.edges) >= self.max_edges.get():
+            raise Exception('Max edges reached')
         self.edges.append(edge)
     
     def remove_edge(self, edge):
+        if edge not in self.edges:
+            return
         self.edges.remove(edge)
 
 

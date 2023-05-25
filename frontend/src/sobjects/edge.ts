@@ -61,16 +61,24 @@ export class Edge extends CompSObject {
         
         // link attributes to UI
         this.link(this.tail.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) oldPort.moved.remove(this.updateSVG)
+            if(oldPort) {
+                oldPort.moved.remove(this.updateSVG)
+                oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
+            }
             if(!port) return
             this.updateSVG();
             port.moved.add(this.updateSVG)
+            port.edges.push(this)
         })
         this.link(this.head.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) oldPort.moved.remove(this.updateSVG)
+            if(oldPort) {
+                oldPort.moved.remove(this.updateSVG)
+                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+            }
             if(!port) return
             this.updateSVG();
             port.moved.add(this.updateSVG)
+            port.edges.push(this)
         })
         this.parent?.onAddChild.add(this.updateSVG)
         this.parent?.onRemoveChild.add(this.updateSVG)
@@ -104,20 +112,14 @@ export class Edge extends CompSObject {
         }
         this.parent?.onAddChild.remove(this.updateSVG)
         this.parent?.onRemoveChild.remove(this.updateSVG)
+        this.head.getValue()?.edges.splice(this.head.getValue()?.edges.indexOf(this),1)
+        this.tail.getValue()?.edges.splice(this.tail.getValue()?.edges.indexOf(this),1)
         super.onDestroy()
     }
-
-    protected onParentChangedFrom(oldValue: SObject): void {
-        super.onParentChangedFrom(oldValue)
-        oldValue.onAddChild.remove(this.updateSVG)
-        oldValue.onRemoveChild.remove(this.updateSVG)
-    }
-
+    
     protected onParentChangedTo(newValue: SObject): void {
         super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
-        newValue.onAddChild.add(this.updateSVG)
-        newValue.onRemoveChild.add(this.updateSVG)
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
@@ -138,17 +140,19 @@ export class Edge extends CompSObject {
             if(object instanceof Port){
                 let port = object
                 if(this.state == EdgeState.DraggingTail){
-                    if(object != this.tail.getValue() && !port.is_input.getValue()){
+                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge()){
                         this.objectsync.record(() => {
                             this.tail.set(port)
                         },true)
+                        break;
                     }
                 }
                 else if(this.state == EdgeState.DraggingHead){
-                    if(port != this.head.getValue() && port.is_input.getValue()){
+                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge()){
                         this.objectsync.record(() => {
                             this.head.set(port)
                         },true)
+                        break;
                     }
                 }
             }
@@ -158,7 +162,7 @@ export class Edge extends CompSObject {
         }
     }
 
-    private onDragEnd(event: MouseEvent, mousePos: Vector2) {
+    private onDragEnd(event: MouseEvent, mousePos: Vector2) {           
         if(this.state == EdgeState.DraggingTail && 
             (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
             {
@@ -190,11 +194,20 @@ export class Edge extends CompSObject {
     }
 
     private onDragEndWhileCreating(){
-        if(this.hasTag('CreatingDragTail')){
-            if(this.tail.getValue() == null){ // cancel creation
+
+        if(this.state == EdgeState.DraggingTail && 
+            (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            {
                 this.objectsync.clearPretendedChanges();
             }
-            else{ // finish creation
+        else if(this.state == EdgeState.DraggingHead &&
+            (this.head.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.head.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            {
+                this.objectsync.clearPretendedChanges();
+            }
+        else {
+            // make the change of port permanent
+            if (this.state == EdgeState.DraggingTail) {
                 let tail = this.tail.getValue()
                 let head = this.head.getValue()
                 let parentID = this.parent.id
@@ -205,11 +218,7 @@ export class Edge extends CompSObject {
                     newEdge.head.set(head)
                 })
             }
-        }else{
-            if(this.head.getValue() == null){ // cancel creation
-                this.objectsync.clearPretendedChanges();
-            }
-            else{ // finish creation
+            else if (this.state == EdgeState.DraggingHead) {
                 let tail = this.tail.getValue()
                 let head = this.head.getValue()
                 let parentID = this.parent.id
