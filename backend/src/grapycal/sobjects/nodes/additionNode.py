@@ -9,6 +9,7 @@ class AdditionNode(FunctionNode):
         super().build()
         self.label.set('+')
         self.shape.set('round')
+        self.primary_color.set('#00cc00')
 
     def calculate(self, data):
         if len(data) == 0:

@@ -15,6 +15,8 @@ export type Constructor<T> = new (...args: any[]) => T;
 export function as <T>(value: any, type: Constructor<T>): T {
     if (value instanceof type)
         return value;
+    if (value === null)
+        return null;
     throw new Error(`Value ${value} is not instance of ${type.name}`);
 }
 

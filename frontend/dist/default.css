@@ -1,11 +1,23 @@
 body{
     /* monospace */
     font-family: Consolas, Courier, monospace;
-    font-size: 16px;
+    font-size: 24px;
     color: #e7e7e7;
     background-color: #000000;
     /*no scroll*/
     overflow: hidden;
+}
+
+html, body{
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+}
+
+input{
+    font-family: Consolas, Courier, monospace;
 }
 
 .Node{
@@ -121,4 +133,28 @@ body{
 
 .pointerEventsNone {
     pointer-events: none;
+}
+
+
+.SidebarSlot{
+    user-select: none;
+    position: absolute;
+    padding: 10px;
+    background-color:rgba(.2,.2,.2,0.8);
+    height:auto;
+    bottom: 0px; 
+    left: 0px;
+    top: 0px;
+    width: 300px;
+    z-index: 1;
+}
+
+.HierarchyNode{
+}
+
+.HierarchyChildNodeSlot{
+    padding-left: 20px;
+}
+.HierarchyLeafSlot{
+    padding-left: 20px;
 }

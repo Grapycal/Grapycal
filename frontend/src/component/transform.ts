@@ -1,5 +1,5 @@
 import { Null, print } from "../devUtils"
-import { Action, Vector2 } from "../utils"
+import { Action, Vector2, as } from "../utils"
 import { Component, IComponentable } from "./component"
 import { EventDispatcher } from "./eventDispatcher"
 import { HtmlItem } from "./htmlItem"
@@ -126,7 +126,7 @@ export class Transform extends Component{
         super(object);
         this.htmlItem = this.getComponent(HtmlItem);
         this.specifiedTargetElement = targetElement;
-        this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
+        this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
 
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
         
@@ -138,7 +138,7 @@ export class Transform extends Component{
 
     private templateChanged(){
         // remove callback
-        this.targetElement = this.specifiedTargetElement || this.htmlItem.baseElement;
+        this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
         this.updateUI();
     }
 

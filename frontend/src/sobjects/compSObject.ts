@@ -37,6 +37,6 @@ export class CompSObject extends SObject implements IComponentable {
     }
     public onDestroy(): void {
         super.onDestroy();
-        this.componentManager.onDestroy();
+        this.componentManager.destroy();
     }
 }

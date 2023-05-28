@@ -14,6 +14,7 @@ class Node(SObject):
         self.label = self.add_attribute('label', StringTopic, 'label')
         self.translation = self.add_attribute('translation', StringTopic, '0,0')
         self.is_preview = self.add_attribute('is_preview', IntTopic, 0)
+        self.primary_color = self.add_attribute('primary_color', StringTopic, '#aaaaaa')
 
         self.in_ports = self.add_attribute('in_ports', ObjListTopic)
         self.out_ports = self.add_attribute('out_ports', ObjListTopic)

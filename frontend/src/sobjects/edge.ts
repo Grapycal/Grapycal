@@ -2,7 +2,7 @@ import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, F
 import { Port } from './port'
 import { HtmlItem } from '../component/htmlItem'
 import { CompSObject } from './compSObject'
-import { editor } from '../app'
+import { editor, soundManager } from '../app'
 import { Vector2, as } from '../utils'
 import { Null, print } from '../devUtils'
 import { Transform } from '../component/transform'
@@ -28,7 +28,7 @@ export class Edge extends CompSObject {
     state: EdgeState = EdgeState.Idle
 
     template = `
-    <div id="base">
+    <div id="base" style="position:absolute">
         <svg class="Edge" id="svg">
             <g>
                 <path id="path" d=""  fill="none"></path>
@@ -91,6 +91,10 @@ export class Edge extends CompSObject {
         this.base.style.width = "1px"
         this.base.style.height = "1px"
         this.svg.style.position = 'absolute'
+        
+        this.link2(this.htmlItem.baseElement,'mousedown', () => {
+            soundManager.playClick() // why not working?
+        })
 
         this.link(this.onStart,()=>{
             if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
@@ -251,7 +255,8 @@ export class Edge extends CompSObject {
             (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x)) {
             tail = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             head = this.transform.worldToLocal(this.head.getValue().getComponent(Transform).worldCenter)
-            tail_orientation = Math.atan2(head.y - tail.y, head.x - tail.x)
+            //tail_orientation = Math.atan2(head.y - tail.y, head.x - tail.x)
+            tail_orientation = 0
             head_orientation = this.head.getValue().orientation 
         }
         else if(
@@ -261,7 +266,8 @@ export class Edge extends CompSObject {
             tail = this.transform.worldToLocal(this.tail.getValue().getComponent(Transform).worldCenter)
             head = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             tail_orientation = this.tail.getValue().orientation
-            head_orientation = Math.atan2(tail.y - head.y, tail.x - head.x)
+            //head_orientation = Math.atan2(tail.y - head.y, tail.x - head.x)
+            head_orientation = Math.PI
         }else {
             if(!this.tail.getValue() || !this.head.getValue()) return ''
             tail = this.transform.worldToLocal(this.tail.getValue().getComponent(Transform).worldCenter)

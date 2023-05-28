@@ -7,6 +7,7 @@ from grapycal.sobjects.nodes.printNode import PrintNode
 from grapycal.sobjects.nodes.textInputNode import TextInputNode
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.sobjects.nodes.textOutputNode import TextOutputNode
+from grapycal.sobjects.sidebar import Sidebar
 import objectsync
 import asyncio
 import signal
@@ -20,6 +21,9 @@ class Workspace:
         self._background_runner = BackgroundRunner()
 
         self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
+
+        self._objectsync.register(Sidebar)
+
         self._objectsync.register(AdditionNode)
         self._objectsync.register(TextOutputNode)
         self._objectsync.register(PrintNode)
@@ -27,6 +31,8 @@ class Workspace:
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
+
+        self._objectsync.create_object(Sidebar)
 
         self._objectsync.create_object(TextInputNode)
         self._objectsync.create_object(TextInputNode)

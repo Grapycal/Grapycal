@@ -3,7 +3,7 @@ import { print } from "../devUtils"
 export function glowDiv(div: HTMLElement) {
     //get border color
     const borderColor = window.getComputedStyle(div).borderColor
-    const boxShadow = `0 0 6px 0px ${borderColor}`
+    const boxShadow = `0 0 3px 0px ${borderColor}`
     div.style.boxShadow = boxShadow
 }
 

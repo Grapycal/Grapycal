@@ -94,7 +94,6 @@ export class Port extends CompSObject {
     }
 
     public acceptsEdge(): boolean {
-        print(this.max_edges.getValue(),this.edges.length)
         if(this.max_edges.getValue() > this.edges.length) return true
         return false
     }

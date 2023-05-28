@@ -53,7 +53,7 @@ export class ComponentManager{
     hasComponent<T extends Component>(type:Constructor<T>): boolean{
         return this.components.some((component) => component.constructor.name === type.name);
     }
-    onDestroy(): void{
+    destroy(): void{
         this.components.forEach((component) => component.onDestroy());
     }
 }

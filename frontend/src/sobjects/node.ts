@@ -1,5 +1,5 @@
 import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic} from 'objectsync-client'
-import { editor } from '../app'
+import { editor, soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
@@ -17,6 +17,7 @@ export class Node extends CompSObject {
     label: StringTopic = this.getAttribute('label', StringTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
     is_preview: IntTopic = this.getAttribute('is_preview', IntTopic)
+    primary_color: StringTopic = this.getAttribute('primary_color', StringTopic)
 
     in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
     out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
@@ -84,6 +85,14 @@ export class Node extends CompSObject {
             print(this.htmlItem.getHtmlEl('label'),this)
         })
 
+        this.link(this.primary_color.onSet, (color: string) => {
+            this.htmlItem.getHtmlEl('label').style.color = color
+            as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = color
+            glowDiv(as(this.htmlItem.baseElement, HTMLElement))
+            for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
+                glowText(div)
+            }
+        })
 
         // Initialize UI
 
@@ -97,6 +106,7 @@ export class Node extends CompSObject {
 
         this.link(this.onStart, () => {
             this.reshape('block')
+            
         })
     }
 
@@ -109,6 +119,10 @@ export class Node extends CompSObject {
         this.htmlItem.applyTemplate(this.templates[shape])
         this.eventDispatcher.setEventElement(as(this.htmlItem.baseElement, HTMLElement))
         this.mouseOverDetector.eventElement = this.htmlItem.baseElement
+        
+        this.link2(this.htmlItem.baseElement,'mousedown', () => {
+            soundManager.playClick()
+        })
         
         glowDiv(as(this.htmlItem.baseElement, HTMLElement))
         //glow text
