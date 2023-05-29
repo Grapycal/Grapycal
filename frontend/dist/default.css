@@ -14,6 +14,7 @@ html, body{
     bottom:0;
     left:0;
     right:0;
+    margin: 0;
 }
 
 input{
@@ -21,26 +22,22 @@ input{
 }
 
 .Node{
-    box-sizing: border-box;
-    position: absolute;
     font-size: 24px;
     background-color: #121113;
-    border: #4eafa4 solid 2px;
+    border: #4eafa4 solid 1px;
     border-radius: 3px;
-    width: fit-content;
-    block-size: fit-content;
     user-select: none;
     -webkit-user-select: none;
 }
 
 
-.Node:focus{
-    outline: none;
-}
-
 .BlockNode{
-    min-width: 100px;
-    min-height: 40px;
+    min-width: 30px;
+    min-height: 30px;
+
+    box-sizing: border-box;
+    width: fit-content;
+    block-size: fit-content;
 }
 
 .NodeContent{
@@ -50,7 +47,7 @@ input{
 
 .Edge{
     overflow: visible;
-    stroke: rgba(171, 171, 171, 0.55);
+    stroke: rgba(120, 120, 120, 0.55);
     stroke-width: 10;
 }
 
@@ -135,12 +132,22 @@ input{
     pointer-events: none;
 }
 
+.NodePreview{
+    margin: 20px auto;
+    box-sizing: border-box;
+    font-size: 24px;
+    background-color: #121113;
+    border: #4eafa4 solid 1px;
+    user-select: none;
+    -webkit-user-select: none;
+}
 
 .SidebarSlot{
+    overflow: scroll;
     user-select: none;
     position: absolute;
     padding: 10px;
-    background-color:rgba(.2,.2,.2,0.8);
+    background-color:rgba(45, 45, 45, 0.54);
     height:auto;
     bottom: 0px; 
     left: 0px;
@@ -149,12 +156,29 @@ input{
     z-index: 1;
 }
 
+.SidebarSlot::-webkit-scrollbar {
+  display: none;
+}
+
 .HierarchyNode{
+    padding: 10px 0px;
+    
+    border-left: #009307 solid 3px;
+}
+
+.HierarchyName{
+    padding-left: 15px;
+    font-size: 28px;
+}
+
+.HierarchyIndent{
+    margin: 10px 20px 0px 20px;
+
 }
 
 .HierarchyChildNodeSlot{
-    padding-left: 20px;
 }
+
 .HierarchyLeafSlot{
-    padding-left: 20px;
+    justify-content: center;
 }

@@ -11,7 +11,7 @@ export class HtmlItem extends Component{
     slots: Map<string,HTMLElement> = new Map();
     parent_: HtmlItem;
     get parent(){return this.parent_;}
-    children: HtmlItem[] = [];
+    children: {item:HtmlItem,slotName:string,order:'append'|'prepend'}[] = [];
     readonly templateChanged = new Action<[]>();
     templateId: string='';
 
@@ -51,18 +51,34 @@ export class HtmlItem extends Component{
             const slotName = element.id.slice(5);
             this.addSlot(slotName, as(element,HTMLElement));
         }
+        
+        // move children to slots
+        for(let child of this.children){
+            if(child.item.baseElement===null) continue;
+            const slot = this.slots.get(child.slotName);
+            if(slot === undefined)
+                throw new Error(`Slot ${child.slotName} not found`);
+            if(order === "append")
+                slot.appendChild(child.item.baseElement);
+            else
+                slot.prepend(child.item.baseElement);
+        }
+        
         this.templateChanged.invoke();
     }
 
-    private moveToSlot(slot: HTMLElement, order: "prepend"|"append" = "prepend"){
-        if (this.baseElement !== Null()){
-            this.parent_slot?.removeChild(this.baseElement);
-            if(order === "append")
-                slot.appendChild(this.baseElement);
-            else
-                slot.prepend(this.baseElement);
-        }
-        this.parent_slot = slot;
+    addChild(child: HtmlItem,slotName: string, order: "prepend"|"append" = "prepend"){
+        const slot = this.slots.get(slotName);
+        if(slot === undefined)
+            throw new Error(`Slot ${slotName} not found`);
+
+        if(child.baseElement===null) return slot;
+        if(order === "append")
+            slot.appendChild(child.baseElement);
+        else
+            slot.prepend(child.baseElement);
+        this.children.push({item:child,slotName:slotName,order:order});
+        return slot;
     }
 
     getHtmlEl(id: string): HTMLElement{
@@ -96,11 +112,9 @@ export class HtmlItem extends Component{
     }
 
     setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="prepend"): void{
-        if (this.parent_ !== Null())
-            this.parent_.children = this.parent_.children.filter(i => i !== this);
-        this.moveToSlot(parent.getSlot(slot),order);
         this.parent_ = parent;
-        parent.children.push(this);
+        this.parent_slot = parent.addChild(this,slot,order);
+
     }
 
     moveToFront(){
@@ -135,10 +149,10 @@ export class HtmlItem extends Component{
     findTransformChildren(): Transform[]{
         const transforms: Transform[] = [];
         for (let child of this.children){
-            if (child.componentManager.hasComponent(Transform))
-                transforms.push(child.getComponent(Transform));
+            if (child.item.componentManager.hasComponent(Transform))
+                transforms.push(child.item.getComponent(Transform));
             else
-                transforms.push(...child.findTransformChildren());
+                transforms.push(...child.item.findTransformChildren());
         }
         return transforms;
     }

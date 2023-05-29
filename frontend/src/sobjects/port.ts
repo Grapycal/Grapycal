@@ -66,7 +66,10 @@ export class Port extends CompSObject {
         this.name.onSet.add((label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
         })
+    }
 
+    protected onStart(): void {
+        super.onStart()
         this.is_input.onSet.add((is_input: number) => {
             if(is_input) {
                 this.orientation = Math.PI
@@ -75,23 +78,27 @@ export class Port extends CompSObject {
             }
             this.isInputChanged(this.is_input.getValue())
         })
-        // Initialize UI
     }
 
 
     protected onParentChangedFrom(oldValue: CompSObject): void {
         super.onParentChangedFrom(oldValue)
         this.isInputChanged(this.is_input.getValue())
-        oldValue.getComponent(Transform).onChange.remove(this.moved.invoke.bind(this.moved))
+        if(oldValue.hasComponent(Transform))
+            oldValue.getComponent(Transform).onChange.remove(this.moved.invoke.bind(this.moved))
     }
 
     protected onParentChangedTo(newValue: CompSObject): void {
         super.onParentChangedTo(newValue)
         this.isInputChanged(this.is_input.getValue())
         this.node = as(newValue, Node);
-        this.node.getComponent(Transform).onChange.add(this.moved.invoke.bind(this.moved))
+        if(this.node.hasComponent(Transform))
+            this.node.getComponent(Transform).onChange.add(this.moved.invoke.bind(this.moved))
         this.moved.invoke()
+        print(this.node.hasComponent(Transform))
     }
+
+
 
     public acceptsEdge(): boolean {
         if(this.max_edges.getValue() > this.edges.length) return true
@@ -112,6 +119,8 @@ export class Port extends CompSObject {
     }
 
     private generateEdge(): void {
+        if(this.node.isPreview)
+            return;
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
             let newEdge = as(this.objectsync.createObject('Edge', this.parent.parent.id),Edge)

@@ -1,25 +1,29 @@
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic
+
+if TYPE_CHECKING:
+    from grapycal.core.workspace import Workspace
+    
 class Node(SObject):
     frontend_type = 'Node'
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace):
-        super().pre_build(attribute_values)
-
+    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace:'Workspace', is_preview:bool = False):
         self.workspace = workspace
         
         self.shape = self.add_attribute('shape', StringTopic, 'block') # round, block, blockNamed, hideBody
         self.output = self.add_attribute('output', StringTopic, 'output')
         self.label = self.add_attribute('label', StringTopic, 'label')
         self.translation = self.add_attribute('translation', StringTopic, '0,0')
-        self.is_preview = self.add_attribute('is_preview', IntTopic, 0)
+        self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.primary_color = self.add_attribute('primary_color', StringTopic, '#aaaaaa')
+        self.category = self.add_attribute('category', StringTopic, '')
 
         self.in_ports = self.add_attribute('in_ports', ObjListTopic)
         self.out_ports = self.add_attribute('out_ports', ObjListTopic)
 
         self.on('double_click', self.double_click)
+        self.on('spawn', lambda: self.workspace.create_node(type(self)))
 
     def build(self):
         pass

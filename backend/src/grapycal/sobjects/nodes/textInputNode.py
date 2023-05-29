@@ -6,8 +6,8 @@ from objectsync import StringTopic
 
 class TextInputNode(Node):
     frontend_type = 'TextInputNode'
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace):
-        super().pre_build(attribute_values, workspace)
+    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace, is_preview:bool = False):
+        super().pre_build(attribute_values, workspace, is_preview)
         self.text = self.add_attribute('text', StringTopic, 'text')
         self.text.on_set += lambda new_value: self.activate() # eager activation
 

@@ -6,18 +6,21 @@ import { print } from "../devUtils"
 export class HeirarchyNode implements IComponentable{
     readonly template: string = `
     <div class="HierarchyNode">
-        <span id="name"></span>
-        <div id="slot_childnode" class="HierarchyChildNodeSlot">
-            
-        </div>
-        <div id="slot_leaf" class="HierarchyLeafSlot">
-                    
+        <span id="name" class="HierarchyName"></span>
+        <div id="indent" class="HierarchyIndent">
+            <div id="slot_childnode" class="HierarchyChildNodeSlot">
+                
+            </div>
+            <div id="slot_leaf" class="HierarchyLeafSlot">
+                        
+            </div>
         </div>
     </div>
     `;
 
     readonly componentManager = new ComponentManager();
     private readonly children = new Map<string,HeirarchyNode>();
+    private readonly leafs: HtmlItem[] = [];
     private readonly linker = new Linker(this);
     private expanded = false;
 
@@ -28,17 +31,19 @@ export class HeirarchyNode implements IComponentable{
         this.name = name;
         this.htmlItem = new HtmlItem(this, document.body);
         this.htmlItem.applyTemplate(this.template);
-        this.htmlItem.getHtmlEl('name').innerText = name;
+        if(!isRoot){
+            this.htmlItem.getHtmlEl('name').innerText = name+' ...';
+            this.linker.link2(this.htmlItem.baseElement,'mousedown',this.mouseDown);
+        }
         if(isRoot){
             //no padding slot_childnode and slot_leaf
-            this.htmlItem.getHtmlEl('slot_childnode').style.paddingLeft = '0px';
-            this.htmlItem.getHtmlEl('slot_leaf').style.paddingLeft = '0px';
+            this.htmlItem.getHtmlEl('name').remove();
+            this.htmlItem.getHtmlEl('indent').classList.remove('HierarchyIndent');
+            this.htmlItem.baseElement.classList.remove('HierarchyNode');
         }
-        this.linker.link2(this.htmlItem.getHtmlEl('name'),'mousedown',this.collapseOrExpand);
 
         if(!isRoot){
-            this.htmlItem.getHtmlEl('slot_childnode').style.display = 'none';
-            this.htmlItem.getHtmlEl('slot_leaf').style.display = 'none';
+            this.htmlItem.getHtmlEl('indent').style.display = 'none';
         }
     }
 
@@ -56,15 +61,15 @@ export class HeirarchyNode implements IComponentable{
         }
     }
 
-    private collapseOrExpand(){
-        print(this.htmlItem)
+    private mouseDown(e: MouseEvent){
+        e.stopPropagation();
         this.expanded = !this.expanded;
         if(this.expanded){
-            this.htmlItem.getHtmlEl('slot_childnode').style.display = 'block';
-            this.htmlItem.getHtmlEl('slot_leaf').style.display = 'block';
+            this.htmlItem.getHtmlEl('name').innerText = this.name + ' ';
+            this.htmlItem.getHtmlEl('indent').style.display = 'block';
         }else{
-            this.htmlItem.getHtmlEl('slot_childnode').style.display = 'none';
-            this.htmlItem.getHtmlEl('slot_leaf').style.display = 'none';
+            this.htmlItem.getHtmlEl('name').innerText = this.name + ' ...'
+            this.htmlItem.getHtmlEl('indent').style.display = 'none';
         }
     }
 
@@ -72,8 +77,9 @@ export class HeirarchyNode implements IComponentable{
         if(typeof path === 'string'){
             path = path.split('/')
         }
-        if(path.length === 0){
+        if(path.length === 0 || path[0] === ''){
             leaf.setParent(this.htmlItem,'leaf')
+            this.leafs.push(leaf);
         }else{
             let child = this.children.get(path[0]);
             if(!child){
@@ -82,6 +88,24 @@ export class HeirarchyNode implements IComponentable{
             }
             child!.addLeaf(leaf,path.slice(1));
         }
+    }
+
+    removeLeaf(leaf: HtmlItem, path: string[]|string){
+        if(typeof path === 'string'){
+            path = path.split('/')
+        }
+        if(path.length === 0 || path[0] === ''){
+            this.leafs.splice(this.leafs.indexOf(leaf),1);
+        }else{
+            let child = this.children.get(path[0])!;
+            child.removeLeaf(leaf,path.slice(1));
+            if(child.isEmpty)
+                this.removeChild(path[0]);
+        }
+    }
+
+    isEmpty(){
+        return this.children.size === 0 && this.leafs.length === 0;
     }
 
     destroy(){

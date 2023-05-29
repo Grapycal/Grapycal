@@ -6,7 +6,7 @@ import { print } from "objectsync-client/src/devUtils"
 export class TextInputNode extends Node{
     protected readonly templates: {[key: string]: string} = {
     block: 
-    `<div class="Node BlockNode flex-horiz space-between">
+    `<div class="BlockNode flex-horiz space-between">
         <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
         <div class="NodeContent full-width flex-horiz space-evenly">
             <div id="label" class="center" >
@@ -22,6 +22,10 @@ export class TextInputNode extends Node{
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         this.text = this.getAttribute('text', StringTopic)
+    }
+
+    protected onStart(): void {
+        super.onStart()
         this.link(this.text.onSet, (text)=>{this.inputField.value = text})
     }
 
@@ -29,9 +33,9 @@ export class TextInputNode extends Node{
         if(this.inputField != Null()){
             this.unlink2(this.inputField,'input')
         }
-        expose('h',this.htmlItem)
         super.reshape(shape)
         this.inputField = this.htmlItem.getEl('input',HTMLInputElement)
+        this.inputField.value = this.text.getValue()
         this.link2(this.inputField,'input', ()=>this.text.set(this.inputField.value))
     }
 }

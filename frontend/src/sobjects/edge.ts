@@ -39,7 +39,6 @@ export class Edge extends CompSObject {
     base: HTMLDivElement
 
     constructor(objectsync: ObjectSyncClient, id: string) {
-        print('Edge constructor')
         super(objectsync, id)
 
         this.updateSVG = this.updateSVG.bind(this)
@@ -59,6 +58,27 @@ export class Edge extends CompSObject {
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
         
+        
+        this.parent?.onAddChild.add(this.updateSVG)
+        this.parent?.onRemoveChild.add(this.updateSVG)
+        this.path = this.htmlItem.getEl('path',SVGPathElement)
+        this.base = this.htmlItem.getEl('base',HTMLDivElement)
+        this.svg = this.htmlItem.getEl('svg', SVGSVGElement)
+
+        this.svg.style.width = "1px"
+        this.svg.style.height = "1px"
+        this.base.style.width = "1px"
+        this.base.style.height = "1px"
+        this.svg.style.position = 'absolute'
+        
+        this.link2(this.htmlItem.baseElement,'mousedown', () => {
+            soundManager.playClick() // why not working?
+        })
+
+    }
+
+    protected onStart(): void {
+        super.onStart()
         // link attributes to UI
         this.link(this.tail.onSet2,(oldPort: Port,port: Port) => {
             if(oldPort) {
@@ -80,32 +100,13 @@ export class Edge extends CompSObject {
             port.moved.add(this.updateSVG)
             port.edges.push(this)
         })
-        this.parent?.onAddChild.add(this.updateSVG)
-        this.parent?.onRemoveChild.add(this.updateSVG)
-        this.path = this.htmlItem.getEl('path',SVGPathElement)
-        this.base = this.htmlItem.getEl('base',HTMLDivElement)
-        this.svg = this.htmlItem.getEl('svg', SVGSVGElement)
-
-        this.svg.style.width = "1px"
-        this.svg.style.height = "1px"
-        this.base.style.width = "1px"
-        this.base.style.height = "1px"
-        this.svg.style.position = 'absolute'
-        
-        this.link2(this.htmlItem.baseElement,'mousedown', () => {
-            soundManager.playClick() // why not working?
-        })
-
-        this.link(this.onStart,()=>{
-            if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
-            if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
-            if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
-                this.link(this.eventDispatcher.onMove,this.onDrag)
-                this.link(this.eventDispatcher.onMouseUp,this.onDragEndWhileCreating)
-            }
-        })
+        if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
+        if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
+        if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
+            this.link(this.eventDispatcher.onMove,this.onDrag)
+            this.link(this.eventDispatcher.onMouseUp,this.onDragEndWhileCreating)
+        }
     }
-
 
     onDestroy(): void {
         if(this.tail.getValue()) {

@@ -10,6 +10,10 @@ class PrintNode(Node):
         self.add_in_port('in').max_edges.set(1)
         self.label.set('')
 
+        if self.is_preview.get():
+            self.label.set('Hello world')
+
+
     def edge_activated(self, edge):
         data = edge.get_data()
         self.label.set(str(data))

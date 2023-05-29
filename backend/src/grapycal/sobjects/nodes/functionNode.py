@@ -4,9 +4,10 @@ from grapycal.sobjects.node import Node
 
 class FunctionNode(Node):
 
-    def pre_build(self, attribute_values, workspace):
-        super().pre_build(attribute_values, workspace)
+    def pre_build(self, attribute_values, workspace, is_preview:bool = False):
+        super().pre_build(attribute_values, workspace, is_preview)
         self._calculated_data = 0
+        self.category.set('function')
 
     def build(self):
         super().build()

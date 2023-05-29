@@ -11,6 +11,5 @@ export function glowText(text: HTMLElement) {
     //get border color
     const borderColor = window.getComputedStyle(text).color.replace('rgb', 'rgba').replace(')', ', 0.4)')
     const textShadow = `0px 0px 2px ${borderColor}`
-    print(textShadow)
     text.style.textShadow = textShadow
 }

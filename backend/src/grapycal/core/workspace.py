@@ -2,7 +2,7 @@ import threading
 import time
 from typing import Any, Callable, Dict
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.nodes.additionNode import AdditionNode
+from grapycal.sobjects.nodes.arithmetic import AdditionNode, MultiplicationNode
 from grapycal.sobjects.nodes.printNode import PrintNode
 from grapycal.sobjects.nodes.textInputNode import TextInputNode
 from grapycal.sobjects.port import InputPort, OutputPort
@@ -24,25 +24,35 @@ class Workspace:
 
         self._objectsync.register(Sidebar)
 
-        self._objectsync.register(AdditionNode)
-        self._objectsync.register(TextOutputNode)
-        self._objectsync.register(PrintNode)
-        self._objectsync.register(TextInputNode)
+        self.sidebar = self._objectsync.create_object(Sidebar)
+
+
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 
-        self._objectsync.create_object(Sidebar)
 
-        self._objectsync.create_object(TextInputNode)
-        self._objectsync.create_object(TextInputNode)
-        self._objectsync.create_object(TextInputNode)
-        self._objectsync.create_object(PrintNode)
-        self._objectsync.create_object(PrintNode)
-        self._objectsync.create_object(PrintNode)
-        self._objectsync.create_object(AdditionNode)
-        self._objectsync.create_object(AdditionNode)
-        self._objectsync.create_object(AdditionNode)
+        '''
+        Register all node types here
+        '''
+        self.register_node_type(AdditionNode)
+        self.register_node_type(MultiplicationNode)
+        self.register_node_type(PrintNode)
+        self.register_node_type(TextInputNode)
+
+        '''
+        Create some nodes
+        '''
+
+        # self._objectsync.create_object(TextInputNode)
+        # self._objectsync.create_object(TextInputNode)
+        # self._objectsync.create_object(TextInputNode)
+        # self._objectsync.create_object(PrintNode)
+        # self._objectsync.create_object(PrintNode)
+        # self._objectsync.create_object(PrintNode)
+        # self._objectsync.create_object(AdditionNode)
+        # self._objectsync.create_object(AdditionNode)
+        # self._objectsync.create_object(AdditionNode)
 
     def communication_thread(self):
         asyncio.run(self._objectsync.serve())
@@ -63,6 +73,13 @@ class Workspace:
     def exit(self):
         print('exit')
         self._background_runner.exit()
+
+    def register_node_type(self, node_type: type):
+        self._objectsync.register(node_type)
+        self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
+
+    def create_node(self, node_type: type, **kwargs) -> Node:
+        return self._objectsync.create_object(node_type, parent_id='root', is_preview=False, **kwargs)
 
 if __name__ == '__main__':
     import argparse

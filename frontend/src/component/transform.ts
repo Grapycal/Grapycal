@@ -79,6 +79,9 @@ export class Transform extends Component{
         this.onDrag = this.onDrag.bind(this);
         if (draggable){
             this.getComponent(EventDispatcher).onDrag.add(this.onDrag);
+            this.targetElement.style.position = 'absolute'
+            this.targetElement.style.left = '0px'
+            this.targetElement.style.top = '0px'
         }
         else
             this.getComponent(EventDispatcher).onDrag.remove(this.onDrag);

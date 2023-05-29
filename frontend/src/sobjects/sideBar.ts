@@ -5,6 +5,7 @@ import { HtmlItem } from '../component/htmlItem'
 import { HeirarchyNode } from '../ui_utils/hierarchyNode'
 
 export class Sidebar extends CompSObject {
+    private items: HtmlItem[] = []
     nodeLibrary: HeirarchyNode = new HeirarchyNode('', true);
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
@@ -21,7 +22,20 @@ export class Sidebar extends CompSObject {
                     rsdfg
                 </div>
                 `)
-        this.nodeLibrary.addLeaf(test, 'function/arithmetic/aaa')
-        this.nodeLibrary.addLeaf(test2, 'function/arithmetic/bbb')
     }
+
+    addItem(htmlItem: HtmlItem, path: string) {
+        this.nodeLibrary.addLeaf(htmlItem, path)
+        this.items.push(htmlItem)
+    }
+
+    hasItem(htmlItem: HtmlItem) {
+        return this.items.includes(htmlItem)
+    }
+
+    removeItem(htmlItem: HtmlItem, path: string) {
+        this.nodeLibrary.removeLeaf(htmlItem, path)
+        this.items.splice(this.items.indexOf(htmlItem), 1)
+    }
+    
 }

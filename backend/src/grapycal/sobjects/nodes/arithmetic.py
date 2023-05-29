@@ -10,6 +10,7 @@ class AdditionNode(FunctionNode):
         self.label.set('+')
         self.shape.set('round')
         self.primary_color.set('#00cc00')
+        self.category.set('function/basic')
 
     def calculate(self, data):
         if len(data) == 0:
@@ -22,4 +23,23 @@ class AdditionNode(FunctionNode):
             edge.push_data(summation)
         return summation
 
+class MultiplicationNode(FunctionNode):
+
+    def build(self):
+        super().build()
+        self.label.set('×')
+        self.shape.set('round')
+        self.primary_color.set('#00cc00')
+        self.category.set('function/basic')
+
+    def calculate(self, data):
+        if len(data) == 0:
+            product = 1
+        else:
+            product = data[0]
+            for d in data[1:]:
+                product *= d #type: ignore
+        for edge in self.out_port.edges:
+            edge.push_data(product)
+        return product
     
