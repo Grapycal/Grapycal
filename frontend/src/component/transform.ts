@@ -3,6 +3,7 @@ import { Action, Vector2, as } from "../utils"
 import { Component, IComponentable } from "./component"
 import { EventDispatcher } from "./eventDispatcher"
 import { HtmlItem } from "./htmlItem"
+import { Linker } from "./linker"
 
 export class TransformRoot extends Component{
     scale: number = 1;
@@ -20,15 +21,18 @@ export class TransformRoot extends Component{
 // Dependency: HtmlItem
 export class Transform extends Component{
     htmlItem: HtmlItem = Null();
+    linker = new Linker(this);
     parent: Transform | TransformRoot = Null();
     _targetElement: HTMLElement = Null();
     get targetElement(){return this._targetElement;}
     set targetElement(targetElement: HTMLElement){
         this._targetElement = targetElement;
         if(targetElement != Null() && this.draggable){
-            this.targetElement.style.position = 'absolute'
-            this.targetElement.style.left = '0px'
-            this.targetElement.style.top = '0px'
+            if(this.actuallyDraggable){
+                this.targetElement.style.position = 'absolute'
+                this.targetElement.style.left = '0px'
+                this.targetElement.style.top = '0px'
+            }
         }
     }
     specifiedTargetElement: HTMLElement = Null();
@@ -66,37 +70,82 @@ export class Transform extends Component{
         this.translationChanged.invoke(translation.x, translation.y);
         this.onChange.invoke();
     }
-    settranslation(translation: Vector2){
-        this._translation = translation;
-        this.updateUI();
+    set globalPosition(globalPosition: Vector2){
+        this.translation = this.parent.worldToLocal(globalPosition);
     }
 
     _draggable: boolean = false;
     get draggable(){return this._draggable;}
     set draggable(draggable: boolean){
+        if(this._draggable == draggable) return;
         this._draggable = draggable;
+        if (this.enabled && draggable)
+            this.actuallyDraggable = true;
+        else
+            this.actuallyDraggable = false;
+    }
 
-        this.onDrag = this.onDrag.bind(this);
-        if (draggable){
-            this.getComponent(EventDispatcher).onDrag.add(this.onDrag);
+    _actuallyDraggable: boolean = false; // Yes I ran out of naming ideas
+    private get actuallyDraggable(){return this._actuallyDraggable;}
+    private set actuallyDraggable(actuallyDraggable: boolean){
+        if(this._actuallyDraggable == actuallyDraggable) return;
+        this._actuallyDraggable = actuallyDraggable;
+
+        if (actuallyDraggable){
+            this.linker.link(this.getComponent(EventDispatcher).onDrag,this.onDrag);
             this.targetElement.style.position = 'absolute'
             this.targetElement.style.left = '0px'
             this.targetElement.style.top = '0px'
         }
         else
-            this.getComponent(EventDispatcher).onDrag.remove(this.onDrag);
+        {
+            this.linker.unlink(this.getComponent(EventDispatcher).onDrag);
+            this.targetElement.style.position = 'relative'
+        }
     }
+
 
     _scrollable: boolean = false;
     get scrollable(){return this._scrollable;}
     set scrollable(scrollable: boolean){
+        if(this._scrollable == scrollable) return;
         this._scrollable = scrollable;
+        if (this.enabled && scrollable)
+            this.actuallyScrollable = true;
+        else
+            this.actuallyScrollable = false;
+    }
+
+    _actuallyScrollable: boolean = false;
+    private get actuallyScrollable(){return this._actuallyScrollable;}
+    private set actuallyScrollable(actuallyScrollable: boolean){
+        if(this._actuallyScrollable == actuallyScrollable) return;
+        this._actuallyScrollable = actuallyScrollable;
+
         this.onScroll = this.onScroll.bind(this);
-        if (scrollable){
+        if (actuallyScrollable){
             this.getComponent(EventDispatcher).onScroll.add(this.onScroll);
         }
         else
             this.getComponent(EventDispatcher).onScroll.remove(this.onScroll);
+    }
+
+    _enabled: boolean = true;
+    get enabled(){return this._enabled;}
+    set enabled(enabled: boolean){
+        this._enabled = enabled;
+        if (enabled && this.draggable)
+            this.actuallyDraggable = true;
+        else
+            this.actuallyDraggable = false;
+
+        if (enabled && this.scrollable)
+            this.actuallyScrollable = true;
+        else
+            this.actuallyScrollable = false;
+        if(!enabled){
+            this.targetElement.style.transform = 'none';
+        }
     }
 
     get worldPosition(){
@@ -132,8 +181,6 @@ export class Transform extends Component{
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
 
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
-        
-        //this.onChange.add(this.notifyChangeToChildren.bind(this));
 
         this.updateParent();
         this.updateUI();
@@ -142,6 +189,8 @@ export class Transform extends Component{
     private templateChanged(){
         // remove callback
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
+        this.enabled = false
+        this.enabled = true
         this.updateUI();
     }
 
@@ -187,12 +236,12 @@ export class Transform extends Component{
     }
 
     private updateUI(){
+        if(!this.enabled)
+            return;
         if (this.targetElement === null)
             return;
         this.updateParent();
         let transformString = ''
-        //if(this.parent !== null)
-            //transformString += `translate(${this.parent.pivot.x*-100}%,${this.parent.pivot.y*-100}%)`
         transformString += `translate(${this.pivot.x*-100}%,${this.pivot.y*-100}%)`
         transformString += `translate(${this._translation.x}px,${this._translation.y}px)`;
         transformString += `scale(${this._scale})`

@@ -40,6 +40,16 @@ input{
     block-size: fit-content;
 }
 
+.FrameNode{
+    min-width: 30px;
+    min-height: 30px;
+
+    box-sizing: border-box;
+    width: fit-content;
+    block-size: fit-content;
+}
+
+
 .NodeContent{
     padding: 0px 10px;
     white-space: nowrap;
@@ -173,6 +183,7 @@ input{
 
 .HierarchyIndent{
     margin: 10px 20px 0px 20px;
+    transition: all 0.2s ease-in-out;
 
 }
 
@@ -181,4 +192,8 @@ input{
 
 .HierarchyLeafSlot{
     justify-content: center;
+}
+
+.DisplayNone{ 
+    display: none;
 }

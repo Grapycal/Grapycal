@@ -33,7 +33,7 @@ export class Editor implements IComponentable{
         new EventDispatcher(this, viewport);
         new MouseOverDetector(this, viewport);
         
-        this.transform.scale = 1.3
+        this.transform.scale = 1
         this.transform.draggable = true;
         this.transform.scrollable = true;
     }

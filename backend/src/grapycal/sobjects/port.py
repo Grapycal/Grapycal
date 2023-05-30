@@ -7,9 +7,9 @@ if TYPE_CHECKING:
 
 class Port(SObject):
     frontend_type = 'Port'
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace):
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
         self.name = self.add_attribute('name', StringTopic, 'port name')
-        self.max_edges = self.add_attribute('max_edges', IntTopic, 64)
+        self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
     
         self.edges: List[Edge] = []
         self.node: Node
@@ -26,8 +26,8 @@ class Port(SObject):
 
 
 class InputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace):
-        super().pre_build(attribute_values, workspace)
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='in', max_edges=64):
+        super().pre_build(attribute_values, workspace, name, max_edges)
         self.add_attribute('is_input', IntTopic, 1)
 
     def add_edge(self, edge):
@@ -42,8 +42,8 @@ class InputPort(Port):
         return all(edge.is_data_ready() for edge in self.edges)
 
 class OutputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace):
-        super().pre_build(attribute_values, workspace)
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='out', max_edges=64):
+        super().pre_build(attribute_values, workspace, name, max_edges)
         self.add_attribute('is_input', IntTopic, 0)
 
     def add_edge(self, edge):

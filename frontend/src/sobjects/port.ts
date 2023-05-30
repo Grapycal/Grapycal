@@ -95,7 +95,6 @@ export class Port extends CompSObject {
         if(this.node.hasComponent(Transform))
             this.node.getComponent(Transform).onChange.add(this.moved.invoke.bind(this.moved))
         this.moved.invoke()
-        print(this.node.hasComponent(Transform))
     }
 
 

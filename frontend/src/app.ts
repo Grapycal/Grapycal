@@ -27,11 +27,11 @@ objectsync.register(Sidebar);
 
 
 document.addEventListener('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'z') {
+    if (event.ctrlKey && event.key === 'z' || event.metaKey && event.key === 'Z') {
         event.preventDefault();
         objectsync.undo(null);
     }
-    if (event.ctrlKey && event.key === 'y') {
+    if (event.ctrlKey && event.key === 'y' || event.metaKey && event.key === 'Y') {
         event.preventDefault();
         objectsync.redo(null);
     }

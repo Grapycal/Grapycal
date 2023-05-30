@@ -1,12 +1,9 @@
+import inspect
 import threading
 import time
 from typing import Any, Callable, Dict
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.nodes.arithmetic import AdditionNode, MultiplicationNode
-from grapycal.sobjects.nodes.printNode import PrintNode
-from grapycal.sobjects.nodes.textInputNode import TextInputNode
 from grapycal.sobjects.port import InputPort, OutputPort
-from grapycal.sobjects.nodes.textOutputNode import TextOutputNode
 from grapycal.sobjects.sidebar import Sidebar
 import objectsync
 import asyncio
@@ -14,6 +11,8 @@ import signal
 
 from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
+
+from grapycal import builtin_nodes
 
 class Workspace:
     def __init__(self, port, host) -> None:
@@ -31,37 +30,19 @@ class Workspace:
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 
-
         '''
         Register all node types here
         '''
-        self.register_node_type(AdditionNode)
-        self.register_node_type(MultiplicationNode)
-        self.register_node_type(PrintNode)
-        self.register_node_type(TextInputNode)
+        self.import_nodes_from_module(builtin_nodes)
 
         '''
         Create some nodes
         '''
 
-        # self._objectsync.create_object(TextInputNode)
-        # self._objectsync.create_object(TextInputNode)
-        # self._objectsync.create_object(TextInputNode)
-        # self._objectsync.create_object(PrintNode)
-        # self._objectsync.create_object(PrintNode)
-        # self._objectsync.create_object(PrintNode)
-        # self._objectsync.create_object(AdditionNode)
-        # self._objectsync.create_object(AdditionNode)
-        # self._objectsync.create_object(AdditionNode)
-
     def communication_thread(self):
         asyncio.run(self._objectsync.serve())
 
     def run(self) -> None:
-        # while(True):
-        #     import time
-        #     time.sleep(1)
-        #     print('workspace running')
         print('Workspace running')
         t = threading.Thread(target=self.communication_thread,daemon=True) # daemon=True until we have a proper exit strategy
         t.start()
@@ -77,6 +58,17 @@ class Workspace:
     def register_node_type(self, node_type: type):
         self._objectsync.register(node_type)
         self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
+        print(f'Registered node type {node_type}')
+
+    def import_nodes_from_module(self, module):
+        added_node_types = []
+        for name, obj in inspect.getmembers(module):
+            if inspect.isclass(obj) and issubclass(obj, Node) and obj != Node:
+                self._objectsync.register(obj)
+                added_node_types.append(obj)
+                
+        for node_type in added_node_types:
+            self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
 
     def create_node(self, node_type: type, **kwargs) -> Node:
         return self._objectsync.create_object(node_type, parent_id='root', is_preview=False, **kwargs)

@@ -52,6 +52,8 @@ export class GlobalEventDispatcher{
 }
 
 export class EventDispatcher extends Component{
+    static readonly allEventDispatchers: EventDispatcher[] = [];
+
     private eventElement: ICanReceiveMouseEvent = Null();
     private prevMousePos: Vector2 = Vector2.zero;
     private fowardCalled: boolean = false;
@@ -69,6 +71,7 @@ export class EventDispatcher extends Component{
 
     constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = Null()){
         super(object);
+        EventDispatcher.allEventDispatchers.push(this);
         //bind
         this._onMouseDown = this._onMouseDown.bind(this);
         this._onMouseMove = this._onMouseMove.bind(this);
@@ -98,14 +101,22 @@ export class EventDispatcher extends Component{
         this.fowardCalled = true;
     }
 
+    /**
+     * Usefull when creating a node with mouse
+     */
+    public fakeOnMouseDown(){
+        let event = new MouseEvent('mousedown');
+        this._onMouseDown(event);
+    }
+
     private _onMouseDown(event: MouseEvent){ 
         this.fowardCalled = false;
-        //this.eventElement.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mousemove', this._onMouseMove);
-        //this.eventElement.addEventListener('mouseup', this._onMouseUp);
+        //this.eventElement.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mouseup', this._onMouseUp);
-        this.prevMousePos = new Vector2(event.clientX, event.clientY);
-        if (!this.fowardCalled){
+        //document.addEventListener('mouseup', this._onMouseUp);
+        this.prevMousePos = new Vector2(this.mousePos.x, this.mousePos.y);
+        if (!this.fowardCalled && this.onDragStart.numCallbacks > 0 ||this.onDragStart.numCallbacks > 0 || this.onDrag.numCallbacks > 0 || this.onDragEnd.numCallbacks > 0){
             event.stopPropagation();
         }
         this.fowardCalled = false;
@@ -120,9 +131,7 @@ export class EventDispatcher extends Component{
         }
         this.onDrag.invoke(event, mousePos, this.prevMousePos);
         this.prevMousePos = mousePos;
-        if (!this.fowardCalled){
-            event.stopPropagation();
-        }
+        print(this.onDragStart.numCallbacks, this.onDrag.numCallbacks, this.onDragEnd.numCallbacks)
     }
 
     private _onMouseUp(event: MouseEvent){
@@ -133,9 +142,6 @@ export class EventDispatcher extends Component{
         document.removeEventListener('mousemove', this._onMouseMove);
         //this.eventElement.removeEventListener('mouseup', this._onMouseUp);
         document.removeEventListener('mouseup', this._onMouseUp);
-        if (!this.fowardCalled){
-            event.stopPropagation();
-        }
     }
 
     private _onDoubleClick(event: MouseEvent){
@@ -146,4 +152,11 @@ export class EventDispatcher extends Component{
         }
     }
 
+    public onDestroy(){
+        EventDispatcher.allEventDispatchers.splice(EventDispatcher.allEventDispatchers.indexOf(this), 1);
+        this.eventElement?.removeEventListener('mousedown', this._onMouseDown);
+        this.eventElement?.removeEventListener('wheel', this.onScroll.invoke);
+        this.eventElement?.removeEventListener('dblclick', this._onDoubleClick);
+        super.onDestroy();
+    }
 }

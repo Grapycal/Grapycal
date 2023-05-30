@@ -10,18 +10,6 @@ export class Sidebar extends CompSObject {
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         this.nodeLibrary.htmlItem.setParent(editor.componentManager.getComponent(HtmlItem), 'sidebar')
-        let test = new HtmlItem(this)
-        test.applyTemplate(`
-        <div>
-            rsdfg
-        </div>
-        `)
-        let test2 = new HtmlItem(this)
-                test2.applyTemplate(`
-                <div>
-                    rsdfg
-                </div>
-                `)
     }
 
     addItem(htmlItem: HtmlItem, path: string) {

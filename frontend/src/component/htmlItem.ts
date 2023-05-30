@@ -112,9 +112,9 @@ export class HtmlItem extends Component{
     }
 
     setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="prepend"): void{
+        if (this.parent_ === parent) return;
         this.parent_ = parent;
         this.parent_slot = parent.addChild(this,slot,order);
-
     }
 
     moveToFront(){
@@ -168,5 +168,6 @@ export class HtmlItem extends Component{
 
     onDestroy(){
         this.parent_slot?.removeChild(this.baseElement);
+        print(`removed ${this.baseElement} from ${this.parent_slot}`)
     }
 }
