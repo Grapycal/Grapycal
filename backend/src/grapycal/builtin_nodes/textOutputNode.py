@@ -3,6 +3,7 @@ from grapycal.sobjects.node import Node
 
 class TextOutputNode(Node):
     frontend_type = 'TextOutputNode'
+    category = 'interaction'
     def build(self):
         super().build()
         self.add_in_port('in')

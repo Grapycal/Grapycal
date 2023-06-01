@@ -131,7 +131,6 @@ export class EventDispatcher extends Component{
         }
         this.onDrag.invoke(event, mousePos, this.prevMousePos);
         this.prevMousePos = mousePos;
-        print(this.onDragStart.numCallbacks, this.onDrag.numCallbacks, this.onDragEnd.numCallbacks)
     }
 
     private _onMouseUp(event: MouseEvent){

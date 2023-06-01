@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Any
-from grapycal.sobjects.port import Port
+from grapycal.sobjects.port import InputPort, OutputPort, Port
 from objectsync import SObject, StringTopic, IntTopic, ObjTopic
 from objectsync.sobject import SObjectSerialized
 
@@ -9,24 +9,27 @@ from objectsync.sobject import SObjectSerialized
 class Edge(SObject):
     frontend_type = 'Edge'
 
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace):
-        self.tail = self.add_attribute('tail', ObjTopic[Port])
-        self.head = self.add_attribute('head', ObjTopic[Port])
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, tail:OutputPort|None = None, head:InputPort|None = None):
+        self.tail = self.add_attribute('tail', ObjTopic[Port], tail)
+        self.head = self.add_attribute('head', ObjTopic[Port], head)
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set
+
+        self.on_tail_set(None, tail)
+        self.on_head_set(None, head)
 
         self._data = None
         self._activated = False
         self._data_ready = False
         self.reaquirable = True
 
-    def on_tail_set(self, old_tail:Port, new_tail:Port):
+    def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
         if old_tail:
             old_tail.remove_edge(self)
         if new_tail:
             new_tail.add_edge(self)
 
-    def on_head_set(self, old_head:Port, new_head:Port):
+    def on_head_set(self, old_head:Port|None, new_head:Port|None):
         if old_head:
             old_head.remove_edge(self)
         if new_head:

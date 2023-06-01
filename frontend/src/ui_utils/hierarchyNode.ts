@@ -91,7 +91,6 @@ export class HeirarchyNode implements IComponentable{
     }
 
     removeLeaf(leaf: HtmlItem, path: string[]|string){
-        print('removing leaf',path);
         if(typeof path === 'string'){
             path = path.split('/')
         }
@@ -102,7 +101,6 @@ export class HeirarchyNode implements IComponentable{
             child.removeLeaf(leaf,path.slice(1));
 
             if(child.isEmpty()){
-                print('removing child',path[0]);
                 this.removeChild(path[0]);
             }
         }

@@ -201,8 +201,6 @@ export class Transform extends Component{
             (mouseLocal.x - startMouseLocal.x)*this.scale,
             (mouseLocal.y - startMouseLocal.y)*this.scale
         ));
-        mouseLocal = this.worldToLocal(mousePos);
-        this.updateUI();
     }
 
     onScroll(e:WheelEvent){

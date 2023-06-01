@@ -18,6 +18,7 @@ export class Node extends CompSObject {
     shape: StringTopic = this.getAttribute('shape', StringTopic) // round, block, frame
     output: StringTopic = this.getAttribute('output', StringTopic)
     label: StringTopic = this.getAttribute('label', StringTopic)
+    label_offset: FloatTopic = this.getAttribute('label_offset', FloatTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
     primary_color: StringTopic = this.getAttribute('primary_color', StringTopic)
     category: StringTopic = this.getAttribute('category', StringTopic)
@@ -115,6 +116,13 @@ export class Node extends CompSObject {
             this.htmlItem.getHtmlEl('label').innerText = label
         })
 
+        this.link(this.label_offset.onSet, (offset: number) => {
+            let label_el = this.htmlItem.getHtmlEl('label')
+            let font_size = parseFloat(label_el.style.fontSize.split('px')[0])
+            
+            label_el.style.marginTop = this.label_offset.getValue()*font_size + 'px'
+        })
+
         this.link(this.primary_color.onSet, (color: string) => {
             this.htmlItem.getHtmlEl('label').style.color = color
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = color
@@ -202,8 +210,12 @@ export class Node extends CompSObject {
         this.link2(this.htmlItem.baseElement,'mousedown', () => {
             soundManager.playClick()
         })
+        
+        let label_el = this.htmlItem.getHtmlEl('label')
+        label_el.innerText = this.label.getValue()
+        let font_size = parseFloat(label_el.style.fontSize.split('px')[0])
 
-        this.htmlItem.getHtmlEl('label').innerText = this.label.getValue()
+        label_el.style.marginTop = this.label_offset.getValue()*font_size + 'px'
 
         if(this._isPreview){
             this.htmlItem.baseElement.classList.add('NodePreview')
