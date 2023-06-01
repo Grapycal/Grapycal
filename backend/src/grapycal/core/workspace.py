@@ -55,10 +55,10 @@ class Workspace:
         print('exit')
         self._background_runner.exit()
 
-    def register_node_type(self, node_type: type):
+    def register_node_type(self, node_type: type[Node]):
         self._objectsync.register(node_type)
-        self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
-        print(f'Registered node type {node_type}')
+        if not node_type.category == 'hidden':
+            self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
 
     def import_nodes_from_module(self, module):
         added_node_types = []
@@ -68,10 +68,14 @@ class Workspace:
                 added_node_types.append(obj)
                 
         for node_type in added_node_types:
-            self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
+            if not node_type.category == 'hidden':
+                self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
 
     def create_node(self, node_type: type, **kwargs) -> Node:
         return self._objectsync.create_object(node_type, parent_id='root', is_preview=False, **kwargs)
+    
+    def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
+        return self._objectsync.create_object(Edge, parent_id='root', is_preview=False, tail=tail, head=head)
 
 if __name__ == '__main__':
     import argparse
