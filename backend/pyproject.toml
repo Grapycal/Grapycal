@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = { git = "https://github.com/eri24816/ObjectSync.git", branch = "test-poetry-eric"}
+objectsync = { git = "https://github.com/eri24816/ObjectSync.git", branch = "master"}
 pyyaml = "^6.0"
 
 [build-system]

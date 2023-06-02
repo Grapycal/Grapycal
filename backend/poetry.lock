@@ -2,7 +2,7 @@
 
 [[package]]
 name = "chatroom"
-version = "0.5.2"
+version = "0.5.3"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -15,9 +15,9 @@ websockets = "^11.0.3"
 
 [package.source]
 type = "git"
-url = "https://github.com/eri24816/ChatRoom.git"
-reference = "test-poetry-eric"
-resolved_reference = "db61f698d949408ca51fc55bbbd7f25007d2be70"
+url = "https://github.com/peterxcli/ChatRoom.git"
+reference = "main"
+resolved_reference = "d715a55f56dcb13e9a1b472e76c954199279ece3"
 
 [[package]]
 name = "objectsync"
@@ -29,13 +29,13 @@ files = []
 develop = false
 
 [package.dependencies]
-chatroom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "test-poetry-eric"}
+chatRoom = {git = "https://github.com/peterxcli/ChatRoom.git", branch = "main"}
 
 [package.source]
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
-reference = "test-poetry-eric"
-resolved_reference = "413b4d4836a7f056a7dcf5effac05a2b1d67d0fd"
+reference = "master"
+resolved_reference = "9ab0efab092200910db669465cb4e70d5bb1c04b"
 
 [[package]]
 name = "pyyaml"
@@ -182,4 +182,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "8c5df15b3a9a224a1bfde2dcbfb81ef1f7beba48d997ba608ea3ae97b24e01ce"
+content-hash = "0d1ad3f184866a952fae65d75167b2218f9b21e829417c570b37d4544a00f58b"
