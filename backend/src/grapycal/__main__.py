@@ -14,4 +14,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-# python backend\scripts\main.py backend\config\default.yaml
+# poetry run python -m grapycal

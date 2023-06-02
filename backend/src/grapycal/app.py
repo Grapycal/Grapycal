@@ -1,4 +1,5 @@
 import signal
+import sys
 from typing import Any, Callable, Dict
 import subprocess
 import termcolor
@@ -26,7 +27,7 @@ class GrapycalApp:
         #TODO: Websocket multiplexing
 
         # Here simply start one workspace in background
-        workspace = subprocess.Popen(['python', '-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']])
+        workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']])
         while True:
             break_flag = False
             try:
