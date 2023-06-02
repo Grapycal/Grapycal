@@ -2,5 +2,5 @@
 name = "grapycal"
 version = "0.1.0"
 dependencies = [
-    'objectsync == 0.3.0',
+    'objectsync >= 0.3.0',
 ]
