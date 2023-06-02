@@ -2,7 +2,23 @@
 
 ## Installation (for Development)
 
-The installation process is a bit complicated because Grapycal involves the following 6 packages:
+backend:
+
+```
+cd backend
+poetry install
+```
+
+frontend:
+
+```
+cd frontend
+npm install
+```
+
+## Dependencies
+
+Grapycal and its dependences consist of the following 6 packages:
 
 - [Grapycal/backend](https://github.com/eri24816/Grapycal): Included in this repo, including the backend code of the Grapycal main application
 
@@ -22,7 +38,7 @@ While installing the npm packages, please use `npm link` and `npm link <package 
 1. run Grapycal server
 ```
 cd backend
-python scripts\main.py
+scripts/run.sh
 ```
 
 2. run web server
