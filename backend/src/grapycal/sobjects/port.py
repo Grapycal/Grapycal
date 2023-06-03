@@ -12,7 +12,7 @@ class Port(SObject):
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
     
         self.edges: List[Edge] = []
-        self.node: Node
+        self.node: Node = self.get_parent()
     
     def add_edge(self, edge):
         if len(self.edges) >= self.max_edges.get():

@@ -53,7 +53,6 @@ class Node(SObject):
 
     def add_in_port(self,name,max_edges=64):
         port = self.add_child(InputPort,name=name,max_edges=max_edges)
-        port.node = self
         self.in_ports.insert(port)
         return port
 

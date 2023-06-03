@@ -58,9 +58,6 @@ export class Edge extends CompSObject {
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
         
-        
-        this.parent?.onAddChild.add(this.updateSVG)
-        this.parent?.onRemoveChild.add(this.updateSVG)
         this.path = this.htmlItem.getEl('path',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
         this.svg = this.htmlItem.getEl('svg', SVGSVGElement)

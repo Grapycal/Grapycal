@@ -17,7 +17,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "9c6b11260a93d3730a3e50bf8a601dd8a144de72"
+resolved_reference = "ee67c36ce113a43f7c094d8c1ea42600cb77c649"
 
 [[package]]
 name = "objectsync"

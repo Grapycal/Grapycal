@@ -104,11 +104,11 @@ export class Node extends CompSObject {
                 }
         })
 
-        this.in_ports.onInsert.add((port: Port) => {
+        this.link(this.in_ports.onInsert, (port: Port) => {
             this.reshapePort(port)
         })
 
-        this.out_ports.onInsert.add((port: Port) => {
+        this.link(this.out_ports.onInsert, (port: Port) => {
             this.reshapePort(port)
         })
 

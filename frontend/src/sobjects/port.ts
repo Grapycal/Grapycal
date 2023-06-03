@@ -57,20 +57,22 @@ export class Port extends CompSObject {
         transform.pivot = new Vector2(0,0)
 
         let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Knob'))
-        eventDispatcher.onDragStart.add(this.generateEdge.bind(this))
+        this.link(eventDispatcher.onDragStart,this.generateEdge.bind(this))
 
         new MouseOverDetector(this,this.htmlItem.getHtmlEl('Knob'))
 
         // Bind attributes to UI
+
+        this.displayLabel = false
         
-        this.name.onSet.add((label: string) => {
+        this.link(this.name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
         })
     }
 
     protected onStart(): void {
         super.onStart()
-        this.is_input.onSet.add((is_input: number) => {
+        this.link(this.is_input.onSet,(is_input: number) => {
             if(is_input) {
                 this.orientation = Math.PI
             }else{
