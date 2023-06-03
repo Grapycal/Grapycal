@@ -16,9 +16,7 @@
     "monitor": "npx webpack serve --port 9000 --entry ./node_modules/chatroom-client/src/testApp.ts"
   },
   "dependencies": {
-    "@types/uuid": "^9.0.1",
-    "objectsync-client": "file:../../ObjectSyncClient_ts",
-    "uuid": "^9.0.0"
+    "objectsync-client": "file:../../ObjectSyncClient_ts"
   },
   "include": [
     "src/css.d.ts"

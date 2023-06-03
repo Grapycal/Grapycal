@@ -15,13 +15,13 @@ websockets = "^11.0.3"
 
 [package.source]
 type = "git"
-url = "https://github.com/peterxcli/ChatRoom.git"
+url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "d715a55f56dcb13e9a1b472e76c954199279ece3"
+resolved_reference = "9c6b11260a93d3730a3e50bf8a601dd8a144de72"
 
 [[package]]
 name = "objectsync"
-version = "0.3.0"
+version = "0.3.1"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -29,13 +29,13 @@ files = []
 develop = false
 
 [package.dependencies]
-chatRoom = {git = "https://github.com/peterxcli/ChatRoom.git", branch = "main"}
+chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 
 [package.source]
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "9ab0efab092200910db669465cb4e70d5bb1c04b"
+resolved_reference = "9fca52080adfbd2e9892af6755bd9fe67f058904"
 
 [[package]]
 name = "pyyaml"
