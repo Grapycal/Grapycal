@@ -57,8 +57,8 @@ input{
 
 .Edge{
     overflow: visible;
-    stroke: rgba(120, 120, 120, 0.55);
-    stroke-width: 10;
+    stroke: rgba(141, 141, 141, 0.665);
+    stroke-width: 9;
 }
 
 .Viewport{
@@ -80,7 +80,8 @@ input{
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background-color : #2B292A;
+    background-color : #727272;
+    box-shadow: #060606 0px 0px 7px 1px;
 }
 
 .RoundNode{
