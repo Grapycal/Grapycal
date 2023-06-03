@@ -1,10 +1,10 @@
-import { Null, print } from "../devUtils"
+import { print } from "../devUtils"
 import { Component, IComponentable } from "./component"
 
 class MouseOverDetectorMaster{
-    private static _instance: MouseOverDetectorMaster = Null();
+    private static _instance: MouseOverDetectorMaster = null;
     static get instance(): MouseOverDetectorMaster{
-        if(this._instance == Null())
+        if(this._instance == null)
             this._instance = new MouseOverDetectorMaster();
         return this._instance;
     }
@@ -75,23 +75,23 @@ export class MouseOverDetector extends Component{
     static get objectsUnderMouse(): IComponentable[]{
         return MouseOverDetectorMaster.instance.objectsUnderMouse;
     }
-    _eventElement: Element = Null();
+    _eventElement: Element = null;
     get eventElement(): Element{
         return this._eventElement;
     }
     set eventElement(element: Element){
-        if(this._eventElement != Null())
+        if(this._eventElement != null)
             MouseOverDetectorMaster.instance.remove(this.object);
         this._eventElement = element;
         MouseOverDetectorMaster.instance.add(this.object, element);
     }
-    constructor(object: IComponentable, eventElement: Element = Null()){
+    constructor(object: IComponentable, eventElement: Element = null){
         super(object);
-        if (eventElement != Null())
+        if (eventElement != null)
             this.eventElement = eventElement;
     }
     onDestroy(){
-        if(this._eventElement != Null())
+        if(this._eventElement != null)
             MouseOverDetectorMaster.instance.remove(this.object);
     }
 }

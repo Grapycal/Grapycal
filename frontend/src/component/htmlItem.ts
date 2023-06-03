@@ -1,4 +1,4 @@
-import { Null, print } from "../devUtils"
+import { print } from "../devUtils"
 import { Action, Constructor, as, defined } from "../utils"
 import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
@@ -15,16 +15,16 @@ export class HtmlItem extends Component{
     readonly templateChanged = new Action<[]>();
     templateId: string='';
 
-    constructor(object:IComponentable, specifiedParentElement: HTMLElement = Null()){
+    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null){
         super(object);
-        this.baseElement = Null();
-        this.parent_ = Null();
+        this.baseElement = null;
+        this.parent_ = null;
         this.parent_slot = specifiedParentElement;
     }
 
     applyTemplate(template: string, order: "prepend"|"append" = "prepend"){
         // create element from template
-        if (this.baseElement !== Null())
+        if (this.baseElement !== null)
             this.parent_slot.removeChild(this.baseElement);
 
         const templateElement = document.createElement('template');

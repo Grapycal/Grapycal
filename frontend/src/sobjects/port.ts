@@ -4,7 +4,7 @@ import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 import { Node } from './node'
-import { Null, print } from '../devUtils'
+import { print } from '../devUtils'
 import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
@@ -17,7 +17,7 @@ export class Port extends CompSObject {
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
     orientation: number=0;
 
-    private node: Node = Null();
+    private node: Node = null;
     
     element = document.createElement('div')
 
