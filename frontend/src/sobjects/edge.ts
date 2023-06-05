@@ -277,7 +277,7 @@ export class Edge extends CompSObject {
         let dx = head.x - tail.x
         let dy = head.y - tail.y
         let d = Math.sqrt(dx*dx + dy*dy)
-        let r = Math.min(200, d/3)
+        let r = Math.min(50, d/3)
         if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) return ''
         let path = `M ${tail.x} ${tail.y} C ${tail.x + Math.cos(tail_orientation)*r} ${tail.y + Math.sin(tail_orientation)*r},
         ${head.x + Math.cos(head_orientation)*r} ${head.y+ Math.sin(head_orientation)*r}, ${head.x} ${head.y}`

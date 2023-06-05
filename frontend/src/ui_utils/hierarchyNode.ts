@@ -50,6 +50,9 @@ export class HeirarchyNode implements IComponentable{
             for(let className of Node.getCssClassesFromCategory(path)){
                 this.htmlItem.baseElement.classList.add(className);
             }
+            if(path.lastIndexOf('/') === 0){
+                this.htmlItem.getHtmlEl('name').classList.add('hierarchy-h1');
+            }
         }
     }
 

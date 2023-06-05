@@ -22,6 +22,10 @@ html, body{
 input{
     font-family: inherit;
     color: inherit;
+
+    box-sizing: border-box;
+    width: fit-content;
+    block-size: fit-content;
 }
 
 
@@ -40,8 +44,8 @@ input{
 }
 
 .block-node{
-    min-width: 30px;
-    min-height: 30px;
+    min-width: 20px;
+    min-height: 20px;
 
     box-sizing: border-box;
     width: fit-content;
@@ -49,8 +53,8 @@ input{
 }
 
 .frame-node{
-    min-width: 30px;
-    min-height: 30px;
+    min-width: 20px;
+    min-height: 20px;
 
     box-sizing: border-box;
     width: fit-content;
@@ -146,12 +150,17 @@ input{
 .hierarchy-indent{
     margin: 10px 20px 0px 20px;
 }
-.hierarchy-child-node-slot{
+/* .hierarchy-child-node-slot{
 
-}
+} */
 
 .hierarchy-leaf-slot{
     justify-content: center;
+}
+
+.hierarchy-h1{
+    font-size: 24px;
+
 }
 
 /* Other */

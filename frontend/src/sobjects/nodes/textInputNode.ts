@@ -10,7 +10,7 @@ export class TextInputNode extends Node{
         <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
         <div class="NodeContent full-width flex-horiz space-evenly">
             <div id="label" class="center" >
-            </div><input id="input" type="text" style="width:100px; height:100%; text-align: center; border: none; outline: none; background: none;"/>
+            </div><input id="input" type="text" style=" height:100%; text-align: center; border: none; outline: none; background: none;"/>
                 
         </div>
         <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
