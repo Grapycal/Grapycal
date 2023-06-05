@@ -16,9 +16,13 @@ Define styles for different node categories
 }
 
 .cate-interaction{
-    --cate-color: #4eb8ed;
+    --cate-color: #5b9aff;
 }
 
 .cate-function{
     --cate-color: #59C059;
 }
+/* 
+.cate-function-math{
+    --cate-color: #59C059;
+} */

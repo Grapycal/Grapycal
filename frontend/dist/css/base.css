@@ -21,10 +21,11 @@ html, body{
 
 input{
     font-family: inherit;
+    font-size: inherit;
     color: inherit;
 
     box-sizing: border-box;
-    width: fit-content;
+    width: 50px;
     block-size: fit-content;
 }
 

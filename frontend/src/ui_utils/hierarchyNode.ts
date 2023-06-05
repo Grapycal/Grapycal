@@ -23,7 +23,7 @@ export class HeirarchyNode implements IComponentable{
     private readonly children = new Map<string,HeirarchyNode>();
     private readonly leafs: HtmlItem[] = [];
     private readonly linker = new Linker(this);
-    private expanded = false;
+    private expanded = true;
 
     readonly name: string;
     readonly path: string;
@@ -34,19 +34,16 @@ export class HeirarchyNode implements IComponentable{
         this.path = path;
         this.htmlItem = new HtmlItem(this, document.body);
         this.htmlItem.applyTemplate(this.template);
-        if(!isRoot){
-            this.htmlItem.getHtmlEl('name').innerText = name+' >';
-            this.linker.link2(this.htmlItem.baseElement,'mousedown',this.mouseDown);
-        }
         if(isRoot){
             //no padding slot_childnode and slot_leaf
             this.htmlItem.getHtmlEl('name').remove();
             this.htmlItem.getHtmlEl('indent').classList.remove('hierarchy-indent');
             this.htmlItem.baseElement.classList.remove('hierarchy-node');
         }
-
         if(!isRoot){
-            this.htmlItem.getHtmlEl('indent').style.display = 'none';
+            this.htmlItem.getHtmlEl('name').innerText = name;
+            this.linker.link2(this.htmlItem.baseElement,'mousedown',this.mouseDown);
+            this.htmlItem.getHtmlEl('indent').style.display = 'block';
             for(let className of Node.getCssClassesFromCategory(path)){
                 this.htmlItem.baseElement.classList.add(className);
             }

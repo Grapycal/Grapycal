@@ -15,10 +15,10 @@ export class Node extends CompSObject {
 
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
-        let str = 'cate-'
+        let str = 'cate'
         for(let subCat of category.split('/')){
-            str += subCat
-            if(str == 'cate-') continue
+            if(subCat == '') continue
+            str += '-'+subCat
             classes.push(str)
         }
         return classes
