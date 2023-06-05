@@ -38,7 +38,7 @@ export class Port extends CompSObject {
 
     readonly template: string = `
     <div class="Port">
-        <div class="Knob" id="Knob"></div>
+        <div class="port-knob" id="Knob"></div>
         <div id="label">
         </div>
     </div>
@@ -109,12 +109,12 @@ export class Port extends CompSObject {
     private isInputChanged(is_input: number): void {
         if(is_input) {
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem)!, 'input_port')
-            this.htmlItem.getHtmlEl('Knob').classList.remove('OutPort')
-            this.htmlItem.getHtmlEl('Knob').classList.add('InPort')
+            this.htmlItem.getHtmlEl('Knob').classList.remove('out-port')
+            this.htmlItem.getHtmlEl('Knob').classList.add('in-port')
         } else {
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem)!, 'output_port')
-            this.htmlItem.getHtmlEl('Knob').classList.remove('InPort')
-            this.htmlItem.getHtmlEl('Knob').classList.add('OutPort')
+            this.htmlItem.getHtmlEl('Knob').classList.remove('in-port')
+            this.htmlItem.getHtmlEl('Knob').classList.add('out-port')
         }
         this.moved.invoke()
     }

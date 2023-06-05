@@ -21,7 +21,6 @@ class Node(SObject):
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
-        self.primary_color = self.add_attribute('primary_color', StringTopic, '#aaaaaa')
         self.category_ = self.add_attribute('category', StringTopic, self.category)
 
         self.in_ports:ObjListTopic[InputPort] = self.add_attribute('in_ports', ObjListTopic)

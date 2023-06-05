@@ -17,7 +17,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "ee67c36ce113a43f7c094d8c1ea42600cb77c649"
+resolved_reference = "44aea1fb3569d04dff195842d85a2cb13065fb1b"
 
 [[package]]
 name = "objectsync"
@@ -35,7 +35,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "9fca52080adfbd2e9892af6755bd9fe67f058904"
+resolved_reference = "8e345e1a9a03d68b3c4e3c342f71ea2ff0b28308"
 
 [[package]]
 name = "pyyaml"

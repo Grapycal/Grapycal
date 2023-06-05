@@ -29,7 +29,7 @@ export class Edge extends CompSObject {
 
     template = `
     <div id="base" style="position:absolute">
-        <svg class="Edge" id="svg">
+        <svg class="edge" id="svg">
             <g>
                 <path id="path" d=""  fill="none"></path>
             </g>

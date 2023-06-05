@@ -12,9 +12,8 @@ class AdditionNode(FunctionNode):
     def build(self):
         super().build()
         self.label.set('+')
-        self.label_offset.set(-.1)
+        self.label_offset.set(-.09)
         self.shape.set('round')
-        self.primary_color.set('#00cc00')
 
     def calculate(self, data):
         data = data[0]
@@ -35,9 +34,8 @@ class SubtractionNode(FunctionNode):
     def build(self):
         super().build()
         self.label.set('-')
-        self.label_offset.set(-.1)
+        self.label_offset.set(-.09)
         self.shape.set('round')
-        self.primary_color.set('#00cc00')
 
     def calculate(self, data):
         return sum(data[0]) - sum(data[1])

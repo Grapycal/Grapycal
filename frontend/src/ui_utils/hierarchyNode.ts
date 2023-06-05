@@ -2,16 +2,17 @@ import { ComponentManager, IComponentable } from "../component/component"
 import { HtmlItem } from "../component/htmlItem"
 import { Linker } from "../component/linker"
 import { print } from "../devUtils"
+import { Node } from "../sobjects/node"
 
 export class HeirarchyNode implements IComponentable{
     readonly template: string = `
-    <div class="HierarchyNode">
-        <span id="name" class="HierarchyName"></span>
-        <div id="indent" class="HierarchyIndent">
-            <div id="slot_childnode" class="HierarchyChildNodeSlot">
+    <div class="hierarchy-node">
+        <span id="name" class="hierarchy-name"></span>
+        <div id="indent" class="hierarchy-indent">
+            <div id="slot_childnode" class="hierarchy-child-node-slot">
                 
             </div>
-            <div id="slot_leaf" class="HierarchyLeafSlot">
+            <div id="slot_leaf" class="hierarchy-leaf-slot">
                         
             </div>
         </div>
@@ -25,30 +26,35 @@ export class HeirarchyNode implements IComponentable{
     private expanded = false;
 
     readonly name: string;
+    readonly path: string;
     readonly htmlItem: HtmlItem;
     
-    constructor(name:string,isRoot: boolean = false){
+    constructor(name:string,path:string='',isRoot: boolean = false){
         this.name = name;
+        this.path = path;
         this.htmlItem = new HtmlItem(this, document.body);
         this.htmlItem.applyTemplate(this.template);
         if(!isRoot){
-            this.htmlItem.getHtmlEl('name').innerText = name+' ...';
+            this.htmlItem.getHtmlEl('name').innerText = name+' >';
             this.linker.link2(this.htmlItem.baseElement,'mousedown',this.mouseDown);
         }
         if(isRoot){
             //no padding slot_childnode and slot_leaf
             this.htmlItem.getHtmlEl('name').remove();
-            this.htmlItem.getHtmlEl('indent').classList.remove('HierarchyIndent');
-            this.htmlItem.baseElement.classList.remove('HierarchyNode');
+            this.htmlItem.getHtmlEl('indent').classList.remove('hierarchy-indent');
+            this.htmlItem.baseElement.classList.remove('hierarchy-node');
         }
 
         if(!isRoot){
             this.htmlItem.getHtmlEl('indent').style.display = 'none';
+            for(let className of Node.getCssClassesFromCategory(path)){
+                this.htmlItem.baseElement.classList.add(className);
+            }
         }
     }
 
     private addChild(name: string){
-        let newChild = new HeirarchyNode(name);
+        let newChild = new HeirarchyNode(name,this.path+'/'+name);
         this.children.set(name,newChild);
         newChild.htmlItem.setParent(this.htmlItem,'childnode')
     }
@@ -68,7 +74,7 @@ export class HeirarchyNode implements IComponentable{
             this.htmlItem.getHtmlEl('name').innerText = this.name + ' ';
             this.htmlItem.getHtmlEl('indent').style.display = 'block';
         }else{
-            this.htmlItem.getHtmlEl('name').innerText = this.name + ' ...'
+            this.htmlItem.getHtmlEl('name').innerText = this.name + ' >'
             this.htmlItem.getHtmlEl('indent').style.display = 'none';
         }
     }
