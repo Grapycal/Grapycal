@@ -1,13 +1,18 @@
+
+from contextlib import contextmanager
+from typing import Any, Callable, Dict
+
 import inspect
 import threading
-import time
-from typing import Any, Callable, Dict
-from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
-from grapycal.sobjects.sidebar import Sidebar
 import objectsync
 import asyncio
 import signal
+
+from . import stdout_helper
+
+from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.sidebar import Sidebar
 
 from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
@@ -16,36 +21,47 @@ from grapycal import builtin_nodes
 
 class Workspace:
     def __init__(self, port, host) -> None:
+        
+        '''
+        Enable stdout proxy for this process
+        '''
+        stdout_helper.enable_proxy()
+        self.redirect = stdout_helper.redirect
+        self._communication_event_loop: asyncio.AbstractEventLoop | None = None
 
         self._background_runner = BackgroundRunner()
 
         self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
 
-        self._objectsync.register(Sidebar)
+    def _communication_thread(self,event_loop_set_event: threading.Event):
+        asyncio.run(self._async_communication_thread(event_loop_set_event))
 
-        self.sidebar = self._objectsync.create_object(Sidebar)
-
-
-        self._objectsync.register(InputPort)
-        self._objectsync.register(OutputPort)
-        self._objectsync.register(Edge)
-
-        '''
-        Register all node types here
-        '''
-        self.import_nodes_from_module(builtin_nodes)
-
-        '''
-        Create some nodes
-        '''
-
-    def communication_thread(self):
-        asyncio.run(self._objectsync.serve())
+    async def _async_communication_thread(self,event_loop_set_event: threading.Event):
+        self._communication_event_loop = asyncio.get_event_loop()
+        event_loop_set_event.set()
+        await self._objectsync.serve()
 
     def run(self) -> None:
         print('Workspace running')
-        t = threading.Thread(target=self.communication_thread,daemon=True) # daemon=True until we have a proper exit strategy
+        event_loop_set_event = threading.Event()
+        t = threading.Thread(target=self._communication_thread,daemon=True,args=[event_loop_set_event]) # daemon=True until we have a proper exit strategy
+
         t.start()
+
+        event_loop_set_event.wait()
+
+        self._objectsync.register(Sidebar)
+        self.sidebar = self._objectsync.create_object(Sidebar)
+        
+        self._objectsync.register(InputPort)
+        self._objectsync.register(OutputPort)
+        self._objectsync.register(Edge)
+        
+        '''
+        Register all built-in node types
+        '''
+        self.import_nodes_from_module(builtin_nodes)
+
 
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit()) #? Why this does not work?
     
@@ -54,6 +70,10 @@ class Workspace:
     def exit(self):
         print('exit')
         self._background_runner.exit()
+
+    def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
+        assert self._communication_event_loop is not None
+        return self._communication_event_loop
 
     def register_node_type(self, node_type: type[Node]):
         self._objectsync.register(node_type)

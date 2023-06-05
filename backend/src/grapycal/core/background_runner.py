@@ -1,17 +1,21 @@
+from collections import deque
 from contextlib import contextmanager
-from email import contentmanager
 from queue import Queue
 from typing import Callable, Dict
 import signal
 
 class BackgroundRunner:
     def __init__(self):
-        self._tasks: Queue[Callable] = Queue()
+        self._inputs: Queue = Queue()
+        self._tasks: deque = deque()
         self._exit_flag = False
         self._exception_callback: Callable[[Exception], None] = lambda e: None
 
-    def add_task(self, task: Callable):
-        self._tasks.put(task)
+    def push(self, task: Callable):
+        self._inputs.put((task, False))
+
+    def push_front(self, task: Callable):
+        self._inputs.put((task, True))
 
     def interrupt(self):
         signal.raise_signal(signal.SIGINT)
@@ -39,14 +43,20 @@ class BackgroundRunner:
             if self._exit_flag:
                 break
             try:
-                task = None
-
                 # Queue.get() blocks signal.
-                while task is None:
-                    task = self._tasks.get(timeout=0.2)
+                while len(self._tasks) == 0 or not self._inputs.empty():
+                    inp = self._inputs.get(timeout=0.2)
+                    if inp is None:
+                        continue
+                    task, is_front = inp
+                    if is_front:
+                        self._tasks.append(task)
+                    else:
+                        self._tasks.appendleft(task)
 
                 print('got a task OAO')
-                task()
+                task_to_run = self._tasks.pop()
+                task_to_run()
 
             except KeyboardInterrupt:
                 print("runner catch keyboardinterrupt")
