@@ -23,7 +23,7 @@ class Node(SObject):
 
         self.shape = self.add_attribute('shape', StringTopic, 'block') # round, block, blockNamed, hideBody
         self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
-        self.label = self.add_attribute('label', StringTopic, '')
+        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
@@ -36,9 +36,7 @@ class Node(SObject):
         self.on('spawn', self._spawn , is_stateful=False)
 
         def print_output(data):
-            orig_print('print_output', data)
             self.output.set(self.output.get()+data)
-            orig_print('finished print_output')
         self._output_stream = OutputStream(print_output)
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
@@ -82,6 +80,7 @@ class Node(SObject):
     Run tasks in the background or foreground, redirecting stdout to the node's output stream.
     '''
 
+    #TODO: this records output from chatroom and objectsync too. Fix that.
     @contextmanager
     def redirect_output(self):
         '''
@@ -131,7 +130,7 @@ class Node(SObject):
     def _on_exception(self, e):
         #TODO: Create error topic
         from grapycal.core.stdout_helper import orig_print
-        orig_print('got error\n', traceback.format_exc())
+        orig_print('got error\n', traceback.format_exc(),'\n',''.join(traceback.format_stack()))
 
     '''
     User defined callbacks

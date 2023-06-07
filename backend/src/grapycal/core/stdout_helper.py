@@ -62,12 +62,16 @@ def redirect(stringio: Any):
     Context manager for redirecting stdout to a single io object.
     """
     ident = threading.currentThread().ident
-
+    old_proxy = thread_proxies.get(ident, None)
     thread_proxies[ident] = stringio
     try:
         yield
     finally:
-        del thread_proxies[ident]
+        # possible reentrant call
+        if old_proxy is None:
+            del thread_proxies[ident]
+        else:
+            thread_proxies[ident] = old_proxy
 
 def _get_stream(original):
     """

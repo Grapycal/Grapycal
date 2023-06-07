@@ -1,4 +1,5 @@
 import functools
+from turtle import back
 from typing import Any, Dict
 from grapycal.core.workspace import Workspace
 from grapycal.sobjects.node import Node
@@ -8,9 +9,7 @@ class SimpleNode(Node):
     '''
     An easy to use Node class that can be used to create custom nodes.
     '''
-    def pre_build(self, *args, **kwargs):
-        super().pre_build(*args, **kwargs)
-        self.background = True
+    background = False
 
     def run(self):
         pass
