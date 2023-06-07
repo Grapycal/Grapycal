@@ -9,7 +9,7 @@ from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import StringTopic
 
-class EvalAssignNode(Node):
+class EvalAssignNode_Old(Node):
     category = 'interaction'
     def pre_build(self, attribute_values, workspace, is_preview:bool = False):
         super().pre_build(attribute_values, workspace, is_preview)
@@ -26,7 +26,6 @@ class EvalAssignNode(Node):
         self.get_parent().add_child(Edge, tail=self.text_input.out_port, head=self.text_input_port)
 
     def activate(self):
-        super().activate()
         expression = self.text_input_port.edges[0].get_data()
         assert isinstance(expression, str)
         value = eval(expression)

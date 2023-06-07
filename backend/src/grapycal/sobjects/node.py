@@ -1,6 +1,7 @@
 from contextlib import contextmanager
-import io
+import traceback
 from typing import TYPE_CHECKING, Any, Dict, List
+from grapycal.core.stdout_helper import orig_print
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
@@ -21,7 +22,7 @@ class Node(SObject):
         self.display_ports = self.add_attribute('display_ports', GenericTopic[bool], not isinstance(self.get_parent(), Node))
 
         self.shape = self.add_attribute('shape', StringTopic, 'block') # round, block, blockNamed, hideBody
-        self.output = self.add_attribute('output', StringTopic, 'output') # , is_stateful=False
+        self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
         self.label = self.add_attribute('label', StringTopic, '')
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
@@ -34,7 +35,11 @@ class Node(SObject):
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self._spawn , is_stateful=False)
 
-        self._output_stream = OutputStream(lambda out: self.output.set(self.output.get()+out))
+        def print_output(data):
+            orig_print('print_output', data)
+            self.output.set(self.output.get()+data)
+            orig_print('finished print_output')
+        self._output_stream = OutputStream(print_output)
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
     def build(self):
@@ -82,38 +87,56 @@ class Node(SObject):
         '''
         Returns a context manager that redirects stdout to the node's output stream.
         '''
-        redirect_ = self.workspace.redirect(self._output_stream)
+        from grapycal.core.stdout_helper import orig_print
+
         try:
             self._output_stream.enable_flush()
-            redirect_.__enter__()
-            yield
+            with self.workspace.redirect(self._output_stream):
+                yield
         finally:
-            redirect_.__exit__(None, None, None)
             self._output_stream.disable_flush()
 
     def run_in_background(self,task):
         '''
         Run a task in the background thread.
         '''
+        from grapycal.core.stdout_helper import orig_print
         def task_wrapper():
+            self.workspace.background_runner.set_exception_callback(self._on_exception)
             with self.redirect_output():
                 task()
-        self.workspace._background_runner.push(task_wrapper)
 
-    def run_in_foreground(self,task):
+        self.workspace.background_runner.push(task_wrapper)
+
+    def run_in_foreground(self,task,run_after_transition=True):
         '''
         Run a task in the foreground thread.
         '''
-        with self.redirect_output():
-            task()
+        #TODO: run_after_transition
+        if run_after_transition:
+            def task_wrapper():
+                try:
+                    with self.redirect_output():
+                        task()
+                except Exception as e:
+                    self._on_exception(e)
+            self.workspace.do_after_transition(task_wrapper)
+        else:
+            try:
+                with self.redirect_output():
+                    task()
+            except Exception as e:
+                self._on_exception(e)
+
+    def _on_exception(self, e):
+        #TODO: Create error topic
+        from grapycal.core.stdout_helper import orig_print
+        orig_print('got error\n', traceback.format_exc())
 
     '''
     User defined callbacks
     '''
     
-    def activate(self):
-        pass
-
     def edge_activated(self, edge:Edge):
         pass
 

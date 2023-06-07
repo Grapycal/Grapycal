@@ -16,7 +16,6 @@ class EvalAssignNode(Node):
         self.out_port = self.add_out_port('out')
 
     def activate(self):
-        super().activate()
         expression = self.text.get()
         value = eval(expression)
         for edge in self.out_port.edges:

@@ -25,13 +25,25 @@ class Workspace:
         '''
         Enable stdout proxy for this process
         '''
-        stdout_helper.enable_proxy()
+        stdout_helper.enable_proxy(redirect_error=False)
         self.redirect = stdout_helper.redirect
+
+        '''     
+        !!!!!!!!!!!!!!!!!
+        ! Find another solution and remove this !!!
+        !!!!!!!!!!!!!!!!!
+        '''
+        import chatroom.logger
+        chatroom.logger.print = stdout_helper.orig_print
+        
+
         self._communication_event_loop: asyncio.AbstractEventLoop | None = None
 
-        self._background_runner = BackgroundRunner()
+        self.background_runner = BackgroundRunner()
 
         self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
+
+        self.do_after_transition = self._objectsync.do_after_transition
 
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
@@ -65,11 +77,11 @@ class Workspace:
 
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit()) #? Why this does not work?
     
-        self._background_runner.run()
+        self.background_runner.run()
 
     def exit(self):
         print('exit')
-        self._background_runner.exit()
+        self.background_runner.exit()
 
     def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
         assert self._communication_event_loop is not None

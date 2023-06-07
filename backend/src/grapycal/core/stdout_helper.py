@@ -16,6 +16,8 @@ orig_stdout = sys.stdout
 orig_stderr = sys.stderr
 thread_proxies = {}
 
+def orig_print(*args,flush=False):
+    orig___stdout__.write(' '.join([str(arg) for arg in args])+'\n')
 
 # def redirect():
 #     """

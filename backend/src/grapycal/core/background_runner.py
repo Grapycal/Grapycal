@@ -1,15 +1,18 @@
 from collections import deque
 from contextlib import contextmanager
 from queue import Queue
+import queue
+import traceback
 from typing import Callable, Dict
 import signal
+from .stdout_helper import orig_print
 
 class BackgroundRunner:
     def __init__(self):
         self._inputs: Queue = Queue()
         self._tasks: deque = deque()
         self._exit_flag = False
-        self._exception_callback: Callable[[Exception], None] = lambda e: None
+        self._exception_callback: Callable[[Exception], None] = lambda e: orig_print('runner default exception callback:\n',traceback.format_exc())
 
     def push(self, task: Callable):
         self._inputs.put((task, False))
@@ -45,8 +48,9 @@ class BackgroundRunner:
             try:
                 # Queue.get() blocks signal.
                 while len(self._tasks) == 0 or not self._inputs.empty():
-                    inp = self._inputs.get(timeout=0.2)
-                    if inp is None:
+                    try:
+                        inp = self._inputs.get(timeout=0.2)
+                    except queue.Empty:
                         continue
                     task, is_front = inp
                     if is_front:
