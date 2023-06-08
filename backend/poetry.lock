@@ -35,7 +35,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "345377176166c641daa2889c3d35a148ce4a3551"
+resolved_reference = "1038ad333e0a027ba3d057a46ece069182ad48d0"
 
 [[package]]
 name = "pyyaml"

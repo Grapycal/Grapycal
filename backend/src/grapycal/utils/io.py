@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import asyncio
 import io
 import threading
@@ -63,7 +66,6 @@ class OutputStream:
 
     def disable_flush(self):
         self._event_loop.call_soon_threadsafe(self._disable_flush)
-        print(self._enables)
 
     def _disable_flush(self):
         self._enables -= 1
@@ -71,6 +73,6 @@ class OutputStream:
     def close(self):
         self._exit_flag = True
         self._enable_flush_event.set()
-        print('output stream closed')
+        logger.info('output stream closed')
 
     

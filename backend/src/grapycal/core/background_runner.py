@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from collections import deque
 from contextlib import contextmanager
 from queue import Queue
@@ -32,7 +35,7 @@ class BackgroundRunner:
     @contextmanager
     def no_interrupt(self):
         def handler(signum, frame):
-            print("no_interrupt: continue")
+            logger.info("no_interrupt: continue")
 
         original_sigint_handler = signal.getsignal(signal.SIGINT)
         try:
@@ -58,12 +61,12 @@ class BackgroundRunner:
                     else:
                         self._tasks.appendleft(task)
 
-                print('got a task OAO')
+                logger.debug('got a task OAO')
                 task_to_run = self._tasks.pop()
                 task_to_run()
 
             except KeyboardInterrupt:
-                print("runner catch keyboardinterrupt")
+                logger.info("runner catch keyboardinterrupt")
 
             except Exception as e:
                 self._exception_callback(e)
