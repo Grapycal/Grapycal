@@ -7,7 +7,7 @@ from grapycal.sobjects.node import Node
 
 class SimpleNode(Node):
     '''
-    An easy to use Node class that can be used to create custom nodes.
+    A subclass of `Node` that provides higher level inferface for defining nodes.
     '''
     background = False
 

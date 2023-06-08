@@ -1,5 +1,7 @@
 
-from contextlib import contextmanager
+from grapycal.utils.logging import setup_logging
+logger = setup_logging()
+
 from typing import Any, Callable, Dict
 
 import inspect
@@ -27,15 +29,6 @@ class Workspace:
         '''
         stdout_helper.enable_proxy(redirect_error=False)
         self.redirect = stdout_helper.redirect
-
-        '''     
-        !!!!!!!!!!!!!!!!!
-        ! Find another solution and remove this !!!
-        !!!!!!!!!!!!!!!!!
-        '''
-        import chatroom.logger
-        chatroom.logger.print = stdout_helper.orig_print
-        
 
         self._communication_event_loop: asyncio.AbstractEventLoop | None = None
 

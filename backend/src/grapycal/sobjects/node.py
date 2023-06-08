@@ -41,7 +41,6 @@ class Node(SObject):
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
     def build(self):
-        print(f'Building {self}')
         pass
 
     def post_build(self):
