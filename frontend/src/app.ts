@@ -9,7 +9,8 @@ import { Edge } from './sobjects/edge'
 import { TextOutputNode } from './sobjects/nodes/textOutputNode'
 import { TextInputNode } from './sobjects/nodes/textInputNode'
 import { SoundManager } from './ui_utils/soundManager';
-import { Sidebar } from './sobjects/sideBar'
+import { Sidebar } from './sobjects/sidebar'
+import { Workspace } from './sobjects/workspace'
 
 export const editor = new Editor();
 
@@ -18,6 +19,7 @@ export const soundManager = new SoundManager();
 //const objectsync = new ObjectSyncClient('ws://192.168.245.187:8765');
 const objectsync = new ObjectSyncClient('ws://localhost:8765');
 objectsync.register(Root);
+objectsync.register(Workspace);
 objectsync.register(Node);
 objectsync.register(TextInputNode);
 objectsync.register(TextOutputNode);
@@ -34,6 +36,10 @@ document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.key === 'y' || event.metaKey && event.key === 'Y') {
         event.preventDefault();
         objectsync.redo(null);
+    }
+    if (event.ctrlKey && event.key === 's' || event.metaKey && event.key === 'S') {
+        event.preventDefault();
+        objectsync.emit('ctrl+s');
     }
 });
 

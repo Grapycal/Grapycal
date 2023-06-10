@@ -264,11 +264,18 @@ export class Transform extends Component{
     public getAbsoluteScale(){
         this.updateUI();
         // Only works if element size is not zero
-        let rect = this.targetElement.getBoundingClientRect()
-        return {
-            'x':rect.width/this.targetElement.offsetWidth,
-            'y':rect.height/this.targetElement.offsetHeight
-        };
+        // let rect = this.targetElement.getBoundingClientRect()
+        // return {
+        //     'x':rect.width/this.targetElement.offsetWidth,
+        //     'y':rect.height/this.targetElement.offsetHeight
+        // };
+        let s = this.scale;
+        let parent = this.parent;
+        while(!(parent instanceof TransformRoot)){
+            s *= parent.scale;
+            parent = parent.parent;
+        }
+        return new Vector2(s,s);
     }
 
     public worldToLocal(pos: Vector2){

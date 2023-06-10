@@ -28,7 +28,7 @@ export class Edge extends CompSObject {
     state: EdgeState = EdgeState.Idle
 
     template = `
-    <div id="base" style="position:absolute">
+    <div id="base" style="position:absolute;width:1px;height:1px">
         <svg class="edge" id="svg">
             <g>
                 <path id="path" d=""  fill="none"></path>
@@ -77,26 +77,33 @@ export class Edge extends CompSObject {
     protected onStart(): void {
         super.onStart()
         // link attributes to UI
-        this.link(this.tail.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) {
-                oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
-            }
-            if(!port) return
-            this.updateSVG();
-            port.moved.add(this.updateSVG)
-            port.edges.push(this)
+        this.link(this.tail.onSet2,(oldPort: Port,_) => {
+            if(!oldPort) return
+            oldPort.moved.remove(this.updateSVG)
+            oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
         })
-        this.link(this.head.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) {
-                oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
-            }
-            if(!port) return
-            this.updateSVG();
-            port.moved.add(this.updateSVG)
-            port.edges.push(this)
+        this.link(this.tail.onSet,(newPort: Port) =>{
+            if(!newPort) return
+            setTimeout(() => {
+                this.updateSVG();
+            }, 0);
+            newPort.moved.add(this.updateSVG)
+            newPort.edges.push(this)
         })
+        this.link(this.head.onSet2,(oldPort: Port,_) => {
+            if(!oldPort) return
+            oldPort.moved.remove(this.updateSVG)
+            oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+        })
+        this.link(this.head.onSet,(newPort: Port) =>{
+            if(!newPort) return
+            setTimeout(() => {
+                this.updateSVG();
+            }, 0);
+            newPort.moved.add(this.updateSVG)
+            newPort.edges.push(this)
+        })
+
         if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
         if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
         if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
@@ -237,9 +244,7 @@ export class Edge extends CompSObject {
 
     // Graphical stuff
     private updateSVG() {
-        //print('updateSVG',this.tail.getValue(),this.head.getValue())
         this.path.setAttribute('d', this.getSVGPath())
-
     }
     private getSVGPath(): string {
         let tail: Vector2
