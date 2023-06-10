@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 objectsync = { git = "https://github.com/eri24816/ObjectSync.git", branch = "master"}
 pyyaml = "^6.0"
+dacite = "^1.8.1"
 
 [build-system]
 requires = ["poetry-core"]

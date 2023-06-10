@@ -1,10 +1,11 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import json
 import asyncio
 import io
 import threading
-from typing import Callable
+from typing import Any, Callable
 
 class OutputStream:
     def __init__(self, on_flush:Callable[[str],None], hz=20):
@@ -75,4 +76,17 @@ class OutputStream:
         self._enable_flush_event.set()
         logger.info('output stream closed')
 
+def json_write(path:str,data:Any):
+    with open(path,'w') as f:
+        json.dump(data,f,indent=4)
+
+def json_read(path):
+    with open(path,'r') as f:
+        return json.load(f)
     
+def file_exists(path):
+    try:
+        with open(path,'r') as f:
+            return True
+    except FileNotFoundError:
+        return False

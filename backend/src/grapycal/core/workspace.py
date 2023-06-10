@@ -1,4 +1,6 @@
 
+from grapycal.sobjects.workspaceObject import WorkspaceObject
+from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
 logger = setup_logging()
 
@@ -7,10 +9,14 @@ from typing import Any, Callable, Dict
 import inspect
 import threading
 import objectsync
+from objectsync.sobject import SObjectSerialized
 import asyncio
 import signal
+from dacite import from_dict
+
 
 from . import stdout_helper
+
 
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
@@ -22,8 +28,8 @@ from grapycal.sobjects.node import Node
 from grapycal import builtin_nodes
 
 class Workspace:
-    def __init__(self, port, host) -> None:
-        
+    def __init__(self, port, host, path) -> None:
+        self.path = path
         '''
         Enable stdout proxy for this process
         '''
@@ -55,9 +61,8 @@ class Workspace:
 
         event_loop_set_event.wait()
 
+        self._objectsync.register(WorkspaceObject)
         self._objectsync.register(Sidebar)
-        self.sidebar = self._objectsync.create_object(Sidebar)
-        
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
@@ -65,10 +70,16 @@ class Workspace:
         '''
         Register all built-in node types
         '''
-        self.import_nodes_from_module(builtin_nodes)
-
 
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit()) #? Why this does not work?
+
+        if file_exists(self.path):
+            self.load_workspace(self.path)
+        else:
+            self.initialize_workspace()
+            self.import_nodes(builtin_nodes)
+            
+        self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
     
         self.background_runner.run()
 
@@ -80,34 +91,68 @@ class Workspace:
         assert self._communication_event_loop is not None
         return self._communication_event_loop
 
-    def register_node_type(self, node_type: type[Node]):
-        self._objectsync.register(node_type)
-        if not node_type.category == 'hidden':
-            self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
+    def create_preview_nodes(self, module):
+        node_types = self.get_node_types_from_module(module)
+        for node_type in node_types:
+            if not node_type.category == 'hidden':
+                self._objectsync.create_object(node_type,parent_id=self._workspace_object.sidebar.get_id(),is_preview=True)
 
-    def import_nodes_from_module(self, module):
-        added_node_types = []
+    def import_nodes(self, module):
+        node_types = self.get_node_types_from_module(module)
+        for node_type in node_types:
+            self._objectsync.register(node_type)
+
+    def get_node_types_from_module(self, module) -> list[type[Node]]:
+        node_types: list[type[Node]] = []
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and issubclass(obj, Node) and obj != Node:
-                self._objectsync.register(obj)
-                added_node_types.append(obj)
-                
-        for node_type in added_node_types:
-            if not node_type.category == 'hidden':
-                self._objectsync.create_object(node_type,parent_id=self.sidebar.get_id(),is_preview=True)
+                node_types.append(obj)
+        return node_types
 
     def create_node(self, node_type: type, **kwargs) -> Node:
-        return self._objectsync.create_object(node_type, parent_id='root', is_preview=False, **kwargs)
+        return self._objectsync.create_object(node_type, parent_id=self._workspace_object.get_id(), is_preview=False, **kwargs)
     
     def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
-        return self._objectsync.create_object(Edge, parent_id='root', is_preview=False, tail=tail, head=head)
+        return self._objectsync.create_object(Edge, parent_id=self._workspace_object.get_id(), is_preview=False, tail=tail, head=head)
+    
+    '''
+    Save and load
+    '''
+
+    def initialize_workspace(self) -> None:
+        node_libraries_used = [builtin_nodes] #TODO: Load from workspace_serialized
+        for node_library in node_libraries_used:
+            self.import_nodes(node_library)
+        self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False)
+        for node_library in node_libraries_used:
+            self.create_preview_nodes(node_library)
+
+    def save_workspace(self, path: str) -> None:
+        workspace_serialized = self._workspace_object.serialize()
+        data = {
+            'client_id_count': self._objectsync.get_client_id_count(),
+            'id_count': self._objectsync.get_id_count(),
+            'workspace_serialized': workspace_serialized.to_dict(),
+        }
+        json_write(path, data)
+
+    def load_workspace(self, path: str) -> None:
+        data = json_read(path)
+        self._objectsync.set_client_id_count(data['client_id_count'])
+        self._objectsync.set_id_count(data['id_count'])
+        workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
+        node_libraries_used = [builtin_nodes] #TODO: Load from workspace_serialized
+        for node_library in node_libraries_used:
+            self.import_nodes(node_library)
+        self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False, serialized=workspace_serialized)
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--host', type=str, default='localhost')
+    parser.add_argument('--path', type=str, default='workspace.json')
     args = parser.parse_args()
 
-    workspace = Workspace(args.port,args.host)
+    workspace = Workspace(args.port,args.host,args.path)
     workspace.run()

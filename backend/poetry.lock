@@ -17,7 +17,20 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "7ecabcc38d4e8740bc6fe0b857edfbd89d3aec6e"
+resolved_reference = "be030944aafecf86e6d78517f0e8ad02a852263c"
+
+[[package]]
+name = "dacite"
+version = "1.8.1"
+description = "Simple creation of data classes from dictionaries."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dacite-1.8.1-py3-none-any.whl", hash = "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"},
+]
+
+[package.extras]
+dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "pytest-benchmark", "pytest-cov"]
 
 [[package]]
 name = "objectsync"
@@ -35,7 +48,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "1038ad333e0a027ba3d057a46ece069182ad48d0"
+resolved_reference = "8893cf00049b3acc9532910f9ad7598f24f26d7a"
 
 [[package]]
 name = "pyyaml"
@@ -182,4 +195,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0d1ad3f184866a952fae65d75167b2218f9b21e829417c570b37d4544a00f58b"
+content-hash = "8401de08c942ad91817126abdf9774afc31527628a0d70d72637dd57046de571"
