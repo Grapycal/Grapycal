@@ -23,7 +23,6 @@ class AdditionNode(FunctionNode):
             summation = data[0]
             for d in data[1:]:
                 summation += d #type: ignore
-        print('summation', summation) # this goes to the ouput topic
         return summation
     
 class SubtractionNode(FunctionNode):

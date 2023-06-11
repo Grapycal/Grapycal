@@ -1,5 +1,6 @@
 .port-knob{
     position: relative;
     border-radius: 50%;
-    background-color : #727272;
+    background-color : #495e80ff;
+    border: 1px solid #495e80;
 }

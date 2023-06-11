@@ -1,8 +1,8 @@
 {
-    "client_id_count": 4,
-    "id_count": 28,
+    "client_id_count": 40,
+    "id_count": 41,
     "workspace_serialized": {
-        "id": "0_1",
+        "id": "0_29",
         "type": "WorkspaceObject",
         "attributes": {},
         "children": {
@@ -18,7 +18,7 @@
                             "use_transform": true,
                             "display_ports": true,
                             "shape": "round",
-                            "output": "",
+                            "output": "summation 0\nsummation 0\nsummation 0\n",
                             "label": "+",
                             "label_offset": -0.09,
                             "translation": "",
@@ -438,10 +438,10 @@
                     "use_transform": true,
                     "display_ports": true,
                     "shape": "round",
-                    "output": "summation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\n",
+                    "output": "summation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\n",
                     "label": "+",
                     "label_offset": -0.09,
-                    "translation": "29.33333333333339,-62.33333333333336",
+                    "translation": "-29.81451895038372,-49.179934075614376",
                     "is_preview": 0,
                     "category": "function/math",
                     "in_ports": [
@@ -551,7 +551,7 @@
                     "output": "",
                     "label": "Now Grapycal has save and load functionality.",
                     "label_offset": 0,
-                    "translation": "84.21940305999104,-62.936558278690654",
+                    "translation": "80.88606972665784,-62.93655827869067",
                     "is_preview": 0,
                     "category": "interaction",
                     "in_ports": [
@@ -586,6 +586,269 @@
                 "attributes": {
                     "tail": "0_26",
                     "head": "0_28"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_30": {
+                "id": "0_30",
+                "type": "PrintNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "block",
+                    "output": "",
+                    "label": "Now Grapycal has save and load functionality.",
+                    "label_offset": 0,
+                    "translation": "92.06288834017312,68.38523985153385",
+                    "is_preview": 0,
+                    "category": "interaction",
+                    "in_ports": [
+                        "0_31"
+                    ],
+                    "out_ports": [],
+                    "double_click": null,
+                    "spawn": null
+                },
+                "children": {
+                    "0_31": {
+                        "id": "0_31",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 1,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_30"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "10_4": {
+                "id": "10_4",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_26",
+                    "head": "0_31"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_32": {
+                "id": "0_32",
+                "type": "SubtractionNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "round",
+                    "output": "",
+                    "label": "-",
+                    "label_offset": -0.09,
+                    "translation": "330.4067260127974,157.57937270461784",
+                    "is_preview": 0,
+                    "category": "function/math",
+                    "in_ports": [
+                        "0_34",
+                        "0_33"
+                    ],
+                    "out_ports": [
+                        "0_35"
+                    ],
+                    "double_click": null,
+                    "spawn": null
+                },
+                "children": {
+                    "0_33": {
+                        "id": "0_33",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_32"
+                        }
+                    },
+                    "0_34": {
+                        "id": "0_34",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_32"
+                        }
+                    },
+                    "0_35": {
+                        "id": "0_35",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_32"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_36": {
+                "id": "0_36",
+                "type": "AdditionNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "round",
+                    "output": "summation 0\nsummation 0\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\n",
+                    "label": "+",
+                    "label_offset": -0.09,
+                    "translation": "113.46029981928311,163.05191996215254",
+                    "is_preview": 0,
+                    "category": "function/math",
+                    "in_ports": [
+                        "0_37"
+                    ],
+                    "out_ports": [
+                        "0_38"
+                    ],
+                    "double_click": null,
+                    "spawn": null
+                },
+                "children": {
+                    "0_37": {
+                        "id": "0_37",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_36"
+                        }
+                    },
+                    "0_38": {
+                        "id": "0_38",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_36"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "38_2": {
+                "id": "38_2",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_38",
+                    "head": "0_33"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "38_4": {
+                "id": "38_4",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_26",
+                    "head": "0_37"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_39": {
+                "id": "0_39",
+                "type": "AdditionNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "round",
+                    "output": "",
+                    "label": "+",
+                    "label_offset": -0.09,
+                    "translation": "-35.90026032756041,212.64369660009922",
+                    "is_preview": 0,
+                    "category": "function/math",
+                    "in_ports": [
+                        "0_40"
+                    ],
+                    "out_ports": [
+                        "0_41"
+                    ],
+                    "double_click": null,
+                    "spawn": null
+                },
+                "children": {
+                    "0_40": {
+                        "id": "0_40",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_39"
+                        }
+                    },
+                    "0_41": {
+                        "id": "0_41",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_39"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "38_6": {
+                "id": "38_6",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_41",
+                    "head": "0_37"
                 },
                 "children": {},
                 "user_attribute_references": {},
