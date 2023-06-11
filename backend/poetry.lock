@@ -17,7 +17,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "be030944aafecf86e6d78517f0e8ad02a852263c"
+resolved_reference = "55efcd81063f15b3a453961fbfe93e755a8c993b"
 
 [[package]]
 name = "dacite"
@@ -48,7 +48,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "8893cf00049b3acc9532910f9ad7598f24f26d7a"
+resolved_reference = "e850fa0d89d6366593ef1c09924dec382f9b5405"
 
 [[package]]
 name = "pyyaml"

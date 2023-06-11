@@ -1,8 +1,8 @@
 {
-    "client_id_count": 63,
-    "id_count": 23,
+    "client_id_count": 4,
+    "id_count": 28,
     "workspace_serialized": {
-        "id": "0_23",
+        "id": "0_1",
         "type": "WorkspaceObject",
         "attributes": {},
         "children": {
@@ -29,7 +29,9 @@
                             ],
                             "out_ports": [
                                 "0_5"
-                            ]
+                            ],
+                            "double_click": null,
+                            "spawn": null
                         },
                         "children": {
                             "0_4": {
@@ -40,7 +42,11 @@
                                     "max_edges": 64,
                                     "is_input": 1
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_3"
+                                }
                             },
                             "0_5": {
                                 "id": "0_5",
@@ -50,9 +56,15 @@
                                     "max_edges": 64,
                                     "is_input": 0
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_3"
+                                }
                             }
-                        }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {}
                     },
                     "0_6": {
                         "id": "0_6",
@@ -71,6 +83,8 @@
                             "out_ports": [
                                 "0_7"
                             ],
+                            "double_click": null,
+                            "spawn": null,
                             "text": ""
                         },
                         "children": {
@@ -82,8 +96,16 @@
                                     "max_edges": 64,
                                     "is_input": 0
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_6"
+                                }
                             }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "out_port": "0_7"
                         }
                     },
                     "0_8": {
@@ -102,7 +124,9 @@
                             "in_ports": [
                                 "0_9"
                             ],
-                            "out_ports": []
+                            "out_ports": [],
+                            "double_click": null,
+                            "spawn": null
                         },
                         "children": {
                             "0_9": {
@@ -113,9 +137,15 @@
                                     "max_edges": 1,
                                     "is_input": 1
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_8"
+                                }
                             }
-                        }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {}
                     },
                     "0_10": {
                         "id": "0_10",
@@ -136,7 +166,9 @@
                             ],
                             "out_ports": [
                                 "0_13"
-                            ]
+                            ],
+                            "double_click": null,
+                            "spawn": null
                         },
                         "children": {
                             "0_11": {
@@ -147,7 +179,11 @@
                                     "max_edges": 64,
                                     "is_input": 1
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_10"
+                                }
                             },
                             "0_12": {
                                 "id": "0_12",
@@ -157,7 +193,11 @@
                                     "max_edges": 64,
                                     "is_input": 1
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_10"
+                                }
                             },
                             "0_13": {
                                 "id": "0_13",
@@ -167,11 +207,19 @@
                                     "max_edges": 64,
                                     "is_input": 0
                                 },
-                                "children": {}
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_10"
+                                }
                             }
-                        }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {}
                     }
-                }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
             },
             "0_14": {
                 "id": "0_14",
@@ -183,14 +231,16 @@
                     "output": "",
                     "label": "",
                     "label_offset": 0,
-                    "translation": "-38.33333333333368,-69.33333333333347",
+                    "translation": "-201.33333333332993,-182.3333333333338",
                     "is_preview": 0,
                     "category": "interaction",
                     "in_ports": [],
                     "out_ports": [
                         "0_15"
                     ],
-                    "text": "232"
+                    "double_click": null,
+                    "spawn": null,
+                    "text": "\"Now \""
                 },
                 "children": {
                     "0_15": {
@@ -201,52 +251,20 @@
                             "max_edges": 64,
                             "is_input": 0
                         },
-                        "children": {}
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_14"
+                        }
                     }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {
+                    "out_port": "0_15"
                 }
             },
             "0_16": {
                 "id": "0_16",
-                "type": "PrintNode",
-                "attributes": {
-                    "use_transform": true,
-                    "display_ports": true,
-                    "shape": "block",
-                    "output": "",
-                    "label": "",
-                    "label_offset": 0,
-                    "translation": "138.26222649917813,206.8658157068819",
-                    "is_preview": 0,
-                    "category": "interaction",
-                    "in_ports": [
-                        "0_17"
-                    ],
-                    "out_ports": []
-                },
-                "children": {
-                    "0_17": {
-                        "id": "0_17",
-                        "type": "InputPort",
-                        "attributes": {
-                            "name": "port name",
-                            "max_edges": 1,
-                            "is_input": 1
-                        },
-                        "children": {}
-                    }
-                }
-            },
-            "1_2": {
-                "id": "1_2",
-                "type": "Edge",
-                "attributes": {
-                    "tail": "0_15",
-                    "head": "0_17"
-                },
-                "children": {}
-            },
-            "0_19": {
-                "id": "0_19",
                 "type": "EvalAssignNode",
                 "attributes": {
                     "use_transform": true,
@@ -255,31 +273,41 @@
                     "output": "",
                     "label": "",
                     "label_offset": 0,
-                    "translation": "286.13092371646314,87.95622665523976",
+                    "translation": "-203.99999999999986,-115.00000000000006",
                     "is_preview": 0,
                     "category": "interaction",
                     "in_ports": [],
                     "out_ports": [
-                        "0_20"
+                        "0_17"
                     ],
-                    "text": ""
+                    "double_click": null,
+                    "spawn": null,
+                    "text": "\"Grapycal \""
                 },
                 "children": {
-                    "0_20": {
-                        "id": "0_20",
+                    "0_17": {
+                        "id": "0_17",
                         "type": "OutputPort",
                         "attributes": {
                             "name": "port name",
                             "max_edges": 64,
                             "is_input": 0
                         },
-                        "children": {}
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_16"
+                        }
                     }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {
+                    "out_port": "0_17"
                 }
             },
-            "0_21": {
-                "id": "0_21",
-                "type": "PrintNode",
+            "0_18": {
+                "id": "0_18",
+                "type": "EvalAssignNode",
                 "attributes": {
                     "use_transform": true,
                     "display_ports": true,
@@ -287,36 +315,284 @@
                     "output": "",
                     "label": "",
                     "label_offset": 0,
-                    "translation": "571.5176494780368,6.517098007427647",
+                    "translation": "-202.53978322404808,-49.60322494535731",
+                    "is_preview": 0,
+                    "category": "interaction",
+                    "in_ports": [],
+                    "out_ports": [
+                        "0_19"
+                    ],
+                    "double_click": null,
+                    "spawn": null,
+                    "text": "\"has \""
+                },
+                "children": {
+                    "0_19": {
+                        "id": "0_19",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_18"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {
+                    "out_port": "0_19"
+                }
+            },
+            "0_20": {
+                "id": "0_20",
+                "type": "EvalAssignNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "block",
+                    "output": "",
+                    "label": "",
+                    "label_offset": 0,
+                    "translation": "-202.00000000000014,4.333333333333356",
+                    "is_preview": 0,
+                    "category": "interaction",
+                    "in_ports": [],
+                    "out_ports": [
+                        "0_21"
+                    ],
+                    "double_click": null,
+                    "spawn": null,
+                    "text": "\"save and load \""
+                },
+                "children": {
+                    "0_21": {
+                        "id": "0_21",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_20"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {
+                    "out_port": "0_21"
+                }
+            },
+            "0_22": {
+                "id": "0_22",
+                "type": "EvalAssignNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "block",
+                    "output": "",
+                    "label": "",
+                    "label_offset": 0,
+                    "translation": "-204.66666666666663,59.66666666666667",
+                    "is_preview": 0,
+                    "category": "interaction",
+                    "in_ports": [],
+                    "out_ports": [
+                        "0_23"
+                    ],
+                    "double_click": null,
+                    "spawn": null,
+                    "text": "\"functionality.\""
+                },
+                "children": {
+                    "0_23": {
+                        "id": "0_23",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_22"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {
+                    "out_port": "0_23"
+                }
+            },
+            "0_24": {
+                "id": "0_24",
+                "type": "AdditionNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "round",
+                    "output": "summation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and loadfunctionality.\nsummation Now Grapycal has save and load functionality.\nsummation Now Grapycal has save and load functionality.\n",
+                    "label": "+",
+                    "label_offset": -0.09,
+                    "translation": "29.33333333333339,-62.33333333333336",
+                    "is_preview": 0,
+                    "category": "function/math",
+                    "in_ports": [
+                        "0_25"
+                    ],
+                    "out_ports": [
+                        "0_26"
+                    ],
+                    "double_click": null,
+                    "spawn": null
+                },
+                "children": {
+                    "0_25": {
+                        "id": "0_25",
+                        "type": "InputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 1
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_24"
+                        }
+                    },
+                    "0_26": {
+                        "id": "0_26",
+                        "type": "OutputPort",
+                        "attributes": {
+                            "name": "port name",
+                            "max_edges": 64,
+                            "is_input": 0
+                        },
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_24"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "1_2": {
+                "id": "1_2",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_15",
+                    "head": "0_25"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "1_4": {
+                "id": "1_4",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_17",
+                    "head": "0_25"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "1_6": {
+                "id": "1_6",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_19",
+                    "head": "0_25"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "1_8": {
+                "id": "1_8",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_21",
+                    "head": "0_25"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "1_10": {
+                "id": "1_10",
+                "type": "Edge",
+                "attributes": {
+                    "tail": "0_23",
+                    "head": "0_25"
+                },
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_27": {
+                "id": "0_27",
+                "type": "PrintNode",
+                "attributes": {
+                    "use_transform": true,
+                    "display_ports": true,
+                    "shape": "block",
+                    "output": "",
+                    "label": "Now Grapycal has save and load functionality.",
+                    "label_offset": 0,
+                    "translation": "84.21940305999104,-62.936558278690654",
                     "is_preview": 0,
                     "category": "interaction",
                     "in_ports": [
-                        "0_22"
+                        "0_28"
                     ],
-                    "out_ports": []
+                    "out_ports": [],
+                    "double_click": null,
+                    "spawn": null
                 },
                 "children": {
-                    "0_22": {
-                        "id": "0_22",
+                    "0_28": {
+                        "id": "0_28",
                         "type": "InputPort",
                         "attributes": {
                             "name": "port name",
                             "max_edges": 1,
                             "is_input": 1
                         },
-                        "children": {}
+                        "children": {},
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "node": "0_27"
+                        }
                     }
-                }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
             },
-            "49_2": {
-                "id": "49_2",
+            "1_13": {
+                "id": "1_13",
                 "type": "Edge",
                 "attributes": {
-                    "tail": "0_20",
-                    "head": "0_22"
+                    "tail": "0_26",
+                    "head": "0_28"
                 },
-                "children": {}
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
             }
-        }
+        },
+        "user_attribute_references": {},
+        "user_sobject_references": {}
     }
 }
