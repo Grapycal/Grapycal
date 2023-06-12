@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "grapycal",
             "justMyCode": true,
-            "cwd": "${workspaceFolder}/backend"
+            "cwd": "${workspaceFolder}/test_working_dirs/working_dir_2"
         }
     ]
 }

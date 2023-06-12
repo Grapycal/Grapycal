@@ -10,6 +10,7 @@ python = "^3.11"
 objectsync = { git = "https://github.com/eri24816/ObjectSync.git", branch = "master"}
 pyyaml = "^6.0"
 dacite = "^1.8.1"
+usersettings = "^1.1.5"
 
 [build-system]
 requires = ["poetry-core"]

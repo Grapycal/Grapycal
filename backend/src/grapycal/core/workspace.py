@@ -1,4 +1,5 @@
 
+from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.sobjects.workspaceObject import WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
@@ -25,8 +26,6 @@ from grapycal.sobjects.sidebar import Sidebar
 from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
 
-from grapycal import builtin_nodes
-
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
@@ -41,6 +40,8 @@ class Workspace:
         self.background_runner = BackgroundRunner()
 
         self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
+        
+        self._extention_manager = ExtensionManager(self._objectsync,self)
 
         self.do_after_transition = self._objectsync.do_after_transition
 
@@ -77,7 +78,6 @@ class Workspace:
             self.load_workspace(self.path)
         else:
             self.initialize_workspace()
-            self.import_nodes(builtin_nodes)
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
     
@@ -91,24 +91,6 @@ class Workspace:
         assert self._communication_event_loop is not None
         return self._communication_event_loop
 
-    def create_preview_nodes(self, module):
-        node_types = self.get_node_types_from_module(module)
-        for node_type in node_types:
-            if not node_type.category == 'hidden':
-                self._objectsync.create_object(node_type,parent_id=self._workspace_object.sidebar.get_id(),is_preview=True)
-
-    def import_nodes(self, module):
-        node_types = self.get_node_types_from_module(module)
-        for node_type in node_types:
-            self._objectsync.register(node_type)
-
-    def get_node_types_from_module(self, module) -> list[type[Node]]:
-        node_types: list[type[Node]] = []
-        for name, obj in inspect.getmembers(module):
-            if inspect.isclass(obj) and issubclass(obj, Node) and obj != Node:
-                node_types.append(obj)
-        return node_types
-
     def create_node(self, node_type: type, **kwargs) -> Node:
         return self._objectsync.create_object(node_type, parent_id=self._workspace_object.get_id(), is_preview=False, **kwargs)
     
@@ -117,19 +99,18 @@ class Workspace:
     
     '''
     Save and load
-    '''
+    '''         
 
     def initialize_workspace(self) -> None:
-        node_libraries_used = [builtin_nodes] #TODO: Load from workspace_serialized
-        for node_library in node_libraries_used:
-            self.import_nodes(node_library)
         self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False)
-        for node_library in node_libraries_used:
-            self.create_preview_nodes(node_library)
+        self._extention_manager.import_extension('builtin_nodes')
+        self._extention_manager.import_extension('grapycal_ext1')
 
     def save_workspace(self, path: str) -> None:
         workspace_serialized = self._workspace_object.serialize()
         data = {
+            'extensions': self._extention_manager.get_extention_names(), 
+            # Note: The extension field is intended to be on top so it can be easily retrieved by the extension management program.
             'client_id_count': self._objectsync.get_client_id_count(),
             'id_count': self._objectsync.get_id_count(),
             'workspace_serialized': workspace_serialized.to_dict(),
@@ -141,17 +122,18 @@ class Workspace:
         self._objectsync.set_client_id_count(data['client_id_count'])
         self._objectsync.set_id_count(data['id_count'])
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
-        node_libraries_used = [builtin_nodes] #TODO: Load from workspace_serialized
-        for node_library in node_libraries_used:
-            self.import_nodes(node_library)
+        self._extention_manager.load_extensions(data['extensions'])
         self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False, serialized=workspace_serialized)
+
+    def get_workspace_object(self) -> WorkspaceObject:
+        return self._workspace_object
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--host', type=str, default='localhost')
-    parser.add_argument('--path', type=str, default='workspace.json')
+    parser.add_argument('--path', type=str, default='workspace.grapycal')
     args = parser.parse_args()
 
     workspace = Workspace(args.port,args.host,args.path)
