@@ -4,6 +4,16 @@ import { Component } from "./component"
 type Callback<ARGS extends any[] = any[], OUT = any> = (...args: ARGS) => OUT;
 
 export class Linker extends Component{
+
+    static staticLinkedCallbacks: {action: Action<any>, callback: Callback}[] = []
+    static staticLinkedCallbacks2: {element: Node, eventName: string, callback: Callback}[] = []
+    static link(action: Action<any>, callback: Callback): void{
+        callback = callback.bind(this);
+        this.staticLinkedCallbacks.push({action: action, callback: callback});
+        action.add(callback);
+    }
+
+
     linkedCallbacks: {action: Action<any>, callback: Callback}[] = []
     linkedCallbacks2: {element: Node, eventName: string, callback: Callback}[] = []
     /**

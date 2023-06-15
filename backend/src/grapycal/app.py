@@ -4,6 +4,7 @@ import signal
 import sys
 from typing import Any, Callable, Dict
 import subprocess
+from .utils.file import get_direct_sub_folders
 import termcolor
 import time
 
@@ -66,7 +67,7 @@ class GrapycalApp:
         for f in os.listdir('.'):
             if f.endswith('.grapycal') and not f.startswith('.'):
                 used_extensions += self.parse_extensions_from_workspace(f)
-        for dir in self.get_direct_sub_folders('./.grapycal/extensions'):
+        for dir in get_direct_sub_folders('./.grapycal/extensions'):
             if dir not in used_extensions:
                 shutil.rmtree(f'./.grapycal/extensions/{dir}')
                 
@@ -88,8 +89,5 @@ class GrapycalApp:
                     break
                 extensions_field += char
         return extensions_field.split(',')
-    
-    def get_direct_sub_folders(self, path: str) -> list[str]:
-        return [f for f in os.listdir(path) if os.path.isdir(os.path.join(path,f))]
 
 

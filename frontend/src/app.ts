@@ -11,6 +11,7 @@ import { TextInputNode } from './sobjects/nodes/textInputNode'
 import { SoundManager } from './ui_utils/soundManager';
 import { Sidebar } from './sobjects/sidebar'
 import { Workspace } from './sobjects/workspace'
+import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 
 export const editor = new Editor();
 
@@ -28,6 +29,9 @@ objectsync.register(Edge);
 objectsync.register(Sidebar);
 
 
+new ExtensionsSetting(objectsync);
+
+
 document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.key === 'z' || event.metaKey && event.key === 'Z') {
         event.preventDefault();
@@ -41,6 +45,10 @@ document.addEventListener('keydown', function(event) {
         event.preventDefault();
         objectsync.emit('ctrl+s');
     }
+});
+
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
 });
 
 expose('c',objectsync)
