@@ -65,12 +65,12 @@ export class Edge extends CompSObject {
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
         this.svg = this.htmlItem.getEl('svg', SVGSVGElement)
 
-        this.svg.style.width = "1px"
-        this.svg.style.height = "1px"
+        this.svg.style.width = "auto"
+        this.svg.style.height = "auto"
         this.base.style.width = "1px"
         this.base.style.height = "1px"
         this.svg.style.position = 'absolute'
-        
+
         this.link2(this.htmlItem.baseElement,'mousedown', () => {
             soundManager.playClick() // why not working?
         })
