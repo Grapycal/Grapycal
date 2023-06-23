@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal"
-version = "0.1.1"
+version = "0.2.0"
 description = ""
 authors = ["eri24816 <a931eric@gmail.com>"]
 readme = "README.md"
