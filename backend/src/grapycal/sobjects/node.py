@@ -15,7 +15,7 @@ class Node(SObject):
     frontend_type = 'Node'
     category = 'hidden'
 
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace:'Workspace', is_preview:bool = False, display_ports:bool = True):
+    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace:'Workspace', is_preview:bool = False):
         self.workspace = workspace
         
         self.use_transform = self.add_attribute('use_transform', GenericTopic[bool], not isinstance(self.get_parent(), Node))
@@ -36,7 +36,7 @@ class Node(SObject):
         self.on('spawn', self._spawn , is_stateful=False)
 
         def print_output(data):
-            self.output.set(self.output.get()+data)
+            self.output.set(self.output.get()+data) #TODO: optimize
         self._output_stream = OutputStream(print_output)
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
@@ -61,6 +61,8 @@ class Node(SObject):
             self.display_ports.set(True)
 
     def destroy(self) -> SObjectSerialized:
+        #TODO: Remove all edges connected to this node
+
         self._output_stream.close()
         return super().destroy()
 

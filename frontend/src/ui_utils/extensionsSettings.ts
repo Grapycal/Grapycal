@@ -74,7 +74,7 @@ export class ExtensionsSetting extends Componentable{
                 }
             }else{
                 popup.addOption('Import to workspace',()=>{
-                    this.objectsync.emit('import_extension',{base_name:newExtension.name})
+                    this.objectsync.emit('import_extension',{package_name:newExtension.name})
                 })
             }
         })
@@ -82,9 +82,23 @@ export class ExtensionsSetting extends Componentable{
         this.cards[newExtension.name] = card
         if(status == 'imported'){
             this.importedDiv.appendChild(card)
+            this.sortCards(this.importedDiv)
         }else{
             this.avaliableDiv.appendChild(card)
+            this.sortCards(this.avaliableDiv)
         }
+    }
+
+    sortCards(div:HTMLElement){
+        let cards = Array.from(div.querySelectorAll('.card'))
+        cards.sort((a,b)=>{
+            let aTitle = a.querySelector<HTMLDivElement>('.card-title').innerText
+            let bTitle = b.querySelector<HTMLDivElement>('.card-title').innerText
+            //always put builtin nodes at the top
+            if(aTitle.startsWith('builtin_nodes')) return -1
+            return aTitle.localeCompare(bTitle)
+        })
+        cards.forEach(card=>div.appendChild(card))
     }
 
 

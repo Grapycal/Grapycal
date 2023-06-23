@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class Port(SObject):
     frontend_type = 'Port'
     def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
-        self.name = self.add_attribute('name', StringTopic, 'port name')
+        self.name = self.add_attribute('name', StringTopic, name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
     
         self.edges: List[Edge] = []
@@ -26,7 +26,7 @@ class Port(SObject):
 
 
 class InputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='in', max_edges=64):
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name, max_edges=64):
         super().pre_build(attribute_values, workspace, name, max_edges)
         self.add_attribute('is_input', IntTopic, 1)
 

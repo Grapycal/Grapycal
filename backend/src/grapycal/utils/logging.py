@@ -41,22 +41,22 @@ class ConsoleLogFormatter(logging.Formatter):
     no_bold = "\x1b[22m"
     reset = "\x1b[0m"
     #format = "%(threadName)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    format = f"%(levelname)5s {bold}[%(short_name)s]\t{no_bold} %(message)s"
+    format_ = f"%(levelname)5s {bold}[%(short_name)s]\t{no_bold} %(message)s"
 
     FORMATS = {
         'default':{
-            logging.DEBUG: blue + format + reset,
-            logging.INFO: grey + format + reset,
-            logging.WARNING: yellow + format + reset,
-            logging.ERROR: red + format + reset,
-            logging.CRITICAL: bold_red + format + reset
+            logging.DEBUG: blue + format_ + reset,
+            logging.INFO: grey + format_ + reset,
+            logging.WARNING: yellow + format_ + reset,
+            logging.ERROR: red + format_ + reset,
+            logging.CRITICAL: bold_red + format_ + reset
         },
         'objectsync':{
-            logging.DEBUG: green + format + reset,
-            logging.INFO: grey + format + reset,
-            logging.WARNING: yellow + format + reset,
-            logging.ERROR: red + format + reset,
-            logging.CRITICAL: bold_red + format + reset
+            logging.DEBUG: green + format_ + reset,
+            logging.INFO: grey + format_ + reset,
+            logging.WARNING: yellow + format_ + reset,
+            logging.ERROR: red + format_ + reset,
+            logging.CRITICAL: bold_red + format_ + reset
         },
     }
 
