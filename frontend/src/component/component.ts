@@ -61,3 +61,7 @@ export class ComponentManager{
 export interface IComponentable{
     componentManager: ComponentManager
 }
+
+export class Componentable implements IComponentable{
+    componentManager = new ComponentManager();
+}

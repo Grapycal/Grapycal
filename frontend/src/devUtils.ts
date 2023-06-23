@@ -7,7 +7,3 @@ export function print(...args: any[]): void {
 }
 
 expose('print', print);
-
-export function Null<T>(): T {
-    return null as unknown as T;
-}

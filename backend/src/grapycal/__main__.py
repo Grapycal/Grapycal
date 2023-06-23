@@ -1,17 +1,17 @@
-from grapycal import GrapycalApp, load_config
-import sys
+# python -m grapycal
+
+from grapycal import GrapycalApp
+import usersettings
 
 def main():
-    if len(sys.argv)<2:
-        config_path = 'config/default.yaml'
-    else:
-        config_path = sys.argv[1]
-    config = load_config(config_path
-    )
-    app = GrapycalApp(config)
+    s = usersettings.Settings("Grapycal")
+    s.add_setting("port", int, default=8765) #type: ignore
+    s.add_setting("host", str, default="localhost") #type: ignore
+    s.load_settings()
+    #TODO: enable override from command line
+    s.save_settings()
+    app = GrapycalApp(s)
     app.run()
 
 if __name__ == '__main__':
     main()
-
-# poetry run python -m grapycal

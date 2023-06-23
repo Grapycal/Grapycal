@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="/default.css" />
+    <link rel="stylesheet" href="/css/main.css" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Grapycal</title>
@@ -9,5 +9,17 @@
   </head>
   <body>
     <script src="/main.js" type="module" async defer></script>
+    <div id="settings-page" class="settings-page">
+      <div class="settings-page-overlay" id="settings-page-overlay"></div>
+      <div class="settings-page-content">
+        <h1>⚙️ Extensions</h1>
+        <h2>In Use</h2>
+        <div class="card-gallery" id="imported-extensions"></div>
+        <h2>Avaliable</h2>
+        <div id="avaliable-extensions"></div>
+        
+        <button class="settings-page-close" id="settings-page-close">✕</button>
+      </div>
+    </div>
   </body>
 </html>

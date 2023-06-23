@@ -4,7 +4,7 @@ import { HtmlItem } from '../component/htmlItem'
 import { CompSObject } from './compSObject'
 import { editor, soundManager } from '../app'
 import { Vector2, as } from '../utils'
-import { Null, print } from '../devUtils'
+import { print } from '../devUtils'
 import { Transform } from '../component/transform'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
@@ -28,8 +28,8 @@ export class Edge extends CompSObject {
     state: EdgeState = EdgeState.Idle
 
     template = `
-    <div id="base" style="position:absolute">
-        <svg class="Edge" id="svg">
+    <div id="base" style="position:absolute;width:1px;height:1px">
+        <svg class="edge" id="svg">
             <g>
                 <path id="path" d=""  fill="none"></path>
             </g>
@@ -58,9 +58,6 @@ export class Edge extends CompSObject {
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
         
-        
-        this.parent?.onAddChild.add(this.updateSVG)
-        this.parent?.onRemoveChild.add(this.updateSVG)
         this.path = this.htmlItem.getEl('path',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
         this.svg = this.htmlItem.getEl('svg', SVGSVGElement)
@@ -80,26 +77,29 @@ export class Edge extends CompSObject {
     protected onStart(): void {
         super.onStart()
         // link attributes to UI
-        this.link(this.tail.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) {
-                oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
-            }
-            if(!port) return
-            this.updateSVG();
-            port.moved.add(this.updateSVG)
-            port.edges.push(this)
+        this.link(this.tail.onSet2,(oldPort: Port,_) => {
+            if(!oldPort) return
+            oldPort.moved.remove(this.updateSVG)
+            oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
         })
-        this.link(this.head.onSet2,(oldPort: Port,port: Port) => {
-            if(oldPort) {
-                oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
-            }
-            if(!port) return
+        this.link(this.tail.onSet,(newPort: Port) =>{
+            if(!newPort) return
             this.updateSVG();
-            port.moved.add(this.updateSVG)
-            port.edges.push(this)
+            newPort.moved.add(this.updateSVG)
+            newPort.edges.push(this)
         })
+        this.link(this.head.onSet2,(oldPort: Port,_) => {
+            if(!oldPort) return
+            oldPort.moved.remove(this.updateSVG)
+            oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+        })
+        this.link(this.head.onSet,(newPort: Port) =>{
+            if(!newPort) return
+            this.updateSVG();
+            newPort.moved.add(this.updateSVG)
+            newPort.edges.push(this)
+        })
+
         if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
         if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
         if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
@@ -240,9 +240,7 @@ export class Edge extends CompSObject {
 
     // Graphical stuff
     private updateSVG() {
-        //print('updateSVG',this.tail.getValue(),this.head.getValue())
         this.path.setAttribute('d', this.getSVGPath())
-
     }
     private getSVGPath(): string {
         let tail: Vector2
@@ -280,7 +278,7 @@ export class Edge extends CompSObject {
         let dx = head.x - tail.x
         let dy = head.y - tail.y
         let d = Math.sqrt(dx*dx + dy*dy)
-        let r = Math.min(200, d/3)
+        let r = Math.min(50, d/3)
         if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) return ''
         let path = `M ${tail.x} ${tail.y} C ${tail.x + Math.cos(tail_orientation)*r} ${tail.y + Math.sin(tail_orientation)*r},
         ${head.x + Math.cos(head_orientation)*r} ${head.y+ Math.sin(head_orientation)*r}, ${head.x} ${head.y}`

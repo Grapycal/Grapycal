@@ -1,9 +1,9 @@
 from typing import Any, List
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.simpleNode import SimpleNode
 
-class FunctionNode(Node):
+class FunctionNode(SimpleNode):
     inputs = []
     input_edge_limit = []
     outputs = []
@@ -37,7 +37,7 @@ class FunctionNode(Node):
                 return
         self.activate()
 
-    def activate(self):
+    def run(self):
         inputs = []
         for port in self.in_ports:
             assert isinstance(port, InputPort)
@@ -56,6 +56,7 @@ class FunctionNode(Node):
             for port, data in zip(self.out_ports, result):
                 for edge in port.edges:
                     edge.push_data(data)
+
 
     def calculate(self, data: list[Any]):
         '''
