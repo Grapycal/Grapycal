@@ -1,17 +1,27 @@
+import logging
+logger = logging.getLogger(__name__)
+
+from collections import deque
 from contextlib import contextmanager
-from email import contentmanager
 from queue import Queue
+import queue
+import traceback
 from typing import Callable, Dict
 import signal
+from .stdout_helper import orig_print
 
 class BackgroundRunner:
     def __init__(self):
-        self._tasks: Queue[Callable] = Queue()
+        self._inputs: Queue = Queue()
+        self._tasks: deque = deque()
         self._exit_flag = False
-        self._exception_callback: Callable[[Exception], None] = lambda e: None
+        self._exception_callback: Callable[[Exception], None] = lambda e: orig_print('runner default exception callback:\n',traceback.format_exc())
 
-    def add_task(self, task: Callable):
-        self._tasks.put(task)
+    def push(self, task: Callable):
+        self._inputs.put((task, False))
+
+    def push_front(self, task: Callable):
+        self._inputs.put((task, True))
 
     def interrupt(self):
         signal.raise_signal(signal.SIGINT)
@@ -25,7 +35,7 @@ class BackgroundRunner:
     @contextmanager
     def no_interrupt(self):
         def handler(signum, frame):
-            print("no_interrupt: continue")
+            logger.info("no_interrupt: continue")
 
         original_sigint_handler = signal.getsignal(signal.SIGINT)
         try:
@@ -39,17 +49,24 @@ class BackgroundRunner:
             if self._exit_flag:
                 break
             try:
-                task = None
-
                 # Queue.get() blocks signal.
-                while task is None:
-                    task = self._tasks.get(timeout=0.2)
+                while len(self._tasks) == 0 or not self._inputs.empty():
+                    try:
+                        inp = self._inputs.get(timeout=0.2)
+                    except queue.Empty:
+                        continue
+                    task, is_front = inp
+                    if is_front:
+                        self._tasks.append(task)
+                    else:
+                        self._tasks.appendleft(task)
 
-                print('got a task OAO')
-                task()
+                logger.debug('got a task OAO')
+                task_to_run = self._tasks.pop()
+                task_to_run()
 
             except KeyboardInterrupt:
-                print("runner catch keyboardinterrupt")
+                logger.info("runner catch keyboardinterrupt")
 
             except Exception as e:
                 self._exception_callback(e)

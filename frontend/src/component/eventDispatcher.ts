@@ -1,4 +1,4 @@
-import { Null, print } from "../devUtils"
+import { print } from "../devUtils"
 import { Action, Vector2 } from "../utils"
 import { Component, IComponentable } from "./component"
 
@@ -54,7 +54,7 @@ export class GlobalEventDispatcher{
 export class EventDispatcher extends Component{
     static readonly allEventDispatchers: EventDispatcher[] = [];
 
-    private eventElement: ICanReceiveMouseEvent = Null();
+    private eventElement: ICanReceiveMouseEvent = null;
     private prevMousePos: Vector2 = Vector2.zero;
     private fowardCalled: boolean = false;
 
@@ -69,7 +69,7 @@ export class EventDispatcher extends Component{
     public readonly onScroll = new Action<[WheelEvent]>();
     public readonly onDoubleClick = new Action<[MouseEvent]>();
 
-    constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = Null()){
+    constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = null){
         super(object);
         EventDispatcher.allEventDispatchers.push(this);
         //bind

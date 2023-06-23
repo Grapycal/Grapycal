@@ -11,5 +11,4 @@ class TextOutputNode(Node):
 
     def edge_activated(self, edge):
         data = edge.get_data()
-        print('edge activated', data)
         self.label.set(data)

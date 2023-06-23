@@ -9,9 +9,21 @@ import { glowDiv as glowDiv, glowText } from '../ui_utils/effects'
 import { Vector2, as } from '../utils'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
-import { Sidebar } from './sideBar'
+import { Sidebar } from './sidebar'
 
 export class Node extends CompSObject {
+
+    public static getCssClassesFromCategory(category: string): string[]{
+        let classes = []
+        let str = 'cate'
+        for(let subCat of category.split('/')){
+            if(subCat == '') continue
+            str += '-'+subCat
+            classes.push(str)
+        }
+        return classes
+    }
+    
     use_transform: GenericTopic<boolean> = this.getAttribute('use_transform', GenericTopic<boolean>)
     display_ports: GenericTopic<boolean> = this.getAttribute('display_ports', GenericTopic<boolean>)
 
@@ -20,7 +32,6 @@ export class Node extends CompSObject {
     label: StringTopic = this.getAttribute('label', StringTopic)
     label_offset: FloatTopic = this.getAttribute('label_offset', FloatTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
-    primary_color: StringTopic = this.getAttribute('primary_color', StringTopic)
     category: StringTopic = this.getAttribute('category', StringTopic)
 
     private _isPreview: boolean
@@ -38,7 +49,7 @@ export class Node extends CompSObject {
 
     protected readonly templates: {[key: string]: string} = {
     block: 
-        `<div class="BlockNode flex-horiz space-between">
+        `<div class="node block-node flex-horiz space-between">
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
             <div class="NodeContent full-width flex-vert space-evenly">
                 <div id="label" class="center" ></div>
@@ -47,19 +58,19 @@ export class Node extends CompSObject {
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
         </div>`,
     round:
-        `<div class="RoundNode flex-horiz space-between" >
+        `<div class="node round-node flex-horiz space-between" >
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
             <div class="full-width flex-vert space-evenly"> 
-                <div id="label" class="center" style="font-size:36px"></div>
+                <div id="label" class="center"></div>
             </div>
             <div id="slot_default" style="display:none"></div>
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
         </div>`,
     frame:
-        `<div class="FrameNode flex-horiz space-between">
+        `<div class="node frame-node flex-horiz space-between">
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
             <div class="NodeContent full-width flex-vert space-evenly"> 
-                <div id="label" class="center DisplayNone"></div>
+                <div id="label" class="center display-none"></div>
                 <div id="slot_default"> </div>
             </div>
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
@@ -104,11 +115,11 @@ export class Node extends CompSObject {
                 }
         })
 
-        this.in_ports.onInsert.add((port: Port) => {
+        this.link(this.in_ports.onInsert, (port: Port) => {
             this.reshapePort(port)
         })
 
-        this.out_ports.onInsert.add((port: Port) => {
+        this.link(this.out_ports.onInsert, (port: Port) => {
             this.reshapePort(port)
         })
 
@@ -118,25 +129,24 @@ export class Node extends CompSObject {
 
         this.link(this.label_offset.onSet, (offset: number) => {
             let label_el = this.htmlItem.getHtmlEl('label')
-            let font_size = parseFloat(label_el.style.fontSize.split('px')[0])
-            
-            label_el.style.marginTop = this.label_offset.getValue()*font_size + 'px'
+            label_el.style.marginTop = this.label_offset.getValue() + 'em'
         })
 
-        this.link(this.primary_color.onSet, (color: string) => {
-            this.htmlItem.getHtmlEl('label').style.color = color
-            as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = color
-            glowDiv(as(this.htmlItem.baseElement, HTMLElement))
-            for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
-                glowText(div)
-            }
-        })
-
+        for(let className of Node.getCssClassesFromCategory(this.category.getValue())){
+            this.htmlItem.baseElement.classList.add(className)
+        }
+        this.htmlItem.baseElement.classList.add
         this.link(this.category.onSet2, (oldCategory: string, newCategory: string) => {
             if(this.parent instanceof Sidebar){
                 if(this.parent.hasItem(this.htmlItem))
                     this.parent.removeItem(this.htmlItem, oldCategory)
                 this.parent.addItem(this.htmlItem, newCategory)
+            }
+            for(let className of Node.getCssClassesFromCategory(oldCategory)){
+                this.htmlItem.baseElement.classList.remove(className)
+            }
+            for(let className of Node.getCssClassesFromCategory(newCategory)){
+                this.htmlItem.baseElement.classList.add(className)
             }
         })
 
@@ -196,8 +206,6 @@ export class Node extends CompSObject {
             glowDiv(as(this.htmlItem.baseElement, HTMLElement))
             this.transform.enabled = false
         }else{
-            as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = this.primary_color.getValue()
-            glowDiv(as(this.htmlItem.baseElement, HTMLElement))
             this.transform.enabled = this.use_transform.getValue()
         }
     }
@@ -212,22 +220,10 @@ export class Node extends CompSObject {
         })
         
         let label_el = this.htmlItem.getHtmlEl('label')
-        label_el.innerText = this.label.getValue()
-        let font_size = parseFloat(label_el.style.fontSize.split('px')[0])
-
-        label_el.style.marginTop = this.label_offset.getValue()*font_size + 'px'
+        label_el.style.marginTop = this.label_offset.getValue() + 'em'
 
         if(this._isPreview){
-            this.htmlItem.baseElement.classList.add('NodePreview')
-        }else{
-            this.htmlItem.baseElement.classList.add('Node')
-        }
-        this.htmlItem.getHtmlEl('label').style.color = this.primary_color.getValue()
-        as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = this.primary_color.getValue()
-        glowDiv(as(this.htmlItem.baseElement, HTMLElement))
-        //glow text
-        for(let div of this.htmlItem.baseElement.querySelectorAll('div')){
-            glowText(div)
+            this.htmlItem.baseElement.classList.add('node-preview')
         }
     }
 

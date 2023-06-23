@@ -1,4 +1,4 @@
-import { Null, print } from "../devUtils"
+import { print } from "../devUtils"
 import { Action, Vector2, as } from "../utils"
 import { Component, IComponentable } from "./component"
 import { EventDispatcher } from "./eventDispatcher"
@@ -20,14 +20,14 @@ export class TransformRoot extends Component{
 
 // Dependency: HtmlItem
 export class Transform extends Component{
-    htmlItem: HtmlItem = Null();
+    htmlItem: HtmlItem = null;
     linker = new Linker(this);
-    parent: Transform | TransformRoot = Null();
-    _targetElement: HTMLElement = Null();
+    parent: Transform | TransformRoot = null;
+    _targetElement: HTMLElement = null;
     get targetElement(){return this._targetElement;}
     set targetElement(targetElement: HTMLElement){
         this._targetElement = targetElement;
-        if(targetElement != Null() && this.draggable){
+        if(targetElement != null && this.draggable){
             if(this.actuallyDraggable){
                 this.targetElement.style.position = 'absolute'
                 this.targetElement.style.left = '0px'
@@ -35,7 +35,7 @@ export class Transform extends Component{
             }
         }
     }
-    specifiedTargetElement: HTMLElement = Null();
+    specifiedTargetElement: HTMLElement = null;
 
     onChange = new Action<[]>();
 
@@ -174,7 +174,7 @@ export class Transform extends Component{
     //     }
     // }
     
-    constructor(object:IComponentable, targetElement:HTMLElement=Null(), eventEl: HTMLElement=Null()){
+    constructor(object:IComponentable, targetElement:HTMLElement=null, eventEl: HTMLElement=null){
         super(object);
         this.htmlItem = this.getComponent(HtmlItem);
         this.specifiedTargetElement = targetElement;
@@ -264,11 +264,18 @@ export class Transform extends Component{
     public getAbsoluteScale(){
         this.updateUI();
         // Only works if element size is not zero
-        let rect = this.targetElement.getBoundingClientRect()
-        return {
-            'x':rect.width/this.targetElement.offsetWidth,
-            'y':rect.height/this.targetElement.offsetHeight
-        };
+        // let rect = this.targetElement.getBoundingClientRect()
+        // return {
+        //     'x':rect.width/this.targetElement.offsetWidth,
+        //     'y':rect.height/this.targetElement.offsetHeight
+        // };
+        let s = this.scale;
+        let parent = this.parent;
+        while(!(parent instanceof TransformRoot)){
+            s *= parent.scale;
+            parent = parent.parent;
+        }
+        return new Vector2(s,s);
     }
 
     public worldToLocal(pos: Vector2){

@@ -4,7 +4,7 @@ import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 import { Node } from './node'
-import { Null, print } from '../devUtils'
+import { print } from '../devUtils'
 import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
@@ -17,7 +17,7 @@ export class Port extends CompSObject {
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
     orientation: number=0;
 
-    private node: Node = Null();
+    private node: Node = null;
     
     element = document.createElement('div')
 
@@ -38,7 +38,7 @@ export class Port extends CompSObject {
 
     readonly template: string = `
     <div class="Port">
-        <div class="Knob" id="Knob"></div>
+        <div class="port-knob" id="Knob"></div>
         <div id="label">
         </div>
     </div>
@@ -57,20 +57,22 @@ export class Port extends CompSObject {
         transform.pivot = new Vector2(0,0)
 
         let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Knob'))
-        eventDispatcher.onDragStart.add(this.generateEdge.bind(this))
+        this.link(eventDispatcher.onDragStart,this.generateEdge.bind(this))
 
         new MouseOverDetector(this,this.htmlItem.getHtmlEl('Knob'))
 
         // Bind attributes to UI
+
+        this.displayLabel = false
         
-        this.name.onSet.add((label: string) => {
+        this.link(this.name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
         })
     }
 
     protected onStart(): void {
         super.onStart()
-        this.is_input.onSet.add((is_input: number) => {
+        this.link(this.is_input.onSet,(is_input: number) => {
             if(is_input) {
                 this.orientation = Math.PI
             }else{
@@ -107,12 +109,12 @@ export class Port extends CompSObject {
     private isInputChanged(is_input: number): void {
         if(is_input) {
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem)!, 'input_port')
-            this.htmlItem.getHtmlEl('Knob').classList.remove('OutPort')
-            this.htmlItem.getHtmlEl('Knob').classList.add('InPort')
+            this.htmlItem.getHtmlEl('Knob').classList.remove('out-port')
+            this.htmlItem.getHtmlEl('Knob').classList.add('in-port')
         } else {
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem)!, 'output_port')
-            this.htmlItem.getHtmlEl('Knob').classList.remove('InPort')
-            this.htmlItem.getHtmlEl('Knob').classList.add('OutPort')
+            this.htmlItem.getHtmlEl('Knob').classList.remove('in-port')
+            this.htmlItem.getHtmlEl('Knob').classList.add('out-port')
         }
         this.moved.invoke()
     }

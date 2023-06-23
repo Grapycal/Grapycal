@@ -6,7 +6,7 @@ import { HeirarchyNode } from '../ui_utils/hierarchyNode'
 
 export class Sidebar extends CompSObject {
     private items: HtmlItem[] = []
-    nodeLibrary: HeirarchyNode = new HeirarchyNode('', true);
+    nodeLibrary: HeirarchyNode = new HeirarchyNode('', '',true);
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         this.nodeLibrary.htmlItem.setParent(editor.componentManager.getComponent(HtmlItem), 'sidebar')

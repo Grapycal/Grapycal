@@ -8,7 +8,7 @@ class PrintNode(Node):
     category = 'interaction'
     def build(self):
         super().build()
-        self.add_in_port('in').max_edges.set(1)
+        self.add_in_port('in',max_edges=1)
         self.label.set('')
 
         if self.is_preview.get():
