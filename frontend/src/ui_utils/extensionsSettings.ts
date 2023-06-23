@@ -57,7 +57,7 @@ export class ExtensionsSetting extends Componentable{
         card = card.firstElementChild as HTMLElement
         card.querySelector<HTMLDivElement>('.card-title').innerText = newExtension.name
         //card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(${newExtension.icon})`
-        card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(https://imgur.com/CGgS4FF.png)`
+        card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(https://imgur.com/xwG2FSr.jpg)`
 
         card.addEventListener('contextmenu',(e)=>{
             e.preventDefault()

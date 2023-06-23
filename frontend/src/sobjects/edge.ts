@@ -84,9 +84,7 @@ export class Edge extends CompSObject {
         })
         this.link(this.tail.onSet,(newPort: Port) =>{
             if(!newPort) return
-            setTimeout(() => {
-                this.updateSVG();
-            }, 0);
+            this.updateSVG();
             newPort.moved.add(this.updateSVG)
             newPort.edges.push(this)
         })
@@ -97,9 +95,7 @@ export class Edge extends CompSObject {
         })
         this.link(this.head.onSet,(newPort: Port) =>{
             if(!newPort) return
-            setTimeout(() => {
-                this.updateSVG();
-            }, 0);
+            this.updateSVG();
             newPort.moved.add(this.updateSVG)
             newPort.edges.push(this)
         })
