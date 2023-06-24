@@ -17,7 +17,7 @@ class SimpleNode(Node):
     def activate(self, *args, **kwargs):
         run = functools.partial(self.run, *args, **kwargs)
         if not self.background:
-            self.run_in_foreground(run)
+            self.run_directly(run)
         else:
             self.run_in_background(run)
 

@@ -81,7 +81,6 @@ class Node(SObject):
     Run tasks in the background or foreground, redirecting stdout to the node's output stream.
     '''
 
-    #TODO: this records output from chatroom and objectsync too. Fix that.
     @contextmanager
     def redirect_output(self):
         '''
@@ -100,7 +99,6 @@ class Node(SObject):
         '''
         Run a task in the background thread.
         '''
-        from grapycal.core.stdout_helper import orig_print
         def task_wrapper():
             self.workspace.background_runner.set_exception_callback(self._on_exception)
             with self.redirect_output():
@@ -108,11 +106,10 @@ class Node(SObject):
 
         self.workspace.background_runner.push(task_wrapper)
 
-    def run_in_foreground(self,task,run_after_transition=True):
+    def run_directly(self,task,run_after_transition=True):
         '''
-        Run a task in the foreground thread.
+        Run a task in the current thread.
         '''
-        #TODO: run_after_transition
         if run_after_transition:
             def task_wrapper():
                 try:
@@ -134,7 +131,7 @@ class Node(SObject):
         orig_print('got error\n', traceback.format_exc(),'\n',''.join(traceback.format_stack()))
 
     '''
-    User defined callbacks
+    Node events
     '''
     
     def edge_activated(self, edge:Edge):
