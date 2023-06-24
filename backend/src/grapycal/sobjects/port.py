@@ -27,7 +27,7 @@ class Port(SObject):
 
 
 class InputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name, max_edges=64):
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
         super().pre_build(attribute_values, workspace, name, max_edges)
         self.add_attribute('is_input', IntTopic, 1)
 
@@ -43,7 +43,7 @@ class InputPort(Port):
         return all(edge.is_data_ready() for edge in self.edges)
 
 class OutputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='out', max_edges=64):
+    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
         super().pre_build(attribute_values, workspace, name, max_edges)
         self.add_attribute('is_input', IntTopic, 0)
 
