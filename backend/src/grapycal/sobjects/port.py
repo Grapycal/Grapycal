@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Any, List
+from grapycal.utils.misc import as_type
 from objectsync import SObject, StringTopic, IntTopic
 
 if TYPE_CHECKING:
@@ -12,7 +13,7 @@ class Port(SObject):
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
     
         self.edges: List[Edge] = []
-        self.node: Node = self.get_parent()
+        self.node: Node = self.get_parent() # type: ignore
     
     def add_edge(self, edge):
         if len(self.edges) >= self.max_edges.get():
