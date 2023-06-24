@@ -29,6 +29,12 @@ input{
     block-size: fit-content;
 }
 
+input:not(:focus){
+    cursor: inherit;
+    user-select: none !important;
+    -webkit-user-select: none;
+}
+
 button{
     font-family: inherit;
     font-size: 30px;
