@@ -106,24 +106,15 @@ class Node(SObject):
 
         self.workspace.background_runner.push(task_wrapper)
 
-    def run_directly(self,task,run_after_transition=True):
+    def run_directly(self,task):
         '''
         Run a task in the current thread.
         '''
-        if run_after_transition:
-            def task_wrapper():
-                try:
-                    with self.redirect_output():
-                        task()
-                except Exception as e:
-                    self._on_exception(e)
-            self.workspace.do_after_transition(task_wrapper)
-        else:
-            try:
-                with self.redirect_output():
-                    task()
-            except Exception as e:
-                self._on_exception(e)
+        try:
+            with self.redirect_output():
+                task()
+        except Exception as e:
+            self._on_exception(e)
 
     def _on_exception(self, e):
         #TODO: Create error topic
