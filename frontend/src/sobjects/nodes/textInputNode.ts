@@ -18,6 +18,7 @@ export class TextInputNode extends Node{
     }
     text: StringTopic = null
     inputField: HTMLInputElement = null
+    compositioning: boolean = false
 
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
@@ -36,6 +37,17 @@ export class TextInputNode extends Node{
         super.reshape(shape)
         this.inputField = this.htmlItem.getEl('input',HTMLInputElement)
         this.inputField.value = this.text.getValue()
-        this.link2(this.inputField,'input', ()=>this.text.set(this.inputField.value))
+        this.inputField.addEventListener('input', (e)=>{
+            if(!this.compositioning){
+                this.text.set(this.inputField.value)
+            }
+        })
+        this.inputField.addEventListener('compositionstart', (e)=>{
+            this.compositioning = true
+        })
+        this.inputField.addEventListener('compositionend', (e)=>{
+            this.compositioning = false
+            this.text.set(this.inputField.value)
+        })
     }
 }

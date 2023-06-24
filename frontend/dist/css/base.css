@@ -27,10 +27,11 @@ input{
     box-sizing: border-box;
     width: 50px;
     block-size: fit-content;
+    
 }
 
 input:not(:focus){
-    cursor: inherit;
+    cursor:default;
     user-select: none !important;
     -webkit-user-select: none;
 }
