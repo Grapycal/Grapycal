@@ -1,5 +1,9 @@
 # Grapycal
 
+![image](https://github.com/eri24816/Grapycal/assets/30017117/a67353e0-1818-4e5f-a670-6b21efda8cb5)
+
+
+
 ## Installation (for Development)
 
 backend:
