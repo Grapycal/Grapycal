@@ -37,7 +37,7 @@ class GrapycalApp:
         #TODO: Websocket multiplexing
 
         # Here simply start one workspace in background
-        workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']])
+        workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']], start_new_session=True)
         while True:
             break_flag = False
             try:
@@ -55,7 +55,6 @@ class GrapycalApp:
                 break
 
         print('Stopping workspaces...')
-        # IDK why workspace can't catch this signal before being killed
         workspace.send_signal(signal.SIGTERM)
         workspace.wait()
         self.clean_unused_fetched_extensions()
