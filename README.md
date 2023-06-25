@@ -49,4 +49,4 @@ cd frontend
 npm run app
 ```
 
-3. Go to `localhost:9001` with a web server.
+3. Go to `localhost:9001` with a web browser.
