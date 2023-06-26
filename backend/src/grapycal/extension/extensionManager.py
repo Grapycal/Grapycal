@@ -110,7 +110,7 @@ class ExtensionManager:
                 port_map_1[port.get_id()] = (port.name.get(),node.get_id())
             for port in ports:
                 for edge in port.edges:
-                    edges_to_recover.append((edge.tail.get().get_id(),edge.head.get().get_id(),edge.get_parent().get_id()))
+                    edges_to_recover.append((edge.tail._topic.get(),edge.head._topic.get(),edge.get_parent().get_id()))
                     self._objectsync.destroy_object(edge.get_id())
 
             # Then destroy the node

@@ -27,6 +27,13 @@ input{
     box-sizing: border-box;
     width: 50px;
     block-size: fit-content;
+    
+}
+
+input:not(:focus){
+    cursor:default;
+    user-select: none !important;
+    -webkit-user-select: none;
 }
 
 button{
@@ -165,6 +172,12 @@ button:hover{
     line-height: 50px;
     font-size: 24px;
     background-color: rgb(43, 69, 89);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.settings-button:hover{
+    background-color: rgb(43, 69, 89, 0.8);
 }
 
 .vignette {
