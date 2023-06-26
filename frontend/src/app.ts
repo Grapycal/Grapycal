@@ -9,7 +9,7 @@ import { Edge } from './sobjects/edge'
 import { TextOutputNode } from './sobjects/nodes/textOutputNode'
 import { TextInputNode } from './sobjects/nodes/textInputNode'
 import { SoundManager } from './ui_utils/soundManager';
-import { Sidebar } from './sobjects/sidebar'
+import { Sidebar } from './sobjects/sideBar'
 import { Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 
