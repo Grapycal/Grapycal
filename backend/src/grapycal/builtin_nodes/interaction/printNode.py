@@ -12,7 +12,7 @@ class PrintNode(Node):
         self.label.set('')
 
         if self.is_preview.get():
-            self.label.set('Hello world')
+            self.label.set('print')
 
 
     def edge_activated(self, edge):

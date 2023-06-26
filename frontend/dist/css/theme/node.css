@@ -23,6 +23,10 @@ Define styles for different node categories
 .cate-function{
     --cate-color: #06c206;
 }
+
+.cate-data{
+    --cate-color: #fea500;
+}
 /* 
 .cate-function-math{
     --cate-color: #59C059;
