@@ -45,7 +45,7 @@ dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "py
 
 [[package]]
 name = "objectsync"
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -59,7 +59,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "6c22882e070e2e193568c68afc9663e761bbf81c"
+resolved_reference = "e11730ffa99e8f34115d01cf276749939e6f43e9"
 
 [[package]]
 name = "pyyaml"
