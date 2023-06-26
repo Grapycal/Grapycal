@@ -72,7 +72,7 @@ class Workspace:
         Register all built-in node types
         '''
 
-        signal.signal(signal.SIGTERM, lambda sig, frame: self.exit()) #? Why this does not work?
+        signal.signal(signal.SIGTERM, lambda sig, frame: self.exit())
 
         if file_exists(self.path):
             self.load_workspace(self.path)

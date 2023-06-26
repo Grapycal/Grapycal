@@ -31,6 +31,7 @@ class BackgroundRunner:
 
     def exit(self):
         self._exit_flag = True
+        self.interrupt()
 
     @contextmanager
     def no_interrupt(self):
