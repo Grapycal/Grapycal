@@ -27,8 +27,7 @@ export class Node extends CompSObject {
     use_transform: GenericTopic<boolean> = this.getAttribute('use_transform', GenericTopic<boolean>)
     display_ports: GenericTopic<boolean> = this.getAttribute('display_ports', GenericTopic<boolean>)
 
-    shape: StringTopic = this.getAttribute('shape', StringTopic) // round, block, frame
-    output: StringTopic = this.getAttribute('output', StringTopic)
+    shape: StringTopic = this.getAttribute('shape', StringTopic) // normal, simple, round
     label: StringTopic = this.getAttribute('label', StringTopic)
     label_offset: FloatTopic = this.getAttribute('label_offset', FloatTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
@@ -48,12 +47,24 @@ export class Node extends CompSObject {
     mouseOverDetector: MouseOverDetector
 
     protected readonly templates: {[key: string]: string} = {
-    block: 
-        `<div class="node block-node flex-horiz space-between">
+    normal: 
+        `<div class="node normal-node flex-vert space-between">
+        
+            <div id="label" class="center" ></div>
+            <div class="flex-horiz left-align full-width">
+                <div id="slot_input_port" class="no-width flex-vert space-evenly center"></div>
+            </div>
+            <div class="flex-horiz right-align full-width">
+                <div id="slot_output_port" class="no-width flex-vert space-evenly center"></div>
+            </div>
+            <div id="slot_control"> </div>
+        </div>`,
+    simple:
+        `<div class="node simple-node flex-horiz space-between">
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
-            <div class="NodeContent full-width flex-vert space-evenly">
-                <div id="label" class="center" ></div>
-                <div id="slot_default"> </div>
+            <div class="NodeContent full-width flex-vert space-evenly"> 
+                <div id="label" class="center-align display-none"></div>
+                <div id="slot_control"> </div>
             </div>
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
         </div>`,
@@ -61,18 +72,9 @@ export class Node extends CompSObject {
         `<div class="node round-node flex-horiz space-between" >
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
             <div class="full-width flex-vert space-evenly"> 
-                <div id="label" class="center"></div>
+                <div id="label" class="center-align"></div>
             </div>
-            <div id="slot_default" style="display:none"></div>
-            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
-        </div>`,
-    frame:
-        `<div class="node frame-node flex-horiz space-between">
-            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
-            <div class="NodeContent full-width flex-vert space-evenly"> 
-                <div id="label" class="center display-none"></div>
-                <div id="slot_default"> </div>
-            </div>
+            <div id="slot_control" style="display:none"></div>
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
         </div>`,
     }
@@ -228,13 +230,13 @@ export class Node extends CompSObject {
     }
 
     reshapePort(port:Port){
-        if(this.shape.getValue() == 'block'){
+        if(this.shape.getValue() == 'normal'){
+            port.displayLabel = true
+        }
+        if(this.shape.getValue() == 'simple'){
             port.displayLabel = false
         }
         if(this.shape.getValue() == 'round'){
-            port.displayLabel = false
-        }
-        if(this.shape.getValue() == 'frame'){
             port.displayLabel = false
         }
     }

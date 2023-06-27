@@ -12,6 +12,7 @@ import { SoundManager } from './ui_utils/soundManager';
 import { Sidebar } from './sobjects/sidebar'
 import { Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
+import { TextControl } from './sobjects/controls/textControl'
 
 export const editor = new Editor();
 
@@ -27,6 +28,8 @@ objectsync.register(TextOutputNode);
 objectsync.register(Port);
 objectsync.register(Edge);
 objectsync.register(Sidebar);
+
+objectsync.register(TextControl)
 
 
 new ExtensionsSetting(objectsync);
