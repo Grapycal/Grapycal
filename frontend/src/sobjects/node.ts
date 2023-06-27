@@ -9,7 +9,7 @@ import { glowDiv as glowDiv, glowText } from '../ui_utils/effects'
 import { Vector2, as } from '../utils'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
-import { Sidebar } from './sidebar'
+import { Sidebar } from './sideBar'
 
 export class Node extends CompSObject {
 

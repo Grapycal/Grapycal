@@ -13,8 +13,10 @@ module.exports = {
                 //use: ["ts-loader",MiniCssExtractPlugin.loader, 'css-loader'],
                 // to use MiniCssExtractPlugin.loader, 'css-loader' on css files only, use this:
                 use: [
-                    
-                    'ts-loader'
+                    {
+                        loader: 'ts-loader',
+                        options: { allowTsInNodeModules: true }
+                    }
                 ],
             },
         ]
