@@ -25,8 +25,13 @@ input{
     color: inherit;
 
     box-sizing: border-box;
-    width: 50px;
-    block-size: fit-content;
+    height:100%;
+
+    min-width:4ch; 
+    text-align: center; 
+    border: none; 
+    outline: none;
+    background: none;
     
 }
 
@@ -58,22 +63,21 @@ button:hover{
     border-radius: 2px;
     user-select: none;
     -webkit-user-select: none;
+    font-size: 16px;
 }
 
 .node-preview{
     margin: 20px auto;
 }
 
-.block-node{
-    min-width: 20px;
-    min-height: 20px;
+.normal-node{
+    width: 100px;
+    min-height: 24px;
 
     box-sizing: border-box;
-    width: fit-content;
-    block-size: fit-content;
 }
 
-.frame-node{
+.simple-node{
     min-width: 20px;
     min-height: 20px;
 
@@ -104,12 +108,27 @@ button:hover{
     background-color : #727272;
 }
 
+.port-label{
+    position: absolute;
+    top: 0px;
+    top: 50%; 
+    transform: translate(0,-50%); 
+}
+
 .out-port{
-    margin: 3px 1.4px;
+    margin: 5px 1.4px;
+}
+
+.out-port .port-label{
+    right: 10px;
 }
 
 .in-port{
-    margin: 3px -1.4px;
+    margin: 5px -1.4px;
+}
+
+.in-port .port-label{
+    left: 10px;
 }
 
 /* Edge */
@@ -271,6 +290,7 @@ button:hover{
 
 .full-width {
   width: 100%;
+  box-sizing: border-box;
 }
 
 .no-width {
@@ -281,12 +301,23 @@ button:hover{
     vertical-align: middle;
 }
 
-.center {
+.center-align {
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
+.left-align {
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.right-align {
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
 
 .pointerEventsNone {
     pointer-events: none;
