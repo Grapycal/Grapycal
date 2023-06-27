@@ -1,0 +1,41 @@
+name: Update objectsync and chatroom dependencies
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: |
+          cd backend && poetry install
+
+      - name: Update objectsync
+        run: |
+          cd backend && poetry update objectsync
+
+      - name: Update chatroom
+        run: |
+          cd backend && poetry update chatroom
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add backend/poetry.lock
+          git commit -m "Update dependencies via GitHub Action" && git push || echo "No changes to commit"
