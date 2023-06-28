@@ -161,4 +161,4 @@ cython_debug/
 
 # Sphinx
 docs/build/
-docs/generated/
+docs/source/generated
