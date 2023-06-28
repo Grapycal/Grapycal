@@ -6,12 +6,11 @@ import { Root } from './sobjects/root'
 import { expose } from './devUtils'
 import { Port } from './sobjects/port'
 import { Edge } from './sobjects/edge'
-import { TextOutputNode } from './sobjects/nodes/textOutputNode'
-import { TextInputNode } from './sobjects/nodes/textInputNode'
 import { SoundManager } from './ui_utils/soundManager';
 import { Sidebar } from './sobjects/sideBar'
 import { Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
+import { TextControl } from './sobjects/controls/textControl'
 
 export const editor = new Editor();
 
@@ -22,11 +21,11 @@ const objectsync = new ObjectSyncClient('ws://localhost:8765');
 objectsync.register(Root);
 objectsync.register(Workspace);
 objectsync.register(Node);
-objectsync.register(TextInputNode);
-objectsync.register(TextOutputNode);
 objectsync.register(Port);
 objectsync.register(Edge);
 objectsync.register(Sidebar);
+
+objectsync.register(TextControl)
 
 
 new ExtensionsSetting(objectsync);

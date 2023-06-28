@@ -9,10 +9,18 @@ import termcolor
 import time
 
 class GrapycalApp:
+    """
+    The backend server
+
+    :param usersettings.Settings config: the configuration for server
+    """
     def __init__(self, config) -> None:
         self._config = config
 
     def run(self) -> None:
+        """
+        Server main loop
+        """
         print(
             termcolor.colored(r'''
                ______                                  __

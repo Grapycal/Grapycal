@@ -131,6 +131,7 @@ export class EventDispatcher extends Component{
         }
         this.onDrag.invoke(event, mousePos, this.prevMousePos);
         this.prevMousePos = mousePos;
+        event.preventDefault(); // Avoid selecting text
     }
 
     private _onMouseUp(event: MouseEvent){

@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import traceback
-from typing import TYPE_CHECKING, Any, Dict, List
-from grapycal.core.stdout_helper import orig_print
+from typing import TYPE_CHECKING, Any, Dict, List, TypeVar
+from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
@@ -21,9 +21,9 @@ class Node(SObject):
         self.use_transform = self.add_attribute('use_transform', GenericTopic[bool], not isinstance(self.get_parent(), Node))
         self.display_ports = self.add_attribute('display_ports', GenericTopic[bool], not isinstance(self.get_parent(), Node))
 
-        self.shape = self.add_attribute('shape', StringTopic, 'block') # round, block, blockNamed, hideBody
+        self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
-        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False)
+        self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
@@ -31,6 +31,8 @@ class Node(SObject):
 
         self.in_ports:ObjListTopic[InputPort] = self.add_attribute('in_ports', ObjListTopic)
         self.out_ports:ObjListTopic[OutputPort] = self.add_attribute('out_ports', ObjListTopic)
+
+        self.controls:ObjListTopic[Control] = self.add_attribute('controls', ObjListTopic)
 
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self._spawn , is_stateful=False)
@@ -76,6 +78,12 @@ class Node(SObject):
         port.node = self
         self.out_ports.insert(port)
         return port
+    
+    T = TypeVar('T', bound=Control)
+    def add_control(self,control_type:type[T],**kwargs) -> T:
+        control = self.add_child(control_type,**kwargs)
+        self.controls.insert(control)
+        return control
 
     '''
     Run tasks in the background or foreground, redirecting stdout to the node's output stream.

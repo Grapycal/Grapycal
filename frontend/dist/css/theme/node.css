@@ -5,12 +5,11 @@ Define styles for different node categories
 .node{
     --cate-color: #8d97a0;
     color: var(--cate-color);
-    text-shadow:  0 0px 5px var(--cate-color);
+    /* text-shadow:  0 0px 5px var(--cate-color); */
     border-color: var(--cate-color);
-    box-shadow: 0 0 7px -2px var(--cate-color);
+    box-shadow: 0 -2px 3px -2px var(--cate-color);
     background-color: #181818;
 }
-
 .hierarchy-node{
     border-color: var(--cate-color);
     color: var(--cate-color);
@@ -26,6 +25,10 @@ Define styles for different node categories
 
 .cate-data{
     --cate-color: #fea500;
+}
+
+.cate-test{
+    --cate-color: #36cdd2;
 }
 /* 
 .cate-function-math{

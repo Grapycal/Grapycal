@@ -1,31 +1,35 @@
+from cProfile import label
 from typing import Any
-from grapycal.sobjects.functionNode import FunctionNode
+from grapycal.sobjects.controls.textControl import TextControl
+from grapycal.sobjects.node import Node
 
-class DivisionNode(FunctionNode):
-    category = 'function/math'
-    inputs = ['a', 'b']
-    input_edge_limit = [None,None]
-    outputs = ['a/b']
-    
+class TestNode(Node):
+    category = 'test'
     def build(self):
-        super().build()
-        self.label.set('/')
+        self.add_in_port('in')
+        self.add_in_port('in2')
+        self.add_out_port('out')
+        self.label.set('Normal Node')
+        self.add_control(TextControl)
 
-    def calculate(self, data):
-        nominators = data[0]
-        denominators = data[1]
-        if len(nominators) == 0:
-            nominator = 1
-        else:
-            nominator = nominators[0]
-            for d in nominators[1:]:
-                nominator *= d
+class TestNode2(Node):
+    category = 'test'
+    def build(self):
+        self.add_in_port('in')
+        self.add_out_port('out')
+        self.add_out_port('out2')
+        self.add_out_port('out3')
+        self.shape.set('simple')
+        self.label.set('Simple Node')
+        self.add_control(TextControl)
+        self.add_control(TextControl)
 
-        if len(denominators) == 0:
-            denominator = 1
-        else:
-            denominator = denominators[0]
-            for d in denominators[1:]:
-                denominator *= d
-        return nominator/denominator
-                
+class TestNode3(Node):
+    category = 'test/1/1'
+    def build(self):
+        self.add_in_port('in')
+        self.add_out_port('out')
+        self.shape.set('simple')
+        self.label.set('Simple Node')
+        text_ctrl = self.add_control(TextControl,label='Ctrl')
+        text_ctrl.text.set('Hello World')

@@ -25,14 +25,18 @@ input{
     color: inherit;
 
     box-sizing: border-box;
-    width: 50px;
-    block-size: fit-content;
-    
+    height:100%;
+
+    min-width:4ch; 
+    text-align: center; 
+    border: none; 
+    outline: none;
+    background: none;
 }
 
-input:not(:focus){
+input{
     cursor:default;
-    user-select: none !important;
+    user-select: none;
     -webkit-user-select: none;
 }
 
@@ -58,27 +62,28 @@ button:hover{
     border-radius: 2px;
     user-select: none;
     -webkit-user-select: none;
+    font-size: 14px;
 }
 
 .node-preview{
     margin: 20px auto;
+    position: relative;
 }
 
-.block-node{
-    min-width: 20px;
+.normal-node{
+    width: 120px;
+    min-height: 24px;
+
+    box-sizing: border-box;
+    
+    padding: 2px 0px;
+}
+
+.simple-node{
+    width: 120px;
     min-height: 20px;
 
     box-sizing: border-box;
-    width: fit-content;
-    block-size: fit-content;
-}
-
-.frame-node{
-    min-width: 20px;
-    min-height: 20px;
-
-    box-sizing: border-box;
-    width: fit-content;
     block-size: fit-content;
 }
 
@@ -88,9 +93,12 @@ button:hover{
     border-radius: 50%;
 }
 
-.NodeContent{
-    padding: 0px 10px;
-    white-space: nowrap;
+.node-label{
+    /* fancy cursive fonts */
+    font-family: "Helvetica Neue", sans-serif;
+    position: absolute;
+    top: -18px;
+    left: 3px;
 }
 
 /* Port */
@@ -98,18 +106,91 @@ button:hover{
 
 .port-knob{
     position: relative;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background-color : #727272;
 }
 
+.port-label{
+    position: absolute;
+    top: 0px;
+    top: 50%; 
+    transform: translate(0,-50%); 
+}
+
 .out-port{
-    margin: 3px 1.4px;
+    margin: 5px 1.4px;
+}
+
+.normal-node .out-port .port-label{
+    right: 12px;
+}
+
+.simple-node .out-port .port-label{
+    left: 12px;
+    top: -1px;
+    font-size: 10px;
+    color: #dadada93;
+}
+
+.round-node .out-port .port-label{
+    left: 12px;
+    top: -1px;
+    font-size: 10px;
+    color: #dadada93;
 }
 
 .in-port{
-    margin: 3px -1.4px;
+    margin: 5px -1.4px;
+}
+
+.normal-node .in-port .port-label{
+    left: 12px;
+}
+
+.simple-node .in-port .port-label{
+    right: 12px;
+    top: -1px;
+    font-size: 10px;
+    color: #dadada93;
+}
+
+.round-node .in-port .port-label{
+    right: 12px;
+    top: -1px;
+    font-size: 10px;
+    color: #dadada93;
+}
+
+/* Control */
+
+.slot-control{
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0px 4px;
+}
+
+.control{
+    box-sizing: border-box;
+    width: 100%;
+    margin: 2px 0px;
+    border-radius: 2px;
+    overflow: hidden;
+    color : #e7e7e7;
+}
+
+input:enabled:hover{
+    background-color: #333333;
+}
+
+input:focus-within{
+    background-color: #2e2e2e;
+}
+
+.label{
+    color: #888888;
 }
 
 /* Edge */
@@ -118,6 +199,12 @@ button:hover{
     overflow: visible;
     stroke: rgba(141, 141, 141, 0.665);
     stroke-width: 5;
+
+    pointer-events: none;
+}
+
+.edge-path{
+    pointer-events: all;
 }
 
 /* Editor */
@@ -150,6 +237,7 @@ button:hover{
     user-select: none;
     position: absolute;
     padding: 10px;
+    padding-bottom: 100px;
     background-color:rgba(45, 45, 45, 0.54);
     height:auto;
     bottom: 0px; 
@@ -271,6 +359,7 @@ button:hover{
 
 .full-width {
   width: 100%;
+  box-sizing: border-box;
 }
 
 .no-width {
@@ -281,12 +370,23 @@ button:hover{
     vertical-align: middle;
 }
 
-.center {
+.center-align {
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
+.left-align {
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.right-align {
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
 
 .pointerEventsNone {
     pointer-events: none;

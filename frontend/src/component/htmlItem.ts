@@ -15,11 +15,13 @@ export class HtmlItem extends Component{
     readonly templateChanged = new Action<[]>();
     templateId: string='';
 
-    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null){
+    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string = null){
         super(object);
         this.baseElement = null;
         this.parent_ = null;
         this.parent_slot = specifiedParentElement;
+        if(template !== null)
+            this.applyTemplate(template);
     }
 
     applyTemplate(template: string, order: "prepend"|"append" = "prepend"){
