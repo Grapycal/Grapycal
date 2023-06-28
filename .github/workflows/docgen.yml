@@ -1,0 +1,33 @@
+name: Generate document
+on: push
+permissions:
+  contents: write
+
+jobs: 
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install docs dependencies & Generate
+        run: |
+          cd backend && poetry install --only docs
+          cd docs && poetry run make html
+        
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: backend/docs/build/html
+          force_orphan: true
+      
