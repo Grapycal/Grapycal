@@ -50,22 +50,21 @@ export class Node extends CompSObject {
     normal: 
         `<div class="node normal-node flex-vert space-between">
         
-            <div id="label" class="center" ></div>
+            <div id="label" class="node-label"></div>
             <div class="flex-horiz left-align full-width">
                 <div id="slot_input_port" class="no-width flex-vert space-evenly center"></div>
             </div>
             <div class="flex-horiz right-align full-width">
                 <div id="slot_output_port" class="no-width flex-vert space-evenly center"></div>
             </div>
-            <div id="slot_control"> </div>
+            <div id="slot_control" class="slot-control"> </div>
         </div>`,
     simple:
         `<div class="node simple-node flex-horiz space-between">
+            <div id="label" class="node-label"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
-            <div class="NodeContent full-width flex-vert space-evenly"> 
-                <div id="label" class="center-align display-none"></div>
-                <div id="slot_control"> </div>
-            </div>
+            <div id="slot_control"  class="slot-control"> </div>
+
             <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
         </div>`,
     round:
@@ -115,14 +114,6 @@ export class Node extends CompSObject {
                     this.htmlItem.getHtmlEl('slot_input_port').style.display = 'none'
                     this.htmlItem.getHtmlEl('slot_output_port').style.display = 'none'
                 }
-        })
-
-        this.link(this.in_ports.onInsert, (port: Port) => {
-            this.reshapePort(port)
-        })
-
-        this.link(this.out_ports.onInsert, (port: Port) => {
-            this.reshapePort(port)
         })
 
         this.link(this.label.onSet, (label: string) => {
@@ -185,16 +176,6 @@ export class Node extends CompSObject {
         }
     }
 
-    protected postStart(): void {
-        super.postStart()
-        for(const port of this.in_ports){
-            this.reshapePort(port)
-        }
-        for(const port of this.out_ports){
-            this.reshapePort(port)
-        }
-    }
-
     onParentChangedTo(newParent: SObject): void {
         super.onParentChangedTo(newParent)
         if(newParent instanceof Sidebar){
@@ -226,18 +207,6 @@ export class Node extends CompSObject {
 
         if(this._isPreview){
             this.htmlItem.baseElement.classList.add('node-preview')
-        }
-    }
-
-    reshapePort(port:Port){
-        if(this.shape.getValue() == 'normal'){
-            port.displayLabel = true
-        }
-        if(this.shape.getValue() == 'simple'){
-            port.displayLabel = false
-        }
-        if(this.shape.getValue() == 'round'){
-            port.displayLabel = false
         }
     }
 

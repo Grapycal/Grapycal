@@ -65,7 +65,7 @@ export class Port extends CompSObject {
 
         // Bind attributes to UI
 
-        this.displayLabel = false
+        this.displayLabel = true
         
         this.link(this.name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
