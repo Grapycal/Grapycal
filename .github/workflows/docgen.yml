@@ -25,7 +25,7 @@ jobs:
       
       - name: Generate document
         run: |
-          cd docs && make html
+          cd backend/docs && make html
         
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
