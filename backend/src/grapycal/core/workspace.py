@@ -1,5 +1,6 @@
 
 from grapycal.extension.extensionManager import ExtensionManager
+from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.workspaceObject import WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
@@ -67,6 +68,8 @@ class Workspace:
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
+
+        self._objectsync.register(TextControl)
         
         '''
         Register all built-in node types

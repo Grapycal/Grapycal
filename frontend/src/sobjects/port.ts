@@ -38,9 +38,11 @@ export class Port extends CompSObject {
 
     readonly template: string = `
     <div class="Port">
-        <div class="port-knob" id="Knob"></div>
-        <div id="label">
+        <div class="port-knob" id="Knob">
+            <div class="port-label" id="label">
+            </div>
         </div>
+        
     </div>
     `
 
@@ -63,7 +65,7 @@ export class Port extends CompSObject {
 
         // Bind attributes to UI
 
-        this.displayLabel = false
+        this.displayLabel = true
         
         this.link(this.name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
