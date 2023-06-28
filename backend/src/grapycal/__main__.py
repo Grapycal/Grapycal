@@ -4,6 +4,9 @@ from grapycal import GrapycalApp
 import usersettings
 
 def main():
+    """
+    Entry function of backend server
+    """
     s = usersettings.Settings("Grapycal")
     s.add_setting("port", int, default=8765) #type: ignore
     s.add_setting("host", str, default="localhost") #type: ignore
