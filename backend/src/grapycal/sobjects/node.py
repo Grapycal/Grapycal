@@ -23,7 +23,7 @@ class Node(SObject):
 
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
-        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False)
+        self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)

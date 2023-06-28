@@ -31,7 +31,7 @@ export class Edge extends CompSObject {
     <div id="base" style="position:absolute;width:1px;height:1px">
         <svg class="edge" id="svg">
             <g>
-                <path id="path" d=""  fill="none"></path>
+                <path class="edge-path" id="path" d=""  fill="none"></path>
             </g>
         </svg>
     </div>

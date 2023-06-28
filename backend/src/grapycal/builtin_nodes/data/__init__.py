@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from grapycal.builtin_nodes.textInputNode import TextInputNode
+from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import OutputPort
@@ -7,22 +8,23 @@ from objectsync import StringTopic
 
 class VariableNode(Node):
     category = 'data'
-    frontend_type = 'TextInputNode'
     def pre_build(self, attribute_values: Dict[str, Any] | None, workspace, is_preview: bool = False):
         super().pre_build(attribute_values, workspace, is_preview)
-        self.text = self.add_attribute('text', StringTopic, '')
+        self.label.set('variable')
+        self.shape.set('simple')
         self.value = None
         self.has_value = False
     
     def build(self):
-        self.in_port = self.add_in_port('in',1)
-        self.out_port = self.add_out_port('out',64)
+        self.in_port = self.add_in_port('set',1)
+        self.out_port = self.add_out_port('get',64)
+        self.text_control = self.add_control(TextControl)
 
     def edge_activated(self, edge: Edge):
-        globals()[self.text.get()] = edge.get_data()
+        globals()[self.text_control.text.get()] = edge.get_data()
 
     def double_click(self):
-        self.value = globals()[self.text.get()]
+        self.value = globals()[self.text_control.text.get()]
         self.has_value = True
         for edge in self.out_port.edges:
             edge.push_data(self.value)
