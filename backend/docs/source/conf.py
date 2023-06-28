@@ -59,3 +59,5 @@ html_static_path = ['_static']
 
 # -- AutoAPI Options -----------------------------------------
 autoapi_dirs = ['../../src']
+
+html_favicon = 'favicon.ico'

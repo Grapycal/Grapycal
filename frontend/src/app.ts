@@ -7,7 +7,7 @@ import { expose } from './devUtils'
 import { Port } from './sobjects/port'
 import { Edge } from './sobjects/edge'
 import { SoundManager } from './ui_utils/soundManager';
-import { Sidebar } from './sobjects/sideBar'
+import { Sidebar } from './sobjects/sidebar'
 import { Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
