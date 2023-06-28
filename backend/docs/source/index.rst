@@ -18,3 +18,11 @@ Pages
    usage
    guide
    layer
+
+.. This is a caption separating guide and API
+   Nothing is inside this because AutoAPI will be inserted into TOC automatically
+   The generated API docs will appeared to have a caption "API"
+   This is a bit tricky but I think it looks good
+.. toctree::
+   :caption: API
+   :hidden:
