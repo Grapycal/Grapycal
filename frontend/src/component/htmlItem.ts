@@ -120,7 +120,9 @@ export class HtmlItem extends Component{
     }
 
     moveToFront(){
-        this.parent_slot?.appendChild(this.baseElement);
+        if (this.parent_slot === null) return;
+        if (this.parent_slot.lastElementChild === this.baseElement) return;
+        this.parent_slot.appendChild(this.baseElement);
     }
 
     moveToBack(){
