@@ -219,7 +219,6 @@ export class Transform extends Component{
     public translate(translation: Vector2){  
         this.translation = this.translation.add(translation);
         this.onChange.invoke();
-        this.updateUI();
     }
 
     public scaleBy(scale: number){
