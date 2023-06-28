@@ -12,6 +12,14 @@ pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "~7.0"
+furo = "~2023.5"
+sphinx-autoapi = "~2.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
