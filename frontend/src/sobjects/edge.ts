@@ -2,12 +2,13 @@ import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, F
 import { Port } from './port'
 import { HtmlItem } from '../component/htmlItem'
 import { CompSObject } from './compSObject'
-import { editor, soundManager } from '../app'
+import { soundManager } from '../app'
 import { Vector2, as } from '../utils'
 import { print } from '../devUtils'
 import { Transform } from '../component/transform'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
+import { Editor } from './editor'
 
 enum EdgeState {
     Idle,
@@ -19,6 +20,7 @@ export class Edge extends CompSObject {
     tail: ObjectTopic<Port> = this.getAttribute('tail', ObjectTopic<Port>)
     head: ObjectTopic<Port> = this.getAttribute('head', ObjectTopic<Port>)
 
+    editor: Editor
     htmlItem: HtmlItem
     eventDispatcher: EventDispatcher
     transform: Transform
@@ -40,6 +42,8 @@ export class Edge extends CompSObject {
 
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
+
+        this.editor = this.parent as Editor
 
         this.updateSVG = this.updateSVG.bind(this)
         this.onDrag = this.onDrag.bind(this)
@@ -132,7 +136,7 @@ export class Edge extends CompSObject {
     
     protected onParentChangedTo(newValue: SObject): void {
         super.onParentChangedTo(newValue)
-        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
+        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || this.editor.htmlItem) //>????????????
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {

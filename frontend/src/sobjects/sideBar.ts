@@ -1,15 +1,16 @@
 import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic, ObjectTopic} from 'objectsync-client'
 import { CompSObject } from './compSObject'
-import { editor } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { HeirarchyNode } from '../ui_utils/hierarchyNode'
+import { Workspace } from './workspace'
+import { as } from '../utils'
 
 export class Sidebar extends CompSObject {
     private items: HtmlItem[] = []
     nodeLibrary: HeirarchyNode = new HeirarchyNode('', '',true);
-    constructor(objectsync: ObjectSyncClient, id: string) {
-        super(objectsync, id)
-        this.nodeLibrary.htmlItem.setParent(editor.componentManager.getComponent(HtmlItem), 'sidebar')
+    onStart() {
+        let workspace = as(this.parent,Workspace)
+        this.nodeLibrary.htmlItem.setParent(workspace.main_editor.getValue().getComponent(HtmlItem), 'sidebar')
     }
 
     addItem(htmlItem: HtmlItem, path: string) {

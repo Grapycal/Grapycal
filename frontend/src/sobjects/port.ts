@@ -1,5 +1,4 @@
 import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic} from 'objectsync-client'
-import { editor } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
@@ -9,6 +8,7 @@ import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { Edge } from './edge'
+import { Workspace } from './workspace'
 
 export class Port extends CompSObject {
 
@@ -48,8 +48,6 @@ export class Port extends CompSObject {
 
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
-
-        // Create UI
 
         // Add Components
         this.htmlItem = new HtmlItem(this)
@@ -136,5 +134,9 @@ export class Port extends CompSObject {
                 newEdge.tail.set(this)
             }
         }),true)
+    }
+
+    public onDestroy(): void {
+        Workspace.instance.ports.splice(Workspace.instance.ports.indexOf(this),1)
     }
 }
