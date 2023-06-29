@@ -117,6 +117,7 @@ button:hover{
     position: absolute;
     top: 0px;
     top: 50%; 
+    white-space: nowrap;
     transform: translate(0,-50%); 
     transition: 0.5s ease-out;
     pointer-events: none;
@@ -298,7 +299,7 @@ input:focus-within{
     padding-top: 4px;
     border-left: #97d11b solid 3px;
     border-radius: 3px;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .hierarchy-name{
@@ -317,7 +318,7 @@ input:focus-within{
 }
 
 .hierarchy-h1{
-    font-size: 24px;
+    font-size: 18px;
 
 }
 

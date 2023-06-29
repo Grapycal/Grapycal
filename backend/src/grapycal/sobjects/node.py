@@ -49,6 +49,7 @@ class Node(SObject):
         def print_output(data):
             self.output.set(self.output.get()+data) #TODO: optimize
         self._output_stream = OutputStream(print_output)
+        self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
     def build(self):
@@ -110,7 +111,7 @@ class Node(SObject):
         finally:
             self._output_stream.disable_flush()
 
-    def run_in_background(self,task):
+    def run_in_background(self,task,to_queue=True):
         '''
         Run a task in the background thread.
         '''
@@ -119,8 +120,8 @@ class Node(SObject):
             with self.redirect_output():
                 task()
 
-        self.workspace.background_runner.push(task_wrapper)
-
+        self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
+        
     def run_directly(self,task):
         '''
         Run a task in the current thread.
@@ -134,7 +135,7 @@ class Node(SObject):
     def _on_exception(self, e):
         #TODO: Create error topic
         from grapycal.core.stdout_helper import orig_print
-        orig_print('got error\n', traceback.format_exc(),'\n',''.join(traceback.format_stack()))
+        orig_print('got error',self.__class__.__name__,'\n', ''.join(traceback.format_stack()))
 
     '''
     Node events

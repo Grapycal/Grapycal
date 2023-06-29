@@ -28,9 +28,14 @@ from grapycal.sobjects.sidebar import Sidebar
 from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
 
+from . import running_module
+
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
+        self.running_module = running_module
+        ''''''
+
         '''
         Enable stdout proxy for this process
         '''
@@ -61,7 +66,6 @@ class Workspace:
         t = threading.Thread(target=self._communication_thread,daemon=True,args=[event_loop_set_event]) # daemon=True until we have a proper exit strategy
 
         t.start()
-
         event_loop_set_event.wait()
 
         self._objectsync.register(WorkspaceObject)
@@ -126,6 +130,9 @@ class Workspace:
     def get_workspace_object(self) -> WorkspaceObject:
         # In case this called in self._objectsync.create_object(WorkspaceObject), 
         return self._objectsync.get_root_object().get_child_of_type(WorkspaceObject)
+    
+    def vars(self)->Dict[str,Any]:
+        return self.running_module.__dict__
 
 if __name__ == '__main__':
     import argparse

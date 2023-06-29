@@ -3,11 +3,11 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 
-class EvalNode(Node):
+class ExecNode(Node):
     category = 'interaction'
     def pre_build(self, attribute_values, workspace, is_preview:bool = False):
         super().pre_build(attribute_values, workspace, is_preview)
-        self.label.set('Eval')
+        self.label.set('Exec')
         self.shape.set('simple')
         self.has_value = False
         self.value = None
@@ -18,11 +18,9 @@ class EvalNode(Node):
         self.text_control = self.add_control(TextControl)
 
     def activate(self):
-        expression = self.text_control.text.get()
-        self.value = eval(expression,self.workspace.vars())
+        stmt = self.text_control.text.get()
+        exec(stmt,self.workspace.vars())
         self.has_value = True
-        for edge in self.out_port.edges:
-            edge.push_data(self.value)
 
     def double_click(self):
         self.activate()

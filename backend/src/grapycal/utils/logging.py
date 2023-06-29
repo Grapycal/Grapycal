@@ -2,12 +2,12 @@ import logging
 
 def setup_logging():
     logger = logging.getLogger()
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    #ch.setLevel(logging.DEBUG)
     ch.setFormatter(ConsoleLogFormatter())
 
-    logger.setLevel(logging.DEBUG)
+    #logger.setLevel(logging.DEBUG)
     logger.handlers.clear()
     logger.addHandler(ch)
     ch.addFilter(NameTranslator())

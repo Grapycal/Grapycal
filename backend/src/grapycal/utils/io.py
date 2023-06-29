@@ -17,6 +17,9 @@ class OutputStream:
         self._on_flush = on_flush
         self._gap = 1/hz
 
+    def set_event_loop(self, event_loop):
+        self._event_loop = event_loop
+
     async def run(self):
         self._event_loop = asyncio.get_running_loop()
         while True:
@@ -74,7 +77,6 @@ class OutputStream:
     def close(self):
         self._exit_flag = True
         self._enable_flush_event.set()
-        logger.info('output stream closed')
 
 def json_write(path:str,data:Any):
     with open(path,'w') as f:
