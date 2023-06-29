@@ -16,7 +16,7 @@ class PrintNode(Node):
         self.add_in_port('',max_edges=1)
         self.text_control = self.add_control(TextControl, editable=False)
 
-    def edge_activated(self, edge):
+    def edge_activated(self, edge, port):
         data = edge.get_data()
         self.text_control.text.set(str(data))
 

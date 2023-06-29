@@ -8,7 +8,7 @@ import shutil
 from grapycal.extension.extension import Extension
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
-from grapycal.sobjects.port import Port
+from grapycal.sobjects.port import InputPort, OutputPort, Port
 from grapycal.utils.file import get_direct_sub_folders
 from grapycal.utils.misc import as_type
 import objectsync
@@ -156,8 +156,8 @@ class ExtensionManager:
                 continue # The port does not present in the new version
             
             new_edge = self._objectsync.create_object(Edge,parent_id=parent_id)
-            new_edge.tail.set(as_type(self._objectsync.get_object(new_tail_id),Port))
-            new_edge.head.set(as_type(self._objectsync.get_object(new_head_id),Port))
+            new_edge.tail.set(as_type(self._objectsync.get_object(new_tail_id),OutputPort))
+            new_edge.head.set(as_type(self._objectsync.get_object(new_head_id),InputPort))
 
         # Unimport old version
         self.unimport_extension(old_version.extension_name)

@@ -3,7 +3,7 @@ from grapycal.builtin_nodes.textInputNode import TextInputNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
-from grapycal.sobjects.port import OutputPort
+from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import StringTopic
 
 class VariableNode(Node):
@@ -20,7 +20,7 @@ class VariableNode(Node):
         self.out_port = self.add_out_port('get',64)
         self.text_control = self.add_control(TextControl)
 
-    def edge_activated(self, edge: Edge):
+    def edge_activated(self, edge: Edge, port: InputPort):
         globals()[self.text_control.text.get()] = edge.get_data()
 
     def double_click(self):

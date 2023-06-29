@@ -10,8 +10,8 @@ class Edge(SObject):
     frontend_type = 'Edge'
 
     def pre_build(self, attribute_values: dict[str, Any] | None, workspace, tail:OutputPort|None = None, head:InputPort|None = None):
-        self.tail = self.add_attribute('tail', ObjTopic[Port], tail)
-        self.head = self.add_attribute('head', ObjTopic[Port], head)
+        self.tail = self.add_attribute('tail', ObjTopic[OutputPort], tail)
+        self.head = self.add_attribute('head', ObjTopic[InputPort], head)
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set
 
@@ -29,13 +29,13 @@ class Edge(SObject):
         if new_tail:
             new_tail.add_edge(self)
 
-    def on_head_set(self, old_head:Port|None, new_head:Port|None):
+    def on_head_set(self, old_head:Port|None, new_head:InputPort|None):
         if old_head:
             old_head.remove_edge(self)
         if new_head:
             new_head.add_edge(self)
             if self._activated:
-                new_head.node.edge_activated(self)
+                new_head.node.edge_activated(self, new_head)
 
     def destroy(self) -> SObjectSerialized:
         if self.tail.get():
@@ -58,8 +58,9 @@ class Edge(SObject):
         self._data = data
         self._activated = True
         self._data_ready = True
-        if self.head.get():
-            self.head.get().node.edge_activated(self)
+        head = self.head.get()
+        if head:
+            head.node.edge_activated(self, head)
     
     def is_activated(self):
         return self._activated
