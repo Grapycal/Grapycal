@@ -22,8 +22,7 @@ class FunctionNode(SimpleNode):
     def build(self):
         super().build()
         for name, max_edges in zip(self.inputs,self._input_edge_limit): #type: ignore
-            port = self.add_in_port(name)
-            port.max_edges.set(max_edges)
+            self.add_in_port(name,max_edges)
         for name in self.outputs:
             self.add_out_port(name)
 

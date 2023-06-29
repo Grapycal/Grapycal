@@ -113,7 +113,7 @@ export class HtmlItem extends Component{
         }
     }
 
-    setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="prepend"): void{
+    setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="append"): void{
         if (this.parent_ === parent) return;
         this.parent_ = parent;
         this.parent_slot = parent.addChild(this,slot,order);
