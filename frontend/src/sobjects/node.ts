@@ -1,5 +1,5 @@
 import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic} from 'objectsync-client'
-import { editor, soundManager } from '../app'
+import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
@@ -10,6 +10,7 @@ import { Vector2, as } from '../utils'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { Sidebar } from './sidebar'
+import { Editor } from './editor'
 
 export class Node extends CompSObject {
 
@@ -41,6 +42,7 @@ export class Node extends CompSObject {
     in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
     out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
 
+    editor: Editor;
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = new Transform(this);
@@ -85,7 +87,6 @@ export class Node extends CompSObject {
         // Initialize UI
 
         this.mouseOverDetector = new MouseOverDetector(this)
-        if(!this._isPreview) 
 
         this.link(this.eventDispatcher.onDoubleClick, () => {
             this.emit('double_click')
@@ -95,6 +96,8 @@ export class Node extends CompSObject {
     protected onStart(): void {
         super.onStart()
         this._isPreview = this.parent instanceof Sidebar
+
+        this.editor = this.isPreview? null : this.parent as Editor
         
         // Bind attributes to UI
 
@@ -122,7 +125,7 @@ export class Node extends CompSObject {
 
         this.link(this.label_offset.onSet, (offset: number) => {
             let label_el = this.htmlItem.getHtmlEl('label')
-            label_el.style.marginTop = this.label_offset.getValue() + 'em'
+            label_el.style.marginTop = offset + 'em'
         })
 
         for(let className of Node.getCssClassesFromCategory(this.category.getValue())){
@@ -145,7 +148,7 @@ export class Node extends CompSObject {
 
         // Configure components
         
-        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
+        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
 
         if(!this._isPreview){
             const [x, y] = this.translation.getValue().split(',').map(parseFloat)
@@ -183,7 +186,7 @@ export class Node extends CompSObject {
             this.transform.enabled = false
         }
         else
-        this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || editor.htmlItem)
+            this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
             glowDiv(as(this.htmlItem.baseElement, HTMLElement))

@@ -1,6 +1,7 @@
 
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.sobjects.controls import TextControl
+from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
@@ -64,6 +65,7 @@ class Workspace:
         event_loop_set_event.wait()
 
         self._objectsync.register(WorkspaceObject)
+        self._objectsync.register(Editor)
         self._objectsync.register(Sidebar)
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
@@ -93,23 +95,17 @@ class Workspace:
     def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
         assert self._communication_event_loop is not None
         return self._communication_event_loop
-
-    def create_node(self, node_type: type, **kwargs) -> Node:
-        return self._objectsync.create_object(node_type, parent_id=self._workspace_object.get_id(), is_preview=False, **kwargs)
-    
-    def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
-        return self._objectsync.create_object(Edge, parent_id=self._workspace_object.get_id(), is_preview=False, tail=tail, head=head)
     
     '''
     Save and load
     '''         
 
     def initialize_workspace(self) -> None:
-        self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False)
+        self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False)
         self._extention_manager.import_extension('builtin_nodes')
 
     def save_workspace(self, path: str) -> None:
-        workspace_serialized = self._workspace_object.serialize()
+        workspace_serialized = self.get_workspace_object().serialize()
         data = {
             'extensions': self._extention_manager.get_extention_names(), 
             # Note: The extension field is intended to be on top so it can be easily retrieved by the extension management program.
@@ -125,10 +121,11 @@ class Workspace:
         self._objectsync.set_id_count(data['id_count'])
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
         self._extention_manager.load_extensions(data['extensions'])
-        self._workspace_object = self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False, serialized=workspace_serialized)
+        self._objectsync.create_object(WorkspaceObject, parent_id='root', serialized=workspace_serialized, id=workspace_serialized.id)
 
     def get_workspace_object(self) -> WorkspaceObject:
-        return self._workspace_object
+        # In case this called in self._objectsync.create_object(WorkspaceObject), 
+        return self._objectsync.get_root_object().get_child_of_type(WorkspaceObject)
 
 if __name__ == '__main__':
     import argparse

@@ -5,6 +5,7 @@ from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
+from grapycal.utils.misc import as_type
 from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic
 from objectsync.sobject import SObjectSerialized
 
@@ -17,6 +18,14 @@ class Node(SObject):
 
     def pre_build(self, attribute_values: Dict[str, Any] | None, workspace:'Workspace', is_preview:bool = False):
         self.workspace = workspace
+        self.workspace_object = self.workspace.get_workspace_object()
+        
+        from grapycal.sobjects.editor import Editor
+        parent = self.get_parent()
+        if isinstance(parent, Editor):
+            self.editor = as_type(self.get_parent(),Editor)
+        else:
+            self.editor = None
         
         self.use_transform = self.add_attribute('use_transform', GenericTopic[bool], not isinstance(self.get_parent(), Node))
         self.display_ports = self.add_attribute('display_ports', GenericTopic[bool], not isinstance(self.get_parent(), Node))
@@ -49,7 +58,7 @@ class Node(SObject):
         pass
 
     def _spawn(self, client_id, translation):
-        new_node = self.workspace.create_node(type(self))
+        new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}')
         new_node.translation.set(translation)
 
@@ -94,7 +103,6 @@ class Node(SObject):
         '''
         Returns a context manager that redirects stdout to the node's output stream.
         '''
-        from grapycal.core.stdout_helper import orig_print
 
         try:
             self._output_stream.enable_flush()
