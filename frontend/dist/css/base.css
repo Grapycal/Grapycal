@@ -118,16 +118,19 @@ button:hover{
     top: 0px;
     top: 50%; 
     transform: translate(0,-50%); 
-    color: transparent;
     transition: 0.5s ease-out;
 }
 
-.port-near-mouse-1 .port-label{
-    color: #b5b5b593;
-}
-
-.port-near-mouse-2 .port-label{
-    color: #4f4f4f93;
+:is(.simple-node,.round-node){
+    .port-label{
+        color: transparent;
+    }
+    .port-near-mouse-1 .port-label{
+        color: #b5b5b593;
+    }
+    .port-near-mouse-2 .port-label{
+        color: #4f4f4f93;
+    }
 }
 
 .out-port{
