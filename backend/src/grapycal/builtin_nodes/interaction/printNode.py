@@ -8,7 +8,7 @@ class PrintNode(Node):
     category = 'interaction'
     def pre_build(self, attribute_values, workspace, is_preview:bool = False):
         super().pre_build(attribute_values, workspace, is_preview)
-        self.label.set('print')
+        self.label.set('Print')
         self.shape.set('simple')
 
     def build(self):

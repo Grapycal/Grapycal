@@ -13,15 +13,19 @@ from .stdout_helper import orig_print
 class BackgroundRunner:
     def __init__(self):
         self._inputs: Queue = Queue()
-        self._tasks: deque = deque()
+        self._queue: deque = deque()
+        self._stack: deque = deque()
         self._exit_flag = False
         self._exception_callback: Callable[[Exception], None] = lambda e: orig_print('runner default exception callback:\n',traceback.format_exc())
 
-    def push(self, task: Callable):
-        self._inputs.put((task, False))
+    def push(self, task: Callable, to_queue: bool = True):
+        self._inputs.put((task, to_queue))
 
-    def push_front(self, task: Callable):
+    def push_to_queue(self, task: Callable):
         self._inputs.put((task, True))
+
+    def push_to_stack(self, task: Callable):
+        self._inputs.put((task, False))
 
     def interrupt(self):
         signal.raise_signal(signal.SIGINT)
@@ -51,19 +55,25 @@ class BackgroundRunner:
                 break
             try:
                 # Queue.get() blocks signal.
-                while len(self._tasks) == 0 or not self._inputs.empty():
+                while not self._inputs.empty() or (len(self._queue) == 0 and len(self._stack) == 0):
                     try:
                         inp = self._inputs.get(timeout=0.2)
                     except queue.Empty:
                         continue
-                    task, is_front = inp
-                    if is_front:
-                        self._tasks.append(task)
+                    task, push_to_queue = inp
+                    if push_to_queue:
+                        self._queue.appendleft(task)
                     else:
-                        self._tasks.appendleft(task)
+                        self._stack.append(task)
 
                 logger.debug('got a task OAO')
-                task_to_run = self._tasks.pop()
+
+                # queue is prioritized
+                if len(self._queue) > 0:
+                    task_to_run = self._queue.pop()
+                else:
+                    task_to_run = self._stack.pop()
+
                 task_to_run()
 
             except KeyboardInterrupt:

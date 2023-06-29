@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from importlib import util as importlib_util
 from pprint import pprint
 import random
@@ -48,6 +51,7 @@ class ExtensionManager:
         return extension
 
     def update_extension(self, extension_name: str) -> None:
+        logger.info(f'Updating extension {extension_name}')
         old_version = self._extensions[extension_name]
         package_name = '_'.join(extension_name.split('_')[:-1])
         new_version = self._load_extension(self._fetch_extension(package_name))
@@ -131,6 +135,8 @@ class ExtensionManager:
             
             #TODO: let the new node class handle the recovery for backwards compatibility
 
+        logger.info(f'Updated extension {package_name} from {old_version.extension_name} to {new_version.extension_name}')
+
         # Recover edges if possible
         def port_id_map(old_port_id:str) -> str|None:
             
@@ -149,7 +155,7 @@ class ExtensionManager:
             return new_port_id
 
         for tail_id, head_id, parent_id in edges_to_recover:
-            print('tail_id:',tail_id,'head_id:',head_id,'parent_id:',parent_id,port_map_1,port_map_2,node_id_map)
+            #print('tail_id:',tail_id,'head_id:',head_id,'parent_id:',parent_id,port_map_1,port_map_2,node_id_map)
             new_tail_id = port_id_map(tail_id)
             new_head_id = port_id_map(head_id)
             if new_tail_id is None or new_head_id is None:
@@ -224,11 +230,8 @@ class ExtensionManager:
 
     def _load_extension(self, name: str) -> Extension:
         self._extensions[name] = Extension(name,self._objectsync.get_all_node_types())
-        pprint(('before register',self._objectsync._object_types))
         for node_type_name, node_type in self._extensions[name].node_types.items():
-            print('extension ',name,' _register ',node_type_name)
             self._objectsync.register(node_type,node_type_name)
-        pprint(('after register',self._objectsync._object_types))
         self._imported_extensions_topic.add(name,{
             'name':name
         })
@@ -243,12 +246,8 @@ class ExtensionManager:
 
     def _unload_extension(self, name: str) -> None:
         node_types = self._extensions[name].node_types
-        pprint(('before unregister',self._objectsync._object_types))
         for node_type in node_types:
-            
-            print('extension ',name,' _unregister ',node_type)
             self._objectsync.unregister(node_type)
-        pprint(('after unregister',self._objectsync._object_types))
         self._extensions.pop(name)
         self._imported_extensions_topic.remove(name)
     

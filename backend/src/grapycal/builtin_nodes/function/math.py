@@ -3,9 +3,9 @@ from grapycal.sobjects.functionNode import FunctionNode
 class AdditionNode(FunctionNode):
     category = 'function/math'
 
-    inputs = ['in']
+    inputs = ['items']
     input_edge_limit = [None]
-    outputs = ['out']
+    outputs = ['sum']
 
     def build(self):
         super().build()
@@ -20,14 +20,14 @@ class AdditionNode(FunctionNode):
         else:
             summation = data[0]
             for d in data[1:]:
-                summation += d #type: ignore
+                summation = summation + d #type: ignore
         return summation
     
 class SubtractionNode(FunctionNode):
     category = 'function/math'
-    inputs = ['in1', 'in2']
+    inputs = ['a', 'b']
     input_edge_limit = [None, None]
-    outputs = ['out']
+    outputs = ['a-b']
 
     def build(self):
         super().build()
@@ -40,9 +40,9 @@ class SubtractionNode(FunctionNode):
     
 class MultiplicationNode(FunctionNode):
     category = 'function/math'
-    inputs = ['in']
+    inputs = ['items']
     input_edge_limit = [None]
-    outputs = ['out']
+    outputs = ['product']
 
     def build(self):
         super().build()
