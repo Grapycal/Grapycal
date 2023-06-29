@@ -9,13 +9,8 @@ export class Workspace extends CompSObject{
     public static instance: Workspace
     main_editor = this.getAttribute('main_editor', ObjectTopic<Editor>)
     eventDispatcher = new EventDispatcher(this, document.getElementById('workspace'))
-    ports: Port[] = []
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         Workspace.instance = this
-    }
-
-    protected onStart(): void {
-        print('Workspace started')
     }
 }

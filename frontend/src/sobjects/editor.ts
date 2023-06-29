@@ -5,6 +5,9 @@ import { HtmlItem } from "../component/htmlItem"
 import { MouseOverDetector } from "../component/mouseOverDetector"
 import { Transform } from "../component/transform"
 import { CompSObject } from "./compSObject"
+import { Linker } from "../component/linker"
+import { Port } from "./port"
+import { print } from "../devUtils"
 
 export class Editor extends CompSObject{
     readonly template: string = `
@@ -29,6 +32,8 @@ export class Editor extends CompSObject{
     `;
 
     componentManager = new ComponentManager();
+    linker = new Linker(this);
+    eventDispatcher: EventDispatcher;
     htmlItem: HtmlItem;
     transform: Transform;
     
@@ -41,7 +46,8 @@ export class Editor extends CompSObject{
         
         this.transform = new Transform(this,editor,viewport);
 
-        new EventDispatcher(this, viewport);
+        this.eventDispatcher = new EventDispatcher(this, viewport);
+        this.linker.link(this.eventDispatcher.onMove,this.mouseMove)
         new MouseOverDetector(this, viewport);
         
         this.transform.scale = 1.3
@@ -51,5 +57,23 @@ export class Editor extends CompSObject{
         this.htmlItem.getHtmlEl('settings-button').addEventListener('click',()=>{
             document.getElementById('settings-page').classList.toggle('open')
         })
+    }
+
+    private mouseMove(e: MouseEvent){
+        // If there's performance issues, maybe optimize this
+        for(let port of this.TopDownSearch(Port)){
+            let dist = port.htmlItem.position.distanceTo(this.eventDispatcher.mousePos)
+            if(dist < 200){
+                port.htmlItem.baseElement.classList.add('port-near-mouse-1')
+                port.htmlItem.baseElement.classList.remove('port-near-mouse-2')
+            }else if (dist < 400){
+                port.htmlItem.baseElement.classList.add('port-near-mouse-2')
+                port.htmlItem.baseElement.classList.remove('port-near-mouse-1')
+            }
+            else{
+                port.htmlItem.baseElement.classList.remove('port-near-mouse-1')
+                port.htmlItem.baseElement.classList.remove('port-near-mouse-2')
+            }
+        }
     }
 }
