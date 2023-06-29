@@ -140,7 +140,7 @@ class Node(SObject):
     Node events
     '''
     
-    def edge_activated(self, edge:Edge):
+    def edge_activated(self, edge:Edge, port:InputPort):
         pass
 
     def input_edge_added(self, edge:Edge, port:InputPort):

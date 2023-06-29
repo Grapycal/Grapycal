@@ -29,7 +29,7 @@ class FunctionNode(SimpleNode):
         self.label.set('f')
         self.shape.set('round')
 
-    def edge_activated(self, edge: Edge):
+    def edge_activated(self, edge: Edge, port):
         for port in self.in_ports:
             assert isinstance(port, InputPort)
             if not port.is_all_edge_ready():

@@ -16,7 +16,7 @@ Define styles for different node categories
 }
 
 .cate-interaction{
-    --cate-color: #287aff;
+    --cate-color: #a2ff28;
 }
 
 .cate-function{
@@ -24,11 +24,15 @@ Define styles for different node categories
 }
 
 .cate-data{
-    --cate-color: #fea500;
+    --cate-color: #fe9000;
 }
 
 .cate-test{
     --cate-color: #36cdd2;
+}
+
+.cate-procedural{
+    --cate-color: #176efb;
 }
 /* 
 .cate-function-math{
