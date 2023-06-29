@@ -117,6 +117,16 @@ button:hover{
     top: 0px;
     top: 50%; 
     transform: translate(0,-50%); 
+    color: transparent;
+    transition: 0.5s ease-out;
+}
+
+.port-near-mouse-1 .port-label{
+    color: #b5b5b593;
+}
+
+.port-near-mouse-2 .port-label{
+    color: #4f4f4f93;
 }
 
 .out-port{
@@ -131,14 +141,12 @@ button:hover{
     left: 12px;
     top: -1px;
     font-size: 10px;
-    color: #dadada93;
 }
 
 .round-node .out-port .port-label{
     left: 12px;
     top: -1px;
     font-size: 10px;
-    color: #dadada93;
 }
 
 .in-port{
@@ -153,14 +161,12 @@ button:hover{
     right: 12px;
     top: -1px;
     font-size: 10px;
-    color: #dadada93;
 }
 
 .round-node .in-port .port-label{
     right: 12px;
     top: -1px;
     font-size: 10px;
-    color: #dadada93;
 }
 
 /* Control */

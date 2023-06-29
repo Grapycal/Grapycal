@@ -1,5 +1,5 @@
 import { print } from "../devUtils"
-import { Action, Constructor, as, defined } from "../utils"
+import { Action, Constructor, Vector2, as, defined } from "../utils"
 import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
 
@@ -167,7 +167,7 @@ export class HtmlItem extends Component{
             return transform.worldPosition;
         }
         const rect = this.baseElement.getBoundingClientRect();
-        return {x:rect.left+rect.width/2, y:rect.top+rect.height/2};
+        return new Vector2(rect.left+rect.width/2, rect.top+rect.height/2)
     }
 
     onDestroy(){

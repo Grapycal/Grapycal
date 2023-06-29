@@ -135,8 +135,4 @@ export class Port extends CompSObject {
             }
         }),true)
     }
-
-    public onDestroy(): void {
-        Workspace.instance.ports.splice(Workspace.instance.ports.indexOf(this),1)
-    }
 }
