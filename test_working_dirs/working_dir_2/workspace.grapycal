@@ -1,0 +1,621 @@
+{
+    "extensions": [
+        "builtin_nodes_422364"
+    ],
+    "client_id_count": 20,
+    "id_count": 37,
+    "workspace_serialized": {
+        "id": "0_1",
+        "type": "WorkspaceObject",
+        "attributes": {
+            "main_editor": "0_3"
+        },
+        "children": {
+            "0_2": {
+                "id": "0_2",
+                "type": "Sidebar",
+                "attributes": {},
+                "children": {
+                    "0_4": {
+                        "id": "0_4",
+                        "type": "builtin_nodes_422364.AdditionNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "round",
+                            "output": "",
+                            "label": "+",
+                            "label_offset": -0.09,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "function/math",
+                            "in_ports": [
+                                "0_5"
+                            ],
+                            "out_ports": [
+                                "0_6"
+                            ],
+                            "controls": [],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_5": {
+                                "id": "0_5",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "items",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_4"
+                                }
+                            },
+                            "0_6": {
+                                "id": "0_6",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "sum",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_4"
+                                }
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1"
+                        }
+                    },
+                    "0_7": {
+                        "id": "0_7",
+                        "type": "builtin_nodes_422364.DivisionNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "round",
+                            "output": "",
+                            "label": "/",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "function/math",
+                            "in_ports": [
+                                "0_8",
+                                "0_9"
+                            ],
+                            "out_ports": [
+                                "0_10"
+                            ],
+                            "controls": [],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_8": {
+                                "id": "0_8",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "a",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_7"
+                                }
+                            },
+                            "0_9": {
+                                "id": "0_9",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "b",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_7"
+                                }
+                            },
+                            "0_10": {
+                                "id": "0_10",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "a/b",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_7"
+                                }
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1"
+                        }
+                    },
+                    "0_11": {
+                        "id": "0_11",
+                        "type": "builtin_nodes_422364.EvalNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "simple",
+                            "output": "",
+                            "label": "Eval",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "interaction",
+                            "in_ports": [],
+                            "out_ports": [
+                                "0_12"
+                            ],
+                            "controls": [
+                                "0_13"
+                            ],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_12": {
+                                "id": "0_12",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_11"
+                                }
+                            },
+                            "0_13": {
+                                "id": "0_13",
+                                "type": "TextControl",
+                                "attributes": {
+                                    "text": "",
+                                    "label": "",
+                                    "editable": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {}
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1",
+                            "out_port": "0_12",
+                            "text_control": "0_13"
+                        }
+                    },
+                    "0_14": {
+                        "id": "0_14",
+                        "type": "builtin_nodes_422364.ExecNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "simple",
+                            "output": "",
+                            "label": "Exec",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "interaction",
+                            "in_ports": [],
+                            "out_ports": [
+                                "0_15"
+                            ],
+                            "controls": [
+                                "0_16"
+                            ],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_15": {
+                                "id": "0_15",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_14"
+                                }
+                            },
+                            "0_16": {
+                                "id": "0_16",
+                                "type": "TextControl",
+                                "attributes": {
+                                    "text": "",
+                                    "label": "",
+                                    "editable": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {}
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1",
+                            "out_port": "0_15",
+                            "text_control": "0_16"
+                        }
+                    },
+                    "0_17": {
+                        "id": "0_17",
+                        "type": "builtin_nodes_422364.ForNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "normal",
+                            "output": "",
+                            "label": "For",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "procedural",
+                            "in_ports": [
+                                "0_18",
+                                "0_19"
+                            ],
+                            "out_ports": [
+                                "0_20"
+                            ],
+                            "controls": [],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_18": {
+                                "id": "0_18",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "iterable",
+                                    "max_edges": 1,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_17"
+                                }
+                            },
+                            "0_19": {
+                                "id": "0_19",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "run",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_17"
+                                }
+                            },
+                            "0_20": {
+                                "id": "0_20",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "item",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_17"
+                                }
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1",
+                            "iterable_port": "0_18",
+                            "run_port": "0_19",
+                            "item_port": "0_20"
+                        }
+                    },
+                    "0_21": {
+                        "id": "0_21",
+                        "type": "builtin_nodes_422364.MultiplicationNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "round",
+                            "output": "",
+                            "label": "*",
+                            "label_offset": -0.09,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "function/math",
+                            "in_ports": [
+                                "0_22"
+                            ],
+                            "out_ports": [
+                                "0_23"
+                            ],
+                            "controls": [],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_22": {
+                                "id": "0_22",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "items",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_21"
+                                }
+                            },
+                            "0_23": {
+                                "id": "0_23",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "product",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_21"
+                                }
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1"
+                        }
+                    },
+                    "0_24": {
+                        "id": "0_24",
+                        "type": "builtin_nodes_422364.PrintNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "simple",
+                            "output": "",
+                            "label": "Print",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "interaction",
+                            "in_ports": [
+                                "0_25"
+                            ],
+                            "out_ports": [],
+                            "controls": [
+                                "0_26"
+                            ],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_25": {
+                                "id": "0_25",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "",
+                                    "max_edges": 1,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_24"
+                                }
+                            },
+                            "0_26": {
+                                "id": "0_26",
+                                "type": "TextControl",
+                                "attributes": {
+                                    "text": "",
+                                    "label": "",
+                                    "editable": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {}
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1",
+                            "text_control": "0_26"
+                        }
+                    },
+                    "0_27": {
+                        "id": "0_27",
+                        "type": "builtin_nodes_422364.SubtractionNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "round",
+                            "output": "",
+                            "label": "-",
+                            "label_offset": -0.09,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "function/math",
+                            "in_ports": [
+                                "0_28",
+                                "0_29"
+                            ],
+                            "out_ports": [
+                                "0_30"
+                            ],
+                            "controls": [],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_28": {
+                                "id": "0_28",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "a",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_27"
+                                }
+                            },
+                            "0_29": {
+                                "id": "0_29",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "b",
+                                    "max_edges": 64,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_27"
+                                }
+                            },
+                            "0_30": {
+                                "id": "0_30",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "a-b",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_27"
+                                }
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1"
+                        }
+                    },
+                    "0_31": {
+                        "id": "0_31",
+                        "type": "builtin_nodes_422364.VariableNode",
+                        "attributes": {
+                            "use_transform": true,
+                            "display_ports": true,
+                            "shape": "simple",
+                            "output": "",
+                            "label": "Variable",
+                            "label_offset": 0,
+                            "translation": "",
+                            "is_preview": 1,
+                            "category": "data",
+                            "in_ports": [
+                                "0_32"
+                            ],
+                            "out_ports": [
+                                "0_33"
+                            ],
+                            "controls": [
+                                "0_34"
+                            ],
+                            "double_click": null,
+                            "spawn": null
+                        },
+                        "children": {
+                            "0_32": {
+                                "id": "0_32",
+                                "type": "InputPort",
+                                "attributes": {
+                                    "name": "set",
+                                    "max_edges": 1,
+                                    "is_input": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_31"
+                                }
+                            },
+                            "0_33": {
+                                "id": "0_33",
+                                "type": "OutputPort",
+                                "attributes": {
+                                    "name": "get",
+                                    "max_edges": 64,
+                                    "is_input": 0
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {
+                                    "node": "0_31"
+                                }
+                            },
+                            "0_34": {
+                                "id": "0_34",
+                                "type": "TextControl",
+                                "attributes": {
+                                    "text": "",
+                                    "label": "",
+                                    "editable": 1
+                                },
+                                "children": {},
+                                "user_attribute_references": {},
+                                "user_sobject_references": {}
+                            }
+                        },
+                        "user_attribute_references": {},
+                        "user_sobject_references": {
+                            "workspace_object": "0_1",
+                            "in_port": "0_32",
+                            "out_port": "0_33",
+                            "text_control": "0_34"
+                        }
+                    }
+                },
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            },
+            "0_3": {
+                "id": "0_3",
+                "type": "Editor",
+                "attributes": {},
+                "children": {},
+                "user_attribute_references": {},
+                "user_sobject_references": {}
+            }
+        },
+        "user_attribute_references": {},
+        "user_sobject_references": {}
+    }
+}

@@ -34,6 +34,7 @@ class ExtensionManager:
         self._objectsync.on('import_extension',self.import_extension,is_stateful=False)
         self._objectsync.on('unimport_extension',self.unimport_extension,is_stateful=False)
         self._objectsync.on('update_extension',self.update_extension,is_stateful=False)
+        self._objectsync.on('refresh_extensions',self._update_available_extensions_topic,is_stateful=False)
 
         self._update_available_extensions_topic()
 

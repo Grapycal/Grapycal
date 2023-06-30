@@ -56,6 +56,7 @@ export class Editor extends CompSObject{
 
         this.htmlItem.getHtmlEl('settings-button').addEventListener('click',()=>{
             document.getElementById('settings-page').classList.toggle('open')
+            objectsync.emit('refresh_extensions')
         })
     }
 
