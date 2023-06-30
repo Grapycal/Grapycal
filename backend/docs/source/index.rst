@@ -12,20 +12,17 @@ Pages
 -----
 - :doc:`First page <usage>`
 
+
+`Grapycal v0.2.0 whats new <https://github.com/eri24816/Grapycal/blob/main/docs/v0.2.0.md>`_
+
 .. toctree::
    :caption: Getting Started
    :hidden:
 
    installation
    run_grapycal
+   extensions
 
-.. toctree::
-   :caption: Guide
-   :hidden:
-
-   usage
-   guide
-   layer
 
 .. This is a caption separating guide and API
    Nothing is inside this because AutoAPI will be inserted into TOC automatically

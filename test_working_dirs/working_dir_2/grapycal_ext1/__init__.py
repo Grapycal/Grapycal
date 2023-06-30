@@ -9,7 +9,7 @@ class TestNode(Node):
         self.add_in_port('in')
         self.add_in_port('in2')
         self.add_out_port('out')
-        self.label.set('Normal Node')
+        self.label.set('TestNode')
         self.add_control(TextControl)
 
 class TestNode2(Node):
