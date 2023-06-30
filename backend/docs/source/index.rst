@@ -3,13 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Grapycal's documentation!
+Welcome to Grapycal Documentation!
 ====================================
+
+Grapycal is a graphical and interactive programming interface with a web user interface. It allows users to manipulate and assemble programs by dragging and clicking blocks or graphs representing various built-in and custom Python functions.
 
 Pages
 -----
 - :doc:`First page <usage>`
-- :doc:`Second page <guide>`
+
+.. toctree::
+   :caption: Getting Started
+   :hidden:
+
+   installation
+   run_grapycal
 
 .. toctree::
    :caption: Guide
