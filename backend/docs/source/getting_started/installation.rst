@@ -10,7 +10,7 @@ Installation
 
 2. Install backend dependencies...
 
-a. via pip
+a. via pip (recommended)
 
 .. code-block:: bash
 

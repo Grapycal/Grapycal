@@ -44,7 +44,7 @@ class Edge(SObject):
             self.head.get().remove_edge(self)
         return super().destroy()
 
-    def get_data(self):
+    def get_data(self)->Any:
 
         if not self._data_ready:
             #TODO: aquire backward

@@ -42,10 +42,10 @@ input{
 
 button{
     font-family: inherit;
-    font-size: 30px;
+    font-size: 18px;
     color: inherit;
-    background-color: inherit;
-    border: inherit;
+    background-color: #1e1e1e;
+    border: #aaaaaa solid 1px;
     outline: inherit;
 }
 
@@ -271,13 +271,14 @@ input:focus-within{
     text-align: center;
     line-height: 50px;
     font-size: 24px;
-    background-color: rgb(43, 69, 89);
+    background-color: #22381f;
     user-select: none;
     -webkit-user-select: none;
+    z-index: 10;
 }
 
 .settings-button:hover{
-    background-color: rgb(43, 69, 89, 0.8);
+    background-color: #2a4f25;
 }
 
 .vignette {

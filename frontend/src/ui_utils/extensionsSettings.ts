@@ -2,8 +2,6 @@ import { DictTopic, ObjectSyncClient } from "objectsync-client"
 import { Linker } from "../component/linker"
 import { Componentable } from "../component/component"
 import { PopupMenu } from "./popupMenu"
-import { print } from "../devUtils"
-import { EventDispatcher } from "../component/eventDispatcher"
 
 export class ExtensionsSetting extends Componentable{
     objectsync: ObjectSyncClient
@@ -24,6 +22,10 @@ export class ExtensionsSetting extends Componentable{
 
         document.getElementById('settings-page-close').addEventListener('click',()=>{
             document.getElementById('settings-page').classList.toggle('open')
+        })
+
+        document.getElementById('refresh-extensions').addEventListener('click',()=>{
+            objectsync.emit('refresh_extensions')
         })
 
         document.getElementById('settings-page-overlay').addEventListener('click',()=>{
