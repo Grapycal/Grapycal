@@ -53,6 +53,11 @@ class Node(SObject):
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
     def build(self):
+        '''
+        Create child objects (typically ports and controls) here.
+        Notice: This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+        running this method again.
+        '''
         pass
 
     def post_build(self):
@@ -79,17 +84,26 @@ class Node(SObject):
         return super().destroy()
 
     def add_in_port(self,name,max_edges=64):
+        '''
+        Add an input port to the node.
+        '''
         port = self.add_child(InputPort,name=name,max_edges=max_edges)
         self.in_ports.insert(port)
         return port
 
     def add_out_port(self,name,max_edges=64):
+        '''
+        Add an output port to the node.
+        '''
         port = self.add_child(OutputPort,name=name,max_edges=max_edges)
         self.out_ports.insert(port)
         return port
     
     T = TypeVar('T', bound=Control)
     def add_control(self,control_type:type[T],**kwargs) -> T:
+        '''
+        Add a control to the node.
+        '''
         control = self.add_child(control_type,**kwargs)
         self.controls.insert(control)
         return control
@@ -142,19 +156,37 @@ class Node(SObject):
     '''
     
     def edge_activated(self, edge:Edge, port:InputPort):
+        '''
+        Called when an edge on an input port is activated.
+        '''
         pass
 
     def input_edge_added(self, edge:Edge, port:InputPort):
+        '''
+        Called when an edge is added to an input port.
+        '''
         pass
 
     def input_edge_removed(self, edge:Edge, port:InputPort):
+        '''
+        Called when an edge is removed from an input port.
+        '''
         pass
 
     def output_edge_added(self, edge:Edge, port:OutputPort):
+        '''
+        Called when an edge is added to an output port.
+        '''
         pass
 
     def output_edge_removed(self, edge:Edge, port:OutputPort):
+        '''
+        Called when an edge is removed from an output port.
+        '''
         pass
 
     def double_click(self):
+        '''
+        Called when the node is double clicked by an user.
+        '''
         pass
