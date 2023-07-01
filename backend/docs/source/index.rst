@@ -25,6 +25,7 @@ Grapycal is a graphical and interactive programming interface with a web user in
 
    user_manual/overview
    user_manual/node
+   user_manual/execution_of_graph
 
 .. This is a caption separating guide and API
    Nothing is inside this because AutoAPI will be inserted into TOC automatically
