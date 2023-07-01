@@ -16,7 +16,7 @@ class VariableNode(Node):
     
     def build(self):
         self.in_port = self.add_in_port('set',1)
-        self.out_port = self.add_out_port('get',64)
+        self.out_port = self.add_out_port('get')
         self.text_control = self.add_control(TextControl)
 
     def edge_activated(self, edge: Edge, port: InputPort):

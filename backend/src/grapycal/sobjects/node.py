@@ -146,6 +146,23 @@ class Node(SObject):
         except Exception as e:
             self._on_exception(e)
 
+    def run(self,task,background=True,to_queue=True):
+        '''
+        Run a task. The stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
+
+        Args:
+            - task: The task to run.
+
+            - background: If set to True, the task will be scheduled to run in the background thread. Otherwise, it will be run in the current thread immediately.
+            
+            - to_queue: Used only when background is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
+            If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
+        '''
+        if background:
+            self.run_in_background(task,to_queue)
+        else:
+            self.run_directly(task)
+
     def _on_exception(self, e):
         #TODO: Create error topic
         from grapycal.core.stdout_helper import orig_print
