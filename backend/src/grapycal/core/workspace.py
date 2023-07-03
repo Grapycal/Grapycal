@@ -1,6 +1,6 @@
 
 from grapycal.extension.extensionManager import ExtensionManager
-from grapycal.sobjects.controls import TextControl
+from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
@@ -76,6 +76,8 @@ class Workspace:
         self._objectsync.register(Edge)
 
         self._objectsync.register(TextControl)
+        self._objectsync.register(ButtonControl)
+        self._objectsync.register(ImageControl)
         
         '''
         Register all built-in node types

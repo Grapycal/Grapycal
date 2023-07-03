@@ -11,6 +11,8 @@ import { Sidebar } from './sobjects/sidebar'
 import { Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
+import { ButtonControl } from './sobjects/controls/buttonControl'
+import { ImageControl } from './sobjects/controls/imageControl'
 
 export const soundManager = new SoundManager();
 
@@ -25,6 +27,8 @@ objectsync.register(Edge);
 objectsync.register(Sidebar);
 
 objectsync.register(TextControl)
+objectsync.register(ButtonControl)
+objectsync.register(ImageControl)
 
 
 new ExtensionsSetting(objectsync);

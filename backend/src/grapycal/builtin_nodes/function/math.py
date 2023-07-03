@@ -57,7 +57,7 @@ class MultiplicationNode(FunctionNode):
         else:
             product = data[0]
             for d in data[1:]:
-                product *= d
+                product = product * d
         return product
     
 class DivisionNode(FunctionNode):

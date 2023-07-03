@@ -13,7 +13,7 @@ export class TextControl extends Control {
     protected template = `
     <div class="control flex-horiz">
         <div class="label" id="label">Text</div>
-        <input type="text" class="text-field full-width" id="text-field">
+        <input type="text" class="control-text text-field full-height full-width" id="text-field">
     </div>
     `
 

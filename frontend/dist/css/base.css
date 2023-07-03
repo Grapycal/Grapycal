@@ -47,10 +47,15 @@ button{
     background-color: #1e1e1e;
     border: #aaaaaa solid 1px;
     outline: inherit;
+    box-sizing: border-box;
 }
 
 button:hover{
     background-color: #333333;
+}
+
+img{
+    display: block;
 }
 
 
@@ -74,15 +79,16 @@ button:hover{
 .normal-node{
     width: 140px;
     min-height: 24px;
+    padding: 1px 0px;
 
     box-sizing: border-box;
     
-    padding: 2px 0px;
 }
 
 .simple-node{
     width: 120px;
     min-height: 20px;
+    padding: 1px 0px;
 
     box-sizing: border-box;
     block-size: fit-content;
@@ -104,13 +110,12 @@ button:hover{
 
 /* Port */
 
-
 .port-knob{
     position: relative;
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color : #727272;
+    background-color : #4d4d4d;
 }
 
 .port-label{
@@ -191,6 +196,22 @@ button:hover{
     border-radius: 2px;
     overflow: hidden;
     color : #d5d5d5;
+    font-size: 16px;
+}
+
+.control-button{
+    font-size: 16px;
+    border: #828282 solid 1px;
+}
+
+.control-text{
+
+}
+
+.control-image{
+    width: 100%;
+    height: fit-content;
+    object-fit: contain;
 }
 
 input:enabled:hover{
@@ -250,7 +271,7 @@ input:focus-within{
     position: absolute;
     padding: 10px;
     padding-bottom: 100px;
-    background-color:rgba(45, 45, 45, 0.54);
+    background-color:rgba(36, 36, 36, 0.7);
     height:auto;
     bottom: 0px; 
     left: 0px;
@@ -374,6 +395,11 @@ input:focus-within{
   width: 100%;
   box-sizing: border-box;
 }
+
+.full-height {
+    height: 100%;
+    box-sizing: border-box;
+  }
 
 .no-width {
   width: 0;

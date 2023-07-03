@@ -57,7 +57,7 @@ export class Node extends CompSObject {
                 <div id="slot_input_port" class="no-width flex-vert space-evenly center"></div>
                 <div id="slot_output_port" class="no-width flex-vert space-evenly center"></div>
             </div>
-            <div id="slot_control" class="slot-control"> </div>
+            <div id="slot_control" class="slot-control flex-vert space-between"> </div>
         </div>`,
     simple:
         `<div class="node simple-node flex-horiz space-between">

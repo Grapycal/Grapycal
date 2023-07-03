@@ -2,7 +2,7 @@ import logging
 
 def setup_logging():
     logger = logging.getLogger()
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING)
     ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)
     ch.setFormatter(ConsoleLogFormatter())
