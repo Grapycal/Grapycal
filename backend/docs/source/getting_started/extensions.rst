@@ -4,7 +4,6 @@ Extensions
 Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `builtin_nodes` is automatically included in 
 every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes and import them in your workspace.
 
-
 Create an Extension
 -------------------
 
@@ -48,7 +47,7 @@ It doesn't actually do anything, but it's a start. Let's add some logic to it.
 Edit the Extension
 ------------------
 
-Grapycal supports hot reloading of extensions. This means that you can edit the extension code and see the changes in the workspace without having to restart the server.
+Grapycal supports hot reloading of extensions i.e. you can edit the extension code and see the changes in the workspace without having to restart the server.
 
 1. Edit the `__init__.py` and add some logic to the `edge_activated` method:
 
