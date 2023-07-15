@@ -2,7 +2,7 @@ Extensions
 ================
 
 Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `builtin_nodes` is automatically included in 
-every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes and import them in your workspace.
+every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes.
 
 Create an Extension
 -------------------
