@@ -6,7 +6,7 @@
 Welcome to Grapycal Documentation!
 ====================================
 
-Grapycal is a graphical and interactive programming interface with a web user interface. It allows users to manipulate and assemble programs by dragging and clicking blocks or graphs representing various built-in and custom Python functions.
+Grapycal is a graphical and interactive programming language. It allows users to manipulate and assemble programs by dragging and clicking blocks or graphs representing various built-in and custom Python functions.
 
 
 `Grapycal v0.2.0 whats new <https://github.com/eri24816/Grapycal/blob/main/docs/v0.2.0.md>`_
@@ -26,6 +26,13 @@ Grapycal is a graphical and interactive programming interface with a web user in
    user_manual/overview
    user_manual/node
    user_manual/execution_of_graph
+
+.. toctree::
+   :caption: Developer Guide
+   :hidden:
+
+   developer_guide/writing_docs
+
 
 .. This is a caption separating guide and API
    Nothing is inside this because AutoAPI will be inserted into TOC automatically
