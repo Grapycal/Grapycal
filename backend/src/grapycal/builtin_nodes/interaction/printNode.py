@@ -6,15 +6,12 @@ from grapycal.sobjects.port import InputPort
 
 class PrintNode(Node):
     category = 'interaction'
-    def pre_build(self, attribute_values, workspace, is_preview:bool = False):
-        super().pre_build(attribute_values, workspace, is_preview)
-        self.label.set('Print')
-        self.shape.set('simple')
 
-    def build(self):
-        super().build()
+    def build_node(self):
         self.add_in_port('',max_edges=1)
         self.text_control = self.add_control(TextControl, editable=False)
+        self.label.set('Print')
+        self.shape.set('simple')
 
     def edge_activated(self, edge, port):
         data = edge.get_data()

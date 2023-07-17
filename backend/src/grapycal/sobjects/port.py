@@ -8,34 +8,36 @@ if TYPE_CHECKING:
 
 class Port(SObject):
     frontend_type = 'Port'
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
+
+    def build(self, name='port', max_edges=64):
         self.name = self.add_attribute('name', StringTopic, name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
-    
+
+    def init(self):
         self.edges: List[Edge] = []
         self.node: Node = self.get_parent() # type: ignore
     
-    def add_edge(self, edge):
+    def add_edge(self, edge:'Edge'):
         if len(self.edges) >= self.max_edges.get():
             raise Exception('Max edges reached')
         self.edges.append(edge)
     
-    def remove_edge(self, edge):
+    def remove_edge(self, edge:'Edge'):
         if edge not in self.edges:
             return
         self.edges.remove(edge)
 
 
 class InputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
-        super().pre_build(attribute_values, workspace, name, max_edges)
+    def build(self, name='port', max_edges=64):
+        super().build(name, max_edges)
         self.add_attribute('is_input', IntTopic, 1)
 
-    def add_edge(self, edge):
+    def add_edge(self, edge:'Edge'):
         super().add_edge(edge)
         self.node.input_edge_added(edge, self)
 
-    def remove_edge(self, edge):
+    def remove_edge(self, edge:'Edge'):
         super().remove_edge(edge)
         self.node.input_edge_removed(edge, self)
         
@@ -43,16 +45,39 @@ class InputPort(Port):
         return all(edge.is_data_ready() for edge in self.edges)
 
 class OutputPort(Port):
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, name='port', max_edges=64):
-        super().pre_build(attribute_values, workspace, name, max_edges)
+    def build(self, name='port', max_edges=64):
+        super().build(name, max_edges)
         self.add_attribute('is_input', IntTopic, 0)
 
-    def add_edge(self, edge):
+    def init(self):
+        super().init()
+        self._retain = False
+        self._retained_data = None
+
+    def add_edge(self, edge:'Edge'):
         super().add_edge(edge)
+        if self._retain:
+            edge.push_data(self._retained_data)
         self.node.output_edge_added(edge, self)
 
-    def remove_edge(self, edge):
+    def remove_edge(self, edge:'Edge'):
         super().remove_edge(edge)
         self.node.output_edge_removed(edge, self)
 
+    def push_data(self, data, retain: bool = False):
+        '''
+        Push data to all connected edges.
+        If retain is True, the data will be pushed to all future edges when they're connected as well.
+        '''
+        if retain:
+            self._retain = True
+            self._retained_data = data
+        for edge in self.edges:
+            edge.push_data(data)
 
+    def disable_retain(self):
+        '''
+        Disable retain mode.
+        '''
+        self._retain = False
+        self._retained_data = None # Release memory

@@ -7,8 +7,8 @@ class AdditionNode(FunctionNode):
     input_edge_limit = [None]
     outputs = ['sum']
 
-    def build(self):
-        super().build()
+    def build_node(self):
+        super().build_node()
         self.label.set('+')
         self.label_offset.set(-.09)
         self.shape.set('round')
@@ -29,8 +29,8 @@ class SubtractionNode(FunctionNode):
     input_edge_limit = [None, None]
     outputs = ['a-b']
 
-    def build(self):
-        super().build()
+    def build_node(self):
+        super().build_node()
         self.label.set('-')
         self.label_offset.set(-.09)
         self.shape.set('round')
@@ -44,8 +44,8 @@ class MultiplicationNode(FunctionNode):
     input_edge_limit = [None]
     outputs = ['product']
 
-    def build(self):
-        super().build()
+    def build_node(self):
+        super().build_node()
         self.label.set('*')
         self.label_offset.set(-.09)
         self.shape.set('round')
@@ -66,9 +66,10 @@ class DivisionNode(FunctionNode):
     input_edge_limit = [None,None]
     outputs = ['a/b']
     
-    def build(self):
-        super().build()
+    def build_node(self):
+        super().build_node()
         self.label.set('/')
+        self.shape.set('round')
 
     def calculate(self, data):
         nominators = data[0]

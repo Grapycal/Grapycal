@@ -11,9 +11,10 @@ class ButtonControl(Control):
     ```
     '''
     frontend_type = 'ButtonControl'
-    def pre_build(self, attribute_values: Dict[str, Any] | None,label='', **_):
-        super().pre_build(attribute_values, **_)
+    def build(self, label:str=''):
         self.label = self.add_attribute('label', StringTopic, label)
         self._click = self.add_attribute('click', EventTopic, is_stateful=False)
+        
+    def init(self):
         self.on_click = self._click.on_emit
         

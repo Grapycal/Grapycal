@@ -7,17 +7,18 @@ from objectsync import StringTopic
 
 class VariableNode(Node):
     category = 'data'
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace, is_preview: bool = False):
-        super().pre_build(attribute_values, workspace, is_preview)
-        self.label.set('Variable')
-        self.shape.set('simple')
-        self.value = None
-        self.has_value = False
     
-    def build(self):
+    def build_node(self):
         self.in_port = self.add_in_port('set',1)
         self.out_port = self.add_out_port('get')
         self.text_control = self.add_control(TextControl)
+        self.label.set('Variable')
+        self.shape.set('simple')
+
+    def init(self):
+        super().init()
+        self.value = None
+        self.has_value = False
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.workspace.vars()[self.text_control.text.get()] = edge.get_data()

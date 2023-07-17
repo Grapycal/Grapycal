@@ -5,17 +5,17 @@ from grapycal.sobjects.port import InputPort, OutputPort
 
 class EvalNode(Node):
     category = 'interaction'
-    def pre_build(self, attribute_values, workspace, is_preview:bool = False):
-        super().pre_build(attribute_values, workspace, is_preview)
-        self.label.set('Eval')
-        self.shape.set('simple')
-        self.has_value = False
-        self.value = None
     
-    def build(self):
-        super().build()
+    def build_node(self):
         self.out_port = self.add_out_port('')
         self.text_control = self.add_control(TextControl)
+        self.label.set('Eval')
+        self.shape.set('simple')
+
+    def init(self):
+        super().init()
+        self.has_value = False
+        self.value = None
 
     def activate(self):
         expression = self.text_control.text.get()

@@ -9,8 +9,7 @@ class ImageControl(Control):
     '''
     '''
     frontend_type = 'ImageControl'
-    def pre_build(self, attribute_values: Dict[str, Any] | None,**_):
-        super().pre_build(attribute_values, **_)
+    def build(self):
         self.image = self.add_attribute('image', StringTopic,smallest_jpg)
     
     def set_image(self,image:bytes|io.BytesIO):
