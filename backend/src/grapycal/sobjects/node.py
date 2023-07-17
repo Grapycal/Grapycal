@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 import traceback
-from typing import TYPE_CHECKING, Any, Dict, List, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, TypeVar
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
@@ -16,21 +16,10 @@ class Node(SObject):
     frontend_type = 'Node'
     category = 'hidden'
 
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace:'Workspace', is_preview:bool = False):
-        self.workspace = workspace
-        self.workspace_object = self.workspace.get_workspace_object()
+    def build(self,is_preview=False,**build_node_args):
         
-        from grapycal.sobjects.editor import Editor
-        parent = self.get_parent()
-        if isinstance(parent, Editor):
-            self.editor = as_type(self.get_parent(),Editor)
-        else:
-            self.editor = None
-        
-        self.use_transform = self.add_attribute('use_transform', GenericTopic[bool], not isinstance(self.get_parent(), Node))
-        self.display_ports = self.add_attribute('display_ports', GenericTopic[bool], not isinstance(self.get_parent(), Node))
-
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
+        self.shape.add_validator(lambda _,x,__: x in ['normal', 'simple', 'round'])
         self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
         self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
@@ -43,6 +32,34 @@ class Node(SObject):
 
         self.controls:ObjListTopic[Control] = self.add_attribute('controls', ObjListTopic)
 
+        '''
+        Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
+        '''
+        self.build_node(**build_node_args)
+
+    def build_node(self):
+        '''
+        Create attributes, ports, and controls here.
+        
+        Note: 
+            This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+        running this method again.
+        '''
+
+    def init(self):
+        '''
+        This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+        the node is built.
+        '''
+        self.workspace:Workspace = self._server.globals.workspace
+        
+        from grapycal.sobjects.editor import Editor # import here to avoid circular import
+        parent = self.get_parent()
+        if isinstance(parent, Editor):
+            self.editor = parent
+        else:
+            self.editor = None
+
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self._spawn , is_stateful=False)
 
@@ -52,38 +69,25 @@ class Node(SObject):
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
-    def build(self):
-        '''
-        Create child objects (typically ports and controls) here.
-        Notice: This method will not be called when the object is being restored. The child objects will be restored automatically instead of
-        running this method again.
-        '''
-        pass
-
-    def post_build(self):
-        pass
-
     def _spawn(self, client_id, translation):
+        '''
+        Called when a client wants to spawn a node.
+        '''
         new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
-        new_node.add_tag(f'spawned_by_{client_id}')
+        new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
         new_node.translation.set(translation)
 
-    def _on_parent_changed(self, old_parent_id, new_parent_id):
-        super()._on_parent_changed(old_parent_id, new_parent_id)
-        if isinstance(self.get_parent(), Node):
-            self.use_transform.set(False)
-            self.display_ports.set(False)
-        else:
-            self.use_transform.set(True)
-            self.display_ports.set(True)
-
     def destroy(self) -> SObjectSerialized:
+        '''
+        Called when the node is destroyed. You can override this method to do something before the node is destroyed.
+        Overrided methods should call return super().destroy() at the end.
+        '''
         #TODO: Remove all edges connected to this node
 
         self._output_stream.close()
         return super().destroy()
 
-    def add_in_port(self,name,max_edges=64):
+    def add_in_port(self,name:str,max_edges=64):
         '''
         Add an input port to the node.
         '''
@@ -91,7 +95,7 @@ class Node(SObject):
         self.in_ports.insert(port)
         return port
 
-    def add_out_port(self,name,max_edges=64):
+    def add_out_port(self,name:str,max_edges=64):
         '''
         Add an output port to the node.
         '''
@@ -113,7 +117,7 @@ class Node(SObject):
     '''
 
     @contextmanager
-    def redirect_output(self):
+    def _redirect_output(self):
         '''
         Returns a context manager that redirects stdout to the node's output stream.
         '''
@@ -125,43 +129,43 @@ class Node(SObject):
         finally:
             self._output_stream.disable_flush()
 
-    def run_in_background(self,task,to_queue=True):
+    def _run_in_background(self,task:Callable[[],None],to_queue=True):
         '''
         Run a task in the background thread.
         '''
         def task_wrapper():
             self.workspace.background_runner.set_exception_callback(self._on_exception)
-            with self.redirect_output():
+            with self._redirect_output():
                 task()
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
-    def run_directly(self,task):
+    def _run_directly(self,task:Callable[[],None]):
         '''
         Run a task in the current thread.
         '''
         try:
-            with self.redirect_output():
+            with self._redirect_output():
                 task()
         except Exception as e:
             self._on_exception(e)
 
-    def run(self,task,background=True,to_queue=True):
+    def run(self,task:Callable[[],None],background=True,to_queue=True):
         '''
-        Run a task. The stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
+        Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
         Args:
             - task: The task to run.
 
             - background: If set to True, the task will be scheduled to run in the background thread. Otherwise, it will be run in the current thread immediately.
             
-            - to_queue: Used only when background is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
+            - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
             If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
         '''
         if background:
-            self.run_in_background(task,to_queue)
+            self._run_in_background(task,to_queue)
         else:
-            self.run_directly(task)
+            self._run_directly(task)
 
     def _on_exception(self, e):
         #TODO: Create error topic

@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from .tensor import *
 
 class LinearNode(nn.Module):
     def __init__(self, in_features, out_features):

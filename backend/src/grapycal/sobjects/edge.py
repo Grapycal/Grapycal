@@ -9,19 +9,23 @@ from objectsync.sobject import SObjectSerialized
 class Edge(SObject):
     frontend_type = 'Edge'
 
-    def pre_build(self, attribute_values: dict[str, Any] | None, workspace, tail:OutputPort|None = None, head:InputPort|None = None):
+    def build(self, tail:OutputPort|None = None, head:InputPort|None = None):
         self.tail = self.add_attribute('tail', ObjTopic[OutputPort], tail)
         self.head = self.add_attribute('head', ObjTopic[InputPort], head)
-        self.tail.on_set2 += self.on_tail_set
-        self.head.on_set2 += self.on_head_set
 
-        self.on_tail_set(None, tail)
-        self.on_head_set(None, head)
-
+    def init(self):
+        
         self._data = None
         self._activated = False
         self._data_ready = False
         self.reaquirable = True
+
+        self.tail.on_set2 += self.on_tail_set
+        self.head.on_set2 += self.on_head_set
+
+        self.on_tail_set(None, self.tail.get())
+        self.on_head_set(None, self.head.get())
+
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
         if old_tail:

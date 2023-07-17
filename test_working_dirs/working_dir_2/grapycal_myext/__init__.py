@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 class ImageDisplayNode(Node):
     category = 'interaction'
-    def build(self):
+    def build_node(self):
         self.label.set('imshow')
         self.shape.set('simple')
         self.img = self.add_control(ImageControl)
@@ -30,17 +30,18 @@ class ImageDisplayNode(Node):
 
 class IsEvenNode(Node):
     category = 'function'
-    def pre_build(self, attribute_values: Dict[str, Any] | None, workspace: Workspace, is_preview: bool = False):
-        super().pre_build(attribute_values, workspace, is_preview)
-        self.i=1
 
-    def build(self):
+    def build_node(self):
         self.label.set('IsEven')
         self.add_in_port('number')
         self.out_port = self.add_out_port('isEven')
         self.text = self.add_control(TextControl)
-        button = self.add_control(ButtonControl, label='Test')
-        button.on_click += self.button_clicked
+        self.button = self.add_control(ButtonControl, label='Test')
+        
+    def init(self):
+        super().init()
+        self.i=1
+        self.button.on_click += self.button_clicked
 
     def button_clicked(self):
         self.i += 1

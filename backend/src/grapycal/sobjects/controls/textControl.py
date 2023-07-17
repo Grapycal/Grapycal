@@ -11,8 +11,7 @@ class TextControl(Control):
     ```
     '''
     frontend_type = 'TextControl'
-    def pre_build(self, attribute_values: Dict[str, Any] | None, text='', label='', editable=True, **_):
-        super().pre_build(attribute_values, **_)
+    def build(self, text:str='', label:str='', editable:bool=True):
         self.text = self.add_attribute('text', StringTopic, text)
         self.label = self.add_attribute('label', StringTopic, label)
         self.editable = self.add_attribute('editable', IntTopic, 1 if editable else 0)

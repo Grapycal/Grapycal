@@ -24,23 +24,20 @@ export class Node extends CompSObject {
         }
         return classes
     }
-    
-    use_transform: GenericTopic<boolean> = this.getAttribute('use_transform', GenericTopic<boolean>)
-    display_ports: GenericTopic<boolean> = this.getAttribute('display_ports', GenericTopic<boolean>)
 
     shape: StringTopic = this.getAttribute('shape', StringTopic) // normal, simple, round
     label: StringTopic = this.getAttribute('label', StringTopic)
     label_offset: FloatTopic = this.getAttribute('label_offset', FloatTopic)
     translation: StringTopic = this.getAttribute('translation', StringTopic)
     category: StringTopic = this.getAttribute('category', StringTopic)
+    in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
+    out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
 
     private _isPreview: boolean
     get isPreview(): boolean {
         return this._isPreview
     }
 
-    in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
-    out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
 
     editor: Editor;
     htmlItem: HtmlItem = new HtmlItem(this);
@@ -81,9 +78,6 @@ export class Node extends CompSObject {
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
 
-        
-        // Initialize UI
-
         this.mouseOverDetector = new MouseOverDetector(this)
 
         this.link(this.eventDispatcher.onDoubleClick, () => {
@@ -100,22 +94,6 @@ export class Node extends CompSObject {
         // Bind attributes to UI
 
         this.shape.onSet.add(this.reshape.bind(this))
-
-        // this.link(this.use_transform.onSet, (use_transform: boolean) => {
-        //     if(this.transform)
-        //         this.transform.enabled = use_transform
-        // })
-
-        this.link(this.display_ports.onSet, (display_ports: boolean) => {
-            if(this.htmlItem.getHtmlEl('slot_input_port'))
-                if(display_ports){
-                    this.htmlItem.getHtmlEl('slot_input_port').style.display = 'flex'
-                    this.htmlItem.getHtmlEl('slot_output_port').style.display = 'flex'
-                }else{
-                    this.htmlItem.getHtmlEl('slot_input_port').style.display = 'none'
-                    this.htmlItem.getHtmlEl('slot_output_port').style.display = 'none'
-                }
-        })
 
         this.link(this.label.onSet, (label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
@@ -189,8 +167,6 @@ export class Node extends CompSObject {
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
             glowDiv(as(this.htmlItem.baseElement, HTMLElement))
             this.transform.enabled = false
-        }else{
-            this.transform.enabled = this.use_transform.getValue()
         }
     }
 

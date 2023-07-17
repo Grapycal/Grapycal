@@ -46,7 +46,7 @@ class Workspace:
 
         self.background_runner = BackgroundRunner()
 
-        self._objectsync = objectsync.Server(port,host,prebuild_kwargs={'workspace':self})
+        self._objectsync = objectsync.Server(port,host)
         
         self._extention_manager = ExtensionManager(self._objectsync,self)
 
@@ -67,6 +67,8 @@ class Workspace:
 
         t.start()
         event_loop_set_event.wait()
+
+        self._objectsync.globals.workspace = self
 
         self._objectsync.register(WorkspaceObject)
         self._objectsync.register(Editor)
@@ -107,7 +109,7 @@ class Workspace:
     '''         
 
     def initialize_workspace(self) -> None:
-        self._objectsync.create_object(WorkspaceObject, parent_id='root', is_preview=False)
+        self._objectsync.create_object(WorkspaceObject, parent_id='root')
         self._extention_manager.import_extension('builtin_nodes')
 
     def save_workspace(self, path: str) -> None:
