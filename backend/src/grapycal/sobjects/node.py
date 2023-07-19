@@ -170,7 +170,7 @@ class Node(SObject):
     def _on_exception(self, e):
         #TODO: Create error topic
         from grapycal.core.stdout_helper import orig_print
-        orig_print('got error',self.__class__.__name__,'\n', ''.join(traceback.format_stack()))
+        orig_print('got error',self.__class__.__name__,'\n', ''.join(traceback.format_exc()))
 
     '''
     Node events

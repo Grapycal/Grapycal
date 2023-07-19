@@ -53,6 +53,23 @@ class IsEvenNode(Node):
             e.push_data(result)
 
 
+class CounterNode(Node):
+    category = 'function'
+    def build_node(self, is_preview=False, **build_node_args):
+        self.text = self.add_control(TextControl)
+        self.text.text.set('0')
+        self.add_control(ButtonControl, label='Add').on_click += self.button_clicked
+        self.add_in_port('set')
+        self.add_out_port('get')
+
+    def init(self):
+        super().init()
+        self.i=0
+
+    def button_clicked(self):
+        self.i += 1
+        self.text.text.set(str(self.i))
+
 # class TestNode2(Node):
 #     category = 'test'
 #     def build(self):

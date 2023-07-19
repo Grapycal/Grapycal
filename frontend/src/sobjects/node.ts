@@ -51,27 +51,27 @@ export class Node extends CompSObject {
         
             <div id="label" class="node-label"></div>
             <div class="flex-horiz space-between full-width">
-                <div id="slot_input_port" class="no-width flex-vert space-evenly center"></div>
-                <div id="slot_output_port" class="no-width flex-vert space-evenly center"></div>
+                <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
+                <div id="slot_output_port" class="no-width flex-vert space-evenly center slot-output-port"></div>
             </div>
             <div id="slot_control" class="slot-control flex-vert space-between"> </div>
         </div>`,
     simple:
         `<div class="node simple-node flex-horiz space-between">
             <div id="label" class="node-label"></div>
-            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+            <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div id="slot_control"  class="slot-control"> </div>
 
-            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+            <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
         </div>`,
     round:
         `<div class="node round-node flex-horiz space-between" >
-            <div id="slot_input_port" class="no-width flex-vert space-evenly"></div>
+            <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
                 <div id="label" class="center-align"></div>
             </div>
             <div id="slot_control" style="display:none"></div>
-            <div id="slot_output_port" class="no-width flex-vert space-evenly"></div>
+            <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
         </div>`,
     }
 

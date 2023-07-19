@@ -70,6 +70,8 @@ class Workspace:
 
         self._objectsync.globals.workspace = self
 
+        self._objectsync.register_service('exit', self.exit)
+
         self._objectsync.register(WorkspaceObject)
         self._objectsync.register(Editor)
         self._objectsync.register(Sidebar)

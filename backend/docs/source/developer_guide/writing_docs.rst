@@ -3,8 +3,8 @@ Writing Docs
 
 The documentation of the Grapycal project is generated using `Sphinx <https://www.sphinx-doc.org/en/master/>`_.
 
-The manually written documentation is written in reStructuredText (`.rst`) files located in `backend/docs/source`.
 The API reference is generated from the docstrings of the source code.
+The source of the rest of the documentation is in reStructuredText (`.rst`) files located in `backend/docs/source`.
 
 To build the documentation locally, run the following command from the `backend/docs` directory:
 
