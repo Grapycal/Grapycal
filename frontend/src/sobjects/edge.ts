@@ -112,8 +112,8 @@ export class Edge extends CompSObject {
         if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
         if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
         if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
-            this.link(this.eventDispatcher.onMove,this.onDrag)
-            this.link(this.eventDispatcher.onMouseUp,this.onDragEndWhileCreating)
+            this.link(this.eventDispatcher.onMoveGlobal,this.onDrag)
+            this.link(this.eventDispatcher.onMouseUpGlobal,this.onDragEndWhileCreating)
         }else{
             
             this.link(this.eventDispatcher.onDragStart,this.onDragStart)

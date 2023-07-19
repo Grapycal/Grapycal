@@ -1,16 +1,24 @@
 import { ObjectSyncClient, ObjectTopic } from "objectsync-client"
 import { CompSObject } from "./compSObject";
-import { Port } from "./port"
-import { EventDispatcher } from "../component/eventDispatcher"
+import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
-import { print } from "../devUtils"
+import { SelectionManager } from "../component/selectionManager"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
-    main_editor = this.getAttribute('main_editor', ObjectTopic<Editor>)
-    eventDispatcher = new EventDispatcher(this, document.getElementById('workspace'))
+    readonly main_editor = this.getAttribute('main_editor', ObjectTopic<Editor>)
+    readonly eventDispatcher = new EventDispatcher(this, document.getElementById('workspace'))
+    readonly selection = new SelectionManager(this)
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         Workspace.instance = this
+        
+    }
+    protected onStart(): void {
+        this.main_editor.getValue().eventDispatcher.onClick.add(()=>{
+            if(GlobalEventDispatcher.instance.isKeyDown('Control')) return;
+            if(GlobalEventDispatcher.instance.isKeyDown('Shift')) return;
+            this.selection.deselectAll()
+        })
     }
 }

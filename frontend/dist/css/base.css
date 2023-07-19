@@ -107,6 +107,28 @@ img{
     left: 3px;
 }
 
+.selection-overlay{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+
+    box-sizing: border-box;
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+.node.selected .selection-overlay{
+    z-index: -1;
+    background-color: var(--cate-color)
+}
+/* 
+.node.selected{
+    background-color: #54360f8f;
+} */
+
 /* Port */
 
 .port-knob{
@@ -237,12 +259,16 @@ img{
     object-fit: contain;
 }
 
-input:enabled:hover{
-    background-color: #333333;
+/* input:enabled:hover{
+    background-color: #8d8d8d2b;
 }
 
 input:focus-within{
-    background-color: #2e2e2e;
+    background-color: #6161612a;
+} */
+
+input:enabled{
+    background-color: #b1b1b117;
 }
 
 .label{

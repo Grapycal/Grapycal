@@ -25,16 +25,17 @@ export class GlobalEventDispatcher{
     public readonly onMouseDown = new Action<[MouseEvent]>();
     public readonly onMouseUp = new Action<[MouseEvent]>();
 
+    public readonly keyState: {[key: string]: boolean} = {};
+
     private _mousePos: Vector2 = Vector2.zero;
     get mousePos(){return this._mousePos;}
     
     constructor(){
-        this._onMouseMove = this._onMouseMove.bind(this);
         document.addEventListener('mousemove', this._onMouseMove.bind(this));
-        this._onMouseDown = this._onMouseDown.bind(this);
         document.addEventListener('mousedown', this._onMouseDown.bind(this));
-        this._onMouseUp = this._onMouseUp.bind(this);
         document.addEventListener('mouseup', this._onMouseUp.bind(this));
+        document.addEventListener('keydown', this._onKeyDown.bind(this));
+        document.addEventListener('keyup', this._onKeyUp.bind(this));
     }
 
     private _onMouseMove(event: MouseEvent){
@@ -49,6 +50,20 @@ export class GlobalEventDispatcher{
     private _onMouseUp(event: MouseEvent){
         this.onMouseUp.invoke(event);
     }
+
+    public isKeyDown(key: string){
+        let result =  this.keyState[key];
+        if(result == undefined) return false;
+        return result;
+    }
+
+    private _onKeyDown(event: KeyboardEvent){
+        this.keyState[event.key] = true;
+    }
+
+    private _onKeyUp(event: KeyboardEvent){
+        this.keyState[event.key] = false;
+    }
 }
 
 export class EventDispatcher extends Component{
@@ -59,15 +74,17 @@ export class EventDispatcher extends Component{
     private fowardCalled: boolean = false;
 
     get mousePos(){return GlobalEventDispatcher.instance.mousePos;}
-    get onMove(){return GlobalEventDispatcher.instance.onMove;}
-    get onMouseDown(){return GlobalEventDispatcher.instance.onMouseDown;}
-    get onMouseUp(){return GlobalEventDispatcher.instance.onMouseUp;}
+    get onMoveGlobal(){return GlobalEventDispatcher.instance.onMove;}
+    get onMouseDownGlobal(){return GlobalEventDispatcher.instance.onMouseDown;}
+    get onMouseUpGlobal(){return GlobalEventDispatcher.instance.onMouseUp;}
 
     public readonly onDragStart = new Action<[MouseEvent,Vector2]>();
     public readonly onDrag = new Action<[MouseEvent,Vector2,Vector2]>();
     public readonly onDragEnd = new Action<[MouseEvent,Vector2]>();
     public readonly onScroll = new Action<[WheelEvent]>();
     public readonly onDoubleClick = new Action<[MouseEvent]>();
+    public readonly onMouseDown = new Action<[MouseEvent]>();
+    public readonly onClick = new Action<[MouseEvent]>();
 
     constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = null){
         super(object);
@@ -109,12 +126,11 @@ export class EventDispatcher extends Component{
         this._onMouseDown(event);
     }
 
-    private _onMouseDown(event: MouseEvent){ 
+    private _onMouseDown(event: MouseEvent){
+        this.onMouseDown.invoke(event);
         this.fowardCalled = false;
         document.addEventListener('mousemove', this._onMouseMove);
-        //this.eventElement.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mouseup', this._onMouseUp);
-        //document.addEventListener('mouseup', this._onMouseUp);
         this.prevMousePos = new Vector2(this.mousePos.x, this.mousePos.y);
         if (!this.fowardCalled && this.onDragStart.numCallbacks > 0 ||this.onDragStart.numCallbacks > 0 || this.onDrag.numCallbacks > 0 || this.onDragEnd.numCallbacks > 0){
             event.stopPropagation();
@@ -139,11 +155,13 @@ export class EventDispatcher extends Component{
 
     private _onMouseUp(event: MouseEvent){
         this.fowardCalled = false;
-        this.onDragEnd.invoke(event, new Vector2(event.clientX, event.clientY));
+        if (this._isDragging)
+            this.onDragEnd.invoke(event, new Vector2(event.clientX, event.clientY));
+        else{
+            this.onClick.invoke(event);
+        }
         this._isDragging = false;
-        //this.eventElement.removeEventListener('mousemove', this._onMouseMove);
         document.removeEventListener('mousemove', this._onMouseMove);
-        //this.eventElement.removeEventListener('mouseup', this._onMouseUp);
         document.removeEventListener('mouseup', this._onMouseUp);
     }
 

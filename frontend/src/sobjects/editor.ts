@@ -46,7 +46,7 @@ export class Editor extends CompSObject{
         this.transform = new Transform(this,editor,viewport);
 
         this.eventDispatcher = new EventDispatcher(this, viewport);
-        this.linker.link(this.eventDispatcher.onMove,this.mouseMove)
+        this.linker.link(this.eventDispatcher.onMoveGlobal,this.mouseMove)
         new MouseOverDetector(this, viewport);
         
         this.transform.scale = 1

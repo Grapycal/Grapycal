@@ -11,6 +11,8 @@ import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { Sidebar } from './sidebar'
 import { Editor } from './editor'
+import { Selectable } from '../component/selectable'
+import { Workspace } from './workspace'
 
 export class Node extends CompSObject {
 
@@ -43,12 +45,14 @@ export class Node extends CompSObject {
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = new Transform(this);
+    selectable = new Selectable(this, Workspace.instance.selection)
     mouseOverDetector: MouseOverDetector
 
     protected readonly templates: {[key: string]: string} = {
     normal: 
         `<div class="node normal-node flex-vert space-between">
         
+            <div class="selection-overlay"></div>
             <div id="label" class="node-label"></div>
             <div class="flex-horiz space-between full-width">
                 <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
@@ -58,6 +62,7 @@ export class Node extends CompSObject {
         </div>`,
     simple:
         `<div class="node simple-node flex-horiz space-between">
+            <div class="selection-overlay"></div>
             <div id="label" class="node-label"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div id="slot_control"  class="slot-control"> </div>
@@ -66,11 +71,13 @@ export class Node extends CompSObject {
         </div>`,
     round:
         `<div class="node round-node flex-horiz space-between" >
+            <div class="selection-overlay"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
                 <div id="label" class="center-align"></div>
             </div>
             <div id="slot_control" style="display:none"></div>
+            
             <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
         </div>`,
     }
@@ -153,6 +160,16 @@ export class Node extends CompSObject {
             this.transform.globalPosition = this.eventDispatcher.mousePos
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
         }
+
+        this.link(this.selectable.onSelected, () => {
+            console.log('selected')
+            this.htmlItem.baseElement.classList.add('selected')
+        })
+
+        this.link(this.selectable.onDeselected, () => {
+            console.log('deselected')
+            this.htmlItem.baseElement.classList.remove('selected')
+        })  
     }
 
     onParentChangedTo(newParent: SObject): void {
