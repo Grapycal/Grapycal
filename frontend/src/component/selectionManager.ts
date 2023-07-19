@@ -18,6 +18,7 @@ export class SelectionManager extends Component{
 
     select(selectable: Selectable){
         if(this.selected.has(selectable)) return;
+        if(!selectable.enabled) return;
         this.selected.add(selectable)
         selectable.select_raw()
     }
