@@ -8,8 +8,8 @@ class LambdaNode(Node):
     def build_node(self):
         self.label.set('Lambda')
         self.shape.set('simple')
-        self.add_in_port('input',1)
-        self.out = self.add_out_port('output')
+        self.add_in_port('input',1,display_name = '')
+        self.out = self.add_out_port('output',display_name = '')
         self.text = self.add_control(TextControl)
         self.text.label.set('λ x:')
         self.text.text.set('x')

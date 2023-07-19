@@ -49,7 +49,7 @@ export class Editor extends CompSObject{
         this.linker.link(this.eventDispatcher.onMove,this.mouseMove)
         new MouseOverDetector(this, viewport);
         
-        this.transform.scale = 1.3
+        this.transform.scale = 1
         this.transform.draggable = true;
         this.transform.scrollable = true;
 

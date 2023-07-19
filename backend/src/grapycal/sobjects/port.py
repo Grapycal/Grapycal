@@ -9,8 +9,9 @@ if TYPE_CHECKING:
 class Port(SObject):
     frontend_type = 'Port'
 
-    def build(self, name='port', max_edges=64):
+    def build(self, name='port', max_edges=64, display_name=None):
         self.name = self.add_attribute('name', StringTopic, name)
+        self.display_name = self.add_attribute('display_name', StringTopic, name if display_name is None else display_name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
 
     def init(self):
@@ -29,8 +30,8 @@ class Port(SObject):
 
 
 class InputPort(Port):
-    def build(self, name='port', max_edges=64):
-        super().build(name, max_edges)
+    def build(self, name='port', max_edges=64, display_name=None):
+        super().build(name, max_edges, display_name)
         self.add_attribute('is_input', IntTopic, 1)
 
     def add_edge(self, edge:'Edge'):
@@ -45,8 +46,8 @@ class InputPort(Port):
         return all(edge.is_data_ready() for edge in self.edges)
 
 class OutputPort(Port):
-    def build(self, name='port', max_edges=64):
-        super().build(name, max_edges)
+    def build(self, name='port', max_edges=64, display_name=None):
+        super().build(name, max_edges, display_name)
         self.add_attribute('is_input', IntTopic, 0)
 
     def init(self):
