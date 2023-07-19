@@ -9,6 +9,8 @@ import { Transform } from '../component/transform'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { Editor } from './editor'
+import { Selectable } from '../component/selectable'
+import { Workspace } from './workspace'
 
 enum EdgeState {
     Idle,
@@ -24,6 +26,7 @@ export class Edge extends CompSObject {
     htmlItem: HtmlItem
     eventDispatcher: EventDispatcher
     transform: Transform
+    selectable: Selectable
     path: SVGPathElement
     svg: SVGSVGElement
 
@@ -58,6 +61,8 @@ export class Edge extends CompSObject {
         this.transform = new Transform(this, this.htmlItem.getHtmlEl('base'))
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
+
+        this.selectable = new Selectable(this, Workspace.instance.selection)
         
         this.path = this.htmlItem.getEl('path',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
@@ -120,6 +125,14 @@ export class Edge extends CompSObject {
             this.link(this.eventDispatcher.onDrag,this.onDrag)
             this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
         }
+
+        this.link(this.selectable.onSelected, () => {
+            this.svg.classList.add('selected')
+        })
+
+        this.link(this.selectable.onDeselected, () => {
+            this.svg.classList.remove('selected')
+        })
     }
 
     onDestroy(): void {
