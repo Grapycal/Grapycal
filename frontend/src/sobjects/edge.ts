@@ -54,9 +54,6 @@ export class Edge extends CompSObject {
         this.htmlItem.applyTemplate(this.template)
 
         this.eventDispatcher = new EventDispatcher(this, this.htmlItem.getEl('path', SVGPathElement))
-        this.link(this.eventDispatcher.onDragStart,this.onDragStart)
-        this.link(this.eventDispatcher.onDrag,this.onDrag)
-        this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
 
         this.transform = new Transform(this, this.htmlItem.getHtmlEl('base'))
         this.transform.pivot = Vector2.zero
@@ -117,6 +114,11 @@ export class Edge extends CompSObject {
         if(this.hasTag('CreatingDragTail')||this.hasTag('CreatingDragHead')){
             this.link(this.eventDispatcher.onMove,this.onDrag)
             this.link(this.eventDispatcher.onMouseUp,this.onDragEndWhileCreating)
+        }else{
+            
+            this.link(this.eventDispatcher.onDragStart,this.onDragStart)
+            this.link(this.eventDispatcher.onDrag,this.onDrag)
+            this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
         }
     }
 

@@ -87,19 +87,19 @@ class Node(SObject):
         self._output_stream.close()
         return super().destroy()
 
-    def add_in_port(self,name:str,max_edges=64):
+    def add_in_port(self,name:str,max_edges=64,display_name=None):
         '''
         Add an input port to the node.
         '''
-        port = self.add_child(InputPort,name=name,max_edges=max_edges)
+        port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
         self.in_ports.insert(port)
         return port
 
-    def add_out_port(self,name:str,max_edges=64):
+    def add_out_port(self,name:str,max_edges=64,display_name=None):
         '''
         Add an output port to the node.
         '''
-        port = self.add_child(OutputPort,name=name,max_edges=max_edges)
+        port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name)
         self.out_ports.insert(port)
         return port
     

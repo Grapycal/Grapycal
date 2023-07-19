@@ -12,7 +12,7 @@ import { Workspace } from './workspace'
 
 export class Port extends CompSObject {
 
-    name: StringTopic = this.getAttribute('name', StringTopic)
+    display_name: StringTopic = this.getAttribute('display_name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
     orientation: number=0;
@@ -65,7 +65,7 @@ export class Port extends CompSObject {
 
         this.displayLabel = true
         
-        this.link(this.name.onSet,(label: string) => {
+        this.link(this.display_name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
         })
     }

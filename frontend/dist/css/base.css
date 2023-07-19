@@ -7,6 +7,7 @@ body{
     background-color: #000000;
     /*no scroll*/
     overflow: hidden;
+    font-size: 14px;
 }
 
 /* Fill the screen */
@@ -67,7 +68,6 @@ img{
     border-radius: 2px;
     user-select: none;
     -webkit-user-select: none;
-    font-size: 14px;
     z-index: 5;
 }
 
@@ -79,7 +79,6 @@ img{
 .normal-node{
     width: 140px;
     min-height: 24px;
-    padding: 1px 0px;
 
     box-sizing: border-box;
     
@@ -88,7 +87,6 @@ img{
 .simple-node{
     width: 120px;
     min-height: 20px;
-    padding: 1px 0px;
 
     box-sizing: border-box;
     block-size: fit-content;
@@ -103,8 +101,9 @@ img{
 .node-label{
     /* fancy cursive fonts */
     font-family: "Helvetica Neue", sans-serif;
+    font-size: 10px; /*the label is not improtant for the view*/
     position: absolute;
-    top: -18px;
+    top: -1.3em;
     left: 3px;
 }
 
@@ -168,6 +167,7 @@ img{
 
 .normal-node .out-port .port-label{
     right: 18px;
+    font-size: 14px;
 }
 
 .simple-node .out-port .port-label{
@@ -188,6 +188,7 @@ img{
 
 .normal-node .in-port .port-label{
     left: 18px;
+    font-size: 14px;
 }
 
 .simple-node .in-port .port-label{
@@ -208,7 +209,7 @@ img{
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    padding: 0px 4px;
+    padding: 0px 2px;
 }
 
 .control{
@@ -218,7 +219,7 @@ img{
     /* border-radius: 2px; */
     overflow: hidden;
     color : #d5d5d5;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .control-button{
