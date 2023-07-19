@@ -6,6 +6,7 @@ class FunctionNode(Node):
     inputs = []
     input_edge_limit = []
     outputs = []
+    display_port_names = True
 
     def build_node(self):
         self._input_edge_limit = self.input_edge_limit[:]
@@ -15,9 +16,11 @@ class FunctionNode(Node):
             if self._input_edge_limit[i] is None:
                 self._input_edge_limit[i] = 64
         for name, max_edges in zip(self.inputs,self._input_edge_limit): #type: ignore
-            self.add_in_port(name,max_edges)
+            display_name = name if self.display_port_names else ''
+            self.add_in_port(name,max_edges,display_name=display_name)
         for name in self.outputs:
-            self.add_out_port(name)
+            display_name = name if self.display_port_names else ''
+            self.add_out_port(name,display_name=display_name)
 
         self.label.set('f')
         self.shape.set('round')

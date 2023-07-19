@@ -161,6 +161,10 @@ export class Node extends CompSObject {
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
         }
 
+        if(this.isPreview){
+            this.selectable.enabled = false
+        }
+
         this.link(this.selectable.onSelected, () => {
             console.log('selected')
             this.htmlItem.baseElement.classList.add('selected')

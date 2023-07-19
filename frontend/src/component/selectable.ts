@@ -14,6 +14,15 @@ export class Selectable extends Component{
         return this._selected
     }
 
+    private _enabled: boolean = true
+    get enabled(): boolean{
+        return this._enabled
+    }
+    set enabled(value: boolean){
+        if(!value && this._selected) this.deselect()
+        this._enabled = value
+    }
+
     constructor(object: IComponentable, selectionManager:SelectionManager){
         super(object)
         this.selectionManager = selectionManager
@@ -27,7 +36,7 @@ export class Selectable extends Component{
 
     click(){
         // Let selection manager handle the click
-        print('click')
+        if(!this.enabled) return;
         this.selectionManager.click(this)
     }
 

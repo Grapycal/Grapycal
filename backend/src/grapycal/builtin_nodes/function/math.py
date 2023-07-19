@@ -6,6 +6,7 @@ class AdditionNode(FunctionNode):
     inputs = ['items']
     input_edge_limit = [None]
     outputs = ['sum']
+    display_port_names = False
 
     def build_node(self):
         super().build_node()
@@ -28,6 +29,7 @@ class SubtractionNode(FunctionNode):
     inputs = ['a', 'b']
     input_edge_limit = [None, None]
     outputs = ['a-b']
+    display_port_names = False
 
     def build_node(self):
         super().build_node()
@@ -43,6 +45,7 @@ class MultiplicationNode(FunctionNode):
     inputs = ['items']
     input_edge_limit = [None]
     outputs = ['product']
+    display_port_names = False
 
     def build_node(self):
         super().build_node()
@@ -65,6 +68,7 @@ class DivisionNode(FunctionNode):
     inputs = ['a', 'b']
     input_edge_limit = [None,None]
     outputs = ['a/b']
+    display_port_names = False
     
     def build_node(self):
         super().build_node()
