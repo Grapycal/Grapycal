@@ -20,7 +20,6 @@ export class Editor extends CompSObject{
                 </div>
             </div>
         </div>
-        <div class="vignette"></div>
 
         <div class="sidebar-container">
             <div class="sidebar-slot" id="slot_sidebar"></div>

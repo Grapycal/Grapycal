@@ -127,7 +127,11 @@ class ExtensionManager:
         for old_serialized, parent_id in nodes_to_recover:
             type_name = f'{new_version.extension_name}.{old_serialized.type.split(".")[1]}' #TODO: Handle removed node types
             new_node: Node = self._objectsync.create_object_s(type_name,parent_id=parent_id) # type: ignore
-            new_node.translation.set(old_serialized.attributes['translation']) # type: ignore
+            for attr_info in old_serialized.attributes:
+                if attr_info[0] == 'translation':
+                    new_node.translation.set(attr_info[2]) # type: ignore
+                    break
+
             node_id_map[old_serialized.id] = new_node.get_id()
 
             ports: List[Port] = new_node.in_ports.get() + new_node.out_ports.get() # type: ignore

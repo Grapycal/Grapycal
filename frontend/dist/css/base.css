@@ -126,6 +126,28 @@ img{
     transform: translate(0,-50%); 
     transition: 0.5s ease-out;
     pointer-events: none;
+    
+    font-family: "Helvetica Neue", sans-serif;
+}
+
+.normal-node .slot-input-port{
+    position: relative;
+    right: 8px;
+}
+
+.simple-node .slot-input-port{
+    position: relative;
+    right: 8px;
+}
+
+.normal-node .slot-output-port{
+    position: relative;
+    left: 8px;
+}
+
+.simple-node .slot-output-port{
+    position: relative;
+    left: 8px;
 }
 
 :is(.simple-node,.round-node){
@@ -145,7 +167,7 @@ img{
 }
 
 .normal-node .out-port .port-label{
-    right: 12px;
+    right: 18px;
 }
 
 .simple-node .out-port .port-label{
@@ -165,7 +187,7 @@ img{
 }
 
 .normal-node .in-port .port-label{
-    left: 12px;
+    left: 18px;
 }
 
 .simple-node .in-port .port-label{
@@ -193,14 +215,14 @@ img{
     box-sizing: border-box;
     width: 100%;
     margin: 2px 0px;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     overflow: hidden;
     color : #d5d5d5;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 .control-button{
-    font-size: 16px;
+    font-size: 12px;
     border: #828282 solid 1px;
 }
 
@@ -224,6 +246,8 @@ input:focus-within{
 
 .label{
     color: #888888;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 /* Edge */

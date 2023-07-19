@@ -22,7 +22,7 @@ Let's create an extension named `grapycal_myext` that defines a node named `IsEv
 
     class IsEvenNode(Node):
         category = 'function'
-        def build(self):
+        def build_node(self):
             self.label.set('IsEven')
             self.add_in_port('number')
             self.add_out_port('isEven')
@@ -57,7 +57,7 @@ Grapycal supports hot reloading of extensions i.e. you can edit the extension co
 
     class IsEvenNode(Node):
         category = 'function'
-        def build(self):
+        def build_node(self):
             self.label.set('IsEven')
             self.add_in_port('number')
             self.out_port = self.add_out_port('isEven')
