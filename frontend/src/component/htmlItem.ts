@@ -7,7 +7,7 @@ export class HtmlItem extends Component{
     static templateIdGenerator: number = 0;
 
     baseElement: Element;
-    parent_slot: HTMLElement;
+    parent_slot: Element;
     slots: Map<string,HTMLElement> = new Map();
     parent_: HtmlItem;
     get parent(){return this.parent_;}
@@ -117,6 +117,12 @@ export class HtmlItem extends Component{
         if (this.parent_ === parent) return;
         this.parent_ = parent;
         this.parent_slot = parent.addChild(this,slot,order);
+    }
+
+    setParentElement(parent: Element): void{
+        if (this.parent_slot === parent) return;
+        this.parent_slot = parent;
+        this.parent_slot.appendChild(this.baseElement);
     }
 
     moveToFront(){

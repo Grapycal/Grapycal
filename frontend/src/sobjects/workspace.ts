@@ -12,7 +12,10 @@ export class Workspace extends CompSObject{
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id)
         Workspace.instance = this
-        
+        document.getElementById('settings-button').addEventListener('click',()=>{
+            document.getElementById('settings-page').classList.toggle('open')
+            objectsync.emit('refresh_extensions')
+        })
     }
     protected onStart(): void {
         this.main_editor.getValue().eventDispatcher.onClick.add(()=>{
