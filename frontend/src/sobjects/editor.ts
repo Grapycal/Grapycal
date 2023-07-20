@@ -21,12 +21,6 @@ export class Editor extends CompSObject{
             </div>
         </div>
 
-        <div class="sidebar-container">
-            <div class="sidebar-slot" id="slot_sidebar"></div>
-            <div class="settings-button" id="settings-button">
-                Settings
-            </div>
-        </div>
     </div>
     `;
 
@@ -53,10 +47,6 @@ export class Editor extends CompSObject{
         this.transform.draggable = true;
         this.transform.scrollable = true;
 
-        this.htmlItem.getHtmlEl('settings-button').addEventListener('click',()=>{
-            document.getElementById('settings-page').classList.toggle('open')
-            objectsync.emit('refresh_extensions')
-        })
     }
 
     private mouseMove(e: MouseEvent){

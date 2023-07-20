@@ -10,7 +10,7 @@ export class Sidebar extends CompSObject {
     nodeLibrary: HeirarchyNode = new HeirarchyNode('', '',true);
     onStart() {
         let workspace = as(this.parent,Workspace)
-        this.nodeLibrary.htmlItem.setParent(workspace.main_editor.getValue().getComponent(HtmlItem), 'sidebar')
+        this.nodeLibrary.htmlItem.setParentElement(document.getElementsByClassName('sidebar-slot')[0])
     }
 
     addItem(htmlItem: HtmlItem, path: string) {
