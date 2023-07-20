@@ -138,12 +138,22 @@ export class Node extends CompSObject {
             this.transform.translation=new Vector2(x, y)
             this.transform.draggable = true
             this.translation.onSet.add((translation: string) => {
-                const [x, y] = translation.split(',').map(parseFloat)
-                this.transform.translation=new Vector2(x, y)
+                this.transform.translation=Vector2.fromString(translation)
             })
             this.transform.translationChanged.add((x: number, y: number) => {
                 this.translation.set(`${x},${y}`)
                 this.htmlItem.moveToFront()
+            })
+            this.transform.dragged.add((delta:Vector2) => {
+                if(!this.selectable.selected) this.selectable.click()
+                this.objectsync.record(() => {
+                    for(let selectable of this.selectable.selectedObjects){
+                        if(selectable.object instanceof Node && selectable.object != this){
+                            let node = selectable.object
+                            node.transform.translate(delta)
+                        }
+                    }
+                })
             })
         }
 
@@ -153,10 +163,19 @@ export class Node extends CompSObject {
                 this.emit('spawn',{client_id:this.objectsync.clientId,translation:`${this.eventDispatcher.mousePos.x},${this.eventDispatcher.mousePos.y}`})
             })
         }
+        
+        this.link(this.selectable.onSelected, () => {
+            this.htmlItem.baseElement.classList.add('selected')
+        })
+
+        this.link(this.selectable.onDeselected, () => {
+            this.htmlItem.baseElement.classList.remove('selected')
+        })  
 
         if(this.hasTag(`spawned_by_${this.objectsync.clientId}`))
         {
             this.removeTag(`spawned_by_${this.objectsync.clientId}`)
+            this.selectable.click()
             this.transform.globalPosition = this.eventDispatcher.mousePos
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
         }
@@ -165,15 +184,6 @@ export class Node extends CompSObject {
             this.selectable.enabled = false
         }
 
-        this.link(this.selectable.onSelected, () => {
-            console.log('selected')
-            this.htmlItem.baseElement.classList.add('selected')
-        })
-
-        this.link(this.selectable.onDeselected, () => {
-            console.log('deselected')
-            this.htmlItem.baseElement.classList.remove('selected')
-        })  
     }
 
     onParentChangedTo(newParent: SObject): void {

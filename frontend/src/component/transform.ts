@@ -38,6 +38,7 @@ export class Transform extends Component{
     specifiedTargetElement: HTMLElement = null;
 
     onChange = new Action<[]>();
+    dragged = new Action<[Vector2]>();
 
     private _pivot: Vector2 = new Vector2(0.5, 0.5);
     private _scale: number = 1;
@@ -194,16 +195,18 @@ export class Transform extends Component{
         this.updateUI();
     }
 
-    onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
+    private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
         let startMouseLocal = this.worldToLocal(prevMousePos);
         let mouseLocal = this.worldToLocal(mousePos);
-        this.translate(new Vector2(
+        let delta = new Vector2(
             (mouseLocal.x - startMouseLocal.x)*this.scale,
             (mouseLocal.y - startMouseLocal.y)*this.scale
-        ));
+        )
+        this.translate(delta);
+        this.dragged.invoke(delta);
     }
 
-    onScroll(e:WheelEvent){
+    private onScroll(e:WheelEvent){
         e.stopPropagation();
         let startMouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
         this.scale *= Math.exp(-0.001*e.deltaY);
