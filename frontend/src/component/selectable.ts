@@ -23,6 +23,10 @@ export class Selectable extends Component{
         this._enabled = value
     }
 
+    get selectedObjects(): Set<Selectable>{
+        return this.selectionManager.selected
+    }
+
     constructor(object: IComponentable, selectionManager:SelectionManager){
         super(object)
         this.selectionManager = selectionManager

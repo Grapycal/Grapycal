@@ -86,4 +86,13 @@ export class Vector2 {
     mulScalar(scalar: number): Vector2{
         return new Vector2(this.x * scalar, this.y * scalar);
     }
+
+    static fromString(str: string): Vector2{
+        const [x, y] = str.split(',').map(parseFloat);
+        return new Vector2(x, y);
+    }
+
+    toString(): string{
+        return `${this.x},${this.y}`;
+    }
 }
