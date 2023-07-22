@@ -178,6 +178,5 @@ export class HtmlItem extends Component{
 
     onDestroy(){
         this.parent_slot?.removeChild(this.baseElement);
-        print(`removed ${this.baseElement} from ${this.parent_slot}`)
     }
 }

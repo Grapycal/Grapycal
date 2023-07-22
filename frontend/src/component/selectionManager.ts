@@ -1,4 +1,5 @@
 import { CompSObject } from "../sobjects/compSObject"
+import { Action } from "../utils"
 import { Component } from "./component"
 import { GlobalEventDispatcher } from "./eventDispatcher"
 import { Selectable } from "./selectable"
@@ -6,6 +7,9 @@ import { Selectable } from "./selectable"
 export class SelectionManager extends Component{
     selected: Set<Selectable> = new Set();
     tracking: Set<Selectable> = new Set();
+
+    onSelect = new Action<[Selectable]>();
+    onDeselect = new Action<[Selectable]>();
 
     register(selectable: Selectable){
         this.tracking.add(selectable)
@@ -21,12 +25,14 @@ export class SelectionManager extends Component{
         if(!selectable.enabled) return;
         this.selected.add(selectable)
         selectable.select_raw()
+        this.onSelect.invoke(selectable)
     }
 
     deselect(selectable: Selectable){
         if(!this.selected.has(selectable)) return;
         this.selected.delete(selectable)
         selectable.deselect_raw()
+        this.onDeselect.invoke(selectable)
     }
 
     selectAll(){

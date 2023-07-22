@@ -14,6 +14,9 @@ class LambdaNode(Node):
         self.text.label.set('λ x:')
         self.text.text.set('x')
 
+        self.expose_attribute(self.text.text,'text',display_name='expression')
+
+
     def input_edge_added(self, edge: Edge, port: InputPort):
         self.calculate(edge.get_data())
 
