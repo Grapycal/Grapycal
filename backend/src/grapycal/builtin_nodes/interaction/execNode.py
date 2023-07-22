@@ -11,6 +11,7 @@ class ExecNode(Node):
         self.text_control = self.add_control(TextControl)
         self.label.set('Exec')
         self.shape.set('simple')
+        self.expose_attribute(self.text_control.text,'text',display_name='statements')
 
     def init(self):
         super().init()

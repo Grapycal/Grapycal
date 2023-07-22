@@ -312,15 +312,24 @@ input:enabled{
     height: 100%;
 }
 
-.sidebar-container{
+.sidebar{
     position: absolute;
     padding: 10px;
     height:auto;
     bottom: 0px; 
-    left: 0px;
     top: 0px;
-    width: 300px;
     z-index: 10;
+    background-color:rgba(36, 36, 36, 0.8);
+}
+
+.sidebar-left{
+    left: 0px;
+    width: 300px;
+}
+
+.sidebar-right{
+    right: 0px;
+    width: 300px;
 }
 
 .sidebar-slot{
@@ -329,7 +338,6 @@ input:enabled{
     position: absolute;
     padding: 10px;
     padding-bottom: 100px;
-    background-color:rgba(36, 36, 36, 0.7);
     height:auto;
     bottom: 0px; 
     left: 0px;
@@ -423,6 +431,13 @@ input:enabled{
 
 .popup-option:hover{
     background-color: #3d3d3d;
+}
+
+/* Attribute Editor */
+
+.text-editor{
+    margin: 4px 10px;
+    flex: 1;
 }
 
 /* Other */
@@ -538,7 +553,7 @@ input:enabled{
     height: 60%;
     padding: 50px;
     z-index: 15;
-    background-color : rgba(20, 20, 20, 0.816); 
+    background-color : rgba(20, 20, 20, 1); 
     border-radius: 3px;
     overflow: scroll;
 }

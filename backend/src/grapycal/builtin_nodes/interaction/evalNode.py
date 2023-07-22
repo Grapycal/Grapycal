@@ -8,9 +8,10 @@ class EvalNode(Node):
     
     def build_node(self):
         self.out_port = self.add_out_port('')
-        self.text_control = self.add_control(TextControl)
+        self.expr_control = self.add_control(TextControl)
         self.label.set('Eval')
         self.shape.set('simple')
+        self.expose_attribute(self.expr_control.text,'text',display_name='expression')
 
     def init(self):
         super().init()
@@ -18,7 +19,7 @@ class EvalNode(Node):
         self.value = None
 
     def activate(self):
-        expression = self.text_control.text.get()
+        expression = self.expr_control.text.get()
         self.value = eval(expression,self.workspace.vars())
         self.has_value = True
         for edge in self.out_port.edges:

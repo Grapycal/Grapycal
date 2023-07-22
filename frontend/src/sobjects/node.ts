@@ -14,6 +14,13 @@ import { Editor } from './editor'
 import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 
+export class ExposedAttributeInfo
+{
+    name:string
+    display_name:string
+    editor_args:any
+}
+
 export class Node extends CompSObject {
 
     public static getCssClassesFromCategory(category: string): string[]{
@@ -34,6 +41,7 @@ export class Node extends CompSObject {
     category: StringTopic = this.getAttribute('category', StringTopic)
     in_ports: ObjListTopic<Port> = this.getAttribute('in_ports', ObjListTopic<Port>)
     out_ports: ObjListTopic<Port> = this.getAttribute('out_ports', ObjListTopic<Port>)
+    exposed_attributes: ListTopic<ExposedAttributeInfo> = this.getAttribute('exposed_attributes', ListTopic<ExposedAttributeInfo>)
 
     private _isPreview: boolean
     get isPreview(): boolean {
@@ -45,7 +53,7 @@ export class Node extends CompSObject {
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = new Transform(this);
-    selectable = new Selectable(this, Workspace.instance.selection)
+    selectable: Selectable;
     mouseOverDetector: MouseOverDetector
 
     protected readonly templates: {[key: string]: string} = {
@@ -94,6 +102,7 @@ export class Node extends CompSObject {
 
     protected onStart(): void {
         super.onStart()
+        this.selectable = new Selectable(this, Workspace.instance.selection)
         this._isPreview = this.parent instanceof Sidebar
 
         this.editor = this.isPreview? null : this.parent as Editor

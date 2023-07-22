@@ -42,7 +42,7 @@ export class HeirarchyNode implements IComponentable{
         }
         if(!isRoot){
             this.htmlItem.getHtmlEl('name').innerText = name;
-            this.linker.link2(this.htmlItem.baseElement,'mousedown',this.mouseDown);
+            this.linker.link2(this.htmlItem.getHtmlEl('name'),'mousedown',this.mouseDown);
             this.htmlItem.getHtmlEl('indent').style.display = 'block';
             for(let className of Node.getCssClassesFromCategory(path)){
                 this.htmlItem.baseElement.classList.add(className);
@@ -112,14 +112,28 @@ export class HeirarchyNode implements IComponentable{
         }
     }
 
-    isEmpty(){
-        return this.children.size === 0 && this.leafs.length === 0;
+    clear(){
+        this.children.forEach((child)=>{
+            child.destroy();
+        })
+        this.children.clear();
+        this.leafs.forEach((leaf)=>{
+            leaf.componentManager.destroy();
+        })
+        this.leafs.splice(0,this.leafs.length);
     }
 
     destroy(){
         this.componentManager.destroy();
-        this.children.forEach((child)=>{
+        for (let child of this.children.values()){
             child.destroy();
-        })
+        }
+        for (let leaf of this.leafs){
+            leaf.componentManager.destroy();
+        }
+    }
+
+    isEmpty(){
+        return this.children.size === 0 && this.leafs.length === 0;
     }
 }

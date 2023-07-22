@@ -6,7 +6,7 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
 from grapycal.utils.misc import as_type
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic
+from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic, Topic
 from objectsync.sobject import SObjectSerialized
 
 if TYPE_CHECKING:
@@ -26,6 +26,7 @@ class Node(SObject):
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
+        self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
 
         self.in_ports:ObjListTopic[InputPort] = self.add_attribute('in_ports', ObjListTopic)
         self.out_ports:ObjListTopic[OutputPort] = self.add_attribute('out_ports', ObjListTopic)
@@ -111,6 +112,22 @@ class Node(SObject):
         control = self.add_child(control_type,**kwargs)
         self.controls.insert(control)
         return control
+    
+    def expose_attribute(self,attribute:Topic,editor_type,editor_args=None,display_name=None):
+        '''
+        Expose an attribute to the editor.
+        '''
+        if editor_args is None:
+            editor_args = {}
+        name = attribute.get_name()
+        if display_name is None:
+            display_name = name.split('/')[-1]
+        editor_args['type'] = editor_type
+        self.exposed_attributes.insert({
+            'name':name,
+            'display_name':display_name,
+            'editor_args':editor_args
+        })
 
     '''
     Run tasks in the background or foreground, redirecting stdout to the node's output stream.
