@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import traceback
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, TypeVar
+from grapycal.core.stdout_helper import orig_print
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
@@ -20,13 +21,16 @@ class Node(SObject):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.shape.add_validator(lambda _,x,__: x in ['normal', 'simple', 'round'])
-        self.output = self.add_attribute('output', StringTopic, '', is_stateful=False)
+        self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
         self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
+
+        # for inspector
+        self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
 
         self.in_ports:ObjListTopic[InputPort] = self.add_attribute('in_ports', ObjListTopic)
         self.out_ports:ObjListTopic[OutputPort] = self.add_attribute('out_ports', ObjListTopic)
@@ -65,7 +69,8 @@ class Node(SObject):
         self.on('spawn', self._spawn , is_stateful=False)
 
         def print_output(data):
-            self.output.set(self.output.get()+data) #TODO: optimize
+            self.output.insert(['output',data])
+
         self._output_stream = OutputStream(print_output)
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
@@ -150,6 +155,7 @@ class Node(SObject):
         '''
         Run a task in the background thread.
         '''
+        self.output.set([])
         def task_wrapper():
             self.workspace.background_runner.set_exception_callback(self._on_exception)
             with self._redirect_output():
@@ -161,6 +167,7 @@ class Node(SObject):
         '''
         Run a task in the current thread.
         '''
+        self.output.set([])
         try:
             with self._redirect_output():
                 task()
@@ -185,9 +192,8 @@ class Node(SObject):
             self._run_directly(task)
 
     def _on_exception(self, e):
-        #TODO: Create error topic
-        from grapycal.core.stdout_helper import orig_print
-        orig_print('got error',self.__class__.__name__,'\n', ''.join(traceback.format_exc()))
+        message = ''.join(traceback.format_exc())
+        self.output.insert(['error',message])
 
     '''
     Node events

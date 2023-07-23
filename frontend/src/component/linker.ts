@@ -14,7 +14,7 @@ export class Linker extends Component{
     }
 
 
-    linkedCallbacks: {action: Action<any>, callback: Callback}[] = []
+    linkedCallbacks: {action: Action<any>, callback: Callback, bindedCallback: Callback}[] = []
     linkedCallbacks2: {element: Node, eventName: string, callback: Callback}[] = []
     /**
      * Use this method to link a callback to an action. 
@@ -24,17 +24,34 @@ export class Linker extends Component{
      * @param callback 
      */
     public link(action: Action<any>, callback: Callback): void{ //TODO: offer remove when parent changed mode
-        callback = callback.bind(this.object);
-        this.linkedCallbacks.push({action: action, callback: callback});
-        action.add(callback);
+        let bindedCallback = callback.bind(this.object);
+        action.add(bindedCallback);
+        this.linkedCallbacks.push({action: action, callback: callback, bindedCallback: bindedCallback});
+    }
+
+    public unlink(action: Action<any,any>|Callback): void{
+        if (action instanceof Action){
+            this.unlinkAction(action);
+        }else{
+            this.unlinkCallback(action);
+        }
     }
     
-    public unlink(action: Action<any,any>): void{
+    public unlinkAction(action: Action<any,any>): void{
         for(let i=0;i<this.linkedCallbacks.length;i++){
             if (this.linkedCallbacks[i].action == action){
                 action.remove(this.linkedCallbacks[i].callback);
                 this.linkedCallbacks.splice(i,1);
                 return;
+            }
+        }
+    }
+
+    public unlinkCallback(callback: Callback): void{
+        for(let i=0;i<this.linkedCallbacks.length;i++){
+            if (this.linkedCallbacks[i].callback == callback){
+                this.linkedCallbacks[i].action.remove(this.linkedCallbacks[i].bindedCallback);
+                this.linkedCallbacks.splice(i,1);
             }
         }
     }

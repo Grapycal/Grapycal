@@ -24,7 +24,7 @@ class ExecNode(Node):
         self.has_value = True
 
     def double_click(self):
-        self.activate()
+        self.run(self.activate)
 
     def output_edge_added(self, edge: Edge, port: OutputPort):
         if self.has_value:

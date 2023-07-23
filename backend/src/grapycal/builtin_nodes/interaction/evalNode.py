@@ -26,7 +26,7 @@ class EvalNode(Node):
             edge.push_data(self.value)
 
     def double_click(self):
-        self.activate()
+        self.run(self.activate)
 
     def output_edge_added(self, edge: Edge, port: OutputPort):
         if self.has_value:

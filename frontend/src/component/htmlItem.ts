@@ -33,6 +33,11 @@ export class HtmlItem extends Component{
         templateElement.innerHTML = template;
         this.baseElement = defined(templateElement.content.firstElementChild);
 
+        //turn off autocomplete
+        for(let element of this.baseElement.querySelectorAll('input,textarea')){
+            element.setAttribute('autocomplete','off');
+        }
+
         // annotate element with template id
         this.templateId = `template_${HtmlItem.templateIdGenerator++}`;
         for(let element of this.baseElement.querySelectorAll('*')){
