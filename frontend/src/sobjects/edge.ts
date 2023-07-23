@@ -82,37 +82,29 @@ export class Edge extends CompSObject {
 
     protected onStart(): void {
         super.onStart()
+
+        const onPortChanged = ((oldPort:Port,newPort:Port) =>{
+            if(oldPort){
+                oldPort.moved.remove(this.updateSVG)
+                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+            }
+            if(newPort){
+                setTimeout(() => {
+                    try{
+                        this.updateSVG();
+                    }catch(e){}
+                }, 0);
+                
+                newPort.moved.add(this.updateSVG)
+                newPort.edges.push(this)
+            }
+        }).bind(this)
+
         // link attributes to UI
-        this.link(this.tail.onSet2,(oldPort: Port,_) => {
-            if(!oldPort) return
-            oldPort.moved.remove(this.updateSVG)
-            oldPort.edges.splice(oldPort.edges.indexOf(this),1) // JS bad
-        })
-        this.link(this.tail.onSet,(newPort: Port) =>{
-            if(!newPort) return
-            setTimeout(() => { // wait for next frame so the port is positioned correctly
-                try{ // sometimes the edge is destroyed before this is called
-                    this.updateSVG();
-                }catch(e){}
-            }, 0);
-            newPort.moved.add(this.updateSVG)
-            newPort.edges.push(this)
-        })
-        this.link(this.head.onSet2,(oldPort: Port,_) => {
-            if(!oldPort) return
-            oldPort.moved.remove(this.updateSVG)
-            oldPort.edges.splice(oldPort.edges.indexOf(this),1)
-        })
-        this.link(this.head.onSet,(newPort: Port) =>{
-            if(!newPort) return
-            setTimeout(() => {
-                try{
-                    this.updateSVG();
-                }catch(e){}
-            }, 0);
-            newPort.moved.add(this.updateSVG)
-            newPort.edges.push(this)
-        })
+        onPortChanged(null,this.tail.getValue())
+        onPortChanged(null,this.head.getValue())
+        this.link(this.tail.onSet2,onPortChanged)
+        this.link(this.head.onSet2,onPortChanged)
 
         if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
         if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
@@ -239,28 +231,10 @@ export class Edge extends CompSObject {
             }
         else {
             // make the change of port permanent
-            if (this.state == EdgeState.DraggingTail) {
-                let tail = this.tail.getValue()
-                let head = this.head.getValue()
-                let parentID = this.parent.id
-                this.objectsync.clearPretendedChanges();
-                this.objectsync.record(() => {
-                    let newEdge = as(this.objectsync.createObject('Edge',parentID),Edge )
-                    newEdge.tail.set(tail)
-                    newEdge.head.set(head)
-                })
-            }
-            else if (this.state == EdgeState.DraggingHead) {
-                let tail = this.tail.getValue()
-                let head = this.head.getValue()
-                let parentID = this.parent.id
-                this.objectsync.clearPretendedChanges();
-                this.objectsync.record(() => {
-                    let newEdge = as(this.objectsync.createObject('Edge',parentID),Edge)
-                    newEdge.tail.set(tail)
-                    newEdge.head.set(head)
-                })
-            }
+            let tail = this.tail.getValue()
+            let head = this.head.getValue()
+            as(this.parent,Editor).createEdge(tail.id,head.id)
+            this.objectsync.clearPretendedChanges();
         }
     }
 

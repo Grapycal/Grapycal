@@ -66,4 +66,8 @@ export class Editor extends CompSObject{
             }
         }
     }
+    
+    public createEdge(tailId: string, headId: string): void{
+        this.makeRequest('create_edge',{tail_id:tailId,head_id:headId})
+    }
 }

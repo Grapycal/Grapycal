@@ -36,6 +36,7 @@ export class GlobalEventDispatcher{
         document.addEventListener('mouseup', this._onMouseUp.bind(this));
         document.addEventListener('keydown', this._onKeyDown.bind(this));
         document.addEventListener('keyup', this._onKeyUp.bind(this));
+        window.addEventListener('blur', this._onBlur.bind(this));
     }
 
     private _onMouseMove(event: MouseEvent){
@@ -63,6 +64,12 @@ export class GlobalEventDispatcher{
 
     private _onKeyUp(event: KeyboardEvent){
         this.keyState[event.key] = false;
+    }
+
+    private _onBlur(event: FocusEvent){
+        for(let key in this.keyState){
+            this.keyState[key] = false;
+        }
     }
 }
 

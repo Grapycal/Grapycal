@@ -29,10 +29,10 @@ input{
     height:100%;
 
     min-width:4ch; 
-    text-align: center; 
     border: none; 
     outline: none;
     background: none;
+    padding: 0.1em 0.2em;
 }
 
 input{
@@ -59,6 +59,26 @@ img{
     display: block;
 }
 
+/* Scrollbar */
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(132, 132, 132) orange;
+  }
+  
+  /* Works on Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: rgb(16, 16, 16);
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(73, 73, 73);
+    border: none;
+  }
 
 /*Node*/
 
@@ -315,7 +335,6 @@ input:enabled{
 .sidebar{
     position: absolute;
     padding: 10px;
-    height:auto;
     bottom: 0px; 
     top: 0px;
     z-index: 10;
@@ -329,7 +348,7 @@ input:enabled{
 
 .sidebar-right{
     right: 0px;
-    width: 300px;
+    width: 400px;
 }
 
 .sidebar-slot{
@@ -433,11 +452,50 @@ input:enabled{
     background-color: #3d3d3d;
 }
 
-/* Attribute Editor */
+/* Inspector */
 
 .text-editor{
     margin: 4px 10px;
     flex: 1;
+}
+
+#node_info{
+    font-family: "Helvetica Neue", sans-serif;
+    /* resize: vertical;
+    overflow: auto; */
+}
+
+#node_type{
+    
+    font-size: 18px;
+    line-height: 24px;
+}
+
+#extension_name{
+    color: #ababab;
+}
+
+#output_display{
+    overflow:auto;
+    white-space: nowrap;
+}
+
+.error{
+    color: #ff4949;
+}
+
+.output{
+    color: #ffffff;
+}
+
+.output-item{
+    margin: 5px 0px;
+}
+
+hr{
+    border: none;
+    border-bottom: #ababab solid 1px;
+    margin: 10px 0px;
 }
 
 /* Other */
