@@ -96,3 +96,29 @@ export class Vector2 {
         return `${this.x},${this.y}`;
     }
 }
+
+export function addPrefixToCssClasses(css: string, prefix: string): string{
+    return css.replace(/\.([a-zA-Z0-9_-]+) +\{/g, (match, className) => {
+        return `.${prefix}-${className}{`;
+    });
+}
+
+export function addPrefixToHtmlClasses(html: Element, prefix: string): void{
+    html.querySelectorAll('[class]').forEach(element => {
+        const classList = element.classList;
+        classList.forEach(className => {
+            classList.remove(className);
+            classList.add(`${prefix}-${className}`);
+        });
+    });
+}
+
+export function addCssToDocument(css:string){
+    var style = document.createElement('style')
+    style.innerText = css
+    document.head.prepend(style) // allow overriding by theme css
+}
+
+export function getStaticField(object: any, fieldName: string): any {
+    return object.constructor[fieldName];
+}

@@ -15,7 +15,7 @@ export class HtmlItem extends Component{
     readonly templateChanged = new Action<[]>();
     templateId: string='';
 
-    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string = null){
+    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string|HTMLTemplateElement = null){
         super(object);
         this.baseElement = null;
         this.parent_ = null;
@@ -24,13 +24,19 @@ export class HtmlItem extends Component{
             this.applyTemplate(template);
     }
 
-    applyTemplate(template: string, order: "prepend"|"append" = "prepend"){
+    applyTemplate(template: string|HTMLTemplateElement, order: "prepend"|"append" = "prepend"){
         // create element from template
         if (this.baseElement !== null)
             this.parent_slot.removeChild(this.baseElement);
 
-        const templateElement = document.createElement('template');
-        templateElement.innerHTML = template;
+        let templateElement: HTMLTemplateElement;
+        if(typeof template === 'string'){
+            templateElement = document.createElement('template');
+            templateElement.innerHTML = template;
+        }else{
+            templateElement = template;
+        }
+
         this.baseElement = defined(templateElement.content.firstElementChild);
 
         //turn off autocomplete

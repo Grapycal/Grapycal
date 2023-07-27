@@ -62,7 +62,6 @@ export class Edge extends CompSObject {
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
 
-        this.selectable = new Selectable(this, Workspace.instance.selection)
         
         this.path = this.htmlItem.getEl('path',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
@@ -82,7 +81,8 @@ export class Edge extends CompSObject {
 
     protected onStart(): void {
         super.onStart()
-
+        
+        this.selectable = new Selectable(this, Workspace.instance.selection)
         const onPortChanged = ((oldPort:Port,newPort:Port) =>{
             if(oldPort){
                 oldPort.moved.remove(this.updateSVG)

@@ -8,7 +8,7 @@ from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
 from grapycal.utils.misc import as_type
 from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic, Topic
-from objectsync.sobject import SObjectSerialized
+from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
@@ -118,9 +118,27 @@ class Node(SObject):
         self.controls.insert(control)
         return control
     
+    # Wrap the SObject.addattribute() to make shorthand of exposing attributes after adding them.
+    T1 = TypeVar("T1", bound=Topic|WrappedTopic)
+    def add_attribute(
+        self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
+        editor_type:str|None=None, editor_args:dict|None=None, display_name:str|None=None
+        ) -> T1: 
+        
+        attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful)
+        if editor_type is not None:
+            assert not isinstance(attribute, WrappedTopic), 'Cannot expose a wrapped topic'
+            self.expose_attribute(attribute,editor_type,editor_args,display_name)
+        return attribute
+    
     def expose_attribute(self,attribute:Topic,editor_type,editor_args=None,display_name=None):
         '''
         Expose an attribute to the editor.
+        Args:
+            - attribute: The attribute to expose.
+
+            - editor_type: The type of the editor to use. Can be ``text`` or ``list``.
+
         '''
         if editor_args is None:
             editor_args = {}
@@ -155,7 +173,6 @@ class Node(SObject):
         '''
         Run a task in the background thread.
         '''
-        self.output.set([])
         def task_wrapper():
             self.workspace.background_runner.set_exception_callback(self._on_exception)
             with self._redirect_output():
@@ -167,7 +184,6 @@ class Node(SObject):
         '''
         Run a task in the current thread.
         '''
-        self.output.set([])
         try:
             with self._redirect_output():
                 task()

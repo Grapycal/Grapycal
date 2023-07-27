@@ -1,6 +1,6 @@
 import { DictTopic, ObjectSyncClient } from "objectsync-client"
 import { Linker } from "../component/linker"
-import { Componentable } from "../component/component"
+import { Componentable } from "../component/componentable"
 import { PopupMenu } from "./popupMenu"
 
 export class ExtensionsSetting extends Componentable{
@@ -10,7 +10,6 @@ export class ExtensionsSetting extends Componentable{
     importedDiv = document.getElementById('imported-extensions')
     avaliableDiv = document.getElementById('avaliable-extensions')
     cards: {[key:string]:HTMLElement} = {}
-    private readonly linker = new Linker(this);
     cardTemplate = `
     <div class="card">
         <div class="card-image"></div>

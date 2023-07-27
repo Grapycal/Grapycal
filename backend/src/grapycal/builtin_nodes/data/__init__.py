@@ -3,7 +3,7 @@ from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
-from objectsync import StringTopic
+from objectsync import StringTopic, ListTopic
 
 class VariableNode(Node):
     category = 'data'
@@ -32,3 +32,19 @@ class VariableNode(Node):
     def output_edge_added(self, edge: Edge, port: OutputPort):
         if self.has_value:
             edge.push_data(self.value)
+
+class SplitNode(Node):
+    category = 'data'
+
+    def build_node(self):
+        self.in_port = self.add_in_port('in',1)
+        self.out_port_dict:Dict[str,OutputPort] = {}
+        self.label.set('Split')
+        self.shape.set('simple')
+        self.add_attribute('indices', ListTopic, editor_type='list').set(['x','y','z'])
+        
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        pass
+
+        

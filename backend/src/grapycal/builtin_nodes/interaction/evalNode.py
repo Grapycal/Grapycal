@@ -18,7 +18,7 @@ class EvalNode(Node):
         self.has_value = False
         self.value = None
 
-    def activate(self):
+    def task(self):
         expression = self.expr_control.text.get()
         self.value = eval(expression,self.workspace.vars())
         self.has_value = True
@@ -26,7 +26,7 @@ class EvalNode(Node):
             edge.push_data(self.value)
 
     def double_click(self):
-        self.run(self.activate)
+        self.run(self.task)
 
     def output_edge_added(self, edge: Edge, port: OutputPort):
         if self.has_value:
