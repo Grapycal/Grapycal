@@ -1,5 +1,6 @@
-import { StringTopic, Topic } from "objectsync-client"
+import { Action, ListTopic, StringTopic, Topic } from "objectsync-client"
 import { ComponentManager, IComponentable } from "../component/component"
+import { Componentable } from "../component/componentable"
 import { HtmlItem } from "../component/htmlItem"
 import { ExposedAttributeInfo, Node } from "../sobjects/node"
 import { as } from "../utils"
@@ -19,6 +20,7 @@ export class Inspector implements IComponentable{
 
     nameEditorMap: {[key:string]:any}={
         'text':TextEditor,
+        'list':ListEditor
     }
 
     template = `
@@ -89,6 +91,7 @@ export class Inspector implements IComponentable{
             this.extensionNameDiv.innerText = extensionName;
             
             let outputAttribute = this.nodes[0].output;
+            console.log(outputAttribute.getValue());
             for(let item of outputAttribute.getValue()){
                 this.addOutput(item);
             }
@@ -186,7 +189,7 @@ class TextEditor implements IComponentable{
 
     constructor(displayName:string,editorArgs:any,connectedAttributes: Topic<any>[]){
         this.connectedAttributes = connectedAttributes;
-        this.htmlItem = new HtmlItem(this, document.body);
+        this.htmlItem = new HtmlItem(this);
         this.htmlItem.applyTemplate(this.template);
         this.input = as(this.htmlItem.getHtmlEl('input'), HTMLInputElement);
         this.htmlItem.getHtmlEl('attribute-name').innerText = displayName;
@@ -228,5 +231,119 @@ class TextEditor implements IComponentable{
             }
         });
         this.locked = false;
+    }
+}
+
+class ListEditor extends Componentable{
+
+    static template = `
+    <div class="attribute-editor flex-horiz stretch">
+        <div id="attribute-name"></div>
+        <div class="list-editor" id="slot_container">
+    </div>
+    `;
+
+    private readonly container: HTMLDivElement;
+    private readonly connectedAttributes: ListTopic<any>[];
+    private readonly items: Map<string,ListEditorItem> = new Map();
+    private locked = false;
+
+    constructor(displayName:string,editorArgs:any,connectedAttributes: Topic<any>[]){
+        super();
+        this.connectedAttributes = [];
+        for(let attr of connectedAttributes){
+            this.connectedAttributes.push(as(attr,ListTopic));
+        }
+
+        this.container = as(this.htmlItem.getHtmlEl('slot_container'), HTMLDivElement);
+
+        this.htmlItem.getHtmlEl('attribute-name').innerText = displayName;
+
+        for (let attr of connectedAttributes) {
+            this.linker.link(attr.onSet, this.updateValue);
+        }
+
+        this.updateValue();
+    }
+
+    private updateValue() {
+        if(this.locked) return;
+        let value:any[] = null;
+        for(let attr of this.connectedAttributes){
+            if(value === null){
+                value = attr.getValue();
+            }else{
+                if(!object_equal(value,attr.getValue())){
+                    value = null;
+                    break;
+                }
+            }
+        }
+
+        // First destroy all items (Sorry, performance)
+        for(let item of this.items.values()){
+            item.destroy();
+        }
+        this.items.clear();
+
+        if(value === null){
+            this.container.innerText = 'multiple values';
+        }else{
+            console.log('value',value)
+            for(let itemText of value){
+                let itemComponent = new ListEditorItem(itemText);
+                this.linker.link(itemComponent.deleteClicked,this.deleteHandler);
+                this.items.set(itemText,itemComponent);
+                itemComponent.htmlItem.setParent(this.htmlItem,'container');
+            }
+        }
+    }
+
+    private deleteHandler(text:string){
+        this.locked = true;
+        Workspace.instance.record(() => {
+            for(let attr of this.connectedAttributes){
+                attr.remove(text);
+            }
+        });
+        console.log('delete',text)
+        console.log('before delete',this.items)
+        this.items.delete(text);
+        console.log('after delete',this.items)
+        
+        this.locked = false;
+    }
+}
+
+class ListEditorItem extends Componentable{
+
+    static template = `
+    <div class="list-editor-item flex-horiz stretch">
+        <div id="list-editor-item-text"></div>
+        <button id="list-editor-item-delete">-</button>
+    </div>
+    `;
+
+    
+
+    readonly text: string;
+
+    readonly textDiv: HTMLDivElement;
+    public readonly deleteButton: HTMLButtonElement;
+
+    public readonly deleteClicked = new Action<[string]>();
+
+    constructor(text:string){
+        super();
+        this.text = text;
+        this.textDiv = as(this.htmlItem.getHtmlEl('list-editor-item-text'),HTMLDivElement);
+        this.deleteButton = as(this.htmlItem.getHtmlEl('list-editor-item-delete'),HTMLButtonElement);
+        this.textDiv.innerText = text;
+        this.linker.link2(this.deleteButton,'click',this.deleteClickedHandler);
+    }
+
+    private deleteClickedHandler(){
+        this.destroy()
+        this.deleteClicked.invoke(this.text);
     }
 }

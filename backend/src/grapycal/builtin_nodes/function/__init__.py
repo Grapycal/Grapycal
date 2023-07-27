@@ -18,7 +18,8 @@ class LambdaNode(Node):
 
 
     def input_edge_added(self, edge: Edge, port: InputPort):
-        self.calculate(edge.get_data())
+        if edge.is_data_ready():    
+            self.calculate(edge.get_data())
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.calculate(edge.get_data())
