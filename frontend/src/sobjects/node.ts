@@ -149,7 +149,9 @@ export class Node extends CompSObject {
             this.transform.translation=new Vector2(x, y)
             this.transform.draggable = true
             this.translation.onSet.add((translation: string) => {
-                this.transform.translation=Vector2.fromString(translation)
+                if(!this.eventDispatcher.isDragging){ // prevent the node from jumping when dragging
+                    this.transform.translation=Vector2.fromString(translation)
+                }
             })
             this.transform.translationChanged.add((x: number, y: number) => {
                 this.translation.set(`${x},${y}`)

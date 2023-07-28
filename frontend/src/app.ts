@@ -16,8 +16,9 @@ import { ImageControl } from './sobjects/controls/imageControl'
 
 export const soundManager = new SoundManager();
 
-//const objectsync = new ObjectSyncClient('ws://192.168.245.187:8765');
-const objectsync = new ObjectSyncClient('ws://localhost:8765');
+let host = location.hostname;
+const objectsync = new ObjectSyncClient(`ws://${host}:8765`);
+
 objectsync.register(Root);
 objectsync.register(Workspace);
 objectsync.register(Editor);
