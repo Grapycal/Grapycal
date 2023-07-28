@@ -91,7 +91,6 @@ export class Inspector implements IComponentable{
             this.extensionNameDiv.innerText = extensionName;
             
             let outputAttribute = this.nodes[0].output;
-            console.log(outputAttribute.getValue());
             for(let item of outputAttribute.getValue()){
                 this.addOutput(item);
             }
@@ -236,12 +235,24 @@ class TextEditor implements IComponentable{
 
 class ListEditor extends Componentable{
 
-    static template = `
-    <div class="attribute-editor flex-horiz stretch">
-        <div id="attribute-name"></div>
-        <div class="list-editor" id="slot_container">
-    </div>
-    `;
+    get template(){ 
+        return `
+        <div class="attribute-editor flex-horiz stretch">
+            <div id="attribute-name"></div>
+            <div class="container" id="slot_container">
+        </div>
+    `}
+
+    get style(): string { 
+        return super.style + `
+        .container{
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            flex-grow: 1;
+            margin: 4px 10px;
+        }
+    `}
 
     private readonly container: HTMLDivElement;
     private readonly connectedAttributes: ListTopic<any>[];
@@ -289,7 +300,6 @@ class ListEditor extends Componentable{
         if(value === null){
             this.container.innerText = 'multiple values';
         }else{
-            console.log('value',value)
             for(let itemText of value){
                 let itemComponent = new ListEditorItem(itemText);
                 this.linker.link(itemComponent.deleteClicked,this.deleteHandler);
@@ -306,10 +316,7 @@ class ListEditor extends Componentable{
                 attr.remove(text);
             }
         });
-        console.log('delete',text)
-        console.log('before delete',this.items)
         this.items.delete(text);
-        console.log('after delete',this.items)
         
         this.locked = false;
     }
@@ -317,14 +324,32 @@ class ListEditor extends Componentable{
 
 class ListEditorItem extends Componentable{
 
-    static template = `
-    <div class="list-editor-item flex-horiz stretch">
-        <div id="list-editor-item-text"></div>
-        <button id="list-editor-item-delete">-</button>
-    </div>
-    `;
+    get template(){ 
+        return `
+        <div class="item flex-horiz stretch">
+            <div id="list-editor-item-text"class="text"></div>
+            <button id="list-editor-item-delete" class="button center-align">-</button>
+        </div>
+        `
+    }
 
-    
+    get style(): string { 
+        return super.style + `
+        .item{
+            margin: 2px;
+            border: 1px outset #373737;
+            flex-grow: 1;
+            background-color: #181818;
+        }
+        .text{
+            flex-grow: 1;
+            margin-left: 5px;
+        }
+        .button{
+            height: 20px;
+            line-height: 0px;
+        }
+   ` }
 
     readonly text: string;
 

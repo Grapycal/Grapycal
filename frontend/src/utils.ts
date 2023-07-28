@@ -1,3 +1,5 @@
+import { print } from "./devUtils"
+
 export { Action } from "objectsync-client"
 
 export function defined<T>(value: T | undefined| null): T {
@@ -98,16 +100,20 @@ export class Vector2 {
 }
 
 export function addPrefixToCssClasses(css: string, prefix: string): string{
-    return css.replace(/\.([a-zA-Z0-9_-]+) +\{/g, (match, className) => {
+    return css.replace(/\.([a-zA-Z0-9_-]+)[ ]*\{/g, (match, className) => {
         return `.${prefix}-${className}{`;
     });
 }
 
 export function addPrefixToHtmlClasses(html: Element, prefix: string): void{
-    html.querySelectorAll('[class]').forEach(element => {
+    let target:Element|DocumentFragment = html;
+    if(html instanceof HTMLTemplateElement)
+        target = html.content;
+    target.querySelectorAll('[class]').forEach(element => {
         const classList = element.classList;
         classList.forEach(className => {
-            classList.remove(className);
+            // The original class is preserved. For example, .class becomes .class .prefix-class
+            // The original class is used by the theme css.
             classList.add(`${prefix}-${className}`);
         });
     });
@@ -115,7 +121,7 @@ export function addPrefixToHtmlClasses(html: Element, prefix: string): void{
 
 export function addCssToDocument(css:string){
     var style = document.createElement('style')
-    style.innerText = css
+    style.innerHTML = css
     document.head.prepend(style) // allow overriding by theme css
 }
 
