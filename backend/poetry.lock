@@ -402,7 +402,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "fad6b06125a49af0b94e1f612afdfd23988b5290"
+resolved_reference = "38bad2e362a2aea207c0bdbc4f0c663073245c52"
 
 [[package]]
 name = "packaging"
