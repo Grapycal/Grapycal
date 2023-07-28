@@ -73,7 +73,6 @@ export class Linker extends Component{
         }
     }
     onDestroy(): void {
-        console.log("onDestroy");
         for(let {action,callback} of this.linkedCallbacks){
             action.remove(callback);
         }
