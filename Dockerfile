@@ -17,3 +17,5 @@ RUN pip install -e ./backend
 RUN rm frontend/package-lock.json && npm install --prefix ./frontend
 
 EXPOSE 8765 9001
+
+CMD ["sh", "docker_cmd.sh"]
