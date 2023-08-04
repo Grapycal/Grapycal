@@ -514,6 +514,10 @@ hr{
     align-items: center;
 }
 
+.grow {
+    flex-grow: 1;
+}
+
 .space-evenly { 
   justify-content: space-evenly; 
 }
