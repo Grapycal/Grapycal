@@ -4,7 +4,7 @@ body{
     /* monospace */
     font-family: Consolas, Courier, monospace;
     color: #e7e7e7;
-    background-color: #000000;
+    background-color: rgb(16, 16, 16);
     /*no scroll*/
     overflow: hidden;
     font-size: 14px;
@@ -83,8 +83,8 @@ img{
 /*Node*/
 
 .node{
-    background-color: #121113;
-    border: #989898 solid 1px;
+    background-color: #232323;
+    border-top: solid 1px;
     border-radius: 2px;
     user-select: none;
     -webkit-user-select: none;
@@ -116,6 +116,7 @@ img{
     width: 25px;
     height: 25px;
     border-radius: 50%;
+    border: solid 1px;
 }
 
 .node-label{
@@ -338,17 +339,19 @@ input:enabled{
     bottom: 0px; 
     top: 0px;
     z-index: 10;
-    background-color:rgba(36, 36, 36, 0.8);
+    background-color:rgba(20, 20, 20, 0.8);
 }
 
 .sidebar-left{
     left: 0px;
     width: 300px;
+    border-right: #4b4b4b solid 1px;
 }
 
 .sidebar-right{
     right: 0px;
     width: 400px;
+    border-left: #4b4b4b solid 1px;
 }
 
 .sidebar-slot{
@@ -377,7 +380,7 @@ input:enabled{
     text-align: center;
     line-height: 50px;
     font-size: 24px;
-    background-color: #22381f;
+    background-color: #1f2738;
     user-select: none;
     -webkit-user-select: none;
     z-index: 10;
