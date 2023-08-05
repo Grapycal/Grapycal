@@ -4,3 +4,4 @@ from grapycal.sobjects.controls import TextControl, ButtonControl, ImageControl
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort, Port
+from objectsync import Topic, IntTopic, SetTopic, DictTopic, StringTopic, ListTopic, GenericTopic, FloatTopic, EventTopic, ObjListTopic, ObjSetTopic, ObjDictTopic, ObjTopic
