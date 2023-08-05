@@ -1,0 +1,1 @@
+cd frontend && npm run app & cd test_working_dirs/working_dir_2 && python -m grapycal --host 0.0.0.0 --port 8765
