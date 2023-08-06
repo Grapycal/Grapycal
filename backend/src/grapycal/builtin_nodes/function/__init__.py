@@ -17,12 +17,16 @@ class LambdaNode(Node):
         self.expose_attribute(self.text.text,'text',display_name='expression')
 
         self.input_args = self.add_attribute('input args',ListTopic,editor_type='list')
-        self.input_args.on_add += self.on_input_arg_added
-        self.input_args.on_remove += self.on_input_arg_removed
+        self.input_args.on_insert += self.on_input_arg_added
+        self.input_args.on_pop += self.on_input_arg_removed
 
-    def on_input_arg_added(self, arg_name):
+    def on_input_arg_added(self, arg_name, position):
+        assert position == len(self.input_args)-1 # currently only support adding to the end
+        assert arg_name not in arg_name
         self.add_in_port(arg_name,1,display_name = arg_name)
 
+    def on_input_arg_removed(self, arg_name, position):
+        self.remove_in_port(arg_name)
 
     def input_edge_added(self, edge: Edge, port: InputPort):
         if edge.is_data_ready():    
