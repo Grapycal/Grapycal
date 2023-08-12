@@ -97,9 +97,6 @@ class Node(SObject):
         '''
         Add an input port to the node.
         '''
-        for port in self.in_ports:
-            if port.name.get() == name:
-                raise ValueError(f'Port with name {name} already exists')
         port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
         self.in_ports.insert(port)
         return port
@@ -108,9 +105,6 @@ class Node(SObject):
         '''
         Add an output port to the node.
         '''
-        for port in self.out_ports:
-            if port.name.get() == name:
-                raise ValueError(f'Port with name {name} already exists')
         port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name)
         self.out_ports.insert(port)
         return port
@@ -121,16 +115,18 @@ class Node(SObject):
         '''
         #find the port with the given name
         for port in self.in_ports:
-            if port.name() == name:
+            if port.name.get() == name:
                 break
         else:
             raise ValueError(f'Port with name {name} does not exist')
+        
         #remove all edges connected to the port
-        for edge in port.edges:
-            edge.destroy()
+        for edge in port.edges: 
+            edge.remove() # do this in port.remove()?   
+
         #remove the port
         self.in_ports.remove(port)
-        port.destroy()
+        port.remove()
     
     T = TypeVar('T', bound=Control)
     def add_control(self,control_type:type[T],**kwargs) -> T:

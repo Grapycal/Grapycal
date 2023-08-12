@@ -31,8 +31,9 @@ objectsync.register(TextControl)
 objectsync.register(ButtonControl)
 objectsync.register(ImageControl)
 
-
-new ExtensionsSetting(objectsync);
+setTimeout(() => { // fix this
+    new ExtensionsSetting(objectsync);
+}, 200);
 
 
 document.addEventListener('keydown', function(event) {
