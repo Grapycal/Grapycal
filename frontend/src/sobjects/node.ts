@@ -80,7 +80,7 @@ export class Node extends CompSObject {
             </div>
         </div>`,
     simple:
-        `<div class="node simple-node">
+        `<div class="node simple-node node-content">
             <div class="node-border-container">
                 <div class="node-border">
                 </div>
