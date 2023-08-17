@@ -87,7 +87,7 @@ export class Port extends CompSObject {
         super.onParentChangedFrom(oldValue)
         this.isInputChanged(this.is_input.getValue())
         if(oldValue.hasComponent(Transform))
-            oldValue.getComponent(Transform).onChange.remove(this.moved.invoke)
+            as(oldValue,Node).moved.remove(this.moved.invoke)
     }
 
     protected onParentChangedTo(newValue: CompSObject): void {
@@ -95,7 +95,7 @@ export class Port extends CompSObject {
         this.isInputChanged(this.is_input.getValue())
         this.node = as(newValue, Node);
         if(this.node.hasComponent(Transform))
-            this.node.getComponent(Transform).onChange.add(this.moved.invoke)
+            this.node.moved.add(this.moved.invoke)
         this.moved.invoke()
     }
 

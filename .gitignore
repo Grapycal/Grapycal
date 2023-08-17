@@ -3,3 +3,8 @@
 
 .grapycal
 *.pyc
+
+# For early development, the grapycal_torch extension is included in this repo.
+# Ignore files downloaded by PyTorch.
+*-ubyte
+*-ubyte.gz

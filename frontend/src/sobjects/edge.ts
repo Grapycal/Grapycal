@@ -28,6 +28,7 @@ export class Edge extends CompSObject {
     transform: Transform
     selectable: Selectable
     path: SVGPathElement
+    path_hit_box: SVGPathElement
     svg: SVGSVGElement
 
     state: EdgeState = EdgeState.Idle
@@ -37,6 +38,7 @@ export class Edge extends CompSObject {
         <svg class="edge" id="svg">
             <g>
                 <path class="edge-path" id="path" d=""  fill="none"></path>
+                <path class="edge-path-hit-box" id="path_hit_box" d=""  fill="none"></path>
             </g>
         </svg>
     </div>
@@ -56,7 +58,7 @@ export class Edge extends CompSObject {
         this.htmlItem = new HtmlItem(this)
         this.htmlItem.applyTemplate(this.template)
 
-        this.eventDispatcher = new EventDispatcher(this, this.htmlItem.getEl('path', SVGPathElement))
+        this.eventDispatcher = new EventDispatcher(this, this.htmlItem.getEl('path_hit_box', SVGPathElement))
 
         this.transform = new Transform(this, this.htmlItem.getHtmlEl('base'))
         this.transform.pivot = Vector2.zero
@@ -64,6 +66,7 @@ export class Edge extends CompSObject {
 
         
         this.path = this.htmlItem.getEl('path',SVGPathElement)
+        this.path_hit_box = this.htmlItem.getEl('path_hit_box',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
         this.svg = this.htmlItem.getEl('svg', SVGSVGElement)
 
@@ -89,11 +92,7 @@ export class Edge extends CompSObject {
                 oldPort.edges.splice(oldPort.edges.indexOf(this),1)
             }
             if(newPort){
-                setTimeout(() => {
-                    try{
-                        this.updateSVG();
-                    }catch(e){}
-                }, 0);
+                this.updateSVG()
                 
                 newPort.moved.add(this.updateSVG)
                 newPort.edges.push(this)
@@ -116,6 +115,12 @@ export class Edge extends CompSObject {
             this.link(this.eventDispatcher.onDragStart,this.onDragStart)
             this.link(this.eventDispatcher.onDrag,this.onDrag)
             this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
+            this.link(this.eventDispatcher.onMouseOver,() => {
+                this.svg.classList.add('hover')
+            })
+            this.link(this.eventDispatcher.onMouseLeave,() => {
+                this.svg.classList.remove('hover')
+            })
         }
 
         this.link(this.selectable.onSelected, () => {
@@ -241,7 +246,12 @@ export class Edge extends CompSObject {
 
     // Graphical stuff
     private updateSVG() {
-        this.path.setAttribute('d', this.getSVGPath())
+        setTimeout(() => {
+            try{
+                this.path.setAttribute('d', this.getSVGPath())
+                this.path_hit_box.setAttribute('d', this.getSVGPath())
+            }catch(e){}
+        }, 0);
     }
     private getSVGPath(): string {
         let tail: Vector2

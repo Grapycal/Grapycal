@@ -59,6 +59,8 @@ img{
     display: block;
 }
 
+input[disabled] {pointer-events:none}
+
 /* Scrollbar */
 /* Works on Firefox */
 * {
@@ -83,11 +85,6 @@ img{
 /*Node*/
 
 .node{
-    background-color: #232323;
-    border-top: solid 1px;
-    border-radius: 2px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
     user-select: none;
     -webkit-user-select: none;
     z-index: 5;
@@ -123,14 +120,20 @@ img{
 
 .node-label{
     /* fancy cursive fonts */
+    text-align: left;
     font-family: "Helvetica Neue", sans-serif;
-    font-size: 10px; /*the label is not improtant for the view*/
-    position: absolute;
-    top: -1.3em;
-    left: 3px;
+    font-size: 12px;
+    padding-left: 3px;
+    padding-top: 3px;
+    
 }
 
-.selection-overlay{
+
+.node-content{
+    background: linear-gradient(180deg, rgba(116, 211, 255, 0.006) 0%, rgba(88, 202, 255, 0.051) 100%);
+}
+
+.node-overlay{
     position: absolute;
     top: -5px;
     left: -5px;
@@ -139,17 +142,48 @@ img{
 
     box-sizing: border-box;
     pointer-events: none;
-}
-
-.node.selected .selection-overlay{
     border-image: url(/select.png) 50% round;
     border-width: 2px;
     border-style: solid;
     border-image-width: 12px;
     image-rendering: pixelated;
+    filter: opacity(0);
+}
+
+.node.hover .node-overlay{
+    /* blue border */
+    filter: opacity(0.3);
+}
+
+.node.selected .node-overlay{
     /* green border */
     filter: invert(66%) sepia(76%) saturate(5039%) hue-rotate(87deg) brightness(127%) contrast(114%);
 }
+
+.node-border-container{
+    /* a trick to make the border thiner than 1px */
+    pointer-events: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    transform: scale(0.1);
+    transform-origin: 50% 50%;
+}
+
+.node-border{
+    position: absolute;
+    top: -450%;
+    left: -450%;
+    right: -450%;
+    bottom: -450%;
+    /* The px here is actually 0.1px */
+    border: solid 5px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px 0px var(--cate-color);
+}
+
 /* 
 .node.selected{
     background-color: #54360f8f;
@@ -175,6 +209,7 @@ img{
     pointer-events: none;
     
     font-family: "Helvetica Neue", sans-serif;
+    color: #bababa;
 }
 
 .normal-node .slot-input-port{
@@ -307,18 +342,25 @@ input:enabled{
 
 .edge{
     overflow: visible;
-    stroke: rgba(141, 141, 141, 0.665);
-    stroke-width: 5;
 
+    stroke: rgba(255, 255, 255, 0.712);
+    stroke-width: 2;
+    stroke-linecap:round;
     pointer-events: none;
 }
 
-.edge.selected{
-    stroke: #00B900a0;
+.edge.hover{
+    stroke: #7a7a7a;
 }
 
-.edge-path{
+.edge.selected{
+    stroke: #19ff28bb;
+}
+
+.edge-path-hit-box{
     pointer-events: all;
+    stroke: transparent;
+    stroke-width: 12;
 }
 
 /* Editor */
@@ -341,7 +383,7 @@ input:enabled{
     bottom: 0px; 
     top: 0px;
     z-index: 10;
-    background-color:rgba(20, 20, 20, 0.8);
+    background-color:rgba(0,0,0,0.8);
 }
 
 .sidebar-left{
@@ -382,14 +424,14 @@ input:enabled{
     text-align: center;
     line-height: 50px;
     font-size: 24px;
-    background-color: #1f2738;
+    background-color: #000000;
     user-select: none;
     -webkit-user-select: none;
     z-index: 10;
 }
 
 .settings-button:hover{
-    background-color: #2a4f25;
+    background-color: #030712;
 }
 
 .vignette {
@@ -582,8 +624,9 @@ hr{
     width: 100000px;
     height: 100000px;
     /* background-image: url(../hexagon_clamped.png); */
+    background: black;
     background-size: 300px;
-    filter: hue-rotate(-0deg) brightness(0.5);
+    filter: hue-rotate(-10deg) brightness(0.3);
 
     
     z-index: -10;
