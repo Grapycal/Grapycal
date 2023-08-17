@@ -9,6 +9,7 @@ export interface ICanReceiveMouseEvent{
     addEventListener(type: 'mouseover', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: 'wheel', listener: (event: WheelEvent) => void, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: 'dblclick', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
+    addEventListener(type: 'mouseleave', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
 
     removeEventListener(type: 'mousedown', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'mousemove', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
@@ -16,6 +17,7 @@ export interface ICanReceiveMouseEvent{
     removeEventListener(type: 'mouseover', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'wheel', listener: (event: WheelEvent) => void, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: 'dblclick', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: 'mouseleave', listener: (event: MouseEvent) => void, options?: boolean | EventListenerOptions): void;
 }
 
 export class GlobalEventDispatcher{
@@ -92,6 +94,8 @@ export class EventDispatcher extends Component{
     public readonly onDoubleClick = new Action<[MouseEvent]>();
     public readonly onMouseDown = new Action<[MouseEvent]>();
     public readonly onClick = new Action<[MouseEvent]>();
+    public readonly onMouseOver = new Action<[MouseEvent]>();
+    public readonly onMouseLeave = new Action<[MouseEvent]>();
 
     constructor(object:IComponentable,eventElement: ICanReceiveMouseEvent = null){
         super(object);
@@ -115,10 +119,14 @@ export class EventDispatcher extends Component{
         this.eventElement?.removeEventListener('mousedown', this._onMouseDown);
         this.eventElement?.removeEventListener('wheel', this.onScroll.invoke);
         this.eventElement?.removeEventListener('dblclick', this._onDoubleClick);
+        this.eventElement?.removeEventListener('mouseover', this.onMouseOver.invoke);
+        this.eventElement?.removeEventListener('mouseleave', this.onMouseLeave.invoke);
         this.eventElement = eventElement;
         this.eventElement.addEventListener('mousedown', this._onMouseDown);
         this.eventElement.addEventListener('wheel', this.onScroll.invoke);
         this.eventElement.addEventListener('dblclick', this._onDoubleClick);
+        this.eventElement.addEventListener('mouseover', this.onMouseOver.invoke);
+        this.eventElement.addEventListener('mouseleave', this.onMouseLeave.invoke);
     }
 
     public forwardEvent(){

@@ -127,6 +127,43 @@ class Node(SObject):
         #remove the port
         self.in_ports.remove(port)
         port.remove()
+
+    def remove_out_port(self,name:str):
+        '''
+        Remove an output port from the node.
+        '''
+        #find the port with the given name
+        for port in self.out_ports:
+            if port.name.get() == name:
+                break
+        else:
+            raise ValueError(f'Port with name {name} does not exist')
+        
+        #remove all edges connected to the port
+        for edge in port.edges: 
+            edge.remove() # do this in port.remove()?
+
+        #remove the port
+        self.out_ports.remove(port)
+        port.remove()
+
+    def get_in_port(self,name:str) -> InputPort:
+        '''
+        Get an input port by its name.
+        '''
+        for port in self.in_ports:
+            if port.name.get() == name:
+                return port
+        raise ValueError(f'Port with name {name} does not exist')
+    
+    def get_out_port(self,name:str) -> OutputPort:
+        '''
+        Get an output port by its name.
+        '''
+        for port in self.out_ports:
+            if port.name.get() == name:
+                return port
+        raise ValueError(f'Port with name {name} does not exist')
     
     T = TypeVar('T', bound=Control)
     def add_control(self,control_type:type[T],**kwargs) -> T:

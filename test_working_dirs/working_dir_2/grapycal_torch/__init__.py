@@ -21,7 +21,10 @@ class ImageDisplayNode(Node):
         self.add_in_port('tensor', 1)
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        data = edge.get_data()
+        self.run(self.update_image)
+
+    def update_image(self):
+        data = self.in_ports[0].edges[0].get_data()
 
         if isinstance(data, Image.Image):
             data = np.array(data)

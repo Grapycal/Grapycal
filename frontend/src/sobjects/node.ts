@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic, Action} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
@@ -57,31 +57,46 @@ export class Node extends CompSObject {
     transform: Transform = new Transform(this);
     selectable: Selectable;
     mouseOverDetector: MouseOverDetector
+    
+    public moved: Action<[]> = new Action();
 
     protected readonly templates: {[key: string]: string} = {
     normal: 
-        `<div class="node normal-node flex-vert space-between">
-        
-            <div class="selection-overlay"></div>
-            <div id="label" class="node-label"></div>
-            <div class="flex-horiz space-between full-width">
-                <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
-                <div id="slot_output_port" class="no-width flex-vert space-evenly center slot-output-port"></div>
+        `<div class="node normal-node">
+            
+            <div class="node-border-container">
+                <div class="node-border">
+                </div>
             </div>
-            <div id="slot_control" class="slot-control flex-vert space-between"> </div>
+            
+            <div class="node-overlay"></div>
+            <div class="node-content flex-vert space-between">
+                <div id="label" class="node-label full-width"></div>
+                <div class="flex-horiz space-between full-width">
+                    <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
+                    <div id="slot_output_port" class="no-width flex-vert space-evenly center slot-output-port"></div>
+                </div>
+                <div id="slot_control" class="slot-control flex-vert space-between"> </div>
+            </div>
         </div>`,
     simple:
-        `<div class="node simple-node flex-horiz space-between">
-            <div class="selection-overlay"></div>
+        `<div class="node simple-node">
+            <div class="node-border-container">
+                <div class="node-border">
+                </div>
+            </div>
+            <div class="node-overlay"></div>
             <div id="label" class="node-label"></div>
-            <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
-            <div id="slot_control"  class="slot-control"> </div>
+            <div class=" flex-horiz space-between">
+                <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
+                <div id="slot_control"  class="slot-control"> </div>
 
-            <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
+            </div>
         </div>`,
     round:
         `<div class="node round-node flex-horiz space-between" >
-            <div class="selection-overlay"></div>
+            <div class="node-overlay"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
                 <div id="label" class="center-align"></div>
@@ -125,7 +140,7 @@ export class Node extends CompSObject {
         for(let className of Node.getCssClassesFromCategory(this.category.getValue())){
             this.htmlItem.baseElement.classList.add(className)
         }
-        this.htmlItem.baseElement.classList.add
+
         this.link(this.category.onSet2, (oldCategory: string, newCategory: string) => {
             if(this.parent instanceof Sidebar){
                 if(this.parent.hasItem(this.htmlItem))
@@ -197,6 +212,17 @@ export class Node extends CompSObject {
             this.selectable.enabled = false
         }
 
+        this.link(this.eventDispatcher.onMouseOver, () => {
+            this.htmlItem.baseElement.classList.add('hover')
+        })
+
+        this.link(this.eventDispatcher.onMouseLeave, () => {
+            this.htmlItem.baseElement.classList.remove('hover')
+        })
+
+        this.link(this.onAddChild,this.moved.invoke)
+        this.link(this.onRemoveChild,this.moved.invoke)
+        this.link(this.transform.onChange,this.moved.invoke)
     }
 
     onParentChangedTo(newParent: SObject): void {
