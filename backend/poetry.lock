@@ -174,7 +174,7 @@ files = [
 
 [[package]]
 name = "chatroom"
-version = "0.5.3"
+version = "0.6.0"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -189,7 +189,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "60f9204dfede285bdce637edce6ca275b8e853f7"
+resolved_reference = "123ce787fac46fbe57840ddf8248bee1feedb08b"
 
 [[package]]
 name = "colorama"
@@ -402,7 +402,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "01d6c6f3c7f751c8e0f8474e2fedf03cc1772b85"
+resolved_reference = "908df10cbf2e4c6258b0b15368dc2b1c218e68a1"
 
 [[package]]
 name = "packaging"
