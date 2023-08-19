@@ -69,7 +69,7 @@ export class Node extends CompSObject {
                 </div>
             </div>
             
-            <div class="node-overlay"></div>
+            <div class="node-selection"></div>
             <div class="node-content flex-vert space-between">
                 <div id="label" class="node-label full-width"></div>
                 <div class="flex-horiz space-between full-width">
@@ -85,7 +85,7 @@ export class Node extends CompSObject {
                 <div class="node-border">
                 </div>
             </div>
-            <div class="node-overlay"></div>
+            <div class="node-selection"></div>
             <div id="label" class="node-label"></div>
             <div class=" flex-horiz space-between">
                 <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
@@ -96,7 +96,7 @@ export class Node extends CompSObject {
         </div>`,
     round:
         `<div class="node round-node flex-horiz space-between" >
-            <div class="node-overlay"></div>
+            <div class="node-selection"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
                 <div id="label" class="center-align"></div>
@@ -159,6 +159,7 @@ export class Node extends CompSObject {
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
 
+        this.transform.pivot = new Vector2(0.5, 0)
         if(!this._isPreview){
             const [x, y] = this.translation.getValue().split(',').map(parseFloat)
             this.transform.translation=new Vector2(x, y)
@@ -188,7 +189,7 @@ export class Node extends CompSObject {
         if(this.isPreview){
             this.link(this.eventDispatcher.onDragStart, () => {
                 //create a new node
-                this.emit('spawn',{client_id:this.objectsync.clientId,translation:`${this.eventDispatcher.mousePos.x},${this.eventDispatcher.mousePos.y}`})
+                this.emit('spawn',{client_id:this.objectsync.clientId,translation:'0,0'}) 
             })
         }
         
@@ -204,7 +205,8 @@ export class Node extends CompSObject {
         {
             this.removeTag(`spawned_by_${this.objectsync.clientId}`)
             this.selectable.click()
-            this.transform.globalPosition = this.eventDispatcher.mousePos
+            let pivot = this.transform.pivot
+            this.transform.globalPosition = this.eventDispatcher.mousePos.add(pivot.mul(this.transform.size)).add(this.transform.size.mulScalar(-0.5))
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
         }
 

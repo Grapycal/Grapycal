@@ -7,6 +7,7 @@ class ExecNode(Node):
     category = 'interaction'
 
     def build_node(self):
+        self.in_port = self.add_in_port('')
         self.out_port = self.add_out_port('')
         self.text_control = self.add_control(TextControl)
         self.label.set('Exec')
@@ -18,14 +19,13 @@ class ExecNode(Node):
         self.has_value = False
         self.value = None
 
-    def activate(self):
+    def task(self):
         stmt = self.text_control.text.get()
         exec(stmt,self.workspace.vars())
         self.has_value = True
 
     def double_click(self):
-        self.run(self.activate)
+        self.run(self.task)
 
-    def output_edge_added(self, edge: Edge, port: OutputPort):
-        if self.has_value:
-            edge.push_data(self.value)
+    def edge_activated(self, edge: Edge, port: InputPort):
+        self.run(self.task)

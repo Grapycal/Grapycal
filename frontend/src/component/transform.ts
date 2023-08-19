@@ -168,6 +168,11 @@ export class Transform extends Component{
         return this.localToWorld(this.localCenter);
     }
 
+    get size(){
+        let rect = this.targetElement.getBoundingClientRect();
+        return new Vector2(rect.width, rect.height);
+    }
+
     // get worldCenter(){
     //     return {
     //         x: this.worldPosition.x + this.targetElement.clientWidth*(0.5-this.pivot.x),

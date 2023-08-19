@@ -65,7 +65,7 @@ class OutputPort(Port):
         super().remove_edge(edge)
         self.node.output_edge_removed(edge, self)
 
-    def push_data(self, data, retain: bool = False):
+    def push_data(self, data:Any=None, retain: bool = False):
         '''
         Push data to all connected edges.
         If retain is True, the data will be pushed to all future edges when they're connected as well.

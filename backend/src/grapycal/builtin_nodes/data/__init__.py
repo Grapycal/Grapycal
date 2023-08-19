@@ -37,14 +37,33 @@ class SplitNode(Node):
     category = 'data'
 
     def build_node(self):
-        self.in_port = self.add_in_port('in',1)
-        self.out_port_dict:Dict[str,OutputPort] = {}
+        self.in_port = self.add_in_port('list/dict',1)
         self.label.set('Split')
-        self.shape.set('simple')
-        self.add_attribute('indices', ListTopic, editor_type='list').set(['x','y','z'])
-        
+        self.shape.set('normal')
+        self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
+
+    def init(self):
+        super().init()
+        self.keys.on_insert.add_auto(self.add_key)
+        self.keys.on_pop.add_auto(self.remove_key)
+
+    def add_key(self, key, position):
+        self.add_out_port(key)
+
+    def remove_key(self, key, position):
+        self.remove_out_port(key)
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        pass
+        self.run(self.task)
+
+    def input_edge_added(self, edge: Edge, port: InputPort):
+        self.run(self.task)
+
+    def task(self):
+        for edge in self.in_port.edges:
+            data = edge.get_data()
+            for out_port in self.out_ports:
+                key = out_port.name.get()
+                out_port.push_data(data[eval(key)])
 
         
