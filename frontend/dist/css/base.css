@@ -88,6 +88,7 @@ input[disabled] {pointer-events:none}
     user-select: none;
     -webkit-user-select: none;
     z-index: 5;
+    background: linear-gradient(180deg, rgba(116, 211, 255, 0.006) 0%, var(--cate-color) 1600%);
 }
 
 .node-preview{
@@ -128,12 +129,7 @@ input[disabled] {pointer-events:none}
     
 }
 
-
-.node-content{
-    background: linear-gradient(180deg, rgba(116, 211, 255, 0.006) 0%, rgba(88, 202, 255, 0.051) 100%);
-}
-
-.node-overlay{
+.node-selection{
     position: absolute;
     top: -5px;
     left: -5px;
@@ -150,12 +146,12 @@ input[disabled] {pointer-events:none}
     filter: opacity(0);
 }
 
-.node.hover .node-overlay{
+.node.hover .node-selection{
     /* blue border */
     filter: opacity(0.3);
 }
 
-.node.selected .node-overlay{
+.node.selected .node-selection{
     /* green border */
     filter: invert(66%) sepia(76%) saturate(5039%) hue-rotate(87deg) brightness(127%) contrast(114%);
 }
@@ -197,6 +193,17 @@ input[disabled] {pointer-events:none}
     height: 10px;
     border-radius: 50%;
     background-color : #4d4d4d;
+}
+
+.port-knob-hitbox{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color : transparent;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
 }
 
 .port-label{

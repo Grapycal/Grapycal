@@ -11,18 +11,22 @@ class LambdaNode(Node):
         self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl])
 
         self.input_args = self.add_attribute('input_args',ListTopic,editor_type='list')
+        self.output_names = self.add_attribute('outputs',ListTopic,editor_type='list')
+
+    def init(self):
         self.input_args.on_insert.add_auto(self.on_input_arg_added)
         self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 
-        self.input_args.insert('x')
+        if self.is_new:
+            self.input_args.insert('x')
 
-        self.output_names = self.add_attribute('outputs',ListTopic,editor_type='list')
         self.output_names.add_validator(ListTopic.unique_validator)
         self.output_names.on_insert.add_auto(self.on_output_added)
         self.output_names.on_pop.add_auto(self.on_output_removed)
 
-        self.output_names.insert('out')
-        self.text_controls['out'].text.set('x')
+        if self.is_new:
+            self.output_names.insert('out')
+            self.text_controls['out'].text.set('x')
     
     def on_input_arg_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)

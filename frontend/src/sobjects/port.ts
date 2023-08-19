@@ -38,7 +38,9 @@ export class Port extends CompSObject {
 
     readonly template: string = `
     <div class="Port">
+        
         <div class="port-knob" id="Knob">
+            <div class="port-knob-hitbox" id="Hitbox"></div>
             <div class="port-label" id="label">
             </div>
         </div>

@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import functools
 import traceback
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, TypeVar
 from grapycal.core.stdout_helper import orig_print
@@ -17,10 +18,16 @@ class Node(SObject):
     frontend_type = 'Node'
     category = 'hidden'
 
+    def initialize(self,*args,**kwargs):
+        # This trick allows subclasses to override init method without calling super().init()
+        self._init_called = False
+        super().initialize(*args,**kwargs)
+        if not self._init_called:
+            Node.init(self)
+
     def build(self,is_preview=False,**build_node_args):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
-        self.shape.add_validator(lambda _,x,__: x in ['normal', 'simple', 'round'])
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
         self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
@@ -56,6 +63,8 @@ class Node(SObject):
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
         '''
+        self._init_called = True
+
         self.workspace:Workspace = self._server.globals.workspace
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
@@ -81,7 +90,6 @@ class Node(SObject):
         '''
         new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
-        new_node.translation.set(translation)
 
     def destroy(self) -> SObjectSerialized:
         '''
@@ -246,7 +254,7 @@ class Node(SObject):
         except Exception as e:
             self._on_exception(e)
 
-    def run(self,task:Callable[[],None],background=True,to_queue=True):
+    def run(self,task:Callable[[],None],background=True,to_queue=True,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
@@ -258,6 +266,7 @@ class Node(SObject):
             - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
             If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
         '''
+        task = functools.partial(task,**kwargs)
         if background:
             self._run_in_background(task,to_queue)
         else:
