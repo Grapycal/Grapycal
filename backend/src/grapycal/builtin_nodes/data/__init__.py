@@ -60,10 +60,9 @@ class SplitNode(Node):
         self.run(self.task)
 
     def task(self):
-        for edge in self.in_port.edges:
-            data = edge.get_data()
-            for out_port in self.out_ports:
-                key = out_port.name.get()
-                out_port.push_data(data[eval(key)])
+        data = self.in_port.get_one_data()
+        for out_port in self.out_ports:
+            key = out_port.name.get()
+            out_port.push_data(eval(f'_data[{key}]',self.workspace.vars(),{'_data':data}))
 
         

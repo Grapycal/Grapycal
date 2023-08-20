@@ -58,10 +58,10 @@ export class Port extends CompSObject {
         let transform = new Transform(this,this.htmlItem.getHtmlEl('Knob'))
         transform.pivot = new Vector2(0,0)
 
-        let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Knob'))
+        let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Hitbox'))
         this.link(eventDispatcher.onDragStart,this.generateEdge.bind(this))
 
-        new MouseOverDetector(this,this.htmlItem.getHtmlEl('Knob'))
+        new MouseOverDetector(this,this.htmlItem.getHtmlEl('Hitbox'))
 
         // Bind attributes to UI
 

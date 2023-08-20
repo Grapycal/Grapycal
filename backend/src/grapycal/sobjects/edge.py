@@ -18,7 +18,7 @@ class Edge(SObject):
         self._data = None
         self._activated = False
         self._data_ready = False
-        self.reaquirable = True
+        self.reaquirable = False
 
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set

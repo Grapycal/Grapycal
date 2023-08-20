@@ -44,6 +44,12 @@ class InputPort(Port):
         
     def is_all_edge_ready(self):
         return all(edge.is_data_ready() for edge in self.edges)
+    
+    def get_data(self):
+        return [edge.get_data() for edge in self.edges]
+    
+    def get_one_data(self):
+        return self.edges[0].get_data()
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):

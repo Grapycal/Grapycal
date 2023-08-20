@@ -113,8 +113,8 @@ input[disabled] {pointer-events:none}
 }
 
 .round-node{
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: solid 1px;
 }
@@ -204,6 +204,12 @@ input[disabled] {pointer-events:none}
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
+}
+
+.round-node .port-knob-hitbox{
+    /* reduce the hitbox size so that it is easier to select the node */
+    width: 15px;
+    height: 15px;
 }
 
 .port-label{

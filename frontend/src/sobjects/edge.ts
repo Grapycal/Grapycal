@@ -193,13 +193,13 @@ export class Edge extends CompSObject {
 
     private onDragEnd(event: MouseEvent, mousePos: Vector2) {           
         if(this.state == EdgeState.DraggingTail && 
-            (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
                 this.objectsync.destroyObject(this.id);
             }
         else if(this.state == EdgeState.DraggingHead &&
-            (this.head.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.head.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            (this.head.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.head.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
                 this.objectsync.destroyObject(this.id);
@@ -225,12 +225,12 @@ export class Edge extends CompSObject {
     private onDragEndWhileCreating(){
 
         if(this.state == EdgeState.DraggingTail && 
-            (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
             }
         else if(this.state == EdgeState.DraggingHead &&
-            (this.head.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.head.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x))
+            (this.head.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.head.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
             }
@@ -262,7 +262,7 @@ export class Edge extends CompSObject {
         if(
             this.state == EdgeState.DraggingTail && 
             this.head.getValue() != null &&
-            (this.tail.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.tail.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x)) {
+            (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue()))){
             tail = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             head = this.transform.worldToLocal(this.head.getValue().getComponent(Transform).worldCenter)
             //tail_orientation = Math.atan2(head.y - tail.y, head.x - tail.x)
@@ -272,7 +272,7 @@ export class Edge extends CompSObject {
         else if(
             this.state == EdgeState.DraggingHead &&
             this.tail.getValue() != null &&
-            (this.head.getValue() == null || this.eventDispatcher.mousePos.distanceTo(this.head.getValue().getComponent(Transform).worldCenter) > 15*this.transform.getAbsoluteScale().x)) {
+            (this.head.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.head.getValue()))) {
             tail = this.transform.worldToLocal(this.tail.getValue().getComponent(Transform).worldCenter)
             head = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             tail_orientation = this.tail.getValue().orientation
