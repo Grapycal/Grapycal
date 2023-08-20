@@ -1,7 +1,13 @@
+from .cnn import *
+from .tensor_operations import *
+from .tensor import *
+del ModuleNode
+
+
+
 import torch
 from torch import nn
 import torchvision
-from .tensor import *
 
 from grapycal import ImageControl, Node, TextControl, ButtonControl, Edge, InputPort
 

@@ -6,6 +6,9 @@ import { as } from "../../utils"
 
 export class Control extends CompSObject {
     htmlitem = new HtmlItem(this)
+    protected get node(): Node {
+        return as(this.parent,Node)
+    }
     protected template = `
     <div class="control">
         this is a control

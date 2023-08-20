@@ -166,7 +166,9 @@ export class Node extends CompSObject {
             this.transform.draggable = true
             this.translation.onSet.add((translation: string) => {
                 if(!this.eventDispatcher.isDragging){ // prevent the node from jumping when dragging
-                    this.transform.translation=Vector2.fromString(translation)
+                    let v = Vector2.fromString(translation);
+                    if(!Number.isNaN(v.x) && !Number.isNaN(v.y))
+                        this.transform.translation=Vector2.fromString(translation)
                 }
             })
             this.transform.translationChanged.add((x: number, y: number) => {
@@ -189,7 +191,7 @@ export class Node extends CompSObject {
         if(this.isPreview){
             this.link(this.eventDispatcher.onDragStart, () => {
                 //create a new node
-                this.emit('spawn',{client_id:this.objectsync.clientId,translation:'0,0'}) 
+                this.emit('spawn',{client_id:this.objectsync.clientId}) 
             })
         }
         

@@ -15,9 +15,10 @@ export class ImageControl extends Control {
         super.onStart()
         let image = this.htmlitem.getEl("image", HTMLImageElement)
         let imageTopic = this.getAttribute("image", StringTopic)
-        this.link(imageTopic.onSet, (_) => {
+        this.link(imageTopic.onSet, (newValue) => {
             // set the image data (jpg)
-            image.src = "data:image/jpg;base64," + imageTopic.getValue()
+            image.src = "data:image/jpg;base64," + newValue
+            this.node.moved.invoke()
         })
     }
 

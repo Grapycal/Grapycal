@@ -84,7 +84,7 @@ class Node(SObject):
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
-    def _spawn(self, client_id, translation):
+    def _spawn(self, client_id):
         '''
         Called when a client wants to spawn a node.
         '''

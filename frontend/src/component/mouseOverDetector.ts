@@ -35,25 +35,10 @@ class MouseOverDetectorMaster{
             this.mousePos = {x: event.clientX, y: event.clientY};
         });
     }
-
+    
     private check(){
-        // https://stackoverflow.com/questions/21051084/javascript-know-all-the-elements-under-your-mouse-pointer-multiple-z-axis-laye
-        
-        let stack = [], el: Element | null;
-        do {
-            el = document.elementFromPoint(this.mousePos.x, this.mousePos.y);
-            if(el == null) break;
-            stack.push(el);
-            el.classList.add('pointerEventsNone');
-        }while(el.tagName !== 'HTML');
-    
-        // clean up
-        for(var i  = 0; i < stack.length; i += 1)
-            stack[i].classList.remove('pointerEventsNone');
-    
-        this._elementsUnderMouse = stack.map(el => el);
-        this._objectsUnderMouse = this._elementsUnderMouse.map(el => this.allObjects.get(el)).filter(obj => obj != undefined).map(obj => obj!);
-        this.isDirty = false;
+        let els = document.elementsFromPoint(this.mousePos.x, this.mousePos.y)
+        this._objectsUnderMouse = els.map(el => this.allObjects.get(el)).filter(obj => obj != undefined).map(obj => obj!);
     }
 
     public add(object: IComponentable, element: Element){

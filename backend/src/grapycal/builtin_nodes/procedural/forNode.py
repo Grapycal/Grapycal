@@ -16,8 +16,14 @@ class ForNode(Node):
 
     def edge_activated(self, edge, port):
         if port == self.run_port:
-            self.iterator = iter(self.iterable_port.edges[0].get_data()) #type: ignore
-            self.run(self.next,to_queue=False)
+            self.start()
+
+    def double_click(self):
+        self.start()
+
+    def start(self):
+        self.iterator = iter(self.iterable_port.edges[0].get_data()) #type: ignore
+        self.run(self.next,to_queue=False)
 
     def next(self):
         try:
