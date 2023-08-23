@@ -177,10 +177,13 @@ export class Node extends CompSObject {
             })
             this.transform.dragged.add((delta:Vector2) => {
                 if(!this.selectable.selected) this.selectable.click()
+                if (this.selectable.selectedObjects.size <= 1) return
+                // TODO: if multiple nodes are selected and drag, they still send their all translation to the server
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
                         if(selectable.object instanceof Node && selectable.object != this){
                             let node = selectable.object
+                            console.log('dragging',node.label.getValue())
                             node.transform.translate(delta)
                         }
                     }
