@@ -170,12 +170,13 @@ export class EventDispatcher extends Component{
 
     private _onMouseUp(event: MouseEvent){
         this.fowardCalled = false;
-        if (this._isDragging)
-            this.onDragEnd.invoke(event, new Vector2(event.clientX, event.clientY));
+        if (this._isDragging) {
+            this._isDragging = false;
+            this.onDrag.invoke(event, new Vector2(event.clientX, event.clientY), this.prevMousePos);
+        }
         else{
             this.onClick.invoke(event);
         }
-        this._isDragging = false;
         document.removeEventListener('mousemove', this._onMouseMove);
         document.removeEventListener('mouseup', this._onMouseUp);
     }

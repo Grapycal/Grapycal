@@ -1,4 +1,5 @@
 import logging
+import os
 
 def setup_logging():
     logger = logging.getLogger()
@@ -6,10 +7,11 @@ def setup_logging():
     #level = logging.DEBUG
     logging.basicConfig(level=level)
     ch = logging.StreamHandler()
-    #ch.setLevel(logging.DEBUG)
+    if (os.environ.get('DEBUG').lower() == 'true'):
+        ch.setLevel(logging.DEBUG)
     ch.setFormatter(ConsoleLogFormatter())
-
-    #logger.setLevel(logging.DEBUG)
+    if (os.environ.get('DEBUG').lower() == 'true'):
+        logger.setLevel(logging.DEBUG)
     logger.handlers.clear()
     logger.addHandler(ch)
     ch.addFilter(NameTranslator())
