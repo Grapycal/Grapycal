@@ -18,13 +18,6 @@ class Node(SObject):
     frontend_type = 'Node'
     category = 'hidden'
 
-    def initialize(self,*args,**kwargs):
-        # This trick allows subclasses to override init method without calling super().init()
-        self._init_called = False
-        super().initialize(*args,**kwargs)
-        if not self._init_called:
-            Node.init(self)
-
     def build(self,is_preview=False,**build_node_args):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
