@@ -7,10 +7,10 @@ def setup_logging():
     #level = logging.DEBUG
     logging.basicConfig(level=level)
     ch = logging.StreamHandler()
-    if (os.environ.get('DEBUG').lower() == 'true'):
+    if os.environ.get('DEBUG') is not None and (os.environ.get('DEBUG').lower() == 'true'):
         ch.setLevel(logging.DEBUG)
     ch.setFormatter(ConsoleLogFormatter())
-    if (os.environ.get('DEBUG').lower() == 'true'):
+    if os.environ.get('DEBUG') is not None and (os.environ.get('DEBUG').lower() == 'true'):
         logger.setLevel(logging.DEBUG)
     logger.handlers.clear()
     logger.addHandler(ch)
