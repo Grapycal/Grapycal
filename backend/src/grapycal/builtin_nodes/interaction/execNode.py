@@ -14,8 +14,7 @@ class ExecNode(Node):
         self.shape.set('simple')
         self.expose_attribute(self.text_control.text,'text',display_name='statements')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.has_value = False
         self.value = None
 

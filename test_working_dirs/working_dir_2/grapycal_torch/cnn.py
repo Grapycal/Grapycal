@@ -8,8 +8,7 @@ class Conv2dNode(ModuleNode):
         self.add_in_port('in',1)
         self.add_out_port('out')
 
-    def init(self):
-        super().init()
+    def init_node(self):
     
     def create_module(self) -> nn.Module:
         return nn.Conv2d(1, 1,3)

@@ -13,8 +13,7 @@ class EvalNode(Node):
         self.shape.set('simple')
         self.expose_attribute(self.expr_control.text,'text',display_name='expression')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.has_value = False
         self.value = None
 

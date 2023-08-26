@@ -11,8 +11,7 @@ class CatNode(FunctionNode):
         self.add_in_port('in')
         self.add_out_port('out')
     
-    def init(self):
-        super().init()
+    def init_node(self):
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
@@ -32,8 +31,7 @@ class StackNode(FunctionNode):
         self.add_in_port('in')
         self.add_out_port('out')
     
-    def init(self):
-        super().init()
+    def init_node(self):
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)

@@ -11,7 +11,7 @@ class ModuleNode(Node,metaclass=ABCMeta):
         #TODO: save and load
         self.label.set('Module')
 
-    def init(self):
+    def init_node(self):
         self.module: nn.Module|None = None
         self.module = self.create_module() #TODO: move to button pressed
 

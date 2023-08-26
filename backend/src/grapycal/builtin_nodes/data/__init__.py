@@ -15,8 +15,7 @@ class VariableNode(Node):
         self.label.set('Variable')
         self.shape.set('simple')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.value = None
         self.has_value = False
 
@@ -42,8 +41,7 @@ class SplitNode(Node):
         self.shape.set('normal')
         self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
 

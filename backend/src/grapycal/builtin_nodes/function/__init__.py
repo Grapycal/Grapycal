@@ -13,7 +13,7 @@ class LambdaNode(Node):
         self.input_args = self.add_attribute('input_args',ListTopic,editor_type='list')
         self.output_names = self.add_attribute('outputs',ListTopic,editor_type='list')
 
-    def init(self):
+    def init_node(self):
         self.input_args.on_insert.add_auto(self.on_input_arg_added)
         self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 
