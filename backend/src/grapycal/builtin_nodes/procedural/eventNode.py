@@ -9,6 +9,6 @@ class EventNode(Node):
         self.label.set('Event')
         self.shape.set('normal')
 
-    def init(self):
+    def init_node(self):
 
         ...

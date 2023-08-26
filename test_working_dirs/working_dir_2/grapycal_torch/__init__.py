@@ -55,8 +55,7 @@ class MnistDatasetNode(Node):
         self.label.set('MNIST')
         self.out = self.add_out_port('dataset')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         def task():
             ds = torchvision.datasets.mnist.MNIST('data', download=True)
             self.out.push_data(ds,retain=True)

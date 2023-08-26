@@ -11,7 +11,7 @@ class ForNode(Node):
         self.label.set('For')
         self.shape.set('normal')
 
-    def init(self):
+    def init_node(self):
         self.iterator:Iterable|None = None
 
     def edge_activated(self, edge, port):

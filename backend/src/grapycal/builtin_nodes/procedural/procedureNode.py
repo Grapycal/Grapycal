@@ -15,8 +15,7 @@ class ProcedureNode(Node):
         self.add_btn.label.set('+')
         self.add_btn.on_click.add_auto(self.add_pressed)
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.steps.add_validator(ListTopic.unique_validator)
         self.steps.on_insert.add_auto(self.add_step)
         self.steps.on_pop.add_auto(self.remove_step)

@@ -56,7 +56,6 @@ class Node(SObject):
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
         '''
-        self._init_called = True
 
         self.workspace:Workspace = self._server.globals.workspace
         
@@ -76,6 +75,11 @@ class Node(SObject):
         self._output_stream = OutputStream(print_output)
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
+
+        self.init_node()
+
+    def init_node(self):
+        pass
 
     def _spawn(self, client_id):
         '''

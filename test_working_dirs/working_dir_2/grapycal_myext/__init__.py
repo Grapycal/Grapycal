@@ -38,8 +38,7 @@ class IsEvenNode(Node):
         self.text = self.add_control(TextControl)
         self.button = self.add_control(ButtonControl, label='Test')
         
-    def init(self):
-        super().init()
+    def init_node(self):
         self.i=1
         self.button.on_click += self.button_clicked
 
@@ -62,8 +61,7 @@ class CounterNode(Node):
         self.add_in_port('set')
         self.add_out_port('get')
 
-    def init(self):
-        super().init()
+    def init_node(self):
         self.i=0
 
     def button_clicked(self):
