@@ -68,10 +68,8 @@ export class Transform extends Component{
     set translation(translation: Vector2){
         this._translation = translation;
         this.updateUI();
-        if (!this.getComponent(EventDispatcher).isDragging) {
-            this.translationChanged.invoke(translation.x, translation.y);
-            this.onChange.invoke();
-        }
+        this.translationChanged.invoke(translation.x, translation.y);
+        this.onChange.invoke();
     }
     set globalPosition(globalPosition: Vector2){
         this.translation = this.parent.worldToLocal(globalPosition);
