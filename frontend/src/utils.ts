@@ -97,6 +97,10 @@ export class Vector2 {
     toString(): string{
         return `${this.x},${this.y}`;
     }
+
+    equals(another:Vector2){
+        return this.x == another.x && this.y == another.y
+    }
 }
 
 export function addPrefixToCssClasses(css: string, prefix: string): string{

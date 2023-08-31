@@ -246,13 +246,28 @@ export class Edge extends CompSObject {
 
     // Graphical stuff
     private updateSVG() {
+        this._updateSVG()
         setTimeout(() => {
             try{
-                this.path.setAttribute('d', this.getSVGPath())
-                this.path_hit_box.setAttribute('d', this.getSVGPath())
+                this._updateSVG()
             }catch(e){}
         }, 0);
     }
+
+    private _updateSVG() {
+        let path = this.getSVGPath()
+        if(path=='')return//no change
+        this.path.setAttribute('d', path)
+        this.path_hit_box.setAttribute('d', path)
+    }
+
+    prevPathParam = {
+        tail:new Vector2(NaN,NaN),
+        head:new Vector2(NaN,NaN),
+        tail_orientation:NaN,
+        head_orientation:NaN
+    }
+
     private getSVGPath(): string {
         let tail: Vector2
         let head: Vector2
@@ -285,6 +300,14 @@ export class Edge extends CompSObject {
             tail_orientation = this.tail.getValue().orientation
             head_orientation = this.head.getValue().orientation
         }
+
+        if(tail.equals(this.prevPathParam.tail) && 
+            head.equals(this.prevPathParam.head) && 
+            tail_orientation == this.prevPathParam.tail_orientation &&
+            head_orientation == this.prevPathParam.head_orientation
+        )return '' // no change
+
+        this.prevPathParam = {tail,head,tail_orientation,head_orientation}
 
         let dx = head.x - tail.x
         let dy = head.y - tail.y
