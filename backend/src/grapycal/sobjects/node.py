@@ -3,12 +3,13 @@ import functools
 import traceback
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, TypeVar
 from grapycal.core.stdout_helper import orig_print
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
 from grapycal.utils.misc import as_type
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic, Topic
+from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic, Topic, ObjDictTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
@@ -32,10 +33,10 @@ class Node(SObject):
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
 
-        self.in_ports:ObjListTopic[InputPort] = self.add_attribute('in_ports', ObjListTopic)
-        self.out_ports:ObjListTopic[OutputPort] = self.add_attribute('out_ports', ObjListTopic)
+        self.in_ports = self.add_attribute('in_ports', ObjListTopic[InputPort])
+        self.out_ports = self.add_attribute('out_ports', ObjListTopic[OutputPort])
 
-        self.controls:ObjListTopic[Control] = self.add_attribute('controls', ObjListTopic)
+        self.controls = self.add_attribute('controls', ObjDictTopic[Control])
 
         '''
         Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
@@ -80,6 +81,13 @@ class Node(SObject):
 
     def init_node(self):
         pass
+
+    def recover_from_version(self,version:str,old:NodeInfo):
+        '''
+        Called when the node is created as a result of a old node being upgraded.
+        The old node's information (including attribute values) is in the `old` argument.
+        '''
+        self.translation.set(old['translation'])
 
     def _spawn(self, client_id):
         '''
@@ -171,13 +179,29 @@ class Node(SObject):
         raise ValueError(f'Port with name {name} does not exist')
     
     T = TypeVar('T', bound=Control)
-    def add_control(self,control_type:type[T],**kwargs) -> T:
+    def add_control(self,control_type:type[T],name:str|None=None,**kwargs) -> T:
         '''
         Add a control to the node.
         '''
+        if name is not None:
+            if name in self.controls:
+                raise ValueError(f'Control with name {name} already exists')
+        else:
+            name = 'Control0'
+            i=0
+            while name in self.controls:
+                i+=1
+                name = f'Control{i}'
+
         control = self.add_child(control_type,**kwargs)
-        self.controls.insert(control)
+        self.controls.add(name,control)
         return control
+    
+    def remove_control(self,control:str|Control):
+        if isinstance(control,str):
+            control = self.controls[control]
+        self.controls.remove(control)
+        control.remove()
     
     # Wrap the SObject.addattribute() to make shorthand of exposing attributes after adding them.
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
