@@ -1,4 +1,6 @@
 import logging
+
+from grapycal.extension.utils import NodeInfo
 logger = logging.getLogger(__name__)
 
 from importlib import util as importlib_util
@@ -112,7 +114,7 @@ class ExtensionManager:
             #   port_map_2: (port name, new node id) -> new id
             ports: List[Port] = node.in_ports.get() + node.out_ports.get() # type: ignore
             for port in ports:
-                port_map_1[port.get_id()] = (port.name.get(),node.get_id())
+                port_map_1[port.get_id()] = (port.is_input.get(),port.name.get(),node.get_id())
             for port in ports:
                 for edge in port.edges:
                     edges_to_recover.append((edge.tail._topic.get(),edge.head._topic.get(),edge.get_parent().get_id()))
@@ -125,18 +127,19 @@ class ExtensionManager:
         node_id_map = {}
         port_map_2 = {}
         for old_serialized, parent_id in nodes_to_recover:
-            type_name = f'{new_version.extension_name}.{old_serialized.type.split(".")[1]}' #TODO: Handle removed node types
+            type_name = f'{new_version.extension_name}.{old_serialized.type.split(".")[1]}'
+
+            # Create the new node instance
             new_node: Node = self._objectsync.create_object_s(type_name,parent_id=parent_id) # type: ignore
-            for attr_info in old_serialized.attributes:
-                if attr_info[0] == 'translation':
-                    new_node.translation.set(attr_info[2]) # type: ignore
-                    break
+
+            # Let the node handle the recovery
+            new_node.recover_from_version('',NodeInfo(old_serialized)) #TODO version name
 
             node_id_map[old_serialized.id] = new_node.get_id()
 
             ports: List[Port] = new_node.in_ports.get() + new_node.out_ports.get() # type: ignore
             for port in ports:
-                port_map_2[(port.name.get(),new_node.get_id())] = port.get_id()
+                port_map_2[(port.is_input.get(),port.name.get(),new_node.get_id())] = port.get_id()
             
             #TODO: let the new node class handle the recovery for backwards compatibility
 
@@ -146,14 +149,14 @@ class ExtensionManager:
         def port_id_map(old_port_id:str) -> str|None:
             
             try:
-                port_name, old_node_id = port_map_1[old_port_id]
+                is_input, port_name, old_node_id = port_map_1[old_port_id]
             except KeyError:
-                return old_port_id
+                return None
             
             new_node_id = node_id_map[old_node_id]
 
             try:
-                new_port_id =  port_map_2[(port_name,new_node_id)]
+                new_port_id =  port_map_2[(is_input,port_name,new_node_id)]
             except KeyError:
                 return None
             
@@ -193,7 +196,7 @@ class ExtensionManager:
                 })
         for name in list(self._avaliable_extensions_topic.get().keys()):
             if name not in available_extensions:
-                self._avaliable_extensions_topic.remove(name)
+                self._avaliable_extensions_topic.pop(name)
 
     def _scan_available_extensions(self) -> list[str]:
         '''
@@ -254,7 +257,7 @@ class ExtensionManager:
         for node_type in node_types:
             self._objectsync.unregister(node_type)
         self._extensions.pop(name)
-        self._imported_extensions_topic.remove(name)
+        self._imported_extensions_topic.pop(name)
     
     def _create_preview_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types

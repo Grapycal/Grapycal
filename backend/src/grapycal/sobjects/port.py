@@ -13,6 +13,7 @@ class Port(SObject):
         self.name = self.add_attribute('name', StringTopic, name)
         self.display_name = self.add_attribute('display_name', StringTopic, name if display_name is None else display_name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
+        self.is_input = self.add_attribute('is_input', IntTopic, 0)
 
     def init(self):
         self.edges: List[Edge] = []
@@ -32,7 +33,7 @@ class Port(SObject):
 class InputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
         super().build(name, max_edges, display_name)
-        self.add_attribute('is_input', IntTopic, 1)
+        self.is_input.set(1)
 
     def add_edge(self, edge:'Edge'):
         super().add_edge(edge)
@@ -54,7 +55,7 @@ class InputPort(Port):
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
         super().build(name, max_edges, display_name)
-        self.add_attribute('is_input', IntTopic, 0)
+        self.is_input.set(0)
 
     def init(self):
         super().init()

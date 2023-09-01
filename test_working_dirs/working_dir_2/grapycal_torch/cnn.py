@@ -9,6 +9,7 @@ class Conv2dNode(ModuleNode):
         self.add_out_port('out')
 
     def init_node(self):
+        pass
     
     def create_module(self) -> nn.Module:
         return nn.Conv2d(1, 1,3)

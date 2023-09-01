@@ -37,7 +37,7 @@ export class ExtensionsSetting extends Componentable{
         this.linker.link(this.importedExtensionsTopic.onAdd,(name,newExtension)=>{
             this.addCard(newExtension,'imported')
         })
-        this.linker.link(this.importedExtensionsTopic.onRemove,(name,oldExtension)=>{
+        this.linker.link(this.importedExtensionsTopic.onPop,(name,oldExtension)=>{
             this.cards[name].remove()
             delete this.cards[name]
         })
@@ -46,7 +46,7 @@ export class ExtensionsSetting extends Componentable{
         this.linker.link(this.avaliableExtensionsTopic.onAdd,(name,newExtension)=>{
             this.addCard(newExtension,'avaliable')
         })
-        this.linker.link(this.avaliableExtensionsTopic.onRemove,(name,oldExtension)=>{
+        this.linker.link(this.avaliableExtensionsTopic.onPop,(name,oldExtension)=>{
             this.cards[name].remove()
             delete this.cards[name]
         })

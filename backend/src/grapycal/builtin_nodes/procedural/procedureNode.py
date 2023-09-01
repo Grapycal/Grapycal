@@ -1,4 +1,5 @@
 import re
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.node import Node
 from grapycal import ListTopic, Edge, InputPort, ButtonControl
 
@@ -21,6 +22,10 @@ class ProcedureNode(Node):
         self.steps.on_pop.add_auto(self.remove_step)
         if self.is_new:
             self.steps.insert('1')
+
+    def recover_from_version(self, version, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.steps.set(old['steps'])
 
     def add_pressed(self):
         new_step = 0
