@@ -1,4 +1,4 @@
-import { IntTopic, Topic } from "objectsync-client"
+import { IntTopic, SetTopic, Topic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
@@ -9,7 +9,7 @@ export class ObjSetEditor extends Componentable {
         return `
         <div class="attribute-editor flex-horiz stretch">
             <div id="attribute-name"></div>
-            <input id="input" type="button">Select</input>
+            <button id="input" type="button" class="grow btn">Select</button>
         </div>
         `
     }
@@ -19,23 +19,26 @@ export class ObjSetEditor extends Componentable {
         .text-editor{
             width: 100px;
         }
+        .btn{
+            font-size:inherit;
+        }
     `
     }
 
-    readonly input: HTMLInputElement
+    readonly button: HTMLButtonElement
     readonly connectedAttributes: Topic<any>[]
     private locked = false;
 
     constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]) {
         super()
         this.connectedAttributes = connectedAttributes
-        this.input = as(this.htmlItem.getHtmlEl('input'), HTMLInputElement)
+        this.button = as(this.htmlItem.getHtmlEl('input'), HTMLButtonElement)
         this.htmlItem.getHtmlEl('attribute-name').innerText = displayName
         for (let attr of connectedAttributes) {
-            attr = as(attr, IntTopic)
+            attr = as(attr, SetTopic)
             this.linker.link(attr.onSet, this.updateValue)
         }
-        this.linker.link2(this.input, 'input', this.inputChanged)
+        this.linker.link2(this.button, 'click', this.selectPressed)
         this.updateValue()
     }
 
@@ -52,22 +55,8 @@ export class ObjSetEditor extends Componentable {
                 }
             }
         }
-        if (value === null) {
-            this.input.value = ''
-            this.input.placeholder = 'multiple values'
-        } else {
-            this.input.value = value.toString()
-        }
     }
 
-    private inputChanged() {
-        this.locked = true
-        Workspace.instance.record(() => {
-            for (let attr of this.connectedAttributes) {
-                attr = as(attr, IntTopic)
-                attr.set(Number.parseInt(this.input.value))
-            }
-        })
-        this.locked = false
+    private selectPressed() {
     }
 }

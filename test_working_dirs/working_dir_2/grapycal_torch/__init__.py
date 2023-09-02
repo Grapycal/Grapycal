@@ -1,6 +1,7 @@
 from .cnn import *
 from .tensor_operations import *
 from .tensor import *
+from .optimizer import *
 del ModuleNode
 
 

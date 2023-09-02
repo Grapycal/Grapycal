@@ -214,11 +214,10 @@ class Node(SObject):
         
         attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful)
         if editor_type is not None:
-            assert not isinstance(attribute, WrappedTopic), 'Cannot expose a wrapped topic'
             self.expose_attribute(attribute,editor_type,editor_args,display_name)
         return attribute
     
-    def expose_attribute(self,attribute:Topic,editor_type,editor_args=None,display_name=None):
+    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,editor_args=None,display_name=None):
         '''
         Expose an attribute to the editor.
         Args:
