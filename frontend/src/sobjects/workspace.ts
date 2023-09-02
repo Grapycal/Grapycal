@@ -3,7 +3,7 @@ import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
 import { SelectionManager } from "../component/selectionManager"
-import { Inspector } from "../ui_utils/inspector"
+import { Inspector } from "../inspector/inspector"
 import { Node } from "./node"
 
 export class Workspace extends CompSObject{
