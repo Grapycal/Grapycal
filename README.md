@@ -53,3 +53,10 @@ npm run app
 ```
 
 3. Go to `localhost:9001` with a web browser.
+
+## Scan dependencies license
+
+```
+cd frontend
+license-checker --summary > licenses.txt
+```
