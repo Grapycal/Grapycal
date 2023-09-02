@@ -1,0 +1,11 @@
+├─ MIT: 432
+├─ ISC: 28
+├─ BSD-2-Clause: 11
+├─ Apache-2.0: 10
+├─ BSD-3-Clause: 4
+├─ CC-BY-4.0: 3
+├─ Unlicense: 3
+├─ UNKNOWN: 1
+├─ (BSD-3-Clause OR GPL-2.0): 1
+└─ MIT*: 1
+

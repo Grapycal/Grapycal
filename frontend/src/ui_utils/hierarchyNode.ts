@@ -4,7 +4,7 @@ import { Linker } from "../component/linker"
 import { print } from "../devUtils"
 import { Node } from "../sobjects/node"
 
-export class HeirarchyNode implements IComponentable{
+export class HierarchyNode implements IComponentable{
     readonly template: string = `
     <div class="hierarchy-node">
         <span id="name" class="hierarchy-name"></span>
@@ -20,7 +20,7 @@ export class HeirarchyNode implements IComponentable{
     `;
 
     readonly componentManager = new ComponentManager();
-    private readonly children = new Map<string,HeirarchyNode>();
+    private readonly children = new Map<string,HierarchyNode>();
     private readonly leafs: HtmlItem[] = [];
     private readonly linker = new Linker(this);
     private expanded = true;
@@ -54,7 +54,7 @@ export class HeirarchyNode implements IComponentable{
     }
 
     private addChild(name: string){
-        let newChild = new HeirarchyNode(name,this.path+'/'+name);
+        let newChild = new HierarchyNode(name,this.path+'/'+name);
         this.children.set(name,newChild);
         newChild.htmlItem.setParent(this.htmlItem,'childnode')
     }
