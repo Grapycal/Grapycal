@@ -71,6 +71,8 @@ class Node(SObject):
         self.on('spawn', self._spawn , is_stateful=False)
 
         def print_output(data):
+            if data=='':
+                return
             self.output.insert(['output',data])
 
         self._output_stream = OutputStream(print_output)

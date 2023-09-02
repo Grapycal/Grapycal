@@ -80,7 +80,7 @@ class OutputStream:
 
 def json_write(path:str,data:Any):
     with open(path,'w') as f:
-        json.dump(data,f,indent=4)
+        json.dump(data,f)
 
 def json_read(path):
     with open(path,'r') as f:
