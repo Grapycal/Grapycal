@@ -1,10 +1,11 @@
-import { ObjectSyncClient, ObjectTopic } from "objectsync-client"
+import { ObjectSyncClient, ObjectTopic, SObject } from "objectsync-client"
 import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
 import { SelectionManager } from "../component/selectionManager"
 import { Inspector } from "../inspector/inspector"
 import { Node } from "./node"
+import { Edge } from "./edge"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -40,8 +41,19 @@ export class Workspace extends CompSObject{
             if(GlobalEventDispatcher.instance.isKeyDown('Shift')) return;
             this.selection.deselectAll()
         })
+        GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
     }
     public getObjectSync(): ObjectSyncClient{
         return this.objectsync
+    }
+    private deletePressed(){
+        let selectedIds = []
+        for(let s of this.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.objectsync.emit('delete',{ids:selectedIds})
     }
 }

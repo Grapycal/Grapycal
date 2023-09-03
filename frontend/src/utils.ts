@@ -1,3 +1,4 @@
+import { Action } from "objectsync-client"
 import { print } from "./devUtils"
 
 export { Action } from "objectsync-client"
@@ -131,4 +132,22 @@ export function addCssToDocument(css:string){
 
 export function getStaticField(object: any, fieldName: string): any {
     return object.constructor[fieldName];
+}
+
+export class ActionDict<K,ARGS extends any[], OUT=void> {
+    private actions = new Map<K,Action<ARGS,OUT>>()
+    add(key:K,callback: Callback<ARGS, OUT>) {
+        if(!this.actions.has(key))this.actions.set(key,new Action<ARGS,OUT>())
+        this.actions.get(key).add(callback)
+    }
+    
+    remove(key:K,callback: Callback<ARGS, OUT>) {
+        this.actions.get(key).remove(callback)
+        if(this.actions.get(key).numCallbacks==0)this.actions.delete(key)
+    }
+
+    invoke(key:K, ...args: ARGS): OUT[] {
+        if(!this.actions.has(key))return []
+        return this.actions.get(key).invoke(...args)
+    }
 }
