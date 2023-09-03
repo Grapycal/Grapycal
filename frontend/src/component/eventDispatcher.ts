@@ -1,5 +1,5 @@
 import { print } from "../devUtils"
-import { Action, Vector2 } from "../utils"
+import { Action,ActionDict, Vector2 } from "../utils"
 import { Component, IComponentable } from "./component"
 
 export interface ICanReceiveMouseEvent{
@@ -26,6 +26,7 @@ export class GlobalEventDispatcher{
     public readonly onMove = new Action<[MouseEvent,Vector2]>();
     public readonly onMouseDown = new Action<[MouseEvent]>();
     public readonly onMouseUp = new Action<[MouseEvent]>();
+    public readonly onKeyDown = new ActionDict<string,[KeyboardEvent]>()
 
     public readonly keyState: {[key: string]: boolean} = {};
 
@@ -61,6 +62,7 @@ export class GlobalEventDispatcher{
     }
 
     private _onKeyDown(event: KeyboardEvent){
+        this.onKeyDown.invoke(event.key,event);
         this.keyState[event.key] = true;
     }
 
