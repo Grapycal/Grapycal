@@ -11,7 +11,10 @@ export class Workspace extends CompSObject{
     public static instance: Workspace
     readonly main_editor = this.getAttribute('main_editor', ObjectTopic<Editor>)
     readonly eventDispatcher = new EventDispatcher(this, document.getElementById('workspace'))
-    readonly selection = new SelectionManager(this)
+    // This selection manager is for the regular selecting
+    readonly selection = new SelectionManager(this) 
+    // This selection manager is used by attr editors in the inspector
+    readonly functionalSelection = new SelectionManager(this) 
     readonly inspector = new Inspector()
     readonly record: ObjectSyncClient['record']
     constructor(objectsync: ObjectSyncClient, id: string) {

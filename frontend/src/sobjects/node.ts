@@ -56,6 +56,7 @@ export class Node extends CompSObject {
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = new Transform(this);
     selectable: Selectable;
+    functionalSelectable: Selectable;
     mouseOverDetector: MouseOverDetector
     
     public moved: Action<[]> = new Action();
@@ -120,6 +121,7 @@ export class Node extends CompSObject {
     protected onStart(): void {
         super.onStart()
         this.selectable = new Selectable(this, Workspace.instance.selection)
+        this.functionalSelectable = new Selectable(this, Workspace.instance.functionalSelection)
         this._isPreview = this.parent instanceof Sidebar
 
         this.editor = this.isPreview? null : this.parent as Editor
@@ -202,6 +204,14 @@ export class Node extends CompSObject {
         this.link(this.selectable.onDeselected, () => {
             this.htmlItem.baseElement.classList.remove('selected')
         })  
+
+        this.link(this.functionalSelectable.onSelected, () => {
+            this.htmlItem.baseElement.classList.add('functional-selected')
+        })
+
+        this.link(this.functionalSelectable.onDeselected, () => {
+            this.htmlItem.baseElement.classList.remove('functional-selected')
+        })
 
         if(this.hasTag(`spawned_by_${this.objectsync.clientId}`))
         {
