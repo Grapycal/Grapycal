@@ -10,6 +10,7 @@ export class SelectionManager extends Component{
 
     onSelect = new Action<[Selectable]>();
     onDeselect = new Action<[Selectable]>();
+    onClick = new Action<[Selectable]>();
 
     register(selectable: Selectable){
         this.tracking.add(selectable)
@@ -63,5 +64,6 @@ export class SelectionManager extends Component{
             this.deselectAll()
             this.select(selectable)
         }
+        this.onClick.invoke(selectable)
     }
 }
