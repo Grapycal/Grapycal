@@ -1,4 +1,4 @@
-import { IntTopic, ObjSetTopic, SetTopic, Topic } from "objectsync-client"
+import { IntTopic, ObjSetTopic, SObject, SetTopic, Topic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
@@ -6,6 +6,7 @@ import { SelectionManager } from "../component/selectionManager"
 import { Selectable } from "../component/selectable"
 import { Edge } from "../sobjects/edge"
 import { Node } from "../sobjects/node"
+import { print } from "../devUtils"
 
 export class ObjSetEditor extends Componentable {
 
@@ -32,37 +33,17 @@ export class ObjSetEditor extends Componentable {
     readonly button: HTMLButtonElement
     private selecting = false;
     private selectionManager: SelectionManager
-    private attribute: ObjSetTopic;
+    private attribute: ObjSetTopic<Node|Edge>;
 
-    constructor(displayName: string, editorArgs: any, connectedAttributes: ObjSetTopic[]) {
+    constructor(displayName: string, editorArgs: any, connectedAttributes: ObjSetTopic<Node|Edge>[]) {
         super()
         if(connectedAttributes.length != 1) return; // No support for multiple attributes
         this.attribute = connectedAttributes[0]
         this.selectionManager = Workspace.instance.functionalSelection
         this.button = as(this.htmlItem.getHtmlEl('input'), HTMLButtonElement)
         this.htmlItem.getHtmlEl('attribute-name').innerText = displayName
-        this.linker.link(this.attribute.onSet,this.updateValue)
         this.linker.link2(this.button, 'click', this.selectPressed)
-        this.initMarkers()
-    }
-
-    private initMarkers() {
-        for(let obj of this.attribute.getValue()){
-            if(obj instanceof Node){
-
-
-    private updateValue() {
-        let value: number = null
-        for (let attr of this.connectedAttributes) {
-            if (value === null) {
-                value = attr.getValue()
-            } else {
-                if (value !== attr.getValue()) {
-                    value = null
-                    break
-                }
-            }
-        }
+        this.componentManager.destroy
     }
 
     private selectPressed() {
@@ -77,21 +58,46 @@ export class ObjSetEditor extends Componentable {
         }
     }
 
-    private startSelect() {
+    private startSelect() {        
+        Workspace.instance.selection.enabled = false
+        this.selectionManager.enabled = true
+        this.selectionManager.clearSelection()
+        for(let obj of this.attribute.getValue()){
+            if(obj instanceof Node || obj instanceof Edge){
+                this.selectionManager.select(obj.functionalSelectable)
+            }
+        }
+        this.link(this.selectionManager.onSelect,this.onSelect)
+        this.link(this.selectionManager.onDeselect,this.onDeselect)
+        this.link(this.attribute.onAppend,(obj: Node|Edge) => {this.selectionManager.select(obj.functionalSelectable)})
+        this.link(this.attribute.onRemove,(obj: Node|Edge) => {this.selectionManager.deselect(obj.functionalSelectable)})
 
     }
 
     private endSelect() {
-        
+        this.unlink(this.selectionManager.onSelect)
+        this.unlink(this.selectionManager.onDeselect)
+        this.unlink(this.attribute.onAppend)
+        this.unlink(this.attribute.onRemove)
+        this.selectionManager.clearSelection()
+        this.selectionManager.enabled = false
+        Workspace.instance.selection.enabled = true
     }
 
-    private objectClicked(selectable:Selectable) {
-        let obj = selectable.object
-        if(!(obj instanceof Node || obj instanceof Edge)) return;
-        if(this.attribute.has(obj)){
-            this.attribute.remove(obj)
-        }else{
-            this.attribute.append(obj)
-        }
+    private onSelect(selectable: Selectable) {
+        if(selectable.object instanceof Node || selectable.object instanceof Edge)
+            this.attribute.append(selectable.object)
     }
+
+    private onDeselect(selectable: Selectable) {
+        if(selectable.object instanceof Node || selectable.object instanceof Edge)
+            this.attribute.remove(selectable.object)
+    }
+
+    onDestroy(): void {
+        if(this.selecting){
+            this.endSelect()
+        }   
+    }
+    
 }

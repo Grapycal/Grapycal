@@ -1,8 +1,8 @@
-import { Topic } from "objectsync-client"
+import { ObjDictTopic, ObjListTopic, ObjSetTopic, ObjectTopic, Topic } from "objectsync-client"
 import { ComponentManager, IComponentable } from "../component/component"
 import { HtmlItem } from "../component/htmlItem"
 import { ExposedAttributeInfo, Node } from "../sobjects/node"
-import { as } from "../utils"
+import { Constructor, as } from "../utils"
 import { HierarchyNode } from "../ui_utils/hierarchyNode"
 import { Linker } from "../component/linker"
 import { Workspace } from "../sobjects/workspace"
@@ -11,10 +11,12 @@ import { ListEditor } from "./ListEditor"
 import { IntEditor } from "./IntEditor"
 import { FloatEditor } from "./FloatEditor"
 import { ObjSetEditor } from "./ObjSetEditor"
+import { print } from "../devUtils"
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
 }
+
 export class Inspector implements IComponentable{
     componentManager = new ComponentManager();
     htmlItem: HtmlItem;
@@ -89,7 +91,7 @@ export class Inspector implements IComponentable{
         }else{
             as(this.htmlItem.baseElement,HTMLElement).style.display = 'flex';
         }
-        this.linker.unlink(this.addOutput)
+        this.linker.unlink(this.addOutput,false)
         if(this.nodes.length === 1){
             let fullType = this.nodes[0].type_topic.getValue();
             let type = fullType.split('.')[1];
@@ -151,25 +153,39 @@ export class Inspector implements IComponentable{
         for(const [name,infos] of exposedAttributes){
             let comparingEditorArgs = infos[0].editor_args;
             let accept = true;
+
+            // all node should have the attribute
             if(infos.length !== this.nodes.length){
                 accept = false;
             }
+
+            // the attributes from all nodes should have the same editor_args
             for(let info of infos){
                 if(!object_equal(info.editor_args,comparingEditorArgs)){
                     accept = false;
                     break;
                 }
             }
+            
             if(accept){
-                let connectedAttributes : Topic<any>[] = [];
-                for(let info of infos){
-                    connectedAttributes.push(Workspace.instance.getObjectSync().getTopic(info.name));
-                }
                 let editorArgs = infos[0].editor_args;
                 let displayName = infos[0].display_name;
-                let editor = new this.nameEditorMap[editorArgs.type](displayName,editorArgs,connectedAttributes);
+                let editorType = this.nameEditorMap[editorArgs.type]
+                let connectedAttributes :(Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>)[] = [];
+                for(let info of infos){
+                    connectedAttributes.push(this.getTopicForEditor(info.name,editorType));
+                }
+                let editor = new editorType(displayName,editorArgs,connectedAttributes);
                 this.hierarchy.addLeaf(editor.htmlItem,'');
             }
+        }
+    }
+
+    private getTopicForEditor(topicName:string,editorType:Constructor<any>){
+        if(editorType === ObjSetEditor){
+            return Workspace.instance.objectsync.getTopic(topicName,ObjSetTopic);
+        }else{
+            return Workspace.instance.objectsync.getTopic(topicName);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Constructor, defined } from "../utils"
+import { Action, Constructor, defined } from "../utils"
 
 // I gonna write Unity code in ts XD
 
@@ -28,7 +28,8 @@ export abstract class Component{
 }
 
 export class ComponentManager{
-    components: Array<Component> = [];
+    private components: Array<Component> = [];
+    readonly onDestroy = new Action<[]>();
     addComponent(component: Component): void{
         this.components.push(component);
     }
@@ -54,6 +55,7 @@ export class ComponentManager{
         return this.components.some((component) => component.constructor.name === type.name);
     }
     destroy(): void{
+        this.onDestroy.invoke();
         this.components.forEach((component) => component.onDestroy());
     }
 }

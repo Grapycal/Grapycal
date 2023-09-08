@@ -178,6 +178,7 @@ export class Node extends CompSObject {
                 this.htmlItem.moveToFront()
             })
             this.transform.dragged.add((delta:Vector2) => {
+                if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
@@ -224,6 +225,7 @@ export class Node extends CompSObject {
 
         if(this.isPreview){
             this.selectable.enabled = false
+            this.functionalSelectable.enabled = false
         }
 
         this.link(this.eventDispatcher.onMouseOver, () => {

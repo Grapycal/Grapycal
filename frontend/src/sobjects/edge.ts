@@ -27,6 +27,7 @@ export class Edge extends CompSObject {
     eventDispatcher: EventDispatcher
     transform: Transform
     selectable: Selectable
+    functionalSelectable: Selectable;
     path: SVGPathElement
     path_hit_box: SVGPathElement
     svg: SVGSVGElement
@@ -86,6 +87,7 @@ export class Edge extends CompSObject {
         super.onStart()
         
         this.selectable = new Selectable(this, Workspace.instance.selection)
+        this.functionalSelectable = new Selectable(this, Workspace.instance.functionalSelection)
         const onPortChanged = ((oldPort:Port,newPort:Port) =>{
             if(oldPort){
                 oldPort.moved.remove(this.updateSVG)
@@ -130,6 +132,12 @@ export class Edge extends CompSObject {
         this.link(this.selectable.onDeselected, () => {
             this.svg.classList.remove('selected')
         })
+        this.link(this.functionalSelectable.onSelected, () => {
+            this.svg.classList.add('functional-selected')
+        })
+        this.link(this.functionalSelectable.onDeselected, () => {
+            this.svg.classList.remove('functional-selected')
+        })
     }
 
     onDestroy(): void {
@@ -139,8 +147,6 @@ export class Edge extends CompSObject {
         if(this.head.getValue()) {
             this.head.getValue().moved.remove(this.updateSVG)
         }
-        this.parent?.onAddChild.remove(this.updateSVG)
-        this.parent?.onRemoveChild.remove(this.updateSVG)
         this.head.getValue()?.edges.splice(this.head.getValue()?.edges.indexOf(this),1)
         this.tail.getValue()?.edges.splice(this.tail.getValue()?.edges.indexOf(this),1)
         super.onDestroy()

@@ -18,7 +18,10 @@ export class Workspace extends CompSObject{
     readonly inspector = new Inspector()
     readonly record: ObjectSyncClient['record']
     constructor(objectsync: ObjectSyncClient, id: string) {
-        super(objectsync, id)
+        super(objectsync, id);
+        (this.selection as any).name = 'selection';
+        (this.functionalSelection as any).name = 'functionalSelection'
+        
         Workspace.instance = this
         document.getElementById('settings-button').addEventListener('click',()=>{
             document.getElementById('settings-page').classList.toggle('open')
@@ -36,13 +39,14 @@ export class Workspace extends CompSObject{
                 this.inspector.removeNode(obj)
             }
         })
+        this.functionalSelection.enabled = false
         this.record = objectsync.record
     }
     protected onStart(): void {
         this.main_editor.getValue().eventDispatcher.onClick.add(()=>{
             if(GlobalEventDispatcher.instance.isKeyDown('Control')) return;
             if(GlobalEventDispatcher.instance.isKeyDown('Shift')) return;
-            this.selection.deselectAll()
+            this.selection.clearSelection()
         })
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
     }
