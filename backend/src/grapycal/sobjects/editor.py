@@ -14,8 +14,14 @@ class Editor(SObject):
         return self.add_child(node_type, is_preview=False, **kwargs)
     
     def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
+        # Check the tail and head have space for the edge
+        if tail.is_full() or head.is_full():
+            raise Exception('A port is full')
         return self.add_child(Edge, tail=tail, head=head)
     
     def create_edge_service(self, tail_id: str, head_id: str):
-        # We should not use add_child here because it does not record the creation as a transition
-        self._server.create_object(Edge,self._id,tail = self._server.get_object(tail_id), head = self._server.get_object(head_id)) # type: ignore
+        tail = self._server.get_object(tail_id)
+        head = self._server.get_object(head_id)
+        assert isinstance(tail, OutputPort)
+        assert isinstance(head, InputPort)
+        self.create_edge(tail, head)

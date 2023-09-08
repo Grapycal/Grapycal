@@ -29,6 +29,9 @@ class Port(SObject):
             return
         self.edges.remove(edge)
 
+    def is_full(self):
+        return len(self.edges) >= self.max_edges.get()
+
 
 class InputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
