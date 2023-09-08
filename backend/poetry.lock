@@ -189,7 +189,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "56a59b926955868cef59e6f0457ba9c1665ca761"
+resolved_reference = "56c5525b2c11f4ab10f6390ce7f964b6ae9f22c9"
 
 [[package]]
 name = "colorama"
