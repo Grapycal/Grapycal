@@ -49,6 +49,10 @@ document.addEventListener('keydown', function(event) {
         event.preventDefault();
         objectsync.emit('ctrl+s');
     }
+    if (event.ctrlKey && event.key === 'q' || event.metaKey && event.key === 'Q') {
+        event.preventDefault();
+        objectsync.makeRequest('exit');
+    }
 });
 
 document.addEventListener('contextmenu', function(event) {
