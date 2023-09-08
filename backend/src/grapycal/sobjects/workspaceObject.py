@@ -14,6 +14,8 @@ class WorkspaceObject(SObject):
         self.add_child(Sidebar)
         self.main_editor.set(self.add_child(Editor))
         self.sidebar = self.get_child_of_type(Sidebar)
+
+    def init(self):
         self._server.on('delete',self._delete_callback,is_stateful=False)
 
     def _delete_callback(self,ids):

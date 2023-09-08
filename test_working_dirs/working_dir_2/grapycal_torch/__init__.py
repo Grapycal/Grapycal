@@ -1,3 +1,5 @@
+from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.port import InputPort
 from .cnn import *
 from .tensor_operations import *
 from .tensor import *
@@ -49,6 +51,9 @@ class ImageDisplayNode(Node):
         plt.savefig(buf,format='jpg',bbox_inches='tight', transparent="True", pad_inches=0)
         plt.close(fig)
         self.img.set_image(buf)
+
+    def input_edge_removed(self, edge: Edge, port: InputPort):
+        self.img.set_image(None)
 
 class MnistDatasetNode(Node):
     category = 'torch/dataset'

@@ -63,17 +63,40 @@ class GridNode(Node):
 
         self.x_start = self.add_attribute('x start',FloatTopic,0,editor_type='float')
         self.x_end = self.add_attribute('x end',FloatTopic,1,editor_type='float')
-        self.x_steps = self.add_attribute('x steps',IntTopic,0.1,editor_type='int')
+        self.x_steps = self.add_attribute('x steps',IntTopic,10,editor_type='int')
         self.y_start = self.add_attribute('y start',FloatTopic,0,editor_type='float')
         self.y_end = self.add_attribute('y end',FloatTopic,1,editor_type='float')
-        self.y_steps = self.add_attribute('y steps',IntTopic,0.1,editor_type='int')
+        self.y_steps = self.add_attribute('y steps',IntTopic,10,editor_type='int')
 
         self.out_x = self.add_out_port('x')
         self.out_y = self.add_out_port('y')
 
+        self.x_shape_text = self.add_control(TextControl)
+        self.x_shape_text.editable.set(0)
+
+        self.y_shape_text = self.add_control(TextControl)
+        self.y_shape_text.editable.set(0)
+
+    def init_node(self):
+        self.x_start.on_set.add_auto(self.update_label_x)
+        self.x_end.on_set.add_auto(self.update_label_x)
+        self.x_steps.on_set.add_auto(self.update_label_x)
+        self.y_start.on_set.add_auto(self.update_label_y)
+        self.y_end.on_set.add_auto(self.update_label_y)
+        self.y_steps.on_set.add_auto(self.update_label_y)
+        if self.is_new:
+            self.update_label_x()
+            self.update_label_y()
+
+    def update_label_x(self,*args):
+        self.x_shape_text.text.set(f'x: [{self.x_start.get()},{self.x_end.get()}] / {self.x_steps.get()}')
+
+    def update_label_y(self,*args):
+        self.y_shape_text.text.set(f'y: [{self.y_start.get()},{self.y_end.get()}] / {self.y_steps.get()}')
+
     def double_click(self):
         x_axis = torch.linspace(self.x_start.get(),self.x_end.get(),self.x_steps.get())
         y_axis = torch.linspace(self.y_start.get(),self.y_end.get(),self.y_steps.get())
-        xx, yy = torch.meshgrid(x_axis, y_axis)
+        yy, xx = torch.meshgrid(y_axis,x_axis)
         self.out_x.push_data(xx,retain=True)
         self.out_y.push_data(yy,retain=True)

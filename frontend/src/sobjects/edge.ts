@@ -88,24 +88,8 @@ export class Edge extends CompSObject {
         
         this.selectable = new Selectable(this, Workspace.instance.selection)
         this.functionalSelectable = new Selectable(this, Workspace.instance.functionalSelection)
-        const onPortChanged = ((oldPort:Port,newPort:Port) =>{
-            if(oldPort){
-                oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
-            }
-            if(newPort){
-                this.updateSVG()
-                
-                newPort.moved.add(this.updateSVG)
-                newPort.edges.push(this)
-            }
-        }).bind(this)
 
         // link attributes to UI
-        onPortChanged(null,this.tail.getValue())
-        onPortChanged(null,this.head.getValue())
-        this.link(this.tail.onSet2,onPortChanged)
-        this.link(this.head.onSet2,onPortChanged)
 
         if(this.hasTag('CreatingDragTail')) this.state = EdgeState.DraggingTail
         if(this.hasTag('CreatingDragHead')) this.state = EdgeState.DraggingHead
@@ -125,6 +109,23 @@ export class Edge extends CompSObject {
             })
         }
 
+        const onPortChanged = ((oldPort:Port,newPort:Port) =>{
+            if(oldPort){
+                oldPort.moved.remove(this.updateSVG)
+                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+            }
+            if(newPort){
+                this.updateSVG()
+                
+                newPort.moved.add(this.updateSVG)
+                newPort.edges.push(this)
+            }
+        }).bind(this)
+        onPortChanged(null,this.tail.getValue())
+        onPortChanged(null,this.head.getValue())
+        this.link(this.tail.onSet2,onPortChanged)
+        this.link(this.head.onSet2,onPortChanged)
+
         this.link(this.selectable.onSelected, () => {
             this.svg.classList.add('selected')
         })
@@ -138,6 +139,7 @@ export class Edge extends CompSObject {
         this.link(this.functionalSelectable.onDeselected, () => {
             this.svg.classList.remove('functional-selected')
         })
+        this.updateSVG()
     }
 
     onDestroy(): void {
@@ -262,7 +264,7 @@ export class Edge extends CompSObject {
 
     private _updateSVG() {
         let path = this.getSVGPath()
-        if(path=='')return//no change
+        if(path==null)return//no change
         this.path.setAttribute('d', path)
         this.path_hit_box.setAttribute('d', path)
     }
@@ -270,8 +272,8 @@ export class Edge extends CompSObject {
     prevPathParam = {
         tail:new Vector2(NaN,NaN),
         head:new Vector2(NaN,NaN),
-        tail_orientation:NaN,
-        head_orientation:NaN
+        tail_orientation:-1,
+        head_orientation:-1
     }
 
     private getSVGPath(): string {
@@ -300,7 +302,7 @@ export class Edge extends CompSObject {
             //head_orientation = Math.atan2(tail.y - head.y, tail.x - head.x)
             head_orientation = Math.PI
         }else {
-            if(!this.tail.getValue() || !this.head.getValue()) return ''
+            if(!this.tail.getValue() || !this.head.getValue()) {throw Error;return null}
             tail = this.transform.worldToLocal(this.tail.getValue().getComponent(Transform).worldCenter)
             head = this.transform.worldToLocal(this.head.getValue().getComponent(Transform).worldCenter)
             tail_orientation = this.tail.getValue().orientation
@@ -311,7 +313,7 @@ export class Edge extends CompSObject {
             head.equals(this.prevPathParam.head) && 
             tail_orientation == this.prevPathParam.tail_orientation &&
             head_orientation == this.prevPathParam.head_orientation
-        )return '' // no change
+        )return null // no change
 
         this.prevPathParam = {tail,head,tail_orientation,head_orientation}
 
@@ -319,7 +321,7 @@ export class Edge extends CompSObject {
         let dy = head.y - tail.y
         let d = Math.sqrt(dx*dx + dy*dy)
         let r = Math.min(50, d/3)
-        if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) return ''
+        if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) throw new Error('NaN')
         let path = `M ${tail.x} ${tail.y} C ${tail.x + Math.cos(tail_orientation)*r} ${tail.y + Math.sin(tail_orientation)*r},
         ${head.x + Math.cos(head_orientation)*r} ${head.y+ Math.sin(head_orientation)*r}, ${head.x} ${head.y}`
 
