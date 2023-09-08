@@ -1,5 +1,6 @@
 import { Action } from "objectsync-client"
 import { Component } from "./component"
+import { print } from "../devUtils"
 
 type Callback<ARGS extends any[] = any[], OUT = any> = (...args: ARGS) => OUT;
 
@@ -29,30 +30,36 @@ export class Linker extends Component{
         this.linkedCallbacks.push({action: action, callback: callback, bindedCallback: bindedCallback});
     }
 
-    public unlink(action: Action<any,any>|Callback): void{
+    public unlink(action: Action<any,any>|Callback,throwIfNotExist:boolean=true): void{
         if (action instanceof Action){
-            this.unlinkAction(action);
+            this.unlinkAction(action,throwIfNotExist);
         }else{
-            this.unlinkCallback(action);
+            this.unlinkCallback(action,throwIfNotExist);
         }
     }
     
-    public unlinkAction(action: Action<any,any>): void{
+    public unlinkAction(action: Action<any,any>,throwIfNotExist:boolean=true): void{
         for(let i=0;i<this.linkedCallbacks.length;i++){
             if (this.linkedCallbacks[i].action == action){
-                action.remove(this.linkedCallbacks[i].callback);
+                action.remove(this.linkedCallbacks[i].bindedCallback);
                 this.linkedCallbacks.splice(i,1);
                 return;
             }
         }
+        if (throwIfNotExist){
+            throw new Error('action not found');
+        }
     }
 
-    public unlinkCallback(callback: Callback): void{
+    public unlinkCallback(callback: Callback,throwIfNotExist:boolean=true): void{
         for(let i=0;i<this.linkedCallbacks.length;i++){
             if (this.linkedCallbacks[i].callback == callback){
                 this.linkedCallbacks[i].action.remove(this.linkedCallbacks[i].bindedCallback);
                 this.linkedCallbacks.splice(i,1);
             }
+        }
+        if (throwIfNotExist){
+            throw new Error('callback not found');
         }
     }
 
@@ -73,8 +80,8 @@ export class Linker extends Component{
         }
     }
     onDestroy(): void {
-        for(let {action,callback} of this.linkedCallbacks){
-            action.remove(callback);
+        for(let {action,callback,bindedCallback} of this.linkedCallbacks){
+            action.remove(bindedCallback);
         }
         for(let {element,eventName,callback} of this.linkedCallbacks2){
             element.removeEventListener(eventName,callback);

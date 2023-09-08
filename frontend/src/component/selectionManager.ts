@@ -1,3 +1,4 @@
+import { print } from "../devUtils"
 import { CompSObject } from "../sobjects/compSObject"
 import { Action } from "../utils"
 import { Component } from "./component"
@@ -7,6 +8,13 @@ import { Selectable } from "./selectable"
 export class SelectionManager extends Component{
     selected: Set<Selectable> = new Set();
     tracking: Set<Selectable> = new Set();
+
+    _enabled = true;
+    get enabled(){return this._enabled}
+    set enabled(value: boolean){
+        if(this._enabled == value) return;
+        this._enabled = value;
+    }
 
     onSelect = new Action<[Selectable]>();
     onDeselect = new Action<[Selectable]>();
@@ -22,14 +30,16 @@ export class SelectionManager extends Component{
     }
 
     select(selectable: Selectable){
-        if(this.selected.has(selectable)) return;
+        if(!this.enabled) return;
         if(!selectable.enabled) return;
+        if(this.selected.has(selectable)) return;
         this.selected.add(selectable)
         selectable.select_raw()
         this.onSelect.invoke(selectable)
     }
 
     deselect(selectable: Selectable){
+        if(!this.enabled) return;
         if(!this.selected.has(selectable)) return;
         this.selected.delete(selectable)
         selectable.deselect_raw()
@@ -42,7 +52,7 @@ export class SelectionManager extends Component{
         }
     }
 
-    deselectAll(){
+    clearSelection(){
         for(let selectable of this.selected){
             this.deselect(selectable)
         }
@@ -61,7 +71,7 @@ export class SelectionManager extends Component{
             this.select(selectable)
         // otherwise, select only this
         }else{
-            this.deselectAll()
+            this.clearSelection()
             this.select(selectable)
         }
         this.onClick.invoke(selectable)

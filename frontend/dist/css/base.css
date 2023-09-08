@@ -156,6 +156,11 @@ input[disabled] {pointer-events:none}
     filter: invert(66%) sepia(76%) saturate(5039%) hue-rotate(87deg) brightness(127%) contrast(114%);
 }
 
+.node.functional-selected .node-selection{
+    /* green border */
+    filter: invert(66%) sepia(76%) saturate(5039%) hue-rotate(20deg) brightness(127%) contrast(114%);
+}
+
 .node-border-container{
     /* a trick to make the border thiner than 1px */
     pointer-events: none;
@@ -368,6 +373,10 @@ input:enabled{
 
 .edge.selected{
     stroke: #19ff28bb;
+}
+
+.edge.functional-selected{
+    stroke: #ff7119bb;
 }
 
 .edge-path-hit-box{

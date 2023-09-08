@@ -52,7 +52,6 @@ export class ListEditor extends Componentable {
 
     constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]) {
         super()
-        print(connectedAttributes.length)
         this.connectedAttributes = []
         for (let attr of connectedAttributes) {
             this.connectedAttributes.push(as(attr, ListTopic))
