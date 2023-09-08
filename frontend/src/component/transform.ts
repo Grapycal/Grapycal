@@ -1,7 +1,7 @@
 import { print } from "../devUtils"
 import { Action, Vector2, as } from "../utils"
 import { Component, IComponentable } from "./component"
-import { EventDispatcher } from "./eventDispatcher"
+import { EventDispatcher, GlobalEventDispatcher } from "./eventDispatcher"
 import { HtmlItem } from "./htmlItem"
 import { Linker } from "./linker"
 
@@ -43,6 +43,8 @@ export class Transform extends Component{
     private _pivot: Vector2 = new Vector2(0.5, 0.5);
     private _scale: number = 1;
     private _translation: Vector2 = Vector2.zero;
+
+    public scrollSmoothness: number = 0;
 
     get pivot(){return this._pivot;}
     set pivot(pivot: Vector2){
@@ -213,15 +215,25 @@ export class Transform extends Component{
 
     private onScroll(e:WheelEvent){
         e.stopPropagation();
-        let startMouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
-        this.scale *= Math.exp(-0.001*e.deltaY);
+        this.smoothScroll(-0.001*e.deltaY);
+    }
+
+    private smoothScroll(amount:number){
+        let a = Math.exp(-this.scrollSmoothness);
+        let startMouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
+        this.scale *= Math.exp(amount*a);
         this.updateUI();
-        let mouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
+        let mouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.translate(new Vector2(
             (mouseLocal.x - startMouseLocal.x)*this.scale,
             (mouseLocal.y - startMouseLocal.y)*this.scale
         ));
-        mouseLocal = this.worldToLocal(new Vector2(e.clientX, e.clientY));
+        if(Math.abs(amount) > 0.001){
+            setTimeout(() => {
+                this.smoothScroll(amount*(1-a));
+            }, 20);
+        }
+        
     }
 
     public translate(translation: Vector2){  
