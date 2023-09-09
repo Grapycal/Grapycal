@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
 import traceback
@@ -59,6 +61,7 @@ class Node(SObject):
         '''
 
         self.workspace:Workspace = self._server.globals.workspace
+        self.destroyed = False
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
         parent = self.get_parent()
@@ -73,7 +76,10 @@ class Node(SObject):
         def print_output(data):
             if data=='':
                 return
-            self.output.insert(['output',data])
+            if self.destroyed:
+                logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
+            else:
+                self.output.insert(['output',data])
 
         self._output_stream = OutputStream(print_output)
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
@@ -106,6 +112,7 @@ class Node(SObject):
         #TODO: Remove all edges connected to this node
 
         self._output_stream.close()
+        self.destroyed = True
         return super().destroy()
 
     def add_in_port(self,name:str,max_edges=64,display_name=None):
@@ -296,7 +303,10 @@ class Node(SObject):
 
     def _on_exception(self, e):
         message = ''.join(traceback.format_exc())
-        self.output.insert(['error',message])
+        if self.destroyed:
+            logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
+        else:
+            self.output.insert(['error',message])
 
     '''
     Node events
