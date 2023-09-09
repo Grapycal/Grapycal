@@ -32,6 +32,8 @@ class FunctionNode(Node):
         self.run(self.task)
 
     def task(self):
+        if self.destroyed:
+            return
         inputs = []
         for port in self.in_ports:
             inputs.append([edge.get_data() for edge in port.edges])
@@ -78,3 +80,6 @@ class FunctionNode(Node):
             if not port.is_all_edge_ready():
                 return
         self.run(self.task)
+
+    def remove(self):
+        return super().remove()
