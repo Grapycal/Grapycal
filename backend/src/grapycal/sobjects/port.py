@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, List
-from grapycal.utils.misc import as_type
 from objectsync import SObject, StringTopic, IntTopic
+from grapycal.utils.misc import Action
 
 if TYPE_CHECKING:
     from grapycal.sobjects.node import Node
@@ -38,6 +38,10 @@ class InputPort(Port):
         super().build(name, max_edges, display_name)
         self.is_input.set(1)
 
+    def init(self):
+        super().init()
+        self.on_activate = Action()
+
     def add_edge(self, edge:'Edge'):
         super().add_edge(edge)
         self.node.input_edge_added(edge, self)
@@ -54,6 +58,10 @@ class InputPort(Port):
     
     def get_one_data(self):
         return self.edges[0].get_data()
+    
+    def edge_activated(self, edge:'Edge'):
+        self.on_activate.invoke(self, edge)
+        self.node.edge_activated(edge, self)
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
@@ -75,7 +83,7 @@ class OutputPort(Port):
         super().remove_edge(edge)
         self.node.output_edge_removed(edge, self)
 
-    def push_data(self, data:Any=None, retain: bool = False):
+    def push_data(self, data:Any=None,label:str|None=None, retain: bool = False):
         '''
         Push data to all connected edges.
         If retain is True, the data will be pushed to all future edges when they're connected as well.
@@ -84,7 +92,7 @@ class OutputPort(Port):
             self._retain = True
             self._retained_data = data
         for edge in self.edges:
-            edge.push_data(data)
+            edge.push_data(data,label=label)
 
     def disable_retain(self):
         '''

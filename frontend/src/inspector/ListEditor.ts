@@ -96,7 +96,7 @@ export class ListEditor extends Componentable {
             item.destroy()
         }
         this.items.clear()
-
+        
         if (value === null) {
             this.container.innerText = 'multiple values'
 
@@ -123,6 +123,7 @@ export class ListEditor extends Componentable {
             }
         })
         this.locked = false
+        this.updateValue() // Manually update value because it was locked when attribute was changed
     }
 
     private deleteHandler(item: ListEditorItem) {
@@ -135,6 +136,7 @@ export class ListEditor extends Componentable {
         this.items.delete(item)
 
         this.locked = false
+        this.updateValue() // Manually update value because it was locked when attribute was changed
     }
 }
 class ListEditorItem extends Componentable {

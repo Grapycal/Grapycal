@@ -40,11 +40,14 @@ class FunctionNode(Node):
 
         result = self.calculate(inputs)
 
+        if result is None:
+            return
+
         if len(self.out_ports) == 1:
-            self.out_ports[0].push_data(result,retain=True)
+            self.out_ports[0].push_data(result)
         else:
             for port, data in zip(self.out_ports, result):
-                port.push_data(data,retain=True)
+                port.push_data(data)
 
 
     def calculate(self, inputs: list[Any]):

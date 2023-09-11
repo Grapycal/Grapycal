@@ -21,6 +21,7 @@ enum EdgeState {
 export class Edge extends CompSObject {
     tail: ObjectTopic<Port> = this.getAttribute('tail', ObjectTopic<Port>)
     head: ObjectTopic<Port> = this.getAttribute('head', ObjectTopic<Port>)
+    labelTopic: StringTopic = this.getAttribute('label', StringTopic)
 
     editor: Editor
     htmlItem: HtmlItem
@@ -31,11 +32,13 @@ export class Edge extends CompSObject {
     path: SVGPathElement
     path_hit_box: SVGPathElement
     svg: SVGSVGElement
+    label: HTMLDivElement
 
     state: EdgeState = EdgeState.Idle
 
     template = `
     <div id="base" style="position:absolute;width:1px;height:1px">
+        <div class="edge-label" id="label"></div>
         <svg class="edge" id="svg">
             <g>
                 <path class="edge-path" id="path" d=""  fill="none"></path>
@@ -76,6 +79,8 @@ export class Edge extends CompSObject {
         this.base.style.width = "1px"
         this.base.style.height = "1px"
         this.svg.style.position = 'absolute'
+
+        this.label = this.htmlItem.getEl('label',HTMLDivElement)
 
         this.link2(this.htmlItem.baseElement,'mousedown', () => {
             soundManager.playClick() // why not working?
@@ -138,6 +143,9 @@ export class Edge extends CompSObject {
         })
         this.link(this.functionalSelectable.onDeselected, () => {
             this.svg.classList.remove('functional-selected')
+        })
+        this.link(this.labelTopic.onSet, () => {
+            this.label.innerText = this.labelTopic.getValue()
         })
         this.updateSVG()
     }
@@ -267,13 +275,31 @@ export class Edge extends CompSObject {
         if(path==null)return//no change
         this.path.setAttribute('d', path)
         this.path_hit_box.setAttribute('d', path)
+        let worldCenter = new Vector2(
+            (this.path.getBoundingClientRect().left + this.path.getBoundingClientRect().right)/2,
+            (this.path.getBoundingClientRect().top + this.path.getBoundingClientRect().bottom)/2
+        )
+        let localCenter = this.transform.worldToLocal(worldCenter)
+        this.label.style.left = localCenter.x + 'px'
+        this.label.style.top = localCenter.y + 'px'
+        this.label.style.width = this.pathResult.length + 'px'
+        let angle = this.pathResult.tangent.angle()
+        if (angle > Math.PI/2) angle -= Math.PI
+        if (angle < -Math.PI/2) angle += Math.PI
+        this.label.style.transform = `translate(-50%,-50%) rotate(${angle}rad) translate(0,50%)`
     }
 
-    prevPathParam = {
+    pathParam = {
         tail:new Vector2(NaN,NaN),
         head:new Vector2(NaN,NaN),
         tail_orientation:-1,
         head_orientation:-1
+    }
+
+    pathResult = {
+        tangent:new Vector2(NaN,NaN),
+        normal:new Vector2(NaN,NaN),
+        length:NaN
     }
 
     private getSVGPath(): string {
@@ -309,21 +335,29 @@ export class Edge extends CompSObject {
             head_orientation = this.head.getValue().orientation
         }
 
-        if(tail.equals(this.prevPathParam.tail) && 
-            head.equals(this.prevPathParam.head) && 
-            tail_orientation == this.prevPathParam.tail_orientation &&
-            head_orientation == this.prevPathParam.head_orientation
+        if(tail.equals(this.pathParam.tail) && 
+            head.equals(this.pathParam.head) && 
+            tail_orientation == this.pathParam.tail_orientation &&
+            head_orientation == this.pathParam.head_orientation
         )return null // no change
 
-        this.prevPathParam = {tail,head,tail_orientation,head_orientation}
+        this.pathParam = {tail,head,tail_orientation,head_orientation}
 
         let dx = head.x - tail.x
         let dy = head.y - tail.y
         let d = Math.sqrt(dx*dx + dy*dy)
         let r = Math.min(50, d/3)
         if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) throw new Error('NaN')
-        let path = `M ${tail.x} ${tail.y} C ${tail.x + Math.cos(tail_orientation)*r} ${tail.y + Math.sin(tail_orientation)*r},
-        ${head.x + Math.cos(head_orientation)*r} ${head.y+ Math.sin(head_orientation)*r}, ${head.x} ${head.y}`
+        let mp1 = new Vector2(tail.x + Math.cos(tail_orientation)*r, tail.y + Math.sin(tail_orientation)*r)
+        let mp2 = new Vector2(head.x + Math.cos(head_orientation)*r, head.y + Math.sin(head_orientation)*r)
+        let path = `M ${tail.x} ${tail.y} C ${mp1.x} ${mp1.y} ${mp2.x} ${mp2.y} ${head.x} ${head.y}`
+
+        let tangent = mp2.add(head).sub(mp1.add(tail)).normalize()
+        this.pathResult = {
+            tangent:tangent,
+            normal:tangent.rotate(Math.PI/2),
+            length:d
+        }
 
         return path
     }

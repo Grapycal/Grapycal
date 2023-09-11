@@ -68,8 +68,15 @@ export class Vector2 {
         return new Vector2(1, 0);
     }
 
+    static angle(a: Vector2, b: Vector2): number{
+        return Math.atan2(b.y - a.y, b.x - a.x);
+    }
+
     x: number;
     y: number;
+    get length(): number{
+        return Math.sqrt(this.x**2 + this.y**2);
+    }
     constructor(x: number, y: number){
         this.x = x;
         this.y = y;
@@ -101,6 +108,20 @@ export class Vector2 {
 
     equals(another:Vector2){
         return this.x == another.x && this.y == another.y
+    }
+
+    angle(): number{
+        return Math.atan2(this.y, this.x);
+    }
+
+    normalize(): Vector2{
+        return new Vector2(this.x / this.length, this.y / this.length);
+    }
+
+    rotate(angle: number): Vector2{
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Vector2(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
     }
 }
 

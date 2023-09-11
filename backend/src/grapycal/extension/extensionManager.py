@@ -100,7 +100,8 @@ class ExtensionManager:
         
         # Remove nodes of the changed types
         nodes_to_recover:List[Tuple[objectsync.sobject.SObjectSerialized,str]] = []
-        edges_to_recover:List[Tuple[str,str,str]] = []
+        edges_to_recover:Dict[str,Tuple[str,str,str]] = {}
+        removed_ports = set[str]()
         port_map_1 = {}
         for node in nodes_to_update:
             # First serialize the node
@@ -116,8 +117,9 @@ class ExtensionManager:
             for port in ports:
                 port_map_1[port.get_id()] = (port.is_input.get(),port.name.get(),node.get_id())
             for port in ports:
-                for edge in port.edges:
-                    edges_to_recover.append((edge.tail._topic.get(),edge.head._topic.get(),edge.get_parent().get_id()))
+                removed_ports.add(port.get_id())
+                for edge in port.edges.copy():
+                    edges_to_recover[edge.get_id()] = (edge.tail._topic.get(),edge.head._topic.get(),edge.get_parent().get_id())
                     self._objectsync.destroy_object(edge.get_id())
 
             # Then destroy the node
@@ -133,7 +135,9 @@ class ExtensionManager:
             new_node: Node = self._objectsync.create_object_s(type_name,parent_id=parent_id) # type: ignore
 
             # Let the node handle the recovery
-            new_node.recover_from_version('',NodeInfo(old_serialized)) #TODO version name
+            old_node_info = NodeInfo(old_serialized)
+            new_node.old_node_info = old_node_info
+            new_node.recover_from_version('',old_node_info) #TODO version name
 
             node_id_map[old_serialized.id] = new_node.get_id()
 
@@ -162,12 +166,19 @@ class ExtensionManager:
             
             return new_port_id
 
-        for tail_id, head_id, parent_id in edges_to_recover:
+        for tail_id, head_id, parent_id in edges_to_recover.values():
             #print('tail_id:',tail_id,'head_id:',head_id,'parent_id:',parent_id,port_map_1,port_map_2,node_id_map)
-            new_tail_id = port_id_map(tail_id)
-            new_head_id = port_id_map(head_id)
+            if tail_id not in removed_ports:
+                new_tail_id = tail_id
+            else:
+                new_tail_id = port_id_map(tail_id)
+            if head_id not in removed_ports:
+                new_head_id = head_id
+            else:
+                new_head_id = port_id_map(head_id)
+
             if new_tail_id is None or new_head_id is None:
-                continue # The port does not present in the new version
+                continue # The port does not present in the new version, unfortunately we cannot recover the edge.
             
             new_edge = self._objectsync.create_object(Edge,parent_id=parent_id)
             new_edge.tail.set(as_type(self._objectsync.get_object(new_tail_id),OutputPort))

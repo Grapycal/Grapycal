@@ -1,10 +1,13 @@
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
+from .basic import *
 from .cnn import *
+from .activation import *
 from .tensor_operations import *
 from .tensor import *
-from .optimizer import *
-del ModuleNode
+from .optimizerNode import *
+from .transform import *
+del ModuleNode, SimpleModuleNode, Node
 
 
 
@@ -61,8 +64,9 @@ class MnistDatasetNode(Node):
         self.label.set('MNIST')
         self.out = self.add_out_port('dataset')
 
-    def init_node(self):
-        def task():
-            ds = torchvision.datasets.mnist.MNIST('data', download=True)
-            self.out.push_data(ds,retain=True)
-        self.run(task)
+    def task(self):
+        ds = torchvision.datasets.mnist.MNIST('data', download=True)
+        self.out.push_data(ds)
+
+    def double_click(self):
+        self.run(self.task)
