@@ -7,7 +7,6 @@ class ForNode(ActiveNode):
 
     def build_node(self):
         super().build_node()
-        self.iterable_port = self.add_in_port('iterable',max_edges=1)
         self.item_port = self.add_out_port('item')
         self.label.set('For')
         self.shape.set('normal')
@@ -17,7 +16,7 @@ class ForNode(ActiveNode):
         self.iterator:Iterable|None = None
 
     def task(self):
-        self.iterator = iter(self.iterable_port.edges[0].get_data()) #type: ignore
+        self.iterator = iter(self.activate_port.get_one_data()) #type: ignore
         self.run(self.next,to_queue=False)
 
     def next(self):

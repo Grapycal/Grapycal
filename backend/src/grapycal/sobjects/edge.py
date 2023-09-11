@@ -67,7 +67,7 @@ class Edge(SObject):
         self._data = data
         self._activated = True
         self._data_ready = True
-        if label:
+        if label: #TODO: limit frequency of label updates
             self.label.set(label)
         else:
             label = ''

@@ -1,5 +1,8 @@
+
 from typing import Any, Callable, Dict, Generic, List, TypeVar
+from grapycal.utils.misc import Action
 from objectsync.sobject import SObjectSerialized
+import asyncio
 
 I=TypeVar('I')
 O=TypeVar('O')
@@ -57,4 +60,14 @@ class NodeInfo(SObjectInfo):
         children = serialized.children
         controls: Dict[str,str] = self.attributes['controls']
         self.controls=LazyDict[str,ControlInfo](lambda name: ControlInfo(children[controls[name]]),list(controls.keys()))
-    
+
+class Clock:
+    def __init__(self, interval: float):
+        self.interval = interval
+        self.on_tick = Action()
+
+
+    async def run(self):
+        while True:
+            await asyncio.sleep(self.interval)
+            self.on_tick.invoke()

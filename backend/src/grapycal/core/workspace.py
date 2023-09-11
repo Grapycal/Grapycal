@@ -1,5 +1,6 @@
 
 from grapycal.extension.extensionManager import ExtensionManager
+from grapycal.extension.utils import Clock
 from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WorkspaceObject
@@ -52,13 +53,15 @@ class Workspace:
 
         self.do_after_transition = self._objectsync.do_after_transition
 
+        self.clock = Clock(0.1)
+
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
 
     async def _async_communication_thread(self,event_loop_set_event: threading.Event):
         self._communication_event_loop = asyncio.get_event_loop()
         event_loop_set_event.set()
-        await self._objectsync.serve()
+        await asyncio.gather(self._objectsync.serve(),self.clock.run())
 
     def run(self) -> None:
         print('Workspace running')

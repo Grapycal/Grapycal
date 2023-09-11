@@ -81,6 +81,9 @@ class Node(SObject):
             if self.destroyed:
                 logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
             else:
+                if len(self.output) > 100:
+                    self.output.set([])
+                    self.output.insert(['error','Too many output lines. Cleared.'])
                 self.output.insert(['output',data])
 
         self._output_stream = OutputStream(print_output)
@@ -351,6 +354,9 @@ class Node(SObject):
         if self.destroyed:
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
+            if len(self.output) > 100:
+                self.output.set([])
+                self.output.insert(['error','Too many output lines. Cleared.'])
             self.output.insert(['error',message])
 
     '''
