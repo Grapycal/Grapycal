@@ -26,8 +26,8 @@ class LambdaNode(Node):
         self.outputs.on_pop.add_auto(self.on_output_removed)
 
         if self.is_new:
-            self.outputs.insert('out')
-            self.text_controls['out'].text.set('x')
+            self.outputs.insert('')
+            self.text_controls[''].text.set('x')
 
     def recover_from_version(self, version, old: NodeInfo):
         super().recover_from_version(version, old)
@@ -54,17 +54,23 @@ class LambdaNode(Node):
         self.remove_control(name)
 
     def input_edge_added(self, edge: Edge, port: InputPort):
-        if edge.is_data_ready():    
-            self.calculate()
+        self.calculate()
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.calculate()
 
     def calculate(self):
+        for port in self.in_ports:
+            if not port.is_all_edge_ready():
+                return
+            if len(port.edges) == 0:
+                return
+        arg_values = [port.get_one_data() for port in self.in_ports]
+
         def task():
-            arg_values = [port.edges[0].get_data() for port in self.in_ports.get()]
             for out_name, text_control in self.text_controls.get().items():
                 expr = f'lambda {",".join(self.input_args)}: {text_control.text.get()}'
                 y = eval(expr,self.workspace.vars())(*arg_values)
-                self.get_out_port(out_name).push_data(y,retain=True)
+                self.get_out_port(out_name).push_data(y)
+                
         self.run(task)

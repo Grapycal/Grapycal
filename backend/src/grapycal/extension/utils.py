@@ -11,6 +11,9 @@ class LazyDict(Generic[I,O]):
     def __getitem__(self,idx:I)->O:
         return self.gen(idx)
     
+    def __contains__(self,idx:I)->bool:
+        return idx in self._keys
+    
     def keys(self):
         return self._keys
 

@@ -87,10 +87,14 @@ export class Node extends CompSObject {
                 </div>
             </div>
             <div class="node-selection"></div>
-            <div id="label" class="node-label"></div>
+            
             <div class=" flex-horiz space-between">
                 <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
-                <div id="slot_control"  class="slot-control"> </div>
+
+                <div class="full-width flex-vert space-evenly">
+                    <div id="label" class="node-label full-width"></div>
+                    <div id="slot_control"  class="slot-control"> </div>
+                </div>
 
                 <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
             </div>

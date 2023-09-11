@@ -1,35 +1,40 @@
 from typing import Any, Dict
+from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.activeNode import ActiveNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import StringTopic, ListTopic
 
-class VariableNode(Node):
+class VariableNode(ActiveNode):
     category = 'data'
     
     def build_node(self):
+        super().build_node()
         self.in_port = self.add_in_port('set',1)
         self.out_port = self.add_out_port('get')
-        self.text_control = self.add_control(TextControl)
+        self.variable_name = self.add_control(TextControl,name='variable_name')
         self.label.set('Variable')
         self.shape.set('simple')
 
     def init_node(self):
+        super().init_node()
         self.value = None
         self.has_value = False
 
-    def edge_activated(self, edge: Edge, port: InputPort):
-        self.workspace.vars()[self.text_control.text.get()] = edge.get_data()
+    def recover_from_version(self, version: str, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.recover_controls('variable_name')
 
-    def double_click(self):
-        self.value = self.workspace.vars()[self.text_control.text.get()]
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.in_port:
+            self.workspace.vars()[self.variable_name.text.get()] = edge.get_data()
+
+    def task(self):
+        self.value = self.workspace.vars()[self.variable_name.text.get()]
         self.has_value = True
         for edge in self.out_port.edges:
-            edge.push_data(self.value)
-
-    def output_edge_added(self, edge: Edge, port: OutputPort):
-        if self.has_value:
             edge.push_data(self.value)
 
 class SplitNode(Node):

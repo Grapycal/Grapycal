@@ -4,7 +4,11 @@ from grapycal.sobjects.port import InputPort, OutputPort, Port
 from objectsync import SObject, StringTopic, IntTopic, ObjTopic
 from objectsync.sobject import SObjectSerialized
 
-
+try:
+    import torch
+    HAS_TORCH = True
+except:
+    HAS_TORCH = False
 
 class Edge(SObject):
     frontend_type = 'Edge'
@@ -12,6 +16,7 @@ class Edge(SObject):
     def build(self, tail:OutputPort|None = None, head:InputPort|None = None):
         self.tail = self.add_attribute('tail', ObjTopic[OutputPort], tail)
         self.head = self.add_attribute('head', ObjTopic[InputPort], head)
+        self.label = self.add_attribute('label', StringTopic, is_stateful=False)
 
     def init(self):
         
@@ -32,6 +37,7 @@ class Edge(SObject):
             old_tail.remove_edge(self)
         if new_tail:
             new_tail.add_edge(self)
+        self.label.set('')
 
     def on_head_set(self, old_head:Port|None, new_head:InputPort|None):
         if old_head:
@@ -51,20 +57,31 @@ class Edge(SObject):
     def get_data(self)->Any:
 
         if not self._data_ready:
-            #TODO: aquire backward
             raise Exception('Data not available')
         self._activated = False
         if not self.reaquirable:
             self._data_ready = False
         return self._data
     
-    def push_data(self, data):
+    def push_data(self, data, label:str|None=None):
         self._data = data
         self._activated = True
         self._data_ready = True
+        if label:
+            self.label.set(label)
+        else:
+            label = ''
+            if HAS_TORCH:
+                if isinstance(data, torch.Tensor):
+                    label = str(list(data.shape)) if list(data.shape)!=[] else 'scalar'
+            self.label.set(label)
+
         head = self.head.get()
         if head:
-            head.node.edge_activated(self, head)
+            head.edge_activated(self)
+
+    def set_label(self, label):
+        self.label.set(label)
     
     def is_activated(self):
         return self._activated

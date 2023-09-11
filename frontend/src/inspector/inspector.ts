@@ -12,6 +12,7 @@ import { IntEditor } from "./IntEditor"
 import { FloatEditor } from "./FloatEditor"
 import { ObjSetEditor } from "./ObjSetEditor"
 import { print } from "../devUtils"
+import { ButtonEditor } from "./ButtonEditor"
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -29,7 +30,8 @@ export class Inspector implements IComponentable{
         'list':ListEditor,
         'int':IntEditor,
         'float':FloatEditor,
-        'objSet':ObjSetEditor
+        'objSet':ObjSetEditor,
+        'button':ButtonEditor,
     }
 
     template = `
@@ -43,13 +45,14 @@ export class Inspector implements IComponentable{
         <div id="slot_attributes_hierarchy"></div>
         <hr>
         <div id="output_display"></div>
-        
+        <button id="clear_output">Clear</button>
     </div>
     `;
     nodeTypeDiv: HTMLElement;
     extensionNameDiv: HTMLElement;
     nodeDescriptionDiv: HTMLElement;
     outputDisplayDiv: HTMLElement;
+    clearOutputButton: HTMLElement;
 
     constructor(){
         this.htmlItem = new HtmlItem(this,document.getElementById('slot_inspector'),this.template);
@@ -59,6 +62,14 @@ export class Inspector implements IComponentable{
         this.extensionNameDiv = this.htmlItem.getHtmlEl('extension_name');
         this.nodeDescriptionDiv = this.htmlItem.getHtmlEl('node_description');
         this.outputDisplayDiv = this.htmlItem.getHtmlEl('output_display');
+        this.clearOutputButton = this.htmlItem.getHtmlEl('clear_output');
+        this.clearOutputButton.onclick = ()=>{
+            if(this.nodes.length === 1){
+                this.nodes[0].output.set([])
+            }
+            this.outputDisplayDiv.innerText = '';
+        }
+
         this.outputDisplayDiv.style.bottom = '0px';
         as(this.htmlItem.baseElement,HTMLElement).style.display = 'none';
         as(this.htmlItem.baseElement,HTMLElement).style.alignItems = 'stretch'
@@ -92,6 +103,7 @@ export class Inspector implements IComponentable{
             as(this.htmlItem.baseElement,HTMLElement).style.display = 'flex';
         }
         this.linker.unlink(this.addOutput,false)
+        this.linker.unlink(this.onOutputSet,false)
         if(this.nodes.length === 1){
             let fullType = this.nodes[0].type_topic.getValue();
             let type = fullType.split('.')[1];
@@ -104,6 +116,7 @@ export class Inspector implements IComponentable{
                 this.addOutput(item);
             }
             this.linker.link(outputAttribute.onInsert,this.addOutput);
+            this.linker.link(outputAttribute.onSet,this.onOutputSet);
             
             return;
         }
@@ -133,6 +146,11 @@ export class Inspector implements IComponentable{
             span.classList.add('output');
         }
         this.outputDisplayDiv.appendChild(span);
+    }
+
+    private onOutputSet(value:any[]){
+        if(value.length === 0)
+            this.outputDisplayDiv.innerText = '';
     }
 
     private updateHierarchy(){

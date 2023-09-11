@@ -1,3 +1,4 @@
+from ast import Tuple
 import logging
 logger = logging.getLogger(__name__)
 from contextlib import contextmanager
@@ -62,6 +63,7 @@ class Node(SObject):
 
         self.workspace:Workspace = self._server.globals.workspace
         self.destroyed = False
+        self.old_node_info :NodeInfo|None = None
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
         parent = self.get_parent()
@@ -97,6 +99,47 @@ class Node(SObject):
         '''
         self.translation.set(old['translation'])
 
+    def recover_attributes(self,*attribute_names:str|tuple[str,str]):
+        '''
+        Recover attributes from the old node.
+        '''
+        assert self.old_node_info is not None
+        for name in attribute_names:
+            if isinstance(name,tuple):
+                old_name,new_name = name
+            else:
+                old_name,new_name = name,name
+            if not self.has_attribute(new_name):
+                logger.warning(f'Attribute {new_name} does not exist in {self}')
+                continue
+            if not self.old_node_info.has_attribute(old_name):
+                logger.warning(f'Attribute {old_name} does not exist in the old node of {self}')
+                continue
+            new_attr = self.get_attribute(new_name)
+            old_attr = self.old_node_info[old_name]
+            if isinstance(new_attr,WrappedTopic):
+                new_attr.set_raw(old_attr)
+            else:
+                new_attr.set(old_attr)
+
+    def recover_controls(self,*control_names:str|tuple[str,str]):
+        '''
+        Recover controls from the old node.
+        '''
+        assert self.old_node_info is not None
+        for name in control_names:
+            if isinstance(name,tuple):
+                old_name,new_name = name
+            else:
+                old_name,new_name = name,name
+            if not (new_name in self.controls):
+                logger.warning(f'Control {new_name} does not exist in {self}')
+                continue
+            if not (old_name in self.old_node_info.controls):
+                logger.warning(f'Control {old_name} does not exist in the old node of {self}')
+                continue
+            self.controls[new_name].recover_from(self.old_node_info.controls[old_name])
+
     def _spawn(self, client_id):
         '''
         Called when a client wants to spawn a node.
@@ -107,10 +150,8 @@ class Node(SObject):
     def destroy(self) -> SObjectSerialized:
         '''
         Called when the node is destroyed. You can override this method to do something before the node is destroyed.
-        Overrided methods should call return super().destroy() at the end.
+        Note: Overrided methods should call return super().destroy() at the end.
         '''
-        #TODO: Remove all edges connected to this node
-
         self._output_stream.close()
         self.destroyed = True
         return super().destroy()
@@ -137,6 +178,7 @@ class Node(SObject):
         '''
         #find the port with the given name
         for port in self.in_ports:
+            assert port is not None
             if port.name.get() == name:
                 break
         else:
@@ -156,6 +198,7 @@ class Node(SObject):
         '''
         #find the port with the given name
         for port in self.out_ports:
+            assert port is not None
             if port.name.get() == name:
                 break
         else:
@@ -174,6 +217,7 @@ class Node(SObject):
         Get an input port by its name.
         '''
         for port in self.in_ports:
+            assert port is not None
             if port.name.get() == name:
                 return port
         raise ValueError(f'Port with name {name} does not exist')
@@ -183,6 +227,7 @@ class Node(SObject):
         Get an output port by its name.
         '''
         for port in self.out_ports:
+            assert port is not None
             if port.name.get() == name:
                 return port
         raise ValueError(f'Port with name {name} does not exist')
@@ -283,7 +328,7 @@ class Node(SObject):
         except Exception as e:
             self._on_exception(e)
 
-    def run(self,task:Callable[[],None],background=True,to_queue=True,**kwargs):
+    def run(self,task:Callable[[],Any],background=True,to_queue=True,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
