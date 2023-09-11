@@ -7,7 +7,6 @@ from .tensor_operations import *
 from .tensor import *
 from .optimizerNode import *
 from .transform import *
-del ModuleNode, SimpleModuleNode, Node
 
 
 
@@ -70,3 +69,6 @@ class MnistDatasetNode(Node):
 
     def double_click(self):
         self.run(self.task)
+
+
+del ModuleNode, SimpleModuleNode, Node, ActiveNode, FunctionNode

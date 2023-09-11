@@ -1,12 +1,14 @@
 from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.activeNode import ActiveNode
 import torch
 from grapycal import Node, TextControl, FloatTopic, IntTopic
 
 
-class ZeroesNode(Node):
+class ZeroesNode(ActiveNode):
     category = 'torch/tensor'
     def build_node(self):
+        super().build_node()
         self.shape.set('simple')
         self.label.set('Zeroes')
         self.out = self.add_out_port('tensor')
@@ -14,12 +16,13 @@ class ZeroesNode(Node):
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
 
-    def double_click(self):
+    def task(self):
         self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(','))))
 
-class OnesNode(Node):
+class OnesNode(ActiveNode):
     category = 'torch/tensor'
     def build_node(self):
+        super().build_node()
         self.shape.set('simple')
         self.label.set('Ones')
         self.out = self.add_out_port('tensor')
@@ -27,12 +30,13 @@ class OnesNode(Node):
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
 
-    def double_click(self):
+    def task(self):
         self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(','))))
 
-class RandNode(Node):
+class RandNode(ActiveNode):
     category = 'torch/tensor'
     def build_node(self):
+        super().build_node()
         self.shape.set('simple')
         self.label.set('Rand')
         self.out = self.add_out_port('tensor')
@@ -40,12 +44,13 @@ class RandNode(Node):
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
 
-    def double_click(self):
+    def task(self):
         self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(','))))
 
-class RandnNode(Node):
+class RandnNode(ActiveNode):
     category = 'torch/tensor'
     def build_node(self):
+        super().build_node()
         self.shape.set('simple')
         self.label.set('Randn')
         self.out = self.add_out_port('tensor')
@@ -53,12 +58,13 @@ class RandnNode(Node):
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
 
-    def double_click(self):
+    def task(self):
         self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(','))))
 
-class GridNode(Node):
+class GridNode(ActiveNode):
     category = 'torch/tensor'
     def build_node(self):
+        super().build_node()
         self.shape.set('simple')
         self.label.set('Grid 2D')
 
@@ -78,7 +84,7 @@ class GridNode(Node):
         self.y_shape_text = self.add_control(TextControl)
         self.y_shape_text.editable.set(0)
 
-    def init_node(self):
+    def task(self):
         self.x_start.on_set.add_auto(self.update_label_x)
         self.x_end.on_set.add_auto(self.update_label_x)
         self.x_steps.on_set.add_auto(self.update_label_x)
