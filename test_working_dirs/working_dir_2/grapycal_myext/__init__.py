@@ -10,24 +10,6 @@ import matplotlib
 matplotlib.use('agg') # use non-interactive backend
 import matplotlib.pyplot as plt
 
-class ImageDisplayNode(Node):
-    category = 'interaction'
-    def build_node(self):
-        self.label.set('imshow')
-        self.shape.set('simple')
-        self.img = self.add_control(ImageControl)
-        self.add_in_port('image')
-
-    def edge_activated(self, edge: Edge, port: InputPort):
-        data = edge.get_data()
-        # use plt to convert to jpg
-        buf = io.BytesIO()
-        fig = plt.figure()
-        plt.imshow(data)
-        plt.savefig(buf,format='jpg')
-        plt.close(fig)
-        self.img.set_image(buf)
-
 class IsEvenNode(Node):
     category = 'function'
 

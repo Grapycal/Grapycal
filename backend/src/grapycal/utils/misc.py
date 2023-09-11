@@ -27,9 +27,9 @@ class Action:
         self.callbacks.remove(callback)
         return self
     
-    def invoke(self, auto, *args: Any, **kwargs: Any) -> Any:
+    def invoke(self, *args: Any, **kwargs: Any) -> Any:
         '''Call each callback in the action with the given arguments.'''
         returns = []
         for callback in self.callbacks:
-            returns.append(callback(auto,*args,**kwargs))
+            returns.append(callback(*args,**kwargs))
         return returns
