@@ -34,3 +34,7 @@ b. via poetry
     rm package-lock.json # I don't know why but it doesn't work with it
     npm install
 
+.. note::
+
+    Currently the frontend have to be installed with npm and be built locally. In future versions the development team
+    will pre-build the webpage and include it in the backend, so users don't need to install and run frontend separately.

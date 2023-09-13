@@ -1,19 +1,7 @@
 Run Grapycal
-==============
+==================
 
-
-
-1. Run the Grapycal App
-
-The Grapycal python package has been installed in the previous step. Now, we can navigate to an abitrary folder where
-we wish to run Grapycal. In this example:
-
-.. code-block:: bash
-
-    mkdir working_dir
-    cd working_dir
-
-Then, simply run the Grapycal App with:
+1. Run the Grapycal Server
 
 .. code-block:: bash
 
@@ -27,3 +15,7 @@ Then, simply run the Grapycal App with:
     npm run app
 
 The web UI is now avaliable at http://localhost:9001/.
+
+.. note::
+
+    In future versions, the web server will be integrated into the Grapycal server.
