@@ -7,7 +7,7 @@ from torch import nn
 from grapycal import EventTopic
 import torch
 
-class ModuleNode(Node,metaclass=ABCMeta):
+class ModuleNode(Node):
     category = 'torch/nn'
     def build_node(self):
         #TODO: save and load

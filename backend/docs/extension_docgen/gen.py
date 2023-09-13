@@ -14,6 +14,9 @@ class Scanner:
         for i in range(len(self.lines)):
             if self.lines[i].strip():
                 break
+        else:
+            self.lines = []
+            return
         self.lines = self.lines[i:]
         self.process()
 
@@ -88,7 +91,14 @@ for node_type in node_types:
 
 # generate rst
 
-rst = f'''
+# try to load the old rst and preserve the part above [generator please start from below]
+try:
+    with open(out,'r') as f:
+        rst = f.read()
+        # search for .. [generator please start from below] and remove everything below it
+        rst = re.sub(r'\.\. \[generator please start from below\].*','.. [generator please start from below]\n',rst,flags=re.DOTALL)
+except:
+    rst = f'''
 {ext.extension_name}
 ==================
 '''
@@ -104,18 +114,45 @@ for category, node_types in categories:
 {capilalizeFirstLetter(category)}
 ------------------
 '''
+#   .. |addition image| image:: ./node_imgs/addition.jpg
+#       :height: 1.5em
+
+#   |addition image| Addition
     node_types = sorted(node_types,key=lambda x:x.get_def_order())
     for node_type in node_types:
+        name = re.sub(r'Node$','',node_type.__name__)
+        name_lower = name.lower()
         rst += f'''
-{re.sub(r'Node$','',node_type.__name__)}
+
+{name}
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/{name_lower}.jpg
+    :width: 10em
+    :align: right
+    :alt: [{name} image]
+
 '''
         if not node_type.__doc__:
             continue
         scanner = Scanner(node_type.__doc__)
 
         rst += scanner.get_unindent()
-        rst += '\n'
+#         rst += f'''
+# .. container:: clearer
+
+#     .. image :: https://i.imgur.com/46USmE3.png
+#         :height: 0px
+
+# '''
+
+        rst += '\n|\n'
 
 with open(out,'w') as f:
     f.write(rst)
+
+#copy ./node_imgs to out_dir
+import shutil,os
+here = os.path.dirname(os.path.abspath(__file__))
+node_imgs = os.path.join(here,'node_imgs')
+shutil.copytree(node_imgs,os.path.join(os.path.dirname(out),'node_imgs'),dirs_exist_ok=True)
