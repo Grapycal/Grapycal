@@ -9,7 +9,7 @@ import einops
 class CatNode(FunctionNode):
     category = 'torch/operations'
     def build_node(self):
-        self.label.set('C0')
+        self.label.set('🐱0')
         self.shape.set('round')
         self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
         self.add_in_port('in')
@@ -21,7 +21,7 @@ class CatNode(FunctionNode):
             self.dim.set(0)
 
     def dim_changed(self,dim):
-        self.label.set('C'+str(dim))
+        self.label.set('🐱'+str(dim))
     
     def calculate(self, inputs: list[Any]):
         return torch.cat(inputs[0],dim=self.dim.get())
@@ -30,7 +30,7 @@ class StackNode(FunctionNode):
     category = 'torch/operations'
     def build_node(self):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
-        self.label.set('S0')
+        self.label.set('☰0')
         self.shape.set('round')
         self.add_in_port('in')
         self.add_out_port('out')
@@ -41,7 +41,7 @@ class StackNode(FunctionNode):
             self.dim.set(0)
 
     def dim_changed(self,dim):
-        self.label.set('S'+str(dim))
+        self.label.set('☰'+str(dim))
     
     def calculate(self, inputs: list[Any]):
         return torch.stack(inputs[0],dim=self.dim.get())

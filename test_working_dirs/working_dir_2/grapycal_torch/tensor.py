@@ -84,7 +84,8 @@ class GridNode(ActiveNode):
         self.y_shape_text = self.add_control(TextControl)
         self.y_shape_text.editable.set(0)
 
-    def task(self):
+    def init_node(self):
+        super().init_node()
         self.x_start.on_set.add_auto(self.update_label_x)
         self.x_end.on_set.add_auto(self.update_label_x)
         self.x_steps.on_set.add_auto(self.update_label_x)
@@ -105,7 +106,7 @@ class GridNode(ActiveNode):
     def update_label_y(self,*args):
         self.y_shape_text.text.set(f'y: [{self.y_start.get()},{self.y_end.get()}] / {self.y_steps.get()}')
 
-    def double_click(self):
+    def task(self):
         x_axis = torch.linspace(self.x_start.get(),self.x_end.get(),self.x_steps.get())
         y_axis = torch.linspace(self.y_start.get(),self.y_end.get(),self.y_steps.get())
         yy, xx = torch.meshgrid(y_axis,x_axis)

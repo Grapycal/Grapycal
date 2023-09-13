@@ -1,21 +1,40 @@
-
-grapycal.builtin_nodes
+Built-in Nodes
 ==================
+
+Here is a list of all the built-in nodes in Grapycal. These basic nodes are always handy to use no matter what task
+you are working on.
+
+.. [generator please start from below]
 
 Interaction
 ------------------
 
+
 Print
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/print.jpg
+    :width: 10em
+    :align: right
+    :alt: [Print image]
+
 Display the data received from the input edge.
 
 :Inputs:
     - **data**: data to be displayed
 
 
+|
+
 
 Eval
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/eval.jpg
+    :width: 10em
+    :align: right
+    :alt: [Eval image]
+
 Equivalent to Python's `eval` function. It evaluates the expression in the input text box and send out the result.
 
 To make it run, either send in a signal to the `run` input port, or double click on the node.
@@ -27,9 +46,17 @@ To make it run, either send in a signal to the `run` input port, or double click
     - **result**: the result of the expression
 
 
+|
+
 
 Exec
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/exec.jpg
+    :width: 10em
+    :align: right
+    :alt: [Exec image]
+
 Equivalent to Python's `exec` function. It executes the statements in the input text box.
 
 To make it run, either send in a signal to the `run` input port, or double click on the node.
@@ -41,12 +68,20 @@ To make it run, either send in a signal to the `run` input port, or double click
 :Outputs:
     - **done**: send out a signal when the statements are done
 
+|
 
 Data
 ------------------
 
+
 Variable
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/variable.jpg
+    :width: 10em
+    :align: right
+    :alt: [Variable image]
+
 VariableNode stores a variable in the workspace. It can be used to store data for later use.
 
 :Inputs:
@@ -57,9 +92,17 @@ VariableNode stores a variable in the workspace. It can be used to store data fo
     - **get**: get the variable's value
 
 
+|
+
 
 Split
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/split.jpg
+    :width: 10em
+    :align: right
+    :alt: [Split image]
+
 SplitNode is used to get items from a list or a dictionary using keys.
 It is equivalent to `data[key]` in Python.
 
@@ -73,12 +116,20 @@ Multiple keys can be used at the same time. Each value will be sent to a corresp
     - **value2**: the value of the second key
     etc.
 
+|
 
 Function/math
 ------------------
 
+
 Addition
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/addition.jpg
+    :width: 10em
+    :align: right
+    :alt: [Addition image]
+
 Adds a set of values together. The values can be of any addable type, such as numbers, NumPy arrays,
 PyTorch tensors, or strings.
 
@@ -88,9 +139,17 @@ PyTorch tensors, or strings.
 :Outputs:
     - **sum**: sum of all values
 
+|
+
 
 Subtraction
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/subtraction.jpg
+    :width: 10em
+    :align: right
+    :alt: [Subtraction image]
+
 Calculates sum(`B`) - sum(`A`).
 
 :Inputs:
@@ -100,9 +159,17 @@ Calculates sum(`B`) - sum(`A`).
 :Outputs:
     - **Difference**: sum(`B`) - sum(`A`)
 
+|
+
 
 Multiplication
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/multiplication.jpg
+    :width: 10em
+    :align: right
+    :alt: [Multiplication image]
+
 Multiplies a set of values together. The values can be of any multipliable type, such as numbers, NumPy arrays, or
 PyTorch tensors.
 
@@ -112,9 +179,17 @@ PyTorch tensors.
 :Outputs:
     - **product**: product of all values
 
+|
+
 
 Division
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/division.jpg
+    :width: 10em
+    :align: right
+    :alt: [Division image]
+
 Calculates product(`B`) / product(`A`).
 
 :Inputs:
@@ -124,33 +199,71 @@ Calculates product(`B`) / product(`A`).
 :Outputs:
     - **Quotient**: product(`B`) / product(`A`)
 
+|
 
 Function
 ------------------
 
+
 Lambda
 ~~~~~~~~~~~~~~~~~~~
-LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function
+
+.. image:: ./node_imgs/lambda.jpg
+    :width: 10em
+    :align: right
+    :alt: [Lambda image]
+
+LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function, which is
 similar to Python's lambda function.
 
-It can be freely configured to be any function of any number of inputs and outputs.
+It can be freely configured to be any function of any number of inputs and outputs. For each output, the node
+provides an input box for you to define the function with an expression.
 
 :Inputs:
     - **x**: input 1
     
 
+|
 
 Procedural
 ------------------
 
+
 For
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/for.jpg
+    :width: 10em
+    :align: right
+    :alt: [For image]
+
+
 
 Event
 ~~~~~~~~~~~~~~~~~~~
 
+.. image:: ./node_imgs/event.jpg
+    :width: 10em
+    :align: right
+    :alt: [Event image]
+
+
+
 Procedure
 ~~~~~~~~~~~~~~~~~~~
 
+.. image:: ./node_imgs/procedure.jpg
+    :width: 10em
+    :align: right
+    :alt: [Procedure image]
+
+
+
 Limiter
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/limiter.jpg
+    :width: 10em
+    :align: right
+    :alt: [Limiter image]
+

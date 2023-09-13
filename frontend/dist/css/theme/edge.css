@@ -1,3 +1,7 @@
-.edge{
+edge{
     /* filter: drop-shadow(0px 0px 3px rgb(0 0 0 / 0.5)); performance problem */
+}
+
+.edge-label{
+    color: #aaaaaa;
 }

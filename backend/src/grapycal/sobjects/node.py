@@ -1,3 +1,4 @@
+from abc import ABCMeta
 from ast import Tuple
 from itertools import count
 import logging
@@ -19,7 +20,7 @@ from objectsync.sobject import SObjectSerialized, WrappedTopic
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
     
-class NodeMeta(type(SObject)):
+class NodeMeta(ABCMeta):
     class_def_counter = count()
     def_order = {}
     def __init__(self, name, bases, attrs):

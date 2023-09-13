@@ -87,7 +87,7 @@ input[disabled] {pointer-events:none}
     user-select: none;
     -webkit-user-select: none;
     z-index: 5;
-    background: linear-gradient(180deg, rgba(116, 211, 255, 0.006) 0%, var(--cate-color) 1600%);
+    background: linear-gradient(180deg, rgb(0, 0, 0) 0%, var(--cate-color) 800%);
 }
 
 .node-preview{
@@ -360,7 +360,7 @@ input:enabled{
 .edge{
     overflow: visible;
 
-    stroke: rgba(255, 255, 255, 0.712);
+    stroke: rgba(190, 190, 190, 0.712);
     stroke-width: 2;
     stroke-linecap:round;
     pointer-events: none;
