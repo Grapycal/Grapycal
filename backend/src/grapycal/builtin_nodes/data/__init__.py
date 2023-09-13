@@ -8,6 +8,18 @@ from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import StringTopic, ListTopic
 
 class VariableNode(ActiveNode):
+    '''
+    
+    VariableNode stores a variable in the workspace. It can be used to store data for later use.
+
+    :inputs:
+        - run: send in a signal to actively output the variable's value
+        - set: set the variable's value
+
+    :outputs:
+        - get: get the variable's value
+
+    '''
     category = 'data'
     
     def build_node(self):
@@ -38,6 +50,20 @@ class VariableNode(ActiveNode):
             edge.push_data(self.value)
 
 class SplitNode(Node):
+    '''
+    SplitNode is used to get items from a list or a dictionary using keys.
+    It is equivalent to `data[key]` in Python.
+
+    Multiple keys can be used at the same time. Each value will be sent to a corresponding output port.
+
+    :inputs:
+        - list/dict: the list or dictionary to be split
+
+    :outputs:
+        - value1: the value of the first key
+        - value2: the value of the second key
+        etc.
+    '''
     category = 'data'
 
     def build_node(self):

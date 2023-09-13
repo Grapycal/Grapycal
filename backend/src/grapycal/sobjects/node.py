@@ -1,4 +1,5 @@
 from ast import Tuple
+from itertools import count
 import logging
 logger = logging.getLogger(__name__)
 from contextlib import contextmanager
@@ -18,9 +19,20 @@ from objectsync.sobject import SObjectSerialized, WrappedTopic
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
     
-class Node(SObject):
+class NodeMeta(type(SObject)):
+    class_def_counter = count()
+    def_order = {}
+    def __init__(self, name, bases, attrs):
+        self.def_order[name] = next(self.class_def_counter)
+        return super().__init__(name, bases, attrs)
+
+class Node(SObject,metaclass=NodeMeta):
     frontend_type = 'Node'
     category = 'hidden'
+
+    @classmethod
+    def get_def_order(cls):
+        return cls.def_order[cls.__name__]
 
     def build(self,is_preview=False,**build_node_args):
         

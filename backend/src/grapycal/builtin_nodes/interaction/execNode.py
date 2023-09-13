@@ -5,11 +5,23 @@ from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 
 class ExecNode(ActiveNode):
+    '''
+    Equivalent to Python's `exec` function. It executes the statements in the input text box.
+
+    To make it run, either send in a signal to the `run` input port, or double click on the node.
+
+    :inputs:
+        - run: send in a signal to run the statements
+        
+
+    :outputs:
+        - done: send out a signal when the statements are done
+    '''
     category = 'interaction'
 
     def build_node(self):
         super().build_node()
-        self.out_port = self.add_out_port('')
+        self.out_port = self.add_out_port('done')
         self.text_control = self.add_control(TextControl)
         self.label.set('Exec')
         self.shape.set('simple')

@@ -1,6 +1,16 @@
 from grapycal.sobjects.functionNode import FunctionNode
 
 class AdditionNode(FunctionNode):
+    '''
+    Adds a set of values together. The values can be of any addable type, such as numbers, NumPy arrays,
+    PyTorch tensors, or strings.
+
+    :inputs:
+        - values: a set of values
+        
+    :outputs:
+        - sum: sum of all values
+    '''
     category = 'function/math'
 
     inputs = ['items']
@@ -25,6 +35,16 @@ class AdditionNode(FunctionNode):
         return summation
     
 class SubtractionNode(FunctionNode):
+    '''
+    Calculates sum(`B`) - sum(`A`).
+    
+    :inputs:
+       - A: A set of values, `A`
+       - B: A set of values, `B`
+    
+    :outputs:
+        -  Difference: sum(`B`) - sum(`A`)
+    '''
     category = 'function/math'
     inputs = ['a', 'b']
     input_edge_limit = [None, None]
@@ -41,6 +61,16 @@ class SubtractionNode(FunctionNode):
         return sum(data[0]) - sum(data[1])
     
 class MultiplicationNode(FunctionNode):
+    '''
+    Multiplies a set of values together. The values can be of any multipliable type, such as numbers, NumPy arrays, or
+    PyTorch tensors.
+
+    :inputs:
+        - values: a set of values
+    
+    :outputs:
+        - product: product of all values
+    '''
     category = 'function/math'
     inputs = ['items']
     input_edge_limit = [None]
@@ -64,6 +94,16 @@ class MultiplicationNode(FunctionNode):
         return product
     
 class DivisionNode(FunctionNode):
+    '''
+    Calculates product(`B`) / product(`A`).
+    
+    :inputs:
+        - A: A set of values, `A`
+        - B: A set of values, `B`
+
+    :outputs:
+        -  Quotient: product(`B`) / product(`A`)
+    '''
     category = 'function/math'
     inputs = ['a', 'b']
     input_edge_limit = [None,None]

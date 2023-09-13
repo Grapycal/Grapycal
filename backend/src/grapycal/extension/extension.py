@@ -7,7 +7,7 @@ from grapycal.sobjects.node import Node
 from objectsync import SObject
 
 class Extension:
-    def __init__(self,extension_name:str,existing_node_types:Dict[str,type[SObject]]) -> None:
+    def __init__(self,extension_name:str,existing_node_types:Dict[str,type[SObject]]={}) -> None:
         self.module = importlib.import_module(extension_name)
         self.extension_name = extension_name
         self.package_name ='_'.join( extension_name.split('_')[:-1])
