@@ -21,3 +21,15 @@ Local builds of the documentation are ignored by git. To publish changes to the 
 .. note::
     
     A good example of how to write sphinx documentation and write docstrings for autoapi is the `Pytorch documentation <https://pytorch.org/docs/stable/index.html>`_.
+
+Generate documentation for an extension
+---------------------------------------
+.. code-block:: 
+    
+    python extension_docgen/gen.py -e <extension_name> -o <output_file>
+
+For the builtin nodes, run:
+
+.. code-block::
+
+    python extension_docgen/gen.py -e grapycal.builtin_nodes -o source/user_manual/builtin_nodes.rst

@@ -5,6 +5,13 @@ from grapycal.sobjects.port import InputPort
 
 
 class PrintNode(Node):
+    '''
+    Display the data received from the input edge.
+
+    :inputs:
+        - data: data to be displayed
+
+    '''
     category = 'interaction'
 
     def build_node(self):

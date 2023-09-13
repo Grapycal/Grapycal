@@ -5,6 +5,16 @@ from grapycal.sobjects.port import InputPort, OutputPort
 from .math import *
 
 class LambdaNode(Node):
+    '''
+    LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function
+    similar to Python's lambda function.
+    
+    It can be freely configured to be any function of any number of inputs and outputs.
+
+    :inputs:
+        - x: input 1
+        
+    '''
     category = 'function'
     def build_node(self):
         self.label.set('Lambda')

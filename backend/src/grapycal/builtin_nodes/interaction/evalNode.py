@@ -5,6 +5,19 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 
 class EvalNode(ActiveNode):
+    '''
+
+    Equivalent to Python's `eval` function. It evaluates the expression in the input text box and send out the result.
+
+    To make it run, either send in a signal to the `run` input port, or double click on the node.
+
+    :inputs:
+        - run: send in a signal to evaluate the expression
+
+    :outputs:
+        - result: the result of the expression
+    
+    '''
     category = 'interaction'
     
     def build_node(self):
