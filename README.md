@@ -4,7 +4,7 @@
 
 ## Documentation
 
-The full documentaition can be found [here](eri24816.github.io/Grapycal/).
+The full documentaition can be found [here](https://eri24816.github.io/Grapycal/).
 
 ## Installation (for Development)
 
