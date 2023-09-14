@@ -1,10 +1,10 @@
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.activeNode import ActiveNode
+from grapycal.sobjects.activeNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 
-class EvalNode(ActiveNode):
+class EvalNode(SourceNode):
     '''
 
     Equivalent to Python's `eval` function. It evaluates the expression in the input text box and send out the result.
