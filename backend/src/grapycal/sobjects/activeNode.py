@@ -2,20 +2,23 @@ from typing import Any, List
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.sobjects.node import Node
-class ActiveNode(Node):
-
+class SourceNode(Node):
+    '''
+    Inherit from this class to conveniently create a node that can be a source of the graph (can be activated by the user.)
+    This type of node can be activated by double clicking the node or by sending a signal the run port on the node.
+    '''
     def build_node(self):
         super().build_node()
-        self.activate_port = self.add_in_port('activate')
+        self.run_port = self.add_in_port('run')
 
     def init_node(self):
         super().init_node()
-        self.activate_port.on_activate += self.on_activate
+        self.run_port.on_activate += self.on_activate
     
     def task(self):
         '''
-        You can define the task of this node here. 
-        By default, this method will be called when double clicking the node or when the activate port on the node
+        Define the task of this node here. 
+        By default, this method will be called when double clicking the node or when the run port on the node
           is activated (if there is one).
         '''
         pass
