@@ -1,4 +1,4 @@
-from grapycal.sobjects.activeNode import SourceNode
+from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node

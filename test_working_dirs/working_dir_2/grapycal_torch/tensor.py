@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.activeNode import SourceNode
+from grapycal.sobjects.sourceNode import SourceNode
 import torch
 from grapycal import Node, TextControl, FloatTopic, IntTopic
 
