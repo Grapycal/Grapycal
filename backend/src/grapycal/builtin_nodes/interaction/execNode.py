@@ -1,10 +1,10 @@
-from grapycal.sobjects.activeNode import ActiveNode
+from grapycal.sobjects.activeNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 
-class ExecNode(ActiveNode):
+class ExecNode(SourceNode):
     '''
     Equivalent to Python's `exec` function. It executes the statements in the input text box.
 

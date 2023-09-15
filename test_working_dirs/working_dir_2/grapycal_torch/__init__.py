@@ -72,4 +72,4 @@ class MnistDatasetNode(Node):
         self.run(self.task)
 
 
-del ModuleNode, SimpleModuleNode, Node, ActiveNode, FunctionNode
+del ModuleNode, SimpleModuleNode, Node, SourceNode, FunctionNode
