@@ -21,12 +21,19 @@ class ModuleNode(Node):
 
     def create_module_and_update_name(self):
         self.module = self.create_module()
-        self.label.set(str(self.module))
+        self.label.set(self.generate_label())
         print('created module',self.module)
 
     @abstractmethod
     def create_module(self)->nn.Module:
         pass
+
+    def generate_label(self):
+        '''
+        Return a string to be displayed on the node
+        The default is str(self.module), which is often too long. Override this method to provide a better label
+        '''
+        return str(self.module)
 
     @abstractmethod
     def forward(self):

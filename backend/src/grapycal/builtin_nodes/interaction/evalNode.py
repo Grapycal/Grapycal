@@ -1,5 +1,5 @@
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.activeNode import SourceNode
+from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
