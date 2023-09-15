@@ -16,9 +16,23 @@ export class Editor extends CompSObject{
             <div style="position:absolute;top:50%;left:50%">
                 
                 <div id="slot_default" class="editor" style="position:absolute;top:50%;left:50%;width:1px;height:1px;">
-                <div class="bg" id="bg"></div>
+                <svg class="bg" id="bg"
+                    <defs>
+                        <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+                            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5" />
+                        </pattern>
+                        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                            <rect width="80" height="80" fill="url(#smallGrid)" />
+                            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1" />
+                        </pattern>
+                    </defs>
+
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    
+                </svg>
                 </div>
             </div>
+            
         </div>
 
     </div>
