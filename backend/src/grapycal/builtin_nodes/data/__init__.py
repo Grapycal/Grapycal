@@ -1,13 +1,13 @@
 from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.activeNode import ActiveNode
+from grapycal.sobjects.activeNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort, OutputPort
 from objectsync import StringTopic, ListTopic
 
-class VariableNode(ActiveNode):
+class VariableNode(SourceNode):
     '''
     
     VariableNode stores a variable in the workspace. It can be used to store data for later use.

@@ -1,5 +1,5 @@
 from grapycal import Node, IntTopic
-from grapycal.builtin_nodes.data import ActiveNode
+from grapycal.builtin_nodes.data import SourceNode
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from torch.utils.data import DataLoader

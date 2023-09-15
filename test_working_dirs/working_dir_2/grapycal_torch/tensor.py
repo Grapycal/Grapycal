@@ -1,11 +1,11 @@
 from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.activeNode import ActiveNode
+from grapycal.sobjects.activeNode import SourceNode
 import torch
 from grapycal import Node, TextControl, FloatTopic, IntTopic
 
 
-class ZeroesNode(ActiveNode):
+class ZeroesNode(SourceNode):
     category = 'torch/tensor'
     def build_node(self):
         super().build_node()
@@ -19,7 +19,7 @@ class ZeroesNode(ActiveNode):
     def task(self):
         self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(','))))
 
-class OnesNode(ActiveNode):
+class OnesNode(SourceNode):
     category = 'torch/tensor'
     def build_node(self):
         super().build_node()
@@ -33,7 +33,7 @@ class OnesNode(ActiveNode):
     def task(self):
         self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(','))))
 
-class RandNode(ActiveNode):
+class RandNode(SourceNode):
     category = 'torch/tensor'
     def build_node(self):
         super().build_node()
@@ -47,7 +47,7 @@ class RandNode(ActiveNode):
     def task(self):
         self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(','))))
 
-class RandnNode(ActiveNode):
+class RandnNode(SourceNode):
     category = 'torch/tensor'
     def build_node(self):
         super().build_node()
@@ -61,7 +61,7 @@ class RandnNode(ActiveNode):
     def task(self):
         self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(','))))
 
-class GridNode(ActiveNode):
+class GridNode(SourceNode):
     category = 'torch/tensor'
     def build_node(self):
         super().build_node()

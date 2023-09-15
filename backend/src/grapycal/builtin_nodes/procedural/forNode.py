@@ -1,8 +1,8 @@
 from typing import Iterable
-from grapycal.sobjects.activeNode import ActiveNode
+from grapycal.sobjects.activeNode import SourceNode
 from grapycal.sobjects.node import Node
 
-class ForNode(ActiveNode):
+class ForNode(SourceNode):
     category = 'procedural'
 
     def build_node(self):
@@ -16,7 +16,7 @@ class ForNode(ActiveNode):
         self.iterator:Iterable|None = None
 
     def task(self):
-        self.iterator = iter(self.activate_port.get_one_data()) #type: ignore
+        self.iterator = iter(self.run_port.get_one_data()) #type: ignore
         self.run(self.next,to_queue=False)
 
     def next(self):
