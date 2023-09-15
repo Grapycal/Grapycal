@@ -13,6 +13,7 @@ import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
 import { ImageControl } from './sobjects/controls/imageControl'
+import { Callback } from 'chatroom-client/src/utils'
 
 export const soundManager = new SoundManager();
 
@@ -58,5 +59,38 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
 });
+
+function documentReady(callback: Callback): void {
+    if (document.readyState === "complete" || document.readyState === "interactive") 
+        callback()
+    else
+        document.addEventListener("DOMContentLoaded", (event: Event) => {
+            callback()
+        })
+
+  }
+
+  documentReady(function(event) {
+    document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
+        let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
+        console.log(sidebar.classList);
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+        } else {
+            sidebar.classList.add('collapsed');
+        }   
+    });
+
+    document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
+        let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
+        console.log(sidebar.classList);
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+        } else {
+            sidebar.classList.add('collapsed');
+        }
+    });  
+})
+
 
 expose('c',objectsync)

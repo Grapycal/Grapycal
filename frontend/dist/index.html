@@ -10,14 +10,20 @@
   <body spellcheck="false">
     <script src="/main.js" type="module" async defer></script>
     
-    <div class="sidebar sidebar-left">
-      <div class="sidebar-slot" id="slot_sidebar"></div>
-      <div class="settings-button" id="settings-button">
-          Settings
+    <div class="sidebar sidebar-left" id="sidebar-left">
+      <button class="sidebar-collapse-left" id="sidebar-collapse-left">&lt</button>
+      <div class = "sidebar-container">
+        <div class="sidebar-slot" id="slot_sidebar"></div>
+        <div class="settings-button" id="settings-button">
+            Settings
+        </div>
       </div>
     </div>
 
-    <div class="sidebar sidebar-right" id="slot_inspector"></div>
+    <div class="sidebar sidebar-right" id=" sidebar-left">
+      <button class="sidebar-collapse-right" id="sidebar-collapse-right">&gt</button>
+      <div class = "sidebar-container" id="slot_inspector"></div>
+    </div>
 
     <div id="settings-page" class="settings-page">
       <div class="settings-page-overlay" id="settings-page-overlay"></div>
