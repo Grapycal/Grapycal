@@ -5,7 +5,7 @@ import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 import { print } from '../devUtils'
 import { Port } from './port'
-import { glowDiv as glowDiv, glowText } from '../ui_utils/effects'
+import { bloomDiv as bloomDiv, glowText } from '../ui_utils/effects'
 import { Vector2, as } from '../utils'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
@@ -66,7 +66,7 @@ export class Node extends CompSObject {
         `<div class="node normal-node">
             
             <div class="node-border-container">
-                <div class="node-border">
+                <div class="node-border" id="node-border">
                 </div>
             </div>
             
@@ -83,7 +83,7 @@ export class Node extends CompSObject {
     simple:
         `<div class="node simple-node node-content">
             <div class="node-border-container">
-                <div class="node-border">
+                <div class="node-border"id="node-border">
                 </div>
             </div>
             <div class="node-selection"></div>
@@ -101,6 +101,10 @@ export class Node extends CompSObject {
         </div>`,
     round:
         `<div class="node round-node flex-horiz space-between" >
+            <div class="node-border-container">
+                <div class="node-border"id="node-border">
+                </div>
+            </div>
             <div class="node-selection"></div>
             <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
@@ -120,6 +124,7 @@ export class Node extends CompSObject {
         this.link(this.eventDispatcher.onDoubleClick, () => {
             this.emit('double_click')
         })
+
     }
 
     protected onStart(): void {
@@ -243,6 +248,13 @@ export class Node extends CompSObject {
         this.link(this.onAddChild,this.moved.invoke)
         this.link(this.onRemoveChild,this.moved.invoke)
         this.link(this.transform.onChange,this.moved.invoke)
+
+        setTimeout(() => {
+            let border = this.htmlItem.getHtmlEl('node-border')
+            bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
+
+        }, 0);
+
     }
 
     onParentChangedTo(newParent: SObject): void {
@@ -255,7 +267,6 @@ export class Node extends CompSObject {
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
-            glowDiv(as(this.htmlItem.baseElement, HTMLElement))
             this.transform.enabled = false
         }
     }

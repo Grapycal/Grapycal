@@ -30,7 +30,7 @@ export class Linker extends Component{
         this.linkedCallbacks.push({action: action, callback: callback, bindedCallback: bindedCallback});
     }
 
-    public unlink(action: Action<any,any>|Callback,throwIfNotExist:boolean=true): void{
+    public unlink(action: Action<any,any>|Callback,throwIfNotExist:boolean=false): void{
         if (action instanceof Action){
             this.unlinkAction(action,throwIfNotExist);
         }else{
@@ -38,7 +38,7 @@ export class Linker extends Component{
         }
     }
     
-    public unlinkAction(action: Action<any,any>,throwIfNotExist:boolean=true): void{
+    public unlinkAction(action: Action<any,any>,throwIfNotExist:boolean=false): void{
         for(let i=0;i<this.linkedCallbacks.length;i++){
             if (this.linkedCallbacks[i].action == action){
                 action.remove(this.linkedCallbacks[i].bindedCallback);
@@ -51,7 +51,7 @@ export class Linker extends Component{
         }
     }
 
-    public unlinkCallback(callback: Callback,throwIfNotExist:boolean=true): void{
+    public unlinkCallback(callback: Callback,throwIfNotExist:boolean=false): void{
         for(let i=0;i<this.linkedCallbacks.length;i++){
             if (this.linkedCallbacks[i].callback == callback){
                 this.linkedCallbacks[i].action.remove(this.linkedCallbacks[i].bindedCallback);

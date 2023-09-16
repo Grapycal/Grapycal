@@ -4,7 +4,7 @@ body{
     /* monospace */
     font-family: Consolas, Courier, monospace;
     color: #e7e7e7;
-    background-color: rgb(16, 16, 16);
+    background-color: rgb(0,0,0);
     /*no scroll*/
     overflow: hidden;
     font-size: 14px;
@@ -115,7 +115,6 @@ input[disabled] {pointer-events:none}
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: solid 1px;
 }
 
 .node-label{
@@ -181,7 +180,11 @@ input[disabled] {pointer-events:none}
     /* The px here is actually 0.1px */
     border: solid 5px;
     border-radius: 20px;
-    box-shadow: 0px 0px 20px 0px var(--cate-color);
+    /* box-shadow: 0px 0px 20px 0px var(--cate-color); */
+}
+
+.round-node .node-border{
+    border-radius: 50%;
 }
 
 /* 
@@ -679,11 +682,6 @@ hr{
     left: -50000px;
     width: 100000px;
     height: 100000px;
-    /* background-image: url(../hexagon_clamped.png); */
-    background: black;
-    background-size: 300px;
-    filter: hue-rotate(-10deg) brightness(0.3);
-
     
     z-index: -10;
 }

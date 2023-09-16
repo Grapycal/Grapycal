@@ -31,6 +31,9 @@ class LeakyReLUNode(SimpleModuleNode):
         self.label.set('LeakyReLU')
         self.negative_slope = self.add_attribute('negative_slope', FloatTopic, 0.01, editor_type='float')
 
+    def generate_label(self):
+        return f'LeakyReLU {self.negative_slope.get()}'
+
     def create_module(self) -> nn.Module:
         return nn.LeakyReLU(negative_slope=self.negative_slope.get())
 
