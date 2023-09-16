@@ -12,6 +12,13 @@ backend:
 
 ```
 cd backend
+pip install -e .
+```
+
+or
+
+```
+cd backend
 poetry install
 ```
 
@@ -34,11 +41,6 @@ Grapycal and its dependences consist of the following 6 packages:
 - [Chatroom](https://github.com/eri24816/ChatRoom) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
 
 - [ChatroomClient_ts](https://github.com/eri24816/ChatRoomClient_ts) and [ObjectSyncClient_ts](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.
-
-While installing the npm packages, please use `npm link` and `npm link <package name>` to manually link `ChatroomClient_ts` to `ObjectSyncClient_ts`, and `ObjectSyncClient_ts` to `Grapycal`.
-
-now can run `npm install` in `frontend` folder, instead of using `npm link <package name>`.
-Remember to run `npm update` in `frontend` folder and `poetry update` in `backend` folder when any of `chatroom` and `objectsync` dependencies is updated.
 
 ## Run App (for Development)
 
