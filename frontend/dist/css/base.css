@@ -122,8 +122,7 @@ input[disabled] {pointer-events:none}
     text-align: left;
     font-family: "Helvetica Neue", sans-serif;
     font-size: 12px;
-    padding-left: 3px;
-    padding-top: 3px;
+    padding: 3px;
     
 }
 
@@ -313,6 +312,10 @@ input[disabled] {pointer-events:none}
     width: 100%;
     box-sizing: border-box;
     padding: 0px 2px;
+
+    /* a trick to obsorb node label's padding-buttom */
+    margin-top: -3px;
+    min-height: 3px;
 }
 
 .control{

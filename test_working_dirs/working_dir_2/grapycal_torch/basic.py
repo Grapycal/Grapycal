@@ -22,6 +22,9 @@ class LinearNode(SimpleModuleNode):
 
     def create_module(self) -> nn.Module:
         return nn.Linear(self.in_features.get(),self.out_features.get())
+    
+    def generate_label(self):
+        return f'Linear {self.in_features.get()} → {self.out_features.get()}'
 
     def forward(self, inp):
         return self.module(inp)

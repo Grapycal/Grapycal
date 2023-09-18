@@ -54,6 +54,16 @@ document.addEventListener('keydown', function(event) {
         event.preventDefault();
         objectsync.makeRequest('exit');
     }
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
+        console.log(sidebar.classList);
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+        } else {
+            sidebar.classList.add('collapsed');
+        }
+    }
 });
 
 document.addEventListener('contextmenu', function(event) {
@@ -70,7 +80,7 @@ function documentReady(callback: Callback): void {
 
   }
 
-  documentReady(function(event) {
+documentReady(function(event) {
     document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
         console.log(sidebar.classList);
@@ -91,6 +101,7 @@ function documentReady(callback: Callback): void {
         }
     });  
 })
+
 
 
 expose('c',objectsync)
