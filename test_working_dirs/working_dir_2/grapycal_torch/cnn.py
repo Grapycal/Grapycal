@@ -35,7 +35,7 @@ class Conv2dNode(ModuleNode):
                          
     def generate_label(self):
         self.module: nn.Conv2d
-        return f'Conv2d {self.module.in_channels}, {self.module.out_channels}, {self.module.kernel_size}'
+        return f'Conv2d {self.module.in_channels} → {self.module.out_channels} {self.module.kernel_size}'
     
     def forward(self):
         inp = self.get_in_port('in').get_one_data()
