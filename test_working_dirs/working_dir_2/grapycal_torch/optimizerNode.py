@@ -3,7 +3,7 @@ from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort
-from grapycal import FloatTopic
+from grapycal import FloatTopic, StringTopic
 from objectsync import ObjSetTopic, SObject
 import torch
 from torch import nn
@@ -17,6 +17,8 @@ class OptimizerNode(Node):
         self.label.set('Optimizer')
         self.modules = self.add_attribute('modules',ObjSetTopic,editor_type='objSet')
         self.lr = self.add_attribute('lr',FloatTopic,0.001,editor_type='float')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+        self.init_modules_port = self.add_in_port('init modules')
         self.zero_grad_port = self.add_in_port('zero_grad()')
         self.step_port = self.add_in_port('step()')
 
@@ -47,6 +49,13 @@ class OptimizerNode(Node):
             self.run(self.step)
         elif port == self.zero_grad_port:
             self.run(self.zero_grad)
+        elif port == self.init_modules_port:
+            self.run(self.init_modules)
+
+    def init_modules(self):
+        for mn in self.modules.get():
+            if isinstance(mn,ModuleNode):
+                mn.create_module_and_update_name(self.device.get())
 
     def step(self):
         self.recreate_optimizer_if_needed()
@@ -60,7 +69,3 @@ class OptimizerNode(Node):
             return
         self.optimizer.zero_grad()
             
-
-
-
-    
