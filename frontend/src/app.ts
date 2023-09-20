@@ -53,6 +53,11 @@ document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.key === 'q' || event.metaKey && event.key === 'Q') {
         event.preventDefault();
         objectsync.makeRequest('exit');
+        //reload page
+        setTimeout(() => {
+            
+            window.location.reload();
+        }, 1000);
     }
     if (event.key === 'Tab') {
         event.preventDefault();

@@ -45,12 +45,16 @@ class GrapycalApp:
         #TODO: Websocket multiplexing
 
         # Here simply start one workspace in background
-        workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']], start_new_session=True)
         while True:
             break_flag = False
             try:
-                while True:
-                    time.sleep(31415926)
+                while True: # Restart workspace when it exits. Convenient for development
+                    workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']], start_new_session=True)
+                    while True:
+                        time.sleep(1)
+                        if workspace.poll() is not None:
+                            print('Workspace exited with code',workspace.poll())
+                            break
             except KeyboardInterrupt:
                 print('Shutting down Grapycal server will force kill all workspaces. Press Ctrl+C again to confirm.')
                 try:
