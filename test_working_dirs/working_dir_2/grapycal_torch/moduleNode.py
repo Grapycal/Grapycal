@@ -19,10 +19,11 @@ class ModuleNode(Node):
         self.module: nn.Module|None = None
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
 
-    def create_module_and_update_name(self):
+    def create_module_and_update_name(self,device='cpu'):
         self.module = self.create_module()
+        self.module.to(device)
         self.label.set(self.generate_label())
-        print('created module',self.module)
+        print('created module',self.module,'on device',device)
 
     @abstractmethod
     def create_module(self)->nn.Module:
