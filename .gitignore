@@ -8,3 +8,6 @@
 # Ignore files downloaded by PyTorch.
 *-ubyte
 *-ubyte.gz
+
+
+.idea/
