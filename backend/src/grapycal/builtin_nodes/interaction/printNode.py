@@ -16,7 +16,7 @@ class PrintNode(Node):
 
     def build_node(self):
         self.add_in_port('',max_edges=1)
-        self.text_control = self.add_control(TextControl, editable=False)
+        self.text_control = self.add_control(TextControl, readonly=True)
         self.label.set('Print')
         self.shape.set('simple')
 
