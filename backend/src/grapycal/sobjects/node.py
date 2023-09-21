@@ -323,28 +323,34 @@ class Node(SObject,metaclass=NodeMeta):
         finally:
             self._output_stream.disable_flush()
 
-    def _run_in_background(self,task:Callable[[],None],to_queue=True):
+    def _run_in_background(self,task:Callable[[],None],to_queue=True,redirect_output=False):
         '''
         Run a task in the background thread.
         '''
         def task_wrapper():
             self.workspace.background_runner.set_exception_callback(self._on_exception)
-            with self._redirect_output():
+            if redirect_output:
+                with self._redirect_output():
+                    task()
+            else:
                 task()
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
-    def _run_directly(self,task:Callable[[],None]):
+    def _run_directly(self,task:Callable[[],None],redirect_output=False):
         '''
         Run a task in the current thread.
         '''
         try:
-            with self._redirect_output():
+            if redirect_output:
+                with self._redirect_output():
+                    task()
+            else:
                 task()
         except Exception as e:
             self._on_exception(e)
 
-    def run(self,task:Callable[[],Any],background=True,to_queue=True,**kwargs):
+    def run(self,task:Callable[[],Any],background=True,to_queue=True,redirect_output=False,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
@@ -358,9 +364,9 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         task = functools.partial(task,**kwargs)
         if background:
-            self._run_in_background(task,to_queue)
+            self._run_in_background(task,to_queue,redirect_output=False)
         else:
-            self._run_directly(task)
+            self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e):
         message = ''.join(traceback.format_exc())
