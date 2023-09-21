@@ -6,17 +6,13 @@ Grapycal is a visual scripting language based on Python.
 It provides an graph editor for constructing programs
 by adding nodes and linking them together.
 
-## Features:
+Features:
 
-### Realtime Interactive Editor
+- Interactive and dynamic: Easily track the active node while the program runs, insert real-time probes to inspect data, and modify the running graph on-the-fly for instant changes in its behavior.
 
-ouo
+- Extendable: Extendable: Grapycal allows users to create custom nodes for various domains, such as deep learning or music synthesis, through its extension system, enabling a wide range of functionalities and collaborations. 
 
-### Extension System
-
-ouo
-
-### Multiple Client Support
+-  Collaborative
 
 
 
