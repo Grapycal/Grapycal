@@ -14,23 +14,23 @@ class Conv2dNode(ModuleNode):
         self.out_channels = self.add_attribute('out_channels',IntTopic , editor_type='int',init_value=1)
         self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3,3')
         self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1,1')
+        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1,1')
 
     def init_node(self):
         super().init_node()
 
     def recover_from_version(self, version: str, old: NodeInfo):
         super().recover_from_version(version, old)
-        self.in_channels.set(old.attributes['in_channels'])
-        self.out_channels.set(old.attributes['out_channels'])
-        self.kernal_size.set(old.attributes['kernel_size'])
-        self.padding.set(old.attributes['padding'])
+        self.recover_attributes('in_channels','out_channels','kernel_size','padding','stride')
+
     
     def create_module(self) -> nn.Module:
         return nn.Conv2d(
             in_channels=self.in_channels.get(),
             out_channels=self.out_channels.get(),
             kernel_size=eval(self.kernal_size.get()),
-            padding=eval(self.padding.get())
+            padding=eval(self.padding.get()),
+            stride=eval(self.stride.get())
         )
                          
     def generate_label(self):

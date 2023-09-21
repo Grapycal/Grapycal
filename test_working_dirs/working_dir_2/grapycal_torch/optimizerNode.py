@@ -28,7 +28,7 @@ class OptimizerNode(Node):
 
     def recover_from_version(self, version: str, old: NodeInfo):
         super().recover_from_version(version, old)
-        self.recover_attributes('modules','lr')
+        self.recover_attributes('modules','lr','device')
 
     def getModules(self)->List[nn.Module]:
         result: List[nn.Module] = []

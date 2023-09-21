@@ -44,6 +44,7 @@ class GrapycalApp:
         #TODO: Support multiple workspaces
         #TODO: Websocket multiplexing
 
+        workspace = None
         # Here simply start one workspace in background
         while True:
             break_flag = False
@@ -67,8 +68,9 @@ class GrapycalApp:
                 break
 
         print('Stopping workspaces...')
-        workspace.send_signal(signal.SIGTERM)
-        workspace.wait()
+        if workspace:
+            workspace.send_signal(signal.SIGTERM)
+            workspace.wait()
         self.clean_unused_fetched_extensions()
         print('Grapycal server terminated')
         return

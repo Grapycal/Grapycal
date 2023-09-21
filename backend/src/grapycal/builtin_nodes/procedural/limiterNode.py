@@ -31,6 +31,9 @@ class LimiterNode(Node):
             self.value = edge.get_data()
             self.counter += 1
             self.has_value = True
+
+            if self.reduce_factor.get() == 0:
+                return
             if self.counter == self.reduce_factor.get():
                 self.counter = 0
                 self.last_push_time = time.time()   
@@ -41,6 +44,9 @@ class LimiterNode(Node):
     def tick(self):
         if not self.has_value:
             return
+        if self.time_span.get() == 0:
+            return
+
         with self.lock:
             if self.value is not None and time.time() - self.last_push_time > self.time_span.get():
                 self.counter = 0

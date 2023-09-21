@@ -127,3 +127,16 @@ class BackwardNode(FunctionNode):
 
     def calculate(self, inputs: list[Any]):
         inputs[0][0].backward()
+
+class ToCudaNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['tensor']
+    outputs = ['tensor']
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('cu')
+        self.shape.set('round')
+
+    def calculate(self, inputs: list[Any]):
+        return inputs[0][0].cuda()
