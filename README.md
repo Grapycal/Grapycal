@@ -10,7 +10,7 @@ Features:
 
 - Interactive and dynamic: Easily track the active node while the program runs, insert real-time probes to inspect data, and modify the running graph on-the-fly for instant changes in its behavior.
 
-- Extendable: Extendable: Grapycal allows users to create custom nodes for various domains, such as deep learning or music synthesis, through its extension system, enabling a wide range of functionalities and collaborations. 
+- Extendable: Grapycal allows users to create custom nodes for any domains, such as deep learning, robotics, or music synthesis. The node extensions can be shared as python packages.
 
 -  Collaborative
 
