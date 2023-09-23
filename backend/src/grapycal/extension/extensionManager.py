@@ -42,6 +42,9 @@ class ExtensionManager:
 
     def load_extensions(self,extension_names) -> None:
         for name in extension_names:
+            if not Extension.extension_exists(name):
+                logger.warning(f'Extension {name} does not exist')
+                self._fetch_extension(name.split('_')[0]+'_'+name.split('_')[1],name.split('_')[2])
             self._load_extension(name)
         
         self._update_available_extensions_topic()
@@ -231,18 +234,20 @@ class ExtensionManager:
         # TODO: pip
         return available_extensions
 
-    def _fetch_extension(self, package_name: str) -> str:
+    def _fetch_extension(self, package_name: str, number=None) -> str:
         '''
         Copy the current version of the extension to .grapycal/extensions, so it cannot be modified by the user.
         '''
-        if package_name == 'builtin_nodes':
-            source_name = 'grapycal.builtin_nodes'
+        if package_name == 'grapycal_builtin':
+            source_name = 'grapycal.grapycal_builtin'
         else:
             assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
             source_name = package_name
         source_path = dirname(importlib_util.find_spec(source_name).origin) # type: ignore
 
-        extension_name = f'{package_name}_{random.randint(0,1000000)}'
+        if number is None:
+            number = random.randint(0,1000000)
+        extension_name = f'{package_name}_{number}'
         assert source_path is not None
         shutil.copytree(source_path,join(self._local_extension_dir,extension_name),dirs_exist_ok=True)
         return extension_name

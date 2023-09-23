@@ -68,11 +68,9 @@ export class ExtensionsSetting extends Componentable{
                 popup.addOption('Reload',()=>{
                     this.objectsync.emit('update_extension',{extension_name:newExtension.name})
                 })
-                if(!newExtension.name.startsWith('builtin_nodes')){
-                    popup.addOption('Remove from workspace',()=>{
-                        this.objectsync.emit('unimport_extension',{extension_name:newExtension.name})
-                    })
-                }
+                popup.addOption('Remove from workspace',()=>{
+                    this.objectsync.emit('unimport_extension',{extension_name:newExtension.name})
+                })
             }else{
                 popup.addOption('Import to workspace',()=>{
                     this.objectsync.emit('import_extension',{package_name:newExtension.name})
@@ -96,7 +94,7 @@ export class ExtensionsSetting extends Componentable{
             let aTitle = a.querySelector<HTMLDivElement>('.card-title').innerText
             let bTitle = b.querySelector<HTMLDivElement>('.card-title').innerText
             //always put builtin nodes at the top
-            if(aTitle.startsWith('builtin_nodes')) return -1
+            if(aTitle.startsWith('grapycal_builtin')) return -1
             return aTitle.localeCompare(bTitle)
         })
         cards.forEach(card=>div.appendChild(card))

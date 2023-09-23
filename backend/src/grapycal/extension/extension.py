@@ -7,6 +7,13 @@ from grapycal.sobjects.node import Node
 from objectsync import SObject
 
 class Extension:
+    @staticmethod
+    def extension_exists(extension_name:str) -> bool:
+        try:
+            importlib.import_module(extension_name)
+            return True
+        except ModuleNotFoundError:
+            return False
     def __init__(self,extension_name:str,existing_node_types:Dict[str,type[SObject]]={}) -> None:
         self.module = importlib.import_module(extension_name)
         self.extension_name = extension_name

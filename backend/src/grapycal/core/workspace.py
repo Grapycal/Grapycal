@@ -115,7 +115,7 @@ class Workspace:
 
     def initialize_workspace(self) -> None:
         self._objectsync.create_object(WorkspaceObject, parent_id='root')
-        self._extention_manager.import_extension('builtin_nodes')
+        self._extention_manager.import_extension('grapycal_builtin')
 
     def save_workspace(self, path: str) -> None:
         workspace_serialized = self.get_workspace_object().serialize()

@@ -1,5 +1,5 @@
 
-grapycal.builtin_nodes
+grapycal.grapycal_builtin
 ==================
 
 Function

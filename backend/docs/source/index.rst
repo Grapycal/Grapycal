@@ -26,7 +26,7 @@ Grapycal is a graphical and interactive programming language. It allows users to
 
    user_manual/overview
    user_manual/node
-   user_manual/builtin_nodes
+   user_manual/grapycal_builtin
    user_manual/execution_of_graph
 
 .. toctree::

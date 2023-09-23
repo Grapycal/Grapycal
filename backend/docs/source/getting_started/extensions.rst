@@ -1,7 +1,7 @@
 Extensions
 ================
 
-Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `builtin_nodes` is automatically included in 
+Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `grapycal_builtin` is automatically included in 
 every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes.
 
 Create an Extension
