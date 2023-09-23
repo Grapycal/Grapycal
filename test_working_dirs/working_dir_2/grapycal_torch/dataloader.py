@@ -1,5 +1,5 @@
 from grapycal import Node, IntTopic
-from grapycal.builtin_nodes.data import SourceNode
+from grapycal.grapycal_builtin.data import SourceNode
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort

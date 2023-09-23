@@ -65,9 +65,6 @@ class Scanner:
         return '\n'.join(result)
     
 
-
-#name = 'grapycal.builtin_nodes'
-
 parser = argparse.ArgumentParser(description='Generate extension documentation')
 parser.add_argument('--extension', '-e', type=str, help='name of the extension')
 parser.add_argument('--out', '-o', type=str, help='output file',default='backend/docs/extension_docgen/generated.rst')
