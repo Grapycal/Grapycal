@@ -74,8 +74,7 @@ Grapycal and its dependences consist of the following 6 packages:
 
 1. run Grapycal server
 ```
-cd backend
-scripts/run.sh
+python -m grapycal
 ```
 
 2. run web server

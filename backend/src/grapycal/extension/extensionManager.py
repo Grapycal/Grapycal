@@ -43,7 +43,7 @@ class ExtensionManager:
     def load_extensions(self,extension_names) -> None:
         for name in extension_names:
             if not Extension.extension_exists(name):
-                logger.warning(f'Extension {name} does not exist')
+                logger.info(f'Extension {name} is not fetched. Fetching...')
                 self._fetch_extension(name.split('_')[0]+'_'+name.split('_')[1],name.split('_')[2])
             self._load_extension(name)
         
