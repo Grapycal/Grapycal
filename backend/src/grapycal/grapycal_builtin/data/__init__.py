@@ -4,8 +4,8 @@ from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
-from grapycal.sobjects.port import InputPort, OutputPort
-from objectsync import StringTopic, ListTopic
+from grapycal.sobjects.port import InputPort
+from objectsync import ListTopic
 
 class VariableNode(SourceNode):
     '''

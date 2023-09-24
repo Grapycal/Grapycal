@@ -1,6 +1,5 @@
 from typing import Iterable
 from grapycal.sobjects.sourceNode import SourceNode
-from grapycal.sobjects.node import Node
 
 class ForNode(SourceNode):
     category = 'procedural'

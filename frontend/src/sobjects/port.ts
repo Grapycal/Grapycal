@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic} from 'objectsync-client'
+import {ObjectSyncClient, StringTopic, IntTopic} from 'objectsync-client'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
@@ -8,7 +8,6 @@ import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { Edge } from './edge'
-import { Workspace } from './workspace'
 
 export class Port extends CompSObject {
 

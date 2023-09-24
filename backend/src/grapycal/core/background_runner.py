@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from queue import Queue
 import queue
 import traceback
-from typing import Callable, Dict
+from typing import Callable
 import signal
 from .stdout_helper import orig_print
 

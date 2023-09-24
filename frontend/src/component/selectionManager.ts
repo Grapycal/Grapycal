@@ -1,5 +1,4 @@
 import { print } from "../devUtils"
-import { CompSObject } from "../sobjects/compSObject"
 import { Action } from "../utils"
 import { Component } from "./component"
 import { GlobalEventDispatcher } from "./eventDispatcher"

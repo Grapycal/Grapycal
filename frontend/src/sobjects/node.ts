@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic, Action} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'

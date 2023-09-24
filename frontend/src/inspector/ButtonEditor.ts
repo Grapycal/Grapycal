@@ -1,7 +1,6 @@
-import { EventTopic, IntTopic, Topic } from "objectsync-client"
+import { EventTopic, Topic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { as } from "../utils"
-import { Workspace } from "../sobjects/workspace"
 
 export class ButtonEditor extends Componentable {
 

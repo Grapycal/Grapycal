@@ -1,6 +1,5 @@
 import { IntTopic, StringTopic } from "objectsync-client"
-import { Control } from "./control";
-import { HtmlItem } from "../../component/htmlItem"
+import { Control } from "./control"
 import { print } from "../../devUtils"
 import { BindInputBoxAndTopic } from "../../ui_utils/interaction"
 

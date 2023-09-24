@@ -1,6 +1,5 @@
-from typing import Any, Dict
 from grapycal.sobjects.controls.control import Control
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic
+from objectsync import StringTopic, IntTopic
 
 
 class TextControl(Control):

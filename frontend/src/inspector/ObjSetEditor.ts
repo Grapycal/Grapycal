@@ -1,4 +1,4 @@
-import { IntTopic, ObjSetTopic, SObject, SetTopic, Topic } from "objectsync-client"
+import { ObjSetTopic} from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"

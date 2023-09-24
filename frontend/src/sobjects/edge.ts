@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic, ObjectTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, ObjectTopic} from 'objectsync-client'
 import { Port } from './port'
 import { HtmlItem } from '../component/htmlItem'
 import { CompSObject } from './compSObject'

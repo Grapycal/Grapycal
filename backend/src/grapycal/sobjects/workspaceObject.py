@@ -1,8 +1,6 @@
-from typing import Any, Dict
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.node import Node
-from grapycal.sobjects.port import Port
 from grapycal.sobjects.sidebar import Sidebar
 from objectsync import SObject, ObjTopic
 

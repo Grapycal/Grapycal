@@ -1,7 +1,6 @@
-from enum import Enum
 from typing import Any
 from grapycal.sobjects.port import InputPort, OutputPort, Port
-from objectsync import SObject, StringTopic, IntTopic, ObjTopic
+from objectsync import SObject, StringTopic, ObjTopic
 from objectsync.sobject import SObjectSerialized
 
 try:

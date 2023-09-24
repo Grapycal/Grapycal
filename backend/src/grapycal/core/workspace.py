@@ -8,9 +8,8 @@ from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
 logger = setup_logging()
 
-from typing import Any, Callable, Dict
+from typing import Any, Dict
 
-import inspect
 import threading
 import objectsync
 from objectsync.sobject import SObjectSerialized

@@ -1,6 +1,5 @@
-from typing import Any, List
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.port import InputPort
 from grapycal.sobjects.node import Node
 class SourceNode(Node):
     '''

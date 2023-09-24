@@ -1,9 +1,8 @@
 from typing import Dict, List
-from grapycal import Node, TextControl, ListTopic, ObjDictTopic, StringTopic
+from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
-from objectsync import ObjDictTopic
+from grapycal.sobjects.port import InputPort
 
 class FuncDefManager:
     calls: Dict[str,List['FuncCallNode']] = {}

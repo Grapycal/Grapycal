@@ -1,6 +1,5 @@
-from typing import Any, List
+from typing import Any
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.sobjects.node import Node
 class FunctionNode(Node):
     inputs = []
