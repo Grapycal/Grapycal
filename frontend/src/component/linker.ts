@@ -24,7 +24,7 @@ export class Linker extends Component{
      * @param action 
      * @param callback 
      */
-    public link(action: Action<any>, callback: Callback, bindTarget:any=null): void{ //TODO: offer remove when parent changed mode
+    public link(action: Action<any>, callback: Callback, bindTarget:any=null): void{
         let bindedCallback = callback.bind(bindTarget || this.object);
         action.add(bindedCallback);
         this.linkedCallbacks.push({action: action, callback: callback, bindedCallback: bindedCallback});
@@ -64,7 +64,7 @@ export class Linker extends Component{
     }
 
 
-    public link2(element: Node,eventName: string , callback: Callback, bindTarget:any=null): void{ //TODO: offer remove when parent changed mode
+    public link2(element: Node,eventName: string , callback: Callback, bindTarget:any=null): void{
         callback = callback.bind(bindTarget || this.object);
         this.linkedCallbacks2.push({element: element, eventName: eventName, callback: callback});
         element.addEventListener(eventName,callback);

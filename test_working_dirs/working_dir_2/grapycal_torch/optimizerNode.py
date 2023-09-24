@@ -42,7 +42,7 @@ class OptimizerNode(Node):
         if current_modules != self.tracked_modules:
             self.tracked_modules = current_modules
             self.optimizer = torch.optim.Adam([p for m in self.tracked_modules for p in m.parameters()],lr=self.lr.get())
-            print('recreated optimizer, ',len(self.tracked_modules),' modules')
+            self.print('recreated optimizer, ',len(self.tracked_modules),' modules')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.step_port:
