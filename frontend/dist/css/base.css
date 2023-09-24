@@ -564,7 +564,7 @@ input:enabled{
 /* Inspector */
 
 .text-editor{
-    margin: 4px 10px;
+    margin: 0px 10px;
     flex: 1;
 }
 
@@ -605,6 +605,10 @@ hr{
     border: none;
     border-bottom: #373737 solid 1px;
     margin: 10px 0px;
+}
+
+.attribute-editor{
+    margin: 6px 0px;
 }
 
 /* Other */

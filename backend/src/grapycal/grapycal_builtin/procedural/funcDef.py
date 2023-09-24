@@ -19,7 +19,7 @@ class FuncCallNode(Node):
 
     def init_node(self):
         FuncDefManager.calls
-        self.func_name.on_set.add_auto(self.on_func_name_changed)
+        self.func_name.on_set.add_manual(self.on_func_name_changed)
 
     def recover_from_version(self, version, old: NodeInfo):
         super().recover_from_version(version, old)
