@@ -155,7 +155,6 @@ export class BindInputBoxAndTopic extends Component{
     }
 
     private onInsert(position: number, insertion: string) {
-        print("onInsert", position, insertion,this.locked)
         if (this.locked) return
         const oldSelectionStart = this.input.selectionStart
         const oldSelectionEnd = this.input.selectionEnd
