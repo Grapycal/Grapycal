@@ -23,7 +23,7 @@ class ModuleNode(Node):
         self.module = self.create_module()
         self.module.to(device)
         self.label.set(self.generate_label())
-        print('created module',self.module,'on device',device)
+        self.print('created module',self.module,'on device',device)
 
     @abstractmethod
     def create_module(self)->nn.Module:

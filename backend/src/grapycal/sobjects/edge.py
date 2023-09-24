@@ -67,7 +67,7 @@ class Edge(SObject):
         self._data = data
         self._activated = True
         self._data_ready = True
-        if label: #TODO: limit frequency of label updates
+        if label:
             self.label.set(label)
         else:
             label = ''
@@ -79,6 +79,10 @@ class Edge(SObject):
         head = self.head.get()
         if head:
             head.edge_activated(self)
+
+        self._activated = False
+        if not self.reaquirable:
+            self._data_ready = False
 
     def set_label(self, label):
         self.label.set(label)

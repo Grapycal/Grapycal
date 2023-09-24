@@ -1,20 +1,19 @@
 from abc import ABCMeta
 from ast import Tuple
+import io
 from itertools import count
 import logging
 logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
 import traceback
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, TypeVar
-from grapycal.core.stdout_helper import orig_print
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
-from grapycal.utils.misc import as_type
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic, Topic, ObjDictTopic
+from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
@@ -88,18 +87,8 @@ class Node(SObject,metaclass=NodeMeta):
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self._spawn , is_stateful=False)
 
-        def print_output(data):
-            if data=='':
-                return
-            if self.destroyed:
-                logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
-            else:
-                if len(self.output) > 100:
-                    self.output.set([])
-                    self.output.insert(['error','Too many output lines. Cleared.'])
-                self.output.insert(['output',data])
-
-        self._output_stream = OutputStream(print_output)
+        
+        self._output_stream = OutputStream(self.raw_print)
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
@@ -305,6 +294,33 @@ class Node(SObject,metaclass=NodeMeta):
             'display_name':display_name,
             'editor_args':editor_args
         })
+
+    def print(self,*args,**kwargs):
+        '''
+        Print to the node's output.
+        '''
+        # print(*args,**kwargs,file=self._output_stream)
+        # self._output_stream.flush()
+
+        # maybe the self._output_stream can be abandoned
+        output = io.StringIO()
+        print(*args, file=output, **kwargs)
+        contents = output.getvalue()
+        output.close()
+
+        self.raw_print(contents)
+
+    def raw_print(self,data):
+        if data=='':
+            return
+        if self.destroyed:
+            logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
+        else:
+            if len(self.output) > 100:
+                self.output.set([])
+                self.output.insert(['error','Too many output lines. Cleared.'])
+            self.output.insert(['output',data])
+
 
     '''
     Run tasks in the background or foreground, redirecting stdout to the node's output stream.

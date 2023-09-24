@@ -58,6 +58,8 @@ export class Editor extends CompSObject{
         new MouseOverDetector(this, viewport);
         
         this.transform.scale = 1
+        this.transform.maxScale = 8
+        this.transform.minScale = 0.4
         this.transform.draggable = true;
         this.transform.scrollable = true;
 

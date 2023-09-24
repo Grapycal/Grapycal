@@ -34,6 +34,6 @@ class EvalNode(SourceNode):
 
     def task(self):
         expression = self.expr_control.text.get()
-        self.value = eval(expression,self.workspace.vars())
+        value = eval(expression,self.workspace.vars())
         for edge in self.out_port.edges:
-            edge.push_data(self.value)
+            edge.push_data(value)

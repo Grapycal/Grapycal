@@ -56,6 +56,12 @@ export class Transform extends Component{
     get scale(){return this._scale;}
     scaleChanged = new Action<[number]>();
     set scale(scale: number){
+        if(this.maxScale !== null && scale > this.maxScale){
+            scale = this.maxScale;
+        }
+        if(this.minScale !== null && scale < this.minScale){
+            scale = this.minScale;
+        }
         this._scale = scale;
         this.updateUI();
         this.scaleChanged.invoke(scale);
@@ -117,6 +123,24 @@ export class Transform extends Component{
             this.actuallyScrollable = true;
         else
             this.actuallyScrollable = false;
+    }
+
+    _maxScale: number|null = null;
+    get maxScale(){return this._maxScale;}
+    set maxScale(maxScale: number){
+        this._maxScale = maxScale;
+        if(this._maxScale !== null && this.scale > maxScale){
+            this.scale = maxScale;
+        }
+    }
+
+    _minScale: number|null = null;
+    get minScale(){return this._minScale;}
+    set minScale(minScale: number){
+        this._minScale = minScale;
+        if(this._minScale !== null && this.scale < minScale){
+            this.scale = minScale;
+        }
     }
 
     _actuallyScrollable: boolean = false;
