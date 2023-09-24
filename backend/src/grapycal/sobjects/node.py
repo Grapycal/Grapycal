@@ -84,7 +84,7 @@ class Node(SObject,metaclass=NodeMeta):
             self.editor = None
 
         self.on('double_click', self.double_click, is_stateful=False)
-        self.on('spawn', self._spawn , is_stateful=False)
+        self.on('spawn', self.spawn , is_stateful=False)
 
         
         self._output_stream = OutputStream(self.raw_print)
@@ -144,7 +144,7 @@ class Node(SObject,metaclass=NodeMeta):
                 continue
             self.controls[new_name].recover_from(self.old_node_info.controls[old_name])
 
-    def _spawn(self, client_id):
+    def spawn(self, client_id):
         '''
         Called when a client wants to spawn a node.
         '''
@@ -235,6 +235,26 @@ class Node(SObject,metaclass=NodeMeta):
             if port.name.get() == name:
                 return port
         raise ValueError(f'Port with name {name} does not exist')
+    
+    def has_in_port(self,name:str) -> bool:
+        '''
+        Check if an input port exists.
+        '''
+        for port in self.in_ports:
+            assert port is not None
+            if port.name.get() == name:
+                return True
+        return False
+    
+    def has_out_port(self,name:str) -> bool:
+        '''
+        Check if an output port exists.
+        '''
+        for port in self.out_ports:
+            assert port is not None
+            if port.name.get() == name:
+                return True
+        return False
     
     T = TypeVar('T', bound=Control)
     def add_control(self,control_type:type[T],name:str|None=None,**kwargs) -> T:
