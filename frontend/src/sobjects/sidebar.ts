@@ -1,4 +1,3 @@
-import {ObjectSyncClient, SObject, StringTopic, DictTopic, IntTopic, SetTopic, FloatTopic, GenericTopic, ListTopic, ObjListTopic, ObjectTopic} from 'objectsync-client'
 import { CompSObject } from './compSObject'
 import { HtmlItem } from '../component/htmlItem'
 import { HierarchyNode } from '../ui_utils/hierarchyNode'

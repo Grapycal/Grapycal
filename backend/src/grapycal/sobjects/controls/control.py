@@ -1,5 +1,5 @@
 from grapycal.extension.utils import ControlInfo
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, GenericTopic, FloatTopic
+from objectsync import SObject
 
 class Control(SObject):
     '''

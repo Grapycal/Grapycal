@@ -1,7 +1,7 @@
 from grapycal import Node, TextControl, ListTopic, ObjDictTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.port import InputPort
 from .math import *
 
 class LambdaNode(Node):

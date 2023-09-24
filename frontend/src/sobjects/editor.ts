@@ -1,5 +1,5 @@
 import { ObjectSyncClient } from "objectsync-client"
-import { ComponentManager, IComponentable } from "../component/component"
+import { ComponentManager } from "../component/component"
 import { EventDispatcher as EventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
 import { MouseOverDetector } from "../component/mouseOverDetector"

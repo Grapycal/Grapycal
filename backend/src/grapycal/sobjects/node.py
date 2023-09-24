@@ -1,5 +1,4 @@
 from abc import ABCMeta
-from ast import Tuple
 import io
 from itertools import count
 import logging

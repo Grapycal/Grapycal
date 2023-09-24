@@ -1,6 +1,5 @@
 import { StringTopic } from "objectsync-client"
-import { Control } from "./control";
-import { HtmlItem } from "../../component/htmlItem"
+import { Control } from "./control"
 import { print } from "../../devUtils"
 
 export class ImageControl extends Control {

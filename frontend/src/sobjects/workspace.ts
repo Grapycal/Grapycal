@@ -1,4 +1,4 @@
-import { ObjectSyncClient, ObjectTopic, SObject } from "objectsync-client"
+import { ObjectSyncClient, ObjectTopic} from "objectsync-client"
 import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"

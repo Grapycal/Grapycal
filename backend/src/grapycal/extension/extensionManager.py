@@ -4,7 +4,6 @@ from grapycal.extension.utils import NodeInfo
 logger = logging.getLogger(__name__)
 
 from importlib import util as importlib_util
-from pprint import pprint
 import random
 from typing import TYPE_CHECKING, Dict, List, Tuple
 import sys

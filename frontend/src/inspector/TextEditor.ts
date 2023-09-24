@@ -1,4 +1,4 @@
-import { StringTopic, Topic } from "objectsync-client"
+import { StringTopic } from "objectsync-client"
 import { ComponentManager, IComponentable } from "../component/component"
 import { HtmlItem } from "../component/htmlItem"
 import { as } from "../utils"
