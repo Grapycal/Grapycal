@@ -437,6 +437,10 @@ input:enabled{
     display: none;
 }
 
+.sidebar-container{
+    height: 100%;
+}
+
 .sidebar-slot{
     overflow: scroll;
     user-select: none;
