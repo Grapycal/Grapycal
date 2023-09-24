@@ -81,8 +81,6 @@ class Edge(SObject):
             head.edge_activated(self)
 
         self._activated = False
-        if not self.reaquirable:
-            self._data_ready = False
 
     def set_label(self, label):
         self.label.set(label)
