@@ -2,6 +2,7 @@ import { FloatTopic, Topic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
+import { inputFinished } from "../ui_utils/interaction"
 
 export class FloatEditor extends Componentable {
 
@@ -35,7 +36,7 @@ export class FloatEditor extends Componentable {
             attr = as(attr, FloatTopic)
             this.linker.link(attr.onSet, this.updateValue)
         }
-        this.linker.link2(this.input, 'input', this.inputChanged)
+        this.linker.link(inputFinished(this.input),this.inputFinished)
         this.updateValue()
     }
 
@@ -60,7 +61,7 @@ export class FloatEditor extends Componentable {
         }
     }
 
-    private inputChanged() {
+    private inputFinished() {
         this.locked = true
         Workspace.instance.record(() => {
             for (let attr of this.connectedAttributes) {

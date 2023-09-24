@@ -8,7 +8,7 @@ export class ButtonEditor extends Componentable {
     get template() {
         return `
         <div class="attribute-editor flex-horiz stretch">
-            <button id="btn" type="button" class="btn"></button>
+            <button id="btn" type="button" class="btn grow"></button>
         </div>
         `
     }
