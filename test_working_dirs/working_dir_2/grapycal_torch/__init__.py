@@ -8,6 +8,8 @@ from .tensor import *
 from .optimizerNode import *
 from .transform import *
 from .dataloader import *
+from .normalize import *
+from .loss import *
 
 
 

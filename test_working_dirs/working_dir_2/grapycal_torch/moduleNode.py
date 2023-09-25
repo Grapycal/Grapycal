@@ -44,6 +44,9 @@ class ModuleNode(Node):
         pass
 
     def edge_activated(self, edge: Edge, port: InputPort):
+        for port_ in self.in_ports:
+            if not port_.is_all_edge_ready():
+                return
         self.run(self.task)
 
     def task(self):

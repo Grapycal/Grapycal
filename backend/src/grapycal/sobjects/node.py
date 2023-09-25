@@ -158,6 +158,13 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         self._output_stream.close()
         self.destroyed = True
+        # remove all edges connected to the ports
+        for port in self.in_ports:
+            for edge in port.edges[:]:
+                edge.remove()
+        for port in self.out_ports:
+            for edge in port.edges[:]:
+                edge.remove()
         return super().destroy()
 
     def add_in_port(self,name:str,max_edges=64,display_name=None):
@@ -189,7 +196,7 @@ class Node(SObject,metaclass=NodeMeta):
             raise ValueError(f'Port with name {name} does not exist')
         
         #remove all edges connected to the port
-        for edge in port.edges: 
+        for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?   
 
         #remove the port
@@ -209,12 +216,14 @@ class Node(SObject,metaclass=NodeMeta):
             raise ValueError(f'Port with name {name} does not exist')
         
         #remove all edges connected to the port
-        for edge in port.edges: 
+        for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?
+            print('edge removed',edge)
 
         #remove the port
         self.out_ports.remove(port)
         port.remove()
+        print('port removed',port)
 
     def get_in_port(self,name:str) -> InputPort:
         '''
