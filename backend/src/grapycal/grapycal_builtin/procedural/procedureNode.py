@@ -48,6 +48,7 @@ class ProcedureNode(Node):
         self.run(self.task)
 
     def task(self):
+        self.data = self.in_port.get_one_data()
         self.iterator = iter(self.steps.get()) #type: ignore
         self.run(self.next)
         
@@ -55,7 +56,9 @@ class ProcedureNode(Node):
         try:
             step = next(self.iterator) #type: ignore
         except StopIteration:
+            del self.data
+            del self.iterator
             return
         port = self.get_out_port(step)
-        port.push_data()
+        port.push_data(self.data)
         self.run(self.next,to_queue=False)

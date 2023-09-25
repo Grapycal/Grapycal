@@ -2,7 +2,7 @@ from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.sourceNode import SourceNode
 import torch
-from grapycal import Node, TextControl, FloatTopic, IntTopic
+from grapycal import Node, TextControl, StringTopic, FloatTopic, IntTopic
 
 
 class ZeroesNode(SourceNode):
@@ -12,12 +12,18 @@ class ZeroesNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Zeroes')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl)
+        self.shape_text = self.add_control(TextControl,'shape_text')
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+
+    def recover_from_version(self, version: str, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.recover_controls('shape_text')
+        self.recover_attributes('device')
 
     def task(self):
-        self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(','))))
+        self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class OnesNode(SourceNode):
     category = 'torch/tensor'
@@ -26,12 +32,18 @@ class OnesNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Ones')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl)
+        self.shape_text = self.add_control(TextControl,'shape_text')
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+
+    def recover_from_version(self, version: str, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.recover_controls('shape_text')
+        self.recover_attributes('device')
 
     def task(self):
-        self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(','))))
+        self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class RandNode(SourceNode):
     category = 'torch/tensor'
@@ -40,12 +52,20 @@ class RandNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Rand')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl)
+        self.shape_text = self.add_control(TextControl,'shape_text')
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+        self.min = self.add_attribute('min',FloatTopic,0,editor_type='float')
+        self.max = self.add_attribute('max',FloatTopic,1,editor_type='float')
+
+    def recover_from_version(self, version: str, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.recover_controls('shape_text')
+        self.recover_attributes('device','min','max')
 
     def task(self):
-        self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(','))))
+        self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
 
 class RandnNode(SourceNode):
     category = 'torch/tensor'
@@ -54,12 +74,18 @@ class RandnNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Randn')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl)
+        self.shape_text = self.add_control(TextControl,'shape_text')
         self.shape_text.text.set('2,2')
         self.shape_text.label.set('Shape')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+        
+    def recover_from_version(self, version: str, old: NodeInfo):
+        super().recover_from_version(version, old)
+        self.recover_controls('shape_text')
+        self.recover_attributes('device')
 
     def task(self):
-        self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(','))))
+        self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class GridNode(SourceNode):
     category = 'torch/tensor'
@@ -78,11 +104,13 @@ class GridNode(SourceNode):
         self.out_x = self.add_out_port('x')
         self.out_y = self.add_out_port('y')
 
-        self.x_shape_text = self.add_control(TextControl)
+        self.x_shape_text = self.add_control(TextControl,'x_shape_text')
         self.x_shape_text.editable.set(0)
 
-        self.y_shape_text = self.add_control(TextControl)
+        self.y_shape_text = self.add_control(TextControl,'y_shape_text')
         self.y_shape_text.editable.set(0)
+
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
 
     def init_node(self):
         super().init_node()
@@ -98,7 +126,8 @@ class GridNode(SourceNode):
 
     def recover_from_version(self, version: str, old: NodeInfo):
         super().recover_from_version(version, old)
-        self.recover_attributes('x start','x end','x steps','y start','y end','y steps')
+        self.recover_attributes('x start','x end','x steps','y start','y end','y steps','device')
+        self.recover_controls('x_shape_text','y_shape_text')
 
     def update_label_x(self,*args):
         self.x_shape_text.text.set(f'x: [{self.x_start.get()},{self.x_end.get()}] / {self.x_steps.get()}')
@@ -107,8 +136,8 @@ class GridNode(SourceNode):
         self.y_shape_text.text.set(f'y: [{self.y_start.get()},{self.y_end.get()}] / {self.y_steps.get()}')
 
     def task(self):
-        x_axis = torch.linspace(self.x_start.get(),self.x_end.get(),self.x_steps.get())
-        y_axis = torch.linspace(self.y_start.get(),self.y_end.get(),self.y_steps.get())
+        x_axis = torch.linspace(self.x_start.get(),self.x_end.get(),self.x_steps.get(),device=self.device.get())
+        y_axis = torch.linspace(self.y_start.get(),self.y_end.get(),self.y_steps.get(),device=self.device.get())
         yy, xx = torch.meshgrid(y_axis,x_axis)
         self.out_x.push_data(xx)
         self.out_y.push_data(yy)

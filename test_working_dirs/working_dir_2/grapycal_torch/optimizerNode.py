@@ -21,10 +21,12 @@ class OptimizerNode(Node):
         self.init_modules_port = self.add_in_port('init modules')
         self.zero_grad_port = self.add_in_port('zero_grad()')
         self.step_port = self.add_in_port('step()')
+        self.eval_port = self.add_in_port('eval()')
+        self.train_port = self.add_in_port('train()')
 
     def init_node(self):
         self.optimizer : torch.optim.Optimizer | None = None
-        self.tracked_modules : set[nn.Module]|None = set()
+        self.tracked_modules : set[nn.Module]= set()
 
     def recover_from_version(self, version: str, old: NodeInfo):
         super().recover_from_version(version, old)
@@ -51,6 +53,10 @@ class OptimizerNode(Node):
             self.run(self.zero_grad)
         elif port == self.init_modules_port:
             self.run(self.init_modules)
+        elif port == self.eval_port:
+            self.run(self.eval)
+        elif port == self.train_port:
+            self.run(self.train)
 
     def init_modules(self):
         for mn in self.modules.get():
@@ -69,3 +75,10 @@ class OptimizerNode(Node):
             return
         self.optimizer.zero_grad()
             
+    def eval(self):
+        for m in self.tracked_modules:
+            m.eval()
+
+    def train(self):
+        for m in self.tracked_modules:
+            m.train()
