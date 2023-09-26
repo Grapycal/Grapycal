@@ -18,7 +18,7 @@ Grapycal is a graphical and interactive programming language. It allows users to
    getting_started/installation
    getting_started/run_grapycal
    getting_started/basic_usage
-   getting_started/extensions
+   getting_started/extension
 
 .. toctree::
    :caption:  User Manual
@@ -34,6 +34,7 @@ Grapycal is a graphical and interactive programming language. It allows users to
    :hidden:
 
    developer_guide/writing_docs
+   developer_guide/define_a_node
 
 
 .. This is a caption separating guide and API

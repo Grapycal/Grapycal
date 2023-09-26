@@ -1,4 +1,4 @@
-Extensions
+Extension
 ================
 
 Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `grapycal_builtin` is automatically included in 
