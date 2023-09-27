@@ -6,7 +6,7 @@ from grapycal import IntTopic, Node
 class LinearNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 

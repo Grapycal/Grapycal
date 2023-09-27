@@ -3,18 +3,18 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 class FunctionNode(Node):
     inputs = []
-    input_edge_limit = []
+    max_in_degree = []
     outputs = []
     display_port_names = True
 
     def build_node(self):
-        self._input_edge_limit = self.input_edge_limit[:]
-        while len(self._input_edge_limit) < len(self.inputs):
-            self._input_edge_limit.append(1)
-        for i in range(len(self._input_edge_limit)):
-            if self._input_edge_limit[i] is None:
-                self._input_edge_limit[i] = 64
-        for name, max_edges in zip(self.inputs,self._input_edge_limit): #type: ignore
+        self._max_in_degree = self.max_in_degree[:]
+        while len(self._max_in_degree) < len(self.inputs):
+            self._max_in_degree.append(1)
+        for i in range(len(self._max_in_degree)):
+            if self._max_in_degree[i] is None:
+                self._max_in_degree[i] = 64
+        for name, max_edges in zip(self.inputs,self._max_in_degree): #type: ignore
             display_name = name if self.display_port_names else ''
             self.add_in_port(name,max_edges,display_name=display_name)
         for name in self.outputs:

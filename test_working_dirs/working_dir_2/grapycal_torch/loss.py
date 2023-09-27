@@ -4,7 +4,7 @@ from torch import nn
 class BCEWithLogitsLossNode(SimpleModuleNode):
     category = 'torch/loss'
     inputs = ['input','target']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['loss']
     def build_node(self):
         super().build_node()
@@ -22,7 +22,7 @@ class BCEWithLogitsLossNode(SimpleModuleNode):
 class MSELossNode(SimpleModuleNode):
     category = 'torch/loss'
     inputs = ['input','target']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['loss']
     def build_node(self):
         super().build_node()
