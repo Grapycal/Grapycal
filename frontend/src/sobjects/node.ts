@@ -44,7 +44,7 @@ export class Node extends CompSObject {
     exposed_attributes: ListTopic<ExposedAttributeInfo> = this.getAttribute('exposed_attributes', ListTopic<ExposedAttributeInfo>)
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
-
+    
     private _isPreview: boolean
     get isPreview(): boolean {
         return this._isPreview
