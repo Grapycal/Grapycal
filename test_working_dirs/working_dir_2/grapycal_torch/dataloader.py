@@ -20,7 +20,7 @@ class DataLoaderNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('batch_size', 'shuffle', 'num_workers')
+        self.restore_attributes('batch_size', 'shuffle', 'num_workers')
 
     def task(self):
         dataset = self.dataset.get_one_data()

@@ -46,7 +46,7 @@ class FuncCallNode(Node):
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('func_name')
+        self.restore_attributes('func_name')
 
     def on_func_name_changed(self, old, new):
         self.label.set(f'Call {new}')
@@ -155,7 +155,7 @@ class FuncInNode(Node):
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('outs','func_name')
+        self.restore_attributes('outs','func_name')
 
     def on_output_added(self, name, position):
         self.add_out_port(name,display_name = name)
@@ -206,7 +206,7 @@ class FuncOutNode(Node):
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('ins','func_name')
+        self.restore_attributes('ins','func_name')
 
     def on_func_name_changed(self, old, new):
         if new != '':

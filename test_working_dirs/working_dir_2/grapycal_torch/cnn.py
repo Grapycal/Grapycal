@@ -21,7 +21,7 @@ class Conv2dNode(ModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('in_channels','out_channels','kernel_size','padding','stride')
+        self.restore_attributes('in_channels','out_channels','kernel_size','padding','stride')
 
     
     def create_module(self) -> nn.Module:
@@ -60,7 +60,7 @@ class ConvTranspose2dNode(ModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('in_channels','out_channels','kernel_size','padding','stride')
+        self.restore_attributes('in_channels','out_channels','kernel_size','padding','stride')
 
     
     def create_module(self) -> nn.Module:
