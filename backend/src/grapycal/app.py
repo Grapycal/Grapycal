@@ -50,7 +50,10 @@ class GrapycalApp:
             break_flag = False
             try:
                 while True: # Restart workspace when it exits. Convenient for development
-                    workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace', '--port', str(self._config['port']), '--host', self._config['host']], start_new_session=True)
+                    workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace',
+                        '--port', str(self._config['port']),
+                        '--host', self._config['host'],
+                        '--path', self._config['path']],start_new_session=True)
                     while True:
                         time.sleep(1)
                         if workspace.poll() is not None:

@@ -2,6 +2,10 @@ from abc import ABCMeta
 import io
 from itertools import count
 import logging
+from grapycal.sobjects.controls.buttonControl import ButtonControl
+from grapycal.sobjects.controls.imageControl import ImageControl
+
+from grapycal.sobjects.controls.textControl import TextControl
 logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
@@ -284,6 +288,27 @@ class Node(SObject,metaclass=NodeMeta):
         self.controls.add(name,control)
         return control
     
+    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True) -> TextControl:
+        '''
+        Add a text control to the node.
+        '''
+        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable)
+        return control
+    
+    def add_button_control(self,label:str='') -> ButtonControl:
+        '''
+        Add a button control to the node.
+        '''
+        control = self.add_control(ButtonControl,label=label)
+        return control
+    
+    def add_image_control(self) -> ImageControl:
+        '''
+        Add an image control to the node.
+        '''
+        control = self.add_control(ImageControl)
+        return control
+
     def remove_control(self,control:str|Control):
         if isinstance(control,str):
             control = self.controls[control]
