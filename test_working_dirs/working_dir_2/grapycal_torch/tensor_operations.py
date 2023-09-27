@@ -101,8 +101,8 @@ class RearrangeNode(FunctionNode):
         if self.is_new:
             self.pattern_control.text.set('b c h w -> b (c h w)')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls(('pattern_control','pattern_control'))
 
     def calculate(self, inputs: list[Any]):

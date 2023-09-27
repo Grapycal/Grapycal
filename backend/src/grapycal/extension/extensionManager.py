@@ -179,7 +179,7 @@ class ExtensionManager:
             # Let the node handle the recovery
             old_node_info = NodeInfo(old_serialized)
             new_node.old_node_info = old_node_info
-            new_node.recover_from_version('',old_node_info) #TODO version name
+            new_node.restore_from_version('',old_node_info) #TODO version name
 
 
             ports: List[Port] = new_node.in_ports.get() + new_node.out_ports.get() # type: ignore

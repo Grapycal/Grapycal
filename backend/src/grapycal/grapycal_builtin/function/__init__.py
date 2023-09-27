@@ -40,8 +40,8 @@ class LambdaNode(Node):
             self.outputs.insert('')
             self.text_controls[''].text.set('x')
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.input_args.set(old['input_args'])
         self.outputs.set(old['outputs'])
         for out_name in old['outputs']:
