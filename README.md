@@ -5,7 +5,7 @@
 
 Grapycal is a visual scripting language based on Python. It provides a web-based editor for writing and ruunnig programs as a graph.
 
-This project is an attempt to make a programming language match human perception at best, while being powerful with the help of Python as its backend.
+The goal of this project is to make a programming language match human perception at best, while being powerful with the help of Python, its backend.
 
 Features:
 
