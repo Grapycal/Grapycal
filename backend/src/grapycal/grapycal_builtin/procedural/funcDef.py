@@ -4,7 +4,6 @@ from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
-from tomlkit import value
 
 class ListDict:
     def __init__(self):

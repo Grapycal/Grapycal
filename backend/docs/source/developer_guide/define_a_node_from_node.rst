@@ -13,6 +13,8 @@ The category is used to group nodes in the node list. For example:
     class CounterNode(Node):
         category = 'demo'
 
+.. _build_node:
+
 ``build_node()``
 -------------------------
 The ``build_node()`` method is called once when a node is created. This is where you define the structure of the node, including      :doc:`controls`,
@@ -43,6 +45,11 @@ Things you can do in ``build_node()``:
 -  ``self.add_out_port`` : Add an :ref:`developer_guide/port:port` to the node.
 -  ``self.add_attribute`` : Add an :ref:`developer_guide/attribute:attribute` to the node.
 -  ``self.expose_attribute`` : Expose an attribute to the inspector panel.
+-  Set values of the node's attributes to customize the node's appearance.
+    *   ``self.shape``: can be ``'normal'``, ``'simple'``, or ``'round'``.
+    *   ``self.label``: the node's label.
+    *   ``self.label_offset``: the offset of the label from the node's center.
+
 
 
 ``init_node()``
@@ -172,6 +179,7 @@ Called when an edge is removed from an output port.
 ``double_click()``
 ------------------------
 Called when the node is double clicked by an user.
+
 
 
 
