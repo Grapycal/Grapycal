@@ -1,6 +1,6 @@
 import io
-from typing import Any, Dict
-from grapycal import Node, Edge, InputPort, TextControl, ButtonControl, IntTopic
+from typing import Any, Dict, List
+from grapycal import Node, Edge, InputPort, TextControl, ButtonControl, IntTopic, FunctionNode
 from grapycal.core.workspace import Workspace
 from grapycal.sobjects.controls.imageControl import ImageControl
 from grapycal.sobjects.edge import Edge
@@ -65,3 +65,20 @@ class CounterNode(Node):
 #         self.add_in_port('in')
 #         self.label.set('<-')
 #         self.add_control(TextControl).text.set('<-')
+
+class AdditionNode(FunctionNode):
+    '''
+    Adds a set of numbers together.
+    '''
+    category = 'function/math'
+
+    inputs = ['numbers']
+    input_edge_limit = [None]
+    outputs = ['sum']
+
+    def calculate(self, data: List[List[Any]]):
+        # Retrive data from the first port (the only port)
+        data_ = data[0]
+
+        # Return the sum of all the numbers coming in from the port
+        return sum(data_)
