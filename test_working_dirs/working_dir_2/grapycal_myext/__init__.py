@@ -73,7 +73,7 @@ class AdditionNode(FunctionNode):
     category = 'function/math'
 
     inputs = ['numbers']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['sum']
 
     def calculate(self, data: List[List[Any]]):

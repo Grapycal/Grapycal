@@ -5,7 +5,7 @@ from torch import nn
 class ReLUNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 
@@ -22,7 +22,7 @@ class ReLUNode(SimpleModuleNode):
 class LeakyReLUNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 

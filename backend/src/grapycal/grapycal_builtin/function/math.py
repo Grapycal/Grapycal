@@ -14,7 +14,7 @@ class AdditionNode(FunctionNode):
     category = 'function/math'
 
     inputs = ['items']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['sum']
     display_port_names = False
 
@@ -47,7 +47,7 @@ class SubtractionNode(FunctionNode):
     '''
     category = 'function/math'
     inputs = ['a', 'b']
-    input_edge_limit = [None, None]
+    max_in_degree = [None, None]
     outputs = ['a-b']
     display_port_names = False
 
@@ -73,7 +73,7 @@ class MultiplicationNode(FunctionNode):
     '''
     category = 'function/math'
     inputs = ['items']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['product']
     display_port_names = False
 
@@ -106,7 +106,7 @@ class DivisionNode(FunctionNode):
     '''
     category = 'function/math'
     inputs = ['a', 'b']
-    input_edge_limit = [None,None]
+    max_in_degree = [None,None]
     outputs = ['a/b']
     display_port_names = False
     

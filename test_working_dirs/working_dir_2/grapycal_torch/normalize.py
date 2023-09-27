@@ -6,7 +6,7 @@ from grapycal import IntTopic, Node, FloatTopic
 class BatchNorm2dNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 
@@ -31,7 +31,7 @@ class BatchNorm2dNode(SimpleModuleNode):
 class Dropout2dNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 
@@ -56,7 +56,7 @@ class Dropout2dNode(SimpleModuleNode):
 class DropoutNode(SimpleModuleNode):
     category = 'torch/nn'
     inputs = ['inp']
-    input_edge_limit = [None]
+    max_in_degree = [None]
     outputs = ['out']
     display_port_names = False
 
