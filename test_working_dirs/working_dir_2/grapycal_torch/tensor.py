@@ -19,8 +19,8 @@ class ZeroesNode(SourceNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('shape_text')
-        self.recover_attributes('device')
+        self.restore_controls('shape_text')
+        self.restore_attributes('device')
 
     def task(self):
         self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
@@ -39,8 +39,8 @@ class OnesNode(SourceNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('shape_text')
-        self.recover_attributes('device')
+        self.restore_controls('shape_text')
+        self.restore_attributes('device')
 
     def task(self):
         self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
@@ -61,8 +61,8 @@ class RandNode(SourceNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('shape_text')
-        self.recover_attributes('device','min','max')
+        self.restore_controls('shape_text')
+        self.restore_attributes('device','min','max')
 
     def task(self):
         self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
@@ -81,8 +81,8 @@ class RandnNode(SourceNode):
         
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('shape_text')
-        self.recover_attributes('device')
+        self.restore_controls('shape_text')
+        self.restore_attributes('device')
 
     def task(self):
         self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
@@ -126,8 +126,8 @@ class GridNode(SourceNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('x start','x end','x steps','y start','y end','y steps','device')
-        self.recover_controls('x_shape_text','y_shape_text')
+        self.restore_attributes('x start','x end','x steps','y start','y end','y steps','device')
+        self.restore_controls('x_shape_text','y_shape_text')
 
     def update_label_x(self,*args):
         self.x_shape_text.text.set(f'x: [{self.x_start.get()},{self.x_end.get()}] / {self.x_steps.get()}')

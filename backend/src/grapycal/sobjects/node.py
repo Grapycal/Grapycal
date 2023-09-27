@@ -107,7 +107,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         self.translation.set(old['translation'])
 
-    def recover_attributes(self,*attribute_names:str|tuple[str,str]):
+    def restore_attributes(self,*attribute_names:str|tuple[str,str]):
         '''
         Recover attributes from the old node.
         '''
@@ -130,7 +130,7 @@ class Node(SObject,metaclass=NodeMeta):
             else:
                 new_attr.set(old_attr)
 
-    def recover_controls(self,*control_names:str|tuple[str,str]):
+    def restore_controls(self,*control_names:str|tuple[str,str]):
         '''
         Recover controls from the old node.
         '''

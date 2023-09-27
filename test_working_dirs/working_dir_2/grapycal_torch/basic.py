@@ -18,7 +18,7 @@ class LinearNode(SimpleModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('in_features','out_features')
+        self.restore_attributes('in_features','out_features')
 
     def create_module(self) -> nn.Module:
         return nn.Linear(self.in_features.get(),self.out_features.get())

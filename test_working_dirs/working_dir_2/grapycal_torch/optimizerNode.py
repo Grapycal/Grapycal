@@ -30,7 +30,7 @@ class OptimizerNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('modules','lr','device')
+        self.restore_attributes('modules','lr','device')
 
     def getModules(self)->List[nn.Module]:
         result: List[nn.Module] = []

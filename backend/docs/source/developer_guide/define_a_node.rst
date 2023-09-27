@@ -3,7 +3,7 @@ Define a Node Type
 
 This guide provides a comprehensive explanation of how to define a node type in Grapycal.
 
-A node type in Grapycal must inherit from the grapycal.Node class and can implement various methods to define its behavior. This guide will walk you through the key methods involved in defining a node type.
+A node type in Grapycal must inherit from the grapycal. Node class and can implement various methods to define its behavior. This guide will walk you through the key methods involved in defining a node type.
 
 Specify the Category
 -------------------------
@@ -88,31 +88,76 @@ Things you can do in ``init_node()``:
 
 ``restore_from_version()``
 -------------------------
-``restore_from_version()`` is called when a node is being upgraded (or downgraded) due to an extension being upgraded (or downgraded).
-Maintaining backward compatibility is a key feature of Grapycal. When an extension is upgraded, Grapycal will delete all nodes of the old version and create new nodes of the new version. To make sure the user's data is not lost, Grapycal will call ``restore_from_version()`` to transfer the data from the old node to the new node.
+
+``restore_from_version()`` is called when a node is being upgraded (or downgraded) due to an extension being upgraded (or downgraded) for backward compatibility. When an extension is upgraded, Grapycal will delete all nodes of the old version and create new nodes of the new version. To make sure the user's data is not lost, Grapycal will call ``restore_from_version()`` to transfer the data from the old node to the new node.
 
 Example usage:
 
 .. code-block:: python
+
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('some_control', 'some_other_control')
-        self.recover_attributes('some_attribute', 'some_other_attribute')
+        self.restore_controls('control_a', 'control_b')
+        self.restore_attributes('attr_a', 'attr_b')
 
+Things you can do in ``restore_from_version()``:
 
+- ``self.restore_controls()``: Transfer the state from the old controls to the new controls.
+- ``self.restore_attributes()``: Transfer the value from the old attributes to the new attributes.
+
+.. note::
+    The ``version`` argument is intended to let the node switch between different restoring strategies based on the version of the old node. However, this feature is not implemented yet. Currently, the ``version`` argument is always ``''``.
+
+.. note::
+    Most restoration tasks can be done with ``restore_controls`` and ``restore_attributes``. For finer-grained control, use the data stored in ``old``. 
+
+``destroy()``
+-------------------------
+
+``destroy()`` is called when a node is being deleted. Override this method to do cleanup tasks such as closing a file or releasing a resource. It's mandatory to return ``super().destroy()`` at the end of the method.
+
+Example usage:
+
+.. code-block:: python
+
+    def destroy(self):
+        self.file.close()
+        return super().destroy()
+
+``edge_activated()``
+------------------------
+Called when an edge on an input port is activated.
+
+``input_edge_added()``
+------------------------
+Called when an edge is added to an input port.
+
+``input_edge_removed()``
+------------------------
+Called when an edge is removed from an input port.
+
+``output_edge_added()``
+------------------------
+Called when an edge is added to an output port.
+
+``output_edge_removed()``
+------------------------
+Called when an edge is removed from an output port.
+
+``double_click()``
+------------------------
+Called when the node is double clicked by an user.
 
 
 
 .. _Node Creation Process:
 
 Node Creation Process
--------------------------
+========================
 
+Here we clearify the node creation process in Grapycal.
 
-
-``build_node()``, ``init_node()`` and ``restore_from_version()`` are the three methods related to node creation.
-
-In different cases, different methods will be called.
+``build_node()``, ``init_node()`` and ``restore_from_version()`` are the three methods related to node creation. In different cases, different methods will be called.
 
 .. figure:: https://i.imgur.com/u0wGw9r.png
    :alt: Creation process of a node

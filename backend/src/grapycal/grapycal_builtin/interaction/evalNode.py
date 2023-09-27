@@ -28,7 +28,7 @@ class EvalNode(SourceNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_controls('expr_control')
+        self.restore_controls('expr_control')
 
     def task(self):
         expression = self.expr_control.text.get()

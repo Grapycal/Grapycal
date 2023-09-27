@@ -17,7 +17,7 @@ class BatchNorm2dNode(SimpleModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('num_features')
+        self.restore_attributes('num_features')
 
     def create_module(self) -> nn.Module:
         return nn.BatchNorm2d(self.num_features.get())
@@ -42,7 +42,7 @@ class Dropout2dNode(SimpleModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('p')
+        self.restore_attributes('p')
 
     def create_module(self) -> nn.Module:
         return nn.Dropout2d(self.p.get())
@@ -67,7 +67,7 @@ class DropoutNode(SimpleModuleNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.recover_attributes('p')
+        self.restore_attributes('p')
 
     def create_module(self) -> nn.Module:
         return nn.Dropout(self.p.get())
