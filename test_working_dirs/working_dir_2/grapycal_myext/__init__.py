@@ -76,9 +76,5 @@ class AdditionNode(FunctionNode):
     max_in_degree = [None]
     outputs = ['sum']
 
-    def calculate(self, data: List[List[Any]]):
-        # Retrive data from the first port (the only port)
-        data_ = data[0]
-
-        # Return the sum of all the numbers coming in from the port
-        return sum(data_)
+    def calculate(self, data: List[Any]):
+        return sum(data)
