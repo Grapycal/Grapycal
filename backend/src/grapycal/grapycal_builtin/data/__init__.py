@@ -35,8 +35,8 @@ class VariableNode(SourceNode):
         self.value = None
         self.has_value = False
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('variable_name')
 
     def edge_activated(self, edge: Edge, port: InputPort):

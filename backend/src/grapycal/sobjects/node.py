@@ -100,7 +100,7 @@ class Node(SObject,metaclass=NodeMeta):
     def init_node(self):
         pass
 
-    def recover_from_version(self,version:str,old:NodeInfo):
+    def restore_from_version(self,version:str,old:NodeInfo):
         '''
         Called when the node is created as a result of a old node being upgraded.
         The old node's information (including attribute values) is in the `old` argument.

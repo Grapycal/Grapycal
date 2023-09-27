@@ -23,8 +23,8 @@ class ProcedureNode(Node):
         if self.is_new:
             self.steps.insert('1')
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.steps.set(old['steps'])
 
     def add_pressed(self):

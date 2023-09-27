@@ -28,8 +28,8 @@ class OptimizerNode(Node):
         self.optimizer : torch.optim.Optimizer | None = None
         self.tracked_modules : set[nn.Module]= set()
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('modules','lr','device')
 
     def getModules(self)->List[nn.Module]:

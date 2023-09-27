@@ -86,16 +86,16 @@ Things you can do in ``init_node()``:
 
 
 
-``recover_from_version()``
+``restore_from_version()``
 -------------------------
-``recover_from_version()`` is called when a node is being upgraded (or downgraded) due to an extension being upgraded (or downgraded).
-Maintaining backward compatibility is a key feature of Grapycal. When an extension is upgraded, Grapycal will delete all nodes of the old version and create new nodes of the new version. To make sure the user's data is not lost, Grapycal will call ``recover_from_version()`` to transfer the data from the old node to the new node.
+``restore_from_version()`` is called when a node is being upgraded (or downgraded) due to an extension being upgraded (or downgraded).
+Maintaining backward compatibility is a key feature of Grapycal. When an extension is upgraded, Grapycal will delete all nodes of the old version and create new nodes of the new version. To make sure the user's data is not lost, Grapycal will call ``restore_from_version()`` to transfer the data from the old node to the new node.
 
 Example usage:
 
 .. code-block:: python
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('some_control', 'some_other_control')
         self.recover_attributes('some_attribute', 'some_other_attribute')
 

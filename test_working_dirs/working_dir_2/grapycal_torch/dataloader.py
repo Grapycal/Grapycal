@@ -18,8 +18,8 @@ class DataLoaderNode(Node):
         self.num_workers = self.add_attribute('num_workers', IntTopic, 0, editor_type='int')
         self.out = self.add_out_port('dataloader')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('batch_size', 'shuffle', 'num_workers')
 
     def task(self):

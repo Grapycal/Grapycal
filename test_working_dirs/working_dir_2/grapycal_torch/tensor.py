@@ -17,8 +17,8 @@ class ZeroesNode(SourceNode):
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('shape_text')
         self.recover_attributes('device')
 
@@ -37,8 +37,8 @@ class OnesNode(SourceNode):
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('shape_text')
         self.recover_attributes('device')
 
@@ -59,8 +59,8 @@ class RandNode(SourceNode):
         self.min = self.add_attribute('min',FloatTopic,0,editor_type='float')
         self.max = self.add_attribute('max',FloatTopic,1,editor_type='float')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('shape_text')
         self.recover_attributes('device','min','max')
 
@@ -79,8 +79,8 @@ class RandnNode(SourceNode):
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
         
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_controls('shape_text')
         self.recover_attributes('device')
 
@@ -124,8 +124,8 @@ class GridNode(SourceNode):
             self.update_label_x()
             self.update_label_y()
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('x start','x end','x steps','y start','y end','y steps','device')
         self.recover_controls('x_shape_text','y_shape_text')
 

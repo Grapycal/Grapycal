@@ -44,8 +44,8 @@ class FuncCallNode(Node):
         FuncDefManager.calls.append(self.func_name.get(),self)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('func_name')
 
     def on_func_name_changed(self, old, new):
@@ -153,8 +153,8 @@ class FuncInNode(Node):
         self.label.set(f'Input of {self.func_name.get()}')
 
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('outs','func_name')
 
     def on_output_added(self, name, position):
@@ -204,8 +204,8 @@ class FuncOutNode(Node):
             assert self.func_name.get() not in FuncDefManager.outs
             FuncDefManager.outs[self.func_name.get()] = self
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.recover_attributes('ins','func_name')
 
     def on_func_name_changed(self, old, new):
