@@ -352,13 +352,65 @@ export class Edge extends CompSObject {
         let mp2 = new Vector2(head.x + Math.cos(head_orientation)*r, head.y + Math.sin(head_orientation)*r)
         let path = `M ${tail.x} ${tail.y} C ${mp1.x} ${mp1.y} ${mp2.x} ${mp2.y} ${head.x} ${head.y}`
 
-        let tangent = mp2.add(head).sub(mp1.add(tail)).normalize()
-        this.pathResult = {
-            tangent:tangent,
-            normal:tangent.rotate(Math.PI/2),
-            length:d
-        }
+        // let dx = head.x - tail.x
+        // let dy = head.y - tail.y
+        // let d = Math.sqrt(dx*dx + dy*dy)
+        // let r = Math.min(50, d/2)
+        // if(isNaN(r) || isNaN(tail_orientation) || isNaN(head_orientation)) throw new Error('NaN')
+        // let mp1 = new Vector2(tail.x + Math.cos(tail_orientation)*r, tail.y + Math.sin(tail_orientation)*r)
+        // let mp2 = new Vector2(head.x + Math.cos(head_orientation)*r, head.y + Math.sin(head_orientation)*r)
+        // let direction = mp2.sub(mp1).normalize()
+        // r = Math.min(r,mp1.sub(mp2).length/2)
+        // let arcp1 = mp1.add(direction.mulScalar(r))
+        // let arcp2 = mp2.sub(direction.mulScalar(r))
+        // let a = arcp1.sub(tail).length/2
+        // let radius = a*r*1/(Math.sqrt(r**2-a**2))
+        // if(isNaN(radius) || direction.dot(head.sub(tail))<0) radius = 0
+        // print(tail_orientation,direction.angle())
+        // let path = `M ${tail.x} ${tail.y} A ${radius} ${radius} 0 0 ${direction.rotate(tail_orientation).angle()>0 ? 1 : 0} ${arcp1.x} ${arcp1.y} L ${arcp2.x} ${arcp2.y} A ${radius} ${radius} 0 0 ${direction.rotate(head_orientation).angle()>0 ? 1 : 0} ${head.x} ${head.y}`
+        // let tangent = mp2.add(head).sub(mp1.add(tail)).normalize()
+        // this.pathResult = {
+        //     tangent:tangent,
+        //     normal:tangent.rotate(Math.PI/2),
+        //     length:d
+        // }
+        
 
+
+        // let delta = head.sub(tail)
+        // let tangent1 = Vector2.fromPolar(1,tail_orientation)
+        // let tangent2 = Vector2.fromPolar(1,head_orientation)
+        // let normal1 = tangent1.rotate(Math.PI/2)
+        // let normal2 = tangent2.rotate(Math.PI/2)
+
+        // let maxR = Math.min(
+        //     delta.length/4/Math.sin(Vector2.angle(normal1,delta)),
+        //     delta.length/4/Math.sin(Vector2.angle(normal2,delta))
+        // )
+
+        // const r = Math.min(20, Math.abs(maxR))
+
+        // const flip = (Vector2.angle(tangent1,head.sub(tail))>0 ? 1 : -1)
+
+        // let c1 = tail.add(normal1.mulScalar(r*flip))
+        // let c2 = head.add(normal2.mulScalar(r*flip))
+
+        // let m = c1.add(c2).mulScalar(0.5)
+        // let centerToM = c1.sub(m)
+        // let d = centerToM.length
+        // let commonTangentDir= centerToM.rotate(Math.asin(r/d)*flip).normalized()
+        
+        // let ct1 = m.add(commonTangentDir.mulScalar((d*d-r*r)**0.5))
+        // let ct2 = m.sub(commonTangentDir.mulScalar((d*d-r*r)**0.5))
+        // let path = `M ${tail.x} ${tail.y} A ${r} ${r} 0 0 ${flip==1?1:0} ${ct1.x} ${ct1.y} L ${ct2.x} ${ct2.y} A ${r} ${r} 0 0 ${flip==1?0:1} ${head.x} ${head.y}`
+
+        // let tangent = commonTangentDir
+        // this.pathResult = {
+        //     tangent:tangent,
+        //     normal:tangent.rotate(Math.PI/2),
+        //     length:head.sub(tail).length
+        // }
+        
         return path
     }
 }

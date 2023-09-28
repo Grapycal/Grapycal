@@ -10,7 +10,7 @@ class FunctionNode(Node):
     def build_node(self):
         self._max_in_degree = self.max_in_degree[:]
         while len(self._max_in_degree) < len(self.inputs):
-            self._max_in_degree.append(1)
+            self._max_in_degree.append(None)
         for i in range(len(self._max_in_degree)):
             if self._max_in_degree[i] is None:
                 self._max_in_degree[i] = 1024
@@ -35,8 +35,7 @@ class FunctionNode(Node):
             return
         inputs = {}
         for port in self.in_ports:
-            inputs[port.name] = [edge.get_data() for edge in port.edges]
-
+            inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
         result = self.calculate(**inputs)
 
         if result is None:

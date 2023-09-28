@@ -72,6 +72,10 @@ export class Vector2 {
         return Math.atan2(b.y - a.y, b.x - a.x);
     }
 
+    static fromPolar(r: number, theta: number): Vector2{
+        return new Vector2(r * Math.cos(theta), r * Math.sin(theta));
+    }
+
     x: number;
     y: number;
     get length(): number{
@@ -96,6 +100,9 @@ export class Vector2 {
     mulScalar(scalar: number): Vector2{
         return new Vector2(this.x * scalar, this.y * scalar);
     }
+    dot(other: Vector2): number{
+        return this.x * other.x + this.y * other.y;
+    }
 
     static fromString(str: string): Vector2{
         const [x, y] = str.split(',').map(parseFloat);
@@ -114,7 +121,7 @@ export class Vector2 {
         return Math.atan2(this.y, this.x);
     }
 
-    normalize(): Vector2{
+    normalized(): Vector2{
         return new Vector2(this.x / this.length, this.y / this.length);
     }
 
