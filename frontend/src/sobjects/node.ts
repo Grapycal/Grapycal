@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
@@ -44,6 +44,7 @@ export class Node extends CompSObject {
     exposed_attributes: ListTopic<ExposedAttributeInfo> = this.getAttribute('exposed_attributes', ListTopic<ExposedAttributeInfo>)
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
+    running: IntTopic = this.getAttribute('running', IntTopic)
     
     private _isPreview: boolean
     get isPreview(): boolean {
@@ -163,6 +164,19 @@ export class Node extends CompSObject {
             }
             for(let className of Node.getCssClassesFromCategory(newCategory)){
                 this.htmlItem.baseElement.classList.add(className)
+            }
+        })
+
+        this.link(this.running.onSet2, (_:number,running: number) => {
+            if(running == 0)
+                this.htmlItem.baseElement.classList.add('running')
+            else{
+                this.htmlItem.baseElement.classList.add('running')
+                let tmp =  running
+                setTimeout(() => {
+                    if(tmp == this.running.getValue())
+                        this.htmlItem.baseElement.classList.remove('running')
+                }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })
 

@@ -2,6 +2,7 @@ from abc import ABCMeta
 import io
 from itertools import count
 import logging
+import random
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.imageControl import ImageControl
 
@@ -47,6 +48,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
+        self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
 
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
@@ -397,12 +399,14 @@ class Node(SObject,metaclass=NodeMeta):
         Run a task in the background thread.
         '''
         def task_wrapper():
+            self.running.set(0)
             self.workspace.background_runner.set_exception_callback(self._on_exception)
             if redirect_output:
                 with self._redirect_output():
                     task()
             else:
                 task()
+            self.running.set(random.randint(0,100))
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
@@ -410,6 +414,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Run a task in the current thread.
         '''
+        self.running.set(0)
         try:
             if redirect_output:
                 with self._redirect_output():
@@ -418,6 +423,7 @@ class Node(SObject,metaclass=NodeMeta):
                 task()
         except Exception as e:
             self._on_exception(e)
+        self.running.set(random.randint(0,100))
 
     def run(self,task:Callable[[],Any],background=True,to_queue=True,redirect_output=False,**kwargs):
         '''
@@ -438,6 +444,7 @@ class Node(SObject,metaclass=NodeMeta):
             self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e):
+        self.running.set(random.randint(0,100))
         message = ''.join(traceback.format_exc())
         if self.destroyed:
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')

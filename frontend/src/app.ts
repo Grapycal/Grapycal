@@ -62,7 +62,6 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Tab') {
         event.preventDefault();
         let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
-        console.log(sidebar.classList);
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
         } else {
