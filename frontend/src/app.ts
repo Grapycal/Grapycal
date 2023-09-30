@@ -87,7 +87,6 @@ function documentReady(callback: Callback): void {
 documentReady(function(event) {
     document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
-        console.log(sidebar.classList);
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
         } else {
@@ -97,7 +96,6 @@ documentReady(function(event) {
 
     document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
-        console.log(sidebar.classList);
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
         } else {

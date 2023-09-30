@@ -397,6 +397,10 @@ input:enabled{
     stroke: #ff7119bb;
 }
 
+.edge.data-ready{
+    stroke: #009398;
+}
+
 .edge-path-hit-box{
     pointer-events: all;
     stroke: transparent;
