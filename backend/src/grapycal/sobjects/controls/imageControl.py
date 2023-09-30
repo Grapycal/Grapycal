@@ -11,6 +11,7 @@ class ImageControl(Control):
     frontend_type = 'ImageControl'
     def build(self):
         self.image = self.add_attribute('image', StringTopic,smallest_jpg,is_stateful=False)
+        self.on_image_set = self.image.on_set
     
     def set_image(self,image:bytes|io.BytesIO|None):
         if image is None:

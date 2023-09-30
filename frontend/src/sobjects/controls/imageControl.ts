@@ -1,18 +1,28 @@
 import { StringTopic } from "objectsync-client"
 import { Control } from "./control"
 import { print } from "../../devUtils"
+import { as } from "../../utils"
+import { Buffer } from 'buffer';
+
 
 export class ImageControl extends Control {
     
     protected template = `
-    <div class="control">
+    <div class="control" tabindex=0>
         <img class="control-image full-height full-width" id="image">
     </div>
     `
 
+    protected css = `
+    .focused{
+        outline: 1px solid #ffffff;
+    }
+    `
+
     protected onStart(): void {
         super.onStart()
-        let image = this.htmlitem.getEl("image", HTMLImageElement)
+        let base = as(this.htmlItem.baseElement, HTMLDivElement)
+        let image = this.htmlItem.getEl("image", HTMLImageElement)
         let imageTopic = this.getAttribute("image", StringTopic)
         this.link(imageTopic.onSet, (newValue) => {
             // set the image data (jpg)
@@ -20,28 +30,36 @@ export class ImageControl extends Control {
             this.node.moved.invoke()
         })
 
-        //paste image from clipboard
-        document.addEventListener('paste', (e) => {
-            let items = e.clipboardData.items
-            if (items) {
-                for (let item of items) {
-                    if (item.type.indexOf("image") !== -1) {
-                        print(item)
-                        let blob = item.getAsFile()
-                        let reader = new FileReader()
-                        reader.onload = (event) => {
-                            let imageTopic = this.getAttribute("image", StringTopic)
-                            print(reader.result)
-                            let buf = reader.result as ArrayBuffer
-                            var base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(buf) as any as number[]));
-                            
-                            imageTopic.set(base64String)
-                        }
-                        reader.readAsArrayBuffer(blob)
+        base.onfocus = () => {
+            base.classList.add("ImageControl-focused")
+            this.link2(document, "paste", this.onPaste)
+        }
+        base.onblur = () => {
+            base.classList.remove("ImageControl-focused")
+            this.unlink2(document, "paste")
+        }
+
+
+    }
+
+    onPaste(e: ClipboardEvent) {
+        let items = e.clipboardData.items
+        if (items) {
+            for (let item of items) {
+                if (item.type.indexOf("image") !== -1) {
+                    let blob = item.getAsFile()
+                    let reader = new FileReader()
+                    reader.onload = (event) => {
+                        let imageTopic = this.getAttribute("image", StringTopic)
+                        let buf =Buffer.from( reader.result as ArrayBuffer)
+                        var base64String = buf.toString('base64')
+                        
+                        imageTopic.set(base64String)
                     }
+                    reader.readAsArrayBuffer(blob)
                 }
             }
-        })
+        }
     }
 
 }

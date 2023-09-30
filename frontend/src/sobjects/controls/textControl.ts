@@ -20,12 +20,12 @@ export class TextControl extends Control {
 
     protected onStart(): void {
         super.onStart()
-        this.textField = this.htmlitem.getEl("text-field", HTMLInputElement)
+        this.textField = this.htmlItem.getEl("text-field", HTMLInputElement)
         this.textField.value = this.text.getValue()
         
         new BindInputBoxAndTopic(this,this.textField, this.text,this.objectsync,true)
 
-        let labelEl = this.htmlitem.getEl("label")
+        let labelEl = this.htmlItem.getEl("label")
         this.link(this.label.onSet, (label) => {
             labelEl.textContent = label
         })

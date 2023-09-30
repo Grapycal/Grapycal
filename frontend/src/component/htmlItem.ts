@@ -3,7 +3,35 @@ import { Action, Constructor, Vector2, as, defined } from "../utils"
 import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
 
+function addPrefixToHtmlClasses(html: Element, prefix: string): void{
+    let target:Element|DocumentFragment = html;
+    if(html instanceof HTMLTemplateElement)
+        target = html.content;
+    target.querySelectorAll('[class]').forEach(element => {
+        const classList = element.classList;
+        classList.forEach(className => {
+            // The original class is preserved. For example, .class becomes .class .prefix-class
+            // The original class is used by the theme css.
+            classList.add(`${prefix}-${className}`);
+        });
+    });
+}
+
+function addCssToDocument(css:string){
+    var style = document.createElement('style')
+    style.innerHTML = css
+    document.head.prepend(style) // allow overriding by theme css
+}
+
+function addPrefixToCssClasses(css: string, prefix: string): string{
+    return css.replace(/\.([a-zA-Z0-9_-]+)[ ]*\{/g, (match, className) => {
+        return `.${prefix}-${className}{`;
+    });
+}
+
 export class HtmlItem extends Component{
+    private static styleAdded = new Set<string>()
+
     static templateIdGenerator: number = 0;
 
     baseElement: Element;
@@ -14,12 +42,26 @@ export class HtmlItem extends Component{
     children: {item:HtmlItem,slotName:string,order:'append'|'prepend'}[] = [];
     readonly templateChanged = new Action<[]>();
     templateId: string='';
+    private useCss: boolean = false;
 
-    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string|HTMLTemplateElement = null){
+    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string|HTMLTemplateElement = null,
+        css = ''
+        ){
         super(object);
         this.baseElement = null;
         this.parent_ = null;
         this.parent_slot = specifiedParentElement;
+
+        if(css !== ''){
+            if (!HtmlItem.styleAdded.has(object.constructor.name)) {
+                HtmlItem.styleAdded.add(object.constructor.name)
+
+                css = addPrefixToCssClasses(css, this.object.constructor.name);
+                addCssToDocument(css);
+            }
+            this.useCss = true;
+        }
+
         if(template !== null)
             this.applyTemplate(template);
     }
@@ -35,6 +77,10 @@ export class HtmlItem extends Component{
             templateElement.innerHTML = template;
         }else{
             templateElement = template;
+        }
+
+        if(this.useCss){
+            addPrefixToHtmlClasses(templateElement, this.object.constructor.name);
         }
 
         this.baseElement = defined(templateElement.content.firstElementChild);
