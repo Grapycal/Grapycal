@@ -5,7 +5,6 @@ import { Node } from "../node"
 import { as } from "../../utils"
 
 export class Control extends CompSObject {
-    htmlitem = new HtmlItem(this)
     protected get node(): Node {
         return as(this.parent,Node)
     }
@@ -14,13 +13,15 @@ export class Control extends CompSObject {
         this is a control
     </div>
     `
+    protected css = ``
+    htmlItem: HtmlItem
     protected onStart(): void {
         super.onStart();
-        this.htmlitem.applyTemplate(this.template)
+        this.htmlItem=new HtmlItem(this,null,this.template,this.css)
     }
     
     onParentChangedTo(newParent: SObject): void {
         super.onParentChangedTo(newParent)
-        this.htmlitem.setParent(as(newParent,Node).htmlItem,'control')
+        this.htmlItem.setParent(as(newParent,Node).htmlItem,'control')
     }
 }

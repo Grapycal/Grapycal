@@ -132,31 +132,7 @@ export class Vector2 {
     }
 }
 
-export function addPrefixToCssClasses(css: string, prefix: string): string{
-    return css.replace(/\.([a-zA-Z0-9_-]+)[ ]*\{/g, (match, className) => {
-        return `.${prefix}-${className}{`;
-    });
-}
 
-export function addPrefixToHtmlClasses(html: Element, prefix: string): void{
-    let target:Element|DocumentFragment = html;
-    if(html instanceof HTMLTemplateElement)
-        target = html.content;
-    target.querySelectorAll('[class]').forEach(element => {
-        const classList = element.classList;
-        classList.forEach(className => {
-            // The original class is preserved. For example, .class becomes .class .prefix-class
-            // The original class is used by the theme css.
-            classList.add(`${prefix}-${className}`);
-        });
-    });
-}
-
-export function addCssToDocument(css:string){
-    var style = document.createElement('style')
-    style.innerHTML = css
-    document.head.prepend(style) // allow overriding by theme css
-}
 
 export function getStaticField(object: any, fieldName: string): any {
     return object.constructor[fieldName];
