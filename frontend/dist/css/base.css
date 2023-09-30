@@ -87,7 +87,10 @@ input[disabled] {pointer-events:none}
     user-select: none;
     -webkit-user-select: none;
     z-index: 5;
-    background: linear-gradient(180deg, rgb(0, 0, 0) 0%, var(--cate-color) 800%);
+
+
+    /* background-image: linear-gradient(180deg, rgb(0, 0, 0) 0%, var(--cate-color) 800%); */
+    background-color: #000000;
 }
 
 .node-preview{
@@ -141,6 +144,16 @@ input[disabled] {pointer-events:none}
     border-image-width: 12px;
     image-rendering: pixelated;
     filter: opacity(0);
+}
+
+.node.running{
+    /* background-image: rgb(47, 79, 79); */
+    background-color:rgb(47, 79, 79);
+}
+
+.node:not(.running){
+
+    transition: background-color 0.2s ease-out;
 }
 
 .node.hover .node-selection{

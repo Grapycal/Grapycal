@@ -352,6 +352,12 @@ export class Edge extends CompSObject {
         let mp2 = new Vector2(head.x + Math.cos(head_orientation)*r, head.y + Math.sin(head_orientation)*r)
         let path = `M ${tail.x} ${tail.y} C ${mp1.x} ${mp1.y} ${mp2.x} ${mp2.y} ${head.x} ${head.y}`
 
+        this.pathResult = {
+            tangent:mp2.add(head).sub(mp1.add(tail)).normalized(),
+            normal:mp2.add(head).sub(mp1.add(tail)).normalized().rotate(Math.PI/2),
+            length:d
+        }
+
         // let dx = head.x - tail.x
         // let dy = head.y - tail.y
         // let d = Math.sqrt(dx*dx + dy*dy)
