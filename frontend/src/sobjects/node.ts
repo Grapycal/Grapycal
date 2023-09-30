@@ -180,6 +180,8 @@ export class Node extends CompSObject {
             }
         })
 
+        if (this.running.getValue() == 0) this.htmlItem.baseElement.classList.add('running')
+
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))

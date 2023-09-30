@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, ObjectTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, ObjectTopic, IntTopic} from 'objectsync-client'
 import { Port } from './port'
 import { HtmlItem } from '../component/htmlItem'
 import { CompSObject } from './compSObject'
@@ -22,6 +22,7 @@ export class Edge extends CompSObject {
     tail: ObjectTopic<Port> = this.getAttribute('tail', ObjectTopic<Port>)
     head: ObjectTopic<Port> = this.getAttribute('head', ObjectTopic<Port>)
     labelTopic: StringTopic = this.getAttribute('label', StringTopic)
+    data_ready: IntTopic = this.getAttribute('data_ready', IntTopic)
 
     editor: Editor
     htmlItem: HtmlItem
@@ -147,6 +148,21 @@ export class Edge extends CompSObject {
         this.link(this.labelTopic.onSet, () => {
             this.label.innerText = this.labelTopic.getValue()
         })
+
+        this.link(this.data_ready.onSet2, (_:number,data_ready: number) => {
+            if(data_ready == 0)
+                this.svg.classList.add('data-ready')
+            else{
+                this.svg.classList.add('data-ready')
+                let tmp =  data_ready
+                setTimeout(() => {
+                    if(tmp == this.data_ready.getValue())
+                        this.svg.classList.remove('data-ready')
+                }, 200); //delay of chatrooom sending buffer is 200ms
+            }
+        })
+        if(this.data_ready.getValue() == 0) this.svg.classList.add('data-ready')
+
         this.updateSVG()
     }
 
