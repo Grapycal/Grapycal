@@ -36,12 +36,11 @@ export class Port extends CompSObject {
     public edges: Edge[] = []
 
     readonly template: string = `
-    <div class="Port">
+    <div class="port">
         
+        <div class="port-label" id="label"></div>
         <div class="port-knob" id="Knob">
             <div class="port-knob-hitbox" id="Hitbox"></div>
-            <div class="port-label" id="label">
-            </div>
         </div>
         
     </div>
@@ -129,10 +128,12 @@ export class Port extends CompSObject {
             if(this.is_input.getValue()){
                 newEdge.addTag('CreatingDragTail')
                 newEdge.head.set(this)
+                newEdge.data_ready.set(123)
             }
             else{
                 newEdge.addTag('CreatingDragHead')
                 newEdge.tail.set(this)
+                newEdge.data_ready.set(123)
             }
         }),true)
     }
