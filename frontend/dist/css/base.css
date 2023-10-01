@@ -1,13 +1,12 @@
 /* App */
 
 body{
-    /* monospace */
-    font-family: Consolas, Courier, monospace;
     color: #e7e7e7;
     background-color: rgb(0,0,0);
     /*no scroll*/
     overflow: hidden;
     font-size: 14px;
+    font-family: 'Roboto', sans-serif;
 }
 
 /* Fill the screen */
@@ -21,7 +20,7 @@ html, body{
 }
 
 input{
-    font-family: inherit;
+    
     font-size: inherit;
     color: inherit;
 
@@ -32,7 +31,7 @@ input{
     border: none; 
     outline: none;
     background: none;
-    padding: 0.1em 0.2em;
+    padding: 0.5px 1px;
 }
 
 input{
@@ -42,7 +41,7 @@ input{
 }
 
 button{
-    font-family: inherit;
+    
     color: inherit;
     background-color: #1e1e1e;
     border: #494949 solid 1px;
@@ -87,9 +86,6 @@ input[disabled] {pointer-events:none}
     user-select: none;
     -webkit-user-select: none;
     z-index: 5;
-
-
-    /* background-image: linear-gradient(180deg, rgb(0, 0, 0) 0%, var(--cate-color) 800%); */
     background-color: #000000;
 }
 
@@ -120,13 +116,9 @@ input[disabled] {pointer-events:none}
     border-radius: 50%;
 }
 
-.node-label{
-    /* fancy cursive fonts */
-    text-align: left;
-    font-family: "Helvetica Neue", sans-serif;
+:is(.normal-node,.simple-node) .node-label{
     font-size: 12px;
-    padding: 3px;
-    
+    padding: 4px 5px 0px 5px;
 }
 
 .node-selection{
@@ -192,7 +184,6 @@ input[disabled] {pointer-events:none}
     /* The px here is actually 0.1px */
     border: solid 5px;
     border-radius: 20px;
-    /* box-shadow: 0px 0px 20px 0px var(--cate-color); */
 }
 
 .round-node .node-border{
@@ -206,12 +197,31 @@ input[disabled] {pointer-events:none}
 
 /* Port */
 
+.port{
+    height: 15px;
+    width: 0px;
+    display: flex;
+    align-items: center;
+}
+
+.normal-node .port{
+    padding: 0px 5px;
+}
+
 .port-knob{
-    position: relative;
+    position: absolute;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background-color : #4d4d4d;
+}
+
+.slot-input-port .port-knob{
+    left: -13px;
+}
+
+.slot-output-port .port-knob{
+    right: -13px;
 }
 
 .port-knob-hitbox{
@@ -233,36 +243,49 @@ input[disabled] {pointer-events:none}
 
 .port-label{
     position: absolute;
-    top: 0px;
-    top: 50%; 
     white-space: nowrap;
-    transform: translate(0,-50%); 
     transition: 0.5s ease-out;
     pointer-events: none;
     
-    font-family: "Helvetica Neue", sans-serif;
+    
+    font-size: 12px;
     color: #bababa;
 }
 
-.normal-node .slot-input-port{
-    position: relative;
-    right: 8px;
+:is(.simple-node,.round-node) .slot-input-port .port-label{
+    font-size: 10px;
+    position: absolute;
+    right: 12px;
+    transform: translate(0px,-8px);
 }
 
-.simple-node .slot-input-port{
-    position: relative;
-    right: 8px;
+:is(.simple-node,.round-node) .slot-output-port .port-label{
+    font-size: 10px;
+    position: absolute;
+    left: 12px;
+    transform: translate(0px,-8px);
 }
 
-.normal-node .slot-output-port{
+.slot-input-port{
     position: relative;
+    gap:2px;
+    padding-bottom: 2px;
+}
+
+.slot-output-port{
+    position: relative;
+    gap:2px;
+    padding-bottom: 2px;
+}
+
+.round-node .slot-input-port{
     left: 8px;
 }
 
-.simple-node .slot-output-port{
-    position: relative;
-    left: 8px;
+.round-node .slot-output-port{
+    right: 8px;
 }
+
 
 :is(.simple-node,.round-node){
     .port-label{
@@ -280,42 +303,8 @@ input[disabled] {pointer-events:none}
     margin: 5px 1.4px;
 }
 
-.normal-node .out-port .port-label{
-    right: 18px;
-    font-size: 14px;
-}
-
-.simple-node .out-port .port-label{
-    left: 12px;
-    top: -1px;
-    font-size: 10px;
-}
-
-.round-node .out-port .port-label{
-    left: 12px;
-    top: -1px;
-    font-size: 10px;
-}
-
-.in-port{
-    margin: 5px -1.4px;
-}
-
-.normal-node .in-port .port-label{
-    left: 18px;
-    font-size: 14px;
-}
-
-.simple-node .in-port .port-label{
-    right: 12px;
-    top: -1px;
-    font-size: 10px;
-}
-
-.round-node .in-port .port-label{
-    right: 12px;
-    top: -1px;
-    font-size: 10px;
+.slot-output-port .port-label{
+    right: 5px;
 }
 
 /* Control */
@@ -324,21 +313,25 @@ input[disabled] {pointer-events:none}
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    padding: 0px 2px;
+    padding: 2px 5px;
+
+    color: #bababa;
 
     /* a trick to obsorb node label's padding-buttom */
     margin-top: -3px;
     min-height: 3px;
+    gap:2px;
+    padding-bottom: 3px;
 }
 
 .control{
     box-sizing: border-box;
     width: 100%;
-    margin: 2px 0px;
     /* border-radius: 2px; */
     overflow: hidden;
     color : #d5d5d5;
-    font-size: 14px;
+    font-size: 12px;
+    min-height: 15px;
 }
 
 .control-button{
@@ -369,7 +362,6 @@ input:enabled{
 }
 
 .label{
-    color: #888888;
     font-size: 12px;
     white-space: nowrap;
 }
@@ -412,7 +404,7 @@ input:enabled{
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 10px;
-    font-family: "Helvetica Neue", sans-serif;
+    
 }
 
 /* Editor */
@@ -435,7 +427,7 @@ input:enabled{
     bottom: 0px; 
     top: 0px;
     z-index: 10;
-    background-color:rgba(0,0,0,0.8);
+    background-color:rgba(0,0,0);
 }
 
 .sidebar-left{
@@ -530,7 +522,7 @@ input:enabled{
 /* Hierarchy */
 
 .hierarchy-node{
-    font-family: "Helvetica Neue", sans-serif;
+    
     margin-bottom: 10px;
     padding-bottom: 2px;
     padding-top: 4px;
@@ -570,7 +562,7 @@ input:enabled{
     width:200px;
     z-index: 20;
     
-    font-family: "Helvetica Neue", sans-serif;
+    
 }
 .popup-option{
     padding:10px;
@@ -590,7 +582,7 @@ input:enabled{
 }
 
 #node_info{
-    font-family: "Helvetica Neue", sans-serif;
+    
     /* resize: vertical;
     overflow: auto; */
 }
@@ -735,7 +727,7 @@ hr{
 }
 
 .settings-page-content{
-    font-family: "Helvetica Neue", sans-serif;
+    
     position: absolute;
     top: 50%;
     left: 50%;

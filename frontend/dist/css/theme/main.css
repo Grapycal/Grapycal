@@ -2,3 +2,11 @@
 @import url(edge.css);
 @import url(node.css);
 @import url(port.css);
+
+:root {
+    --z0: #121212;
+    --z1: #1d1d1d;
+    --z2: #333333;
+    --text-low: #9a9a9a;
+    --text-high: #dfdfdf;
+}

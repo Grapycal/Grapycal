@@ -57,7 +57,7 @@ class LambdaNode(Node):
         self.add_out_port(name,display_name = name)
         new_control = self.add_control(TextControl,name=name)
         self.text_controls[name]=new_control
-        new_control.label.set(f'{name}= ')
+        new_control.label.set(f'{name} = ')
         
     def on_output_removed(self, name, position):
         self.remove_out_port(name)

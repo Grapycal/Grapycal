@@ -18,6 +18,12 @@ export class TextControl extends Control {
     </div>
     `
 
+    protected css: string = `
+        .label{
+            min-width: 20px;
+        }
+    `
+
     protected onStart(): void {
         super.onStart()
         this.textField = this.htmlItem.getEl("text-field", HTMLInputElement)
@@ -25,9 +31,16 @@ export class TextControl extends Control {
         
         new BindInputBoxAndTopic(this,this.textField, this.text,this.objectsync,true)
 
-        let labelEl = this.htmlItem.getEl("label")
+        let labelEl = this.htmlItem.getEl("label", HTMLDivElement)
         this.link(this.label.onSet, (label) => {
-            labelEl.textContent = label
+            if (label == '') {
+                labelEl.style.display = 'none'
+                return
+            }
+            //replace spaces with non-breaking spaces
+            label = label.replace(/ /g, "\u00a0")
+
+            labelEl.innerHTML = label
         })
 
         this.link(this.editable.onSet, (editable) => {

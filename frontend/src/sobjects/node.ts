@@ -75,8 +75,8 @@ export class Node extends CompSObject {
             <div class="node-content flex-vert space-between">
                 <div id="label" class="node-label full-width"></div>
                 <div class="flex-horiz space-between full-width">
-                    <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
-                    <div id="slot_output_port" class="no-width flex-vert space-evenly center slot-output-port"></div>
+                    <div id="slot_input_port" class=" flex-vert space-evenly center slot-input-port"></div>
+                    <div id="slot_output_port" class=" flex-vert space-evenly center slot-output-port"></div>
                 </div>
                 <div id="slot_control" class="slot-control flex-vert space-between"> </div>
             </div>
@@ -90,14 +90,14 @@ export class Node extends CompSObject {
             <div class="node-selection"></div>
             
             <div class=" flex-horiz space-between">
-                <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
 
                 <div class="full-width flex-vert space-evenly">
                     <div id="label" class="node-label full-width"></div>
                     <div id="slot_control"  class="slot-control"> </div>
                 </div>
 
-                <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
             </div>
         </div>`,
     round:
@@ -107,13 +107,13 @@ export class Node extends CompSObject {
                 </div>
             </div>
             <div class="node-selection"></div>
-            <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
+            <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
             <div class="full-width flex-vert space-evenly"> 
-                <div id="label" class="center-align"></div>
+                <div id="label" class="center-align node-label"></div>
             </div>
             <div id="slot_control" style="display:none"></div>
             
-            <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
+            <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
         </div>`,
     }
 
@@ -265,11 +265,11 @@ export class Node extends CompSObject {
         this.link(this.onRemoveChild,this.moved.invoke)
         this.link(this.transform.onChange,this.moved.invoke)
 
-        setTimeout(() => {
-            let border = this.htmlItem.getHtmlEl('node-border')
-            bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
+        // setTimeout(() => {
+        //     let border = this.htmlItem.getHtmlEl('node-border')
+        //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
-        }, 0);
+        // }, 0);
 
     }
 
