@@ -6,6 +6,7 @@ import { SelectionManager } from "../component/selectionManager"
 import { Inspector } from "../inspector/inspector"
 import { Node } from "./node"
 import { Edge } from "./edge"
+import { Footer } from "../ui_utils/footer"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -23,10 +24,6 @@ export class Workspace extends CompSObject{
         (this.functionalSelection as any).name = 'functionalSelection'
         
         Workspace.instance = this
-        document.getElementById('settings-button').addEventListener('click',()=>{
-            document.getElementById('settings-page').classList.toggle('open')
-            objectsync.emit('refresh_extensions')
-        })
         this.selection.onSelect.add((selectable)=>{
             let obj = selectable.object
             if(obj instanceof Node){
@@ -49,6 +46,7 @@ export class Workspace extends CompSObject{
             this.selection.clearSelection()
         })
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
+        Footer.setStatus('Workspace loaded.')
     }
     public getObjectSync(): ObjectSyncClient{
         return this.objectsync

@@ -12,7 +12,7 @@ import { print } from "../devUtils"
 export class Editor extends CompSObject{
     readonly template: string = `
     <div style="width:100%;height:100%">
-        <div class="viewport" id="Viewport" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+        <div class="viewport" id="Viewport" style="width:100%;height:100%;top:0;left:0;">
             <div style="position:absolute;top:50%;left:50%">
                 
                 <div id="slot_default" class="editor" style="position:absolute;top:50%;left:50%;width:1px;height:1px;">
@@ -46,7 +46,7 @@ export class Editor extends CompSObject{
     
     constructor(objectsync: ObjectSyncClient, id: string){
         super(objectsync,id);
-        this.htmlItem = new HtmlItem(this, document.body);
+        this.htmlItem = new HtmlItem(this, document.body.getElementsByClassName('main')[0] as HTMLElement);
         this.htmlItem.applyTemplate(this.template);
         let viewport = this.htmlItem.getHtmlEl('Viewport')
         let editor = this.htmlItem.getHtmlEl('slot_default')
