@@ -20,6 +20,10 @@ Define styles for different node categories
     border-color: var(--cate-color);
 }
 
+.node.running{
+    background-color: var(--t1);
+}
+
 .hierarchy-node{
     border-color: var(--cate-color);
     color: var(--cate-color);

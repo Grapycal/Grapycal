@@ -53,7 +53,7 @@ class InputPort(Port):
         self.node.input_edge_removed(edge, self)
         
     def is_all_edge_ready(self):
-        return all(edge.is_data_ready() for edge in self.edges)
+        return all(edge.is_data_ready() for edge in self.edges) and len(self.edges) > 0
     
     def get_data(self):
         return [edge.get_data() for edge in self.edges]

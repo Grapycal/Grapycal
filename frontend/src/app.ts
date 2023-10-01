@@ -14,6 +14,8 @@ import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
 import { ImageControl } from './sobjects/controls/imageControl'
 import { Callback } from 'chatroom-client/src/utils'
+import { Footer } from './ui_utils/footer'
+import { Header } from './ui_utils/header'
 
 export const soundManager = new SoundManager();
 
@@ -107,3 +109,6 @@ documentReady(function(event) {
 
 
 expose('c',objectsync)
+
+new Header()
+new Footer()

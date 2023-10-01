@@ -1,5 +1,5 @@
 /* App */
-
+* { margin: 0; box-sizing: border-box; }
 body{
     color: #e7e7e7;
     background-color: rgb(0,0,0);
@@ -7,6 +7,22 @@ body{
     overflow: hidden;
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+header{
+    height: 40px;
+}
+
+footer{
+    height: 23px;
+}
+
+.main{
+    position: relative;
+    flex:1;
 }
 
 /* Fill the screen */
@@ -58,6 +74,15 @@ img{
 }
 
 input[disabled] {pointer-events:none}
+
+footer{
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 50px;
+    background-color: #000000;
+    z-index: 10;
+}
 
 /* Scrollbar */
 /* Works on Firefox */
@@ -313,15 +338,16 @@ input[disabled] {pointer-events:none}
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    padding: 2px 5px;
+    padding: 0px 5px;
 
     color: #bababa;
 
-    /* a trick to obsorb node label's padding-buttom */
-    margin-top: -3px;
-    min-height: 3px;
     gap:2px;
-    padding-bottom: 3px;
+    padding-bottom: 5px;
+}
+
+.slot-control:empty{
+    padding: 0px;
 }
 
 .control{
@@ -339,9 +365,6 @@ input[disabled] {pointer-events:none}
     border: #828282 solid 1px;
 }
 
-.control-text{
-
-}
 
 .control-image{
     width: 100%;
@@ -433,13 +456,11 @@ input:enabled{
 .sidebar-left{
     left: 0px;
     width: 300px;
-    border-right: #4b4b4b solid 1px;
 }
 
 .sidebar-right{
     right: 0px;
     width: 300px;
-    border-left: #4b4b4b solid 1px;
 }
 
 .collapsed .sidebar-container{

@@ -82,7 +82,7 @@ export class Node extends CompSObject {
             </div>
         </div>`,
     simple:
-        `<div class="node simple-node node-content">
+        `<div class="node simple-node">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
@@ -92,7 +92,7 @@ export class Node extends CompSObject {
             <div class=" flex-horiz space-between">
                 <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
 
-                <div class="full-width flex-vert space-evenly">
+                <div class="full-width flex-vert space-evenly node-content">
                     <div id="label" class="node-label full-width"></div>
                     <div id="slot_control"  class="slot-control"> </div>
                 </div>
