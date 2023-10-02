@@ -104,7 +104,11 @@ export class HtmlItem extends Component{
         // search for elements that id = slot_name
         // if found, add to slots:
         this.slots = new Map();
-        const slotElements = this.baseElement.querySelectorAll('[id^="slot_"]');
+        const slotElements = this.baseElement.querySelectorAll('[id^="slot_"]')
+        if(this.baseElement.id.startsWith('slot_')){
+            const slotName = this.baseElement.id.slice(5);
+            this.addSlot(slotName, as(this.baseElement,HTMLElement));
+        }
 
         for(let element of slotElements){
             const slotName = element.id.slice(5);
@@ -169,6 +173,40 @@ export class HtmlItem extends Component{
             return as(element,type);
         }
     }
+
+    getHtmlElByClass(className: string): HTMLElement{
+        //match class and template_id
+        const element = this.baseElement.querySelector(`[template_id="${this.templateId}"].${className}`);
+        //const element = this.baseElement.querySelector(`.${className}`);
+        //check baseElement
+        if (this.baseElement.classList.contains(className))
+            return as(this.baseElement,HTMLElement);
+        if (element === null)
+            throw new Error(`Element with class ${className} not found`);
+        return as(element,HTMLElement);
+    }
+
+    getElByClass<T extends Element>(className: string,type?:Constructor<T>): T{
+        //match class and template_id
+        const element = this.baseElement.querySelector(`[template_id="${this.templateId}"].${className}`);
+        //const element = this.baseElement.querySelector(`.${className}`);
+        //check baseElement
+        if (this.baseElement.classList.contains(className))
+            if(type === undefined){
+                return this.baseElement as any;
+            }else{
+                return as(this.baseElement,type);
+            }
+        if (element === null)
+            throw new Error(`Element with class ${className} not found`);
+        if(type === undefined){
+            return element as any;
+        }else{
+            return as(element,type);
+        }
+    }
+
+
 
     setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="append"): void{
         if (this.parent_ === parent) return;

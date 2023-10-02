@@ -79,7 +79,6 @@ class Node(SObject,metaclass=NodeMeta):
         '''
 
         self.workspace:Workspace = self._server.globals.workspace
-        self.destroyed = False
         self.old_node_info :NodeInfo|None = None
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
@@ -163,7 +162,6 @@ class Node(SObject,metaclass=NodeMeta):
         Note: Overrided methods should call return super().destroy() at the end.
         '''
         self._output_stream.close()
-        self.destroyed = True
         # remove all edges connected to the ports
         for port in self.in_ports:
             for edge in port.edges[:]:
@@ -243,7 +241,7 @@ class Node(SObject,metaclass=NodeMeta):
     
     def get_out_port(self,name:str) -> OutputPort:
         '''
-        Get an output port by its name.
+        an output port by its name.
         '''
         for port in self.out_ports:
             assert port is not None
@@ -368,7 +366,7 @@ class Node(SObject,metaclass=NodeMeta):
     def raw_print(self,data):
         if data=='':
             return
-        if self.destroyed:
+        if self.is_destroyed():
             logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
         else:
             if len(self.output) > 100:
@@ -446,7 +444,7 @@ class Node(SObject,metaclass=NodeMeta):
     def _on_exception(self, e):
         self.running.set(random.randint(0,100))
         message = ''.join(traceback.format_exc())
-        if self.destroyed:
+        if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
             if len(self.output) > 100:

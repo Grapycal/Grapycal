@@ -31,7 +31,7 @@ class FunctionNode(Node):
         self.run(self.task)
 
     def task(self):
-        if self.destroyed:
+        if self.is_destroyed():
             return
         inputs = {}
         for port in self.in_ports:
