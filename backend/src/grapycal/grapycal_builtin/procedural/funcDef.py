@@ -86,7 +86,7 @@ class FuncCallNode(Node):
         self.run(self.end_function, to_queue=False)
 
     def start_function(self):
-        if self.destroyed:
+        if self.is_destroyed():
             return
         inputs = {}
         for port in self.in_ports:
@@ -95,7 +95,7 @@ class FuncCallNode(Node):
         FuncDefManager.ins[self.func_name.get()].start_function(inputs)
 
     def end_function(self):
-        if self.destroyed:
+        if self.is_destroyed():
             return
         FuncDefManager.outs[self.func_name.get()].end_function(self)
 

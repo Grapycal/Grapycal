@@ -13,6 +13,7 @@ import { Sidebar } from './sidebar'
 import { Editor } from './editor'
 import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
+import { ErrorPopup } from '../ui_utils/errorPopup'
 
 export class ExposedAttributeInfo
 {
@@ -22,6 +23,7 @@ export class ExposedAttributeInfo
 }
 
 export class Node extends CompSObject {
+    errorPopup: ErrorPopup;
 
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
@@ -64,7 +66,7 @@ export class Node extends CompSObject {
 
     protected readonly templates: {[key: string]: string} = {
     normal: 
-        `<div class="node normal-node">
+        `<div class="node normal-node" id="slot_default">
             
             <div class="node-border-container">
                 <div class="node-border" id="node-border">
@@ -82,7 +84,7 @@ export class Node extends CompSObject {
             </div>
         </div>`,
     simple:
-        `<div class="node simple-node">
+        `<div class="node simple-node" id="slot_default">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
@@ -101,7 +103,7 @@ export class Node extends CompSObject {
             </div>
         </div>`,
     round:
-        `<div class="node round-node flex-horiz space-between" >
+        `<div class="node round-node flex-horiz space-between" id="slot_default">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
@@ -181,6 +183,15 @@ export class Node extends CompSObject {
         })
 
         if (this.running.getValue() == 0) this.htmlItem.baseElement.classList.add('running')
+
+        this.errorPopup = new ErrorPopup(this)
+        this.link(this.output.onInsert, ([type, value]: [string, string]) => {
+            if(type == 'error'){
+                this.errorPopup.set('Error',value)
+                this.errorPopup.show()
+            }
+        })
+
 
         // Configure components
         
@@ -309,5 +320,6 @@ export class Node extends CompSObject {
         if(this.parent instanceof Sidebar){
             this.parent.removeItem(this.htmlItem, this.category.getValue())
         }
+        this.errorPopup.destroy()
     }
 }

@@ -51,10 +51,12 @@ class ImageDisplayNode(Node):
         # use plt to convert to jpg
         buf = io.BytesIO()
         fig = plt.figure()
-        plt.imshow(data)
-        plt.axis('off')
-        plt.savefig(buf,format='jpg',bbox_inches='tight', transparent="True", pad_inches=0)
-        plt.close(fig)
+        try:
+            plt.imshow(data)
+            plt.axis('off')
+            plt.savefig(buf,format='jpg',bbox_inches='tight', transparent="True", pad_inches=0)
+        finally:
+            plt.close(fig)
         self.img.set_image(buf)
 
     def input_edge_removed(self, edge: Edge, port: InputPort):

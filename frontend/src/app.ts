@@ -63,11 +63,14 @@ document.addEventListener('keydown', function(event) {
     }
     if (event.key === 'Tab') {
         event.preventDefault();
-        let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
-        if (sidebar.classList.contains('collapsed')) {
-            sidebar.classList.remove('collapsed');
+        let sidebarRight = document.getElementById('sidebar-collapse-right').parentElement;
+        let sidebarLeft = document.getElementById('sidebar-collapse-left').parentElement
+        if (sidebarRight.classList.contains('collapsed')) {
+            sidebarRight.classList.remove('collapsed');
+            sidebarLeft.classList.remove('collapsed');
         } else {
-            sidebar.classList.add('collapsed');
+            sidebarRight.classList.add('collapsed');
+            sidebarLeft.classList.add('collapsed');
         }
     }
 });

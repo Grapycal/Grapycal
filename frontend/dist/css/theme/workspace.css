@@ -17,7 +17,7 @@ header{
 footer{
     height: 23px;
     background-color: var(--t1);
-    color: var(--t3);
+    color: var(--text-high);
 }
 
 button{
@@ -42,4 +42,10 @@ button{
 
 .ListEditorItem-item button{
     border: var(--z3) 1px solid;
+}
+
+.ErrorPopup-error-popup{
+
+    background-color: var(--z1);
+    border: 1px solid var(--z3);
 }
