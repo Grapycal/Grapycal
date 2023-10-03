@@ -277,11 +277,8 @@ class ExtensionManager:
         '''
         Copy the current version of the extension to .grapycal/extensions, so it cannot be modified by the user.
         '''
-        if package_name == 'grapycal_builtin':
-            source_name = 'grapycal.grapycal_builtin'
-        else:
-            assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
-            source_name = package_name
+        assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
+        source_name = package_name
         source_path = dirname(importlib_util.find_spec(source_name).origin) # type: ignore
 
         if number is None:
