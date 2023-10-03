@@ -147,7 +147,7 @@ class Node(SObject,metaclass=NodeMeta):
             if not (old_name in self.old_node_info.controls):
                 logger.warning(f'Control {old_name} does not exist in the old node of {self}')
                 continue
-            self.controls[new_name].recover_from(self.old_node_info.controls[old_name])
+            self.controls[new_name].restore_from(self.old_node_info.controls[old_name])
 
     def spawn(self, client_id):
         '''
@@ -288,25 +288,25 @@ class Node(SObject,metaclass=NodeMeta):
         self.controls.add(name,control)
         return control
     
-    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True) -> TextControl:
+    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True,name:str|None=None) -> TextControl:
         '''
         Add a text control to the node.
         '''
-        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable)
+        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable,name=name)
         return control
     
-    def add_button_control(self,label:str='') -> ButtonControl:
+    def add_button_control(self,label:str='',name:str|None=None) -> ButtonControl:
         '''
         Add a button control to the node.
         '''
-        control = self.add_control(ButtonControl,label=label)
+        control = self.add_control(ButtonControl,label=label,name=name)
         return control
     
-    def add_image_control(self) -> ImageControl:
+    def add_image_control(self,name:str|None=None) -> ImageControl:
         '''
         Add an image control to the node.
         '''
-        control = self.add_control(ImageControl)
+        control = self.add_control(ImageControl,name=name)
         return control
 
     def remove_control(self,control:str|Control):
@@ -319,15 +319,15 @@ class Node(SObject,metaclass=NodeMeta):
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
     def add_attribute(
         self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
-        editor_type:str|None=None, editor_args:dict|None=None, display_name:str|None=None
+        editor_type:str|None=None, display_name:str|None=None, **editor_args
         ) -> T1: 
         
         attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful)
         if editor_type is not None:
-            self.expose_attribute(attribute,editor_type,editor_args,display_name)
+            self.expose_attribute(attribute,editor_type,display_name,**editor_args)
         return attribute
     
-    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,editor_args=None,display_name=None):
+    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,**editor_args):
         '''
         Expose an attribute to the editor.
         Args:

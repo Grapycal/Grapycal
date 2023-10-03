@@ -103,19 +103,21 @@ export class Node extends CompSObject {
             </div>
         </div>`,
     round:
-        `<div class="node round-node flex-horiz space-between" id="slot_default">
+        `<div class="node round-node " id="slot_default">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
             </div>
             <div class="node-selection"></div>
-            <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-            <div class="full-width flex-vert space-evenly"> 
-                <div id="label" class="center-align node-label"></div>
+            <div class="flex-horiz node-content">
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+                <div class="full-width flex-vert space-evenly"> 
+                    <div id="label" class="center-align node-label"></div>
+                </div>
+                <div id="slot_control" style="display:none"></div>
+                
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
             </div>
-            <div id="slot_control" style="display:none"></div>
-            
-            <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
         </div>`,
     }
 
@@ -184,18 +186,22 @@ export class Node extends CompSObject {
 
         if (this.running.getValue() == 0) this.htmlItem.baseElement.classList.add('running')
 
-        this.errorPopup = new ErrorPopup(this)
         this.link(this.output.onInsert, ([type, value]: [string, string]) => {
-            if(type == 'error'){
-                this.errorPopup.set('Error',value)
-                this.errorPopup.show()
-            }
+                if(type == 'error'){
+                this.objectsync.doAfterTransitionFinish(() => { 
+                    // Sometimes onInsert is invoked by reverted preview change.
+                    if(this.output.getValue().length == 0) return
+                    this.errorPopup.set('Error',value)
+                    this.errorPopup.show()
+                    })
+                }
         })
 
 
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
+        this.errorPopup = new ErrorPopup(this)
 
         this.transform.pivot = new Vector2(0.5, 0)
         if(!this._isPreview){
@@ -214,6 +220,7 @@ export class Node extends CompSObject {
                 this.htmlItem.moveToFront()
             })
             this.transform.dragged.add((delta:Vector2) => {
+                print(this.transform.pivot)
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
                 this.objectsync.record(() => {
@@ -290,8 +297,10 @@ export class Node extends CompSObject {
             newParent.addItem(this.htmlItem, this.category.getValue())
             this.transform.enabled = false
         }
-        else
+        else{
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
+            this.errorPopup.htmlItem.setParent(this.htmlItem.parent)
+        }
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
             this.transform.enabled = false

@@ -20,7 +20,7 @@ class ExecNode(SourceNode):
         super().build_node()
         self.out_port = self.add_out_port('done')
         self.text_control = self.add_control(TextControl)
-        self.label.set('Exec')
+        self.label.set('Execute')
         self.shape.set('simple')
         self.expose_attribute(self.text_control.text,'text',display_name='statements')
 

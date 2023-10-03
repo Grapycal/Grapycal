@@ -54,7 +54,6 @@ export class ErrorPopup extends Componentable{
 
         this.link(this.node.moved,this.onMoved)
 
-        this.htmlItem.setParent(node.htmlItem)
 
         this.baseDiv.addEventListener("mousedown",(e)=>{
             this.hide()
@@ -81,11 +80,10 @@ export class ErrorPopup extends Componentable{
         this.baseDiv.style.display = "none"
     }
 
-    prevNodeSize: Vector2 = new Vector2(0,0)
     onMoved(){
         if(this.baseDiv.style.display == "none") return
-        if(this.node.transform.localSize.equals(this.prevNodeSize)) return
-        this.transform.translation = new Vector2(this.node.transform.localSize.x+20,-this.node.transform.localSize.y-20)
-        this.prevNodeSize = this.node.transform.localSize
+        this.transform.translation = this.node.transform.translation.add(
+            new Vector2(this.node.transform.localSize.x/2+20,-20)
+            )
     }
 }

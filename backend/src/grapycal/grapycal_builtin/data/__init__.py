@@ -76,6 +76,10 @@ class SplitNode(Node):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
 
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('keys')
+
     def add_key(self, key, position):
         self.add_out_port(key)
 

@@ -49,3 +49,18 @@ button{
     background-color: var(--z1);
     border: 1px solid var(--z3);
 }
+
+.OptionsEditor-select{
+    background-color: var(--z2);
+    color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 5px; /* You can adjust the width as needed */
+}
+
+/* Style the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background-color: var(--z3); /* Change the color as desired */
+  border-radius: 1px; /* Add rounded corners if you like */
+}

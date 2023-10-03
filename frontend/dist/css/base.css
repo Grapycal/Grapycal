@@ -136,9 +136,19 @@ footer{
 }
 
 .round-node{
+    border-radius: 50%;
     width: 30px;
     height: 30px;
-    border-radius: 50%;
+}
+
+.node-content{
+    position: relative;
+}
+
+.round-node .node-content{
+    
+    width: 30px;
+    height: 30px;
 }
 
 :is(.normal-node,.simple-node) .node-label{
