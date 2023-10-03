@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "grapycal-builtin"
+version = "0.1.0"
+description = "Built-in nodes for Grapycal"
+authors = ["eri24816 <a931eric@gmail.com>"]
+license = "BSD 3-clause"
+readme = "README.md"
+packages = [{include = "grapycal_builtin"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+grapycal = "0.2.0"
+matplotlib = "^3.8.0"
+numpy = "^1.26.0"
+Pillow = "^10.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
