@@ -1,5 +1,6 @@
 import io
 from typing import Any, Dict
+from grapycal.extension.utils import ControlInfo
 from grapycal.sobjects.controls.control import Control
 from objectsync import StringTopic
 
@@ -12,8 +13,12 @@ class ImageControl(Control):
     def build(self):
         self.image = self.add_attribute('image', StringTopic,smallest_jpg,is_stateful=False)
         self.on_image_set = self.image.on_set
+
+    def restore_from(self, old: ControlInfo):
+        super().restore_from(old)
+        self.image.set(old['image'])
     
-    def set_image(self,image:bytes|io.BytesIO|None):
+    def set(self,image:bytes|io.BytesIO|None):
         if image is None:
             self.image.set(smallest_jpg)
             return
@@ -21,4 +26,7 @@ class ImageControl(Control):
             image.seek(0)
             image = image.read()
         self.image.set_from_binary(image)
+
+    def get(self) -> bytes:
+        return self.image.to_binary()
         

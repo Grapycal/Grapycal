@@ -64,7 +64,7 @@ class UnsqueezeNode(FunctionNode):
         self.label.set('U'+str(dim))
     
     def calculate(self, inputs):
-        return torch.unsqueeze(inputs,dim=self.dim.get())
+        return torch.unsqueeze(inputs[0],dim=self.dim.get())
     
 class SqueezeNode(FunctionNode):
     category = 'torch/operations'
@@ -84,7 +84,7 @@ class SqueezeNode(FunctionNode):
         self.label.set('S'+str(dim))
     
     def calculate(self, inputs):
-        return torch.squeeze(inputs,dim=self.dim.get())
+        return torch.squeeze(inputs[0],dim=self.dim.get())
     
 class RearrangeNode(FunctionNode):
     category = 'torch/operations'
