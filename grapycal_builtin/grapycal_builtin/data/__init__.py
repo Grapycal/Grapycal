@@ -79,7 +79,7 @@ class SplitNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.restore_attributes('keys','key_mode')
+        self.restore_attributes('keys','key mode')
 
     def add_key(self, key, position):
         self.add_out_port(key)

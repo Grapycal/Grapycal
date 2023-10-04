@@ -1,7 +1,6 @@
 /* App */
 * { margin: 0; box-sizing: border-box; }
 body{
-    color: #e7e7e7;
     background-color: rgb(0,0,0);
     /*no scroll*/
     overflow: hidden;
@@ -284,7 +283,6 @@ footer{
     
     
     font-size: 12px;
-    color: #bababa;
 }
 
 :is(.simple-node,.round-node) .slot-input-port .port-label{
@@ -349,9 +347,6 @@ footer{
     width: 100%;
     box-sizing: border-box;
     padding: 0px 5px;
-
-    color: #bababa;
-
     gap:2px;
     padding-bottom: 5px;
 }
@@ -365,7 +360,6 @@ footer{
     width: 100%;
     /* border-radius: 2px; */
     overflow: hidden;
-    color : #d5d5d5;
     font-size: 12px;
     min-height: 15px;
 }
@@ -623,11 +617,6 @@ input:enabled, textarea:enabled{
     font-size: 18px;
     line-height: 24px;
 }
-
-#extension_name{
-    color: #ababab;
-}
-
 #output_display{
     overflow:auto;
     white-space: nowrap;
@@ -637,9 +626,6 @@ input:enabled, textarea:enabled{
     color: #ff4949;
 }
 
-.output{
-    color: #ffffff;
-}
 
 .output-item{
     margin: 5px 0px;

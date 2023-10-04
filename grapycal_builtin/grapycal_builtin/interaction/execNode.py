@@ -22,6 +22,7 @@ class ExecNode(SourceNode):
         self.text_control = self.add_control(TextControl)
         self.label.set('Execute')
         self.shape.set('simple')
+        self.css_classes.append('fit-content')
         self.expose_attribute(self.text_control.text,'text',display_name='statements')
 
     def task(self):
