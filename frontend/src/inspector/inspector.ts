@@ -13,6 +13,7 @@ import { FloatEditor } from "./FloatEditor"
 import { ObjSetEditor } from "./ObjSetEditor"
 import { print } from "../devUtils"
 import { ButtonEditor } from "./ButtonEditor"
+import { OptionsEditor as OptionsEditor } from "./OptionEditor"
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -32,6 +33,7 @@ export class Inspector implements IComponentable{
         'float':FloatEditor,
         'objSet':ObjSetEditor,
         'button':ButtonEditor,
+        'options':OptionsEditor,
     }
 
     template = `
@@ -45,7 +47,7 @@ export class Inspector implements IComponentable{
         <div id="slot_attributes_hierarchy"></div>
         <hr>
         <div id="output_display"></div>
-        <button id="clear_output">Clear</button>
+        <button id="clear_output">Clear Output</button>
     </div>
     `;
     nodeTypeDiv: HTMLElement;

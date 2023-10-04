@@ -102,12 +102,17 @@ class ExtensionManager:
         
         # Remove nodes of the changed types
         nodes_to_recover:List[Tuple[objectsync.sobject.SObjectSerialized,str]] = []
+        wrapped_topics:set[Tuple[str,str]] = set()
         edges_to_recover:Dict[str,Tuple[str,str,str]] = {}
         removed_ports = set[str]()
         port_map_1 = {}
         for node in nodes_to_update:
             # First serialize the node
             nodes_to_recover.append((node.serialize(),node.get_parent().get_id()))
+
+            for name, topic in node._attributes.items():
+                if isinstance(topic,objectsync.WrappedTopic):
+                    wrapped_topics.add((node.get_id(),name))
 
             # To handle edge recovery, we need to know the mapping between old and new port ids.
             # We use the port name and the node id to identify a port.
@@ -126,22 +131,56 @@ class ExtensionManager:
 
             # Then destroy the node
             self._objectsync.destroy_object(node.get_id())
+
+
+        '''
+        Now, the old nodes, ports and edges are destroyed. Their information is stored in nodes_to_recover and edges_to_recover.
+        '''
         
         # Recover nodes with new version
+        
         node_id_map = {}
-        port_map_2 = {}
+        new_nodes:Dict[str,Tuple[objectsync.sobject.SObjectSerialized,Node]] = {}
         for old_serialized, parent_id in nodes_to_recover:
             type_name = f'{new_version.extension_name}.{old_serialized.type.split(".")[1]}'
 
             # Create the new node instance
             new_node: Node = self._objectsync.create_object_s(type_name,parent_id=parent_id) # type: ignore
+            new_nodes[new_node.get_id()] = (old_serialized,new_node)
+            node_id_map[old_serialized.id] = new_node.get_id()
+        
+        # Update values of wrapped topics
+        for old_serialized,new_node in new_nodes.values():
+            for attr in old_serialized.attributes:
+                if (old_serialized.id,attr[0]) in wrapped_topics:
+                    if isinstance(attr[2],list):
+                        tmp = []
+                        for value in attr[2]:
+                            if value in node_id_map:
+                                tmp.append(node_id_map[value])
+                            else:
+                                tmp.append(value)
+                        attr[2] = tmp
+                    elif isinstance(attr[2],dict):
+                        tmp = {}
+                        for key,value in attr[2].items():
+                            if value in node_id_map:
+                                tmp[key] = node_id_map[value]
+                            else:
+                                tmp[key] = value
+                        attr[2] = tmp
+                    else:
+                        attr[2] = node_id_map[attr[2]] if attr[2] in node_id_map else attr[2]
+                        
 
+        # Recover the new nodes
+        port_map_2 = {}
+        for old_serialized,new_node in new_nodes.values():
             # Let the node handle the recovery
             old_node_info = NodeInfo(old_serialized)
             new_node.old_node_info = old_node_info
-            new_node.recover_from_version('',old_node_info) #TODO version name
+            new_node.restore_from_version('',old_node_info) #TODO version name
 
-            node_id_map[old_serialized.id] = new_node.get_id()
 
             ports: List[Port] = new_node.in_ports.get() + new_node.out_ports.get() # type: ignore
             for port in ports:
@@ -150,6 +189,7 @@ class ExtensionManager:
             #TODO: let the new node class handle the recovery for backwards compatibility
 
         logger.info(f'Updated extension {package_name} from {old_version.extension_name} to {new_version.extension_name}')
+
 
         # Recover edges if possible
         def port_id_map(old_port_id:str) -> str|None:
@@ -182,9 +222,9 @@ class ExtensionManager:
             if new_tail_id is None or new_head_id is None:
                 continue # The port does not present in the new version, unfortunately we cannot recover the edge.
             
-            new_edge = self._objectsync.create_object(Edge,parent_id=parent_id)
-            new_edge.tail.set(as_type(self._objectsync.get_object(new_tail_id),OutputPort))
-            new_edge.head.set(as_type(self._objectsync.get_object(new_head_id),InputPort))
+            new_tail = self._objectsync.get_object(new_tail_id)
+            new_head = self._objectsync.get_object(new_head_id)
+            new_edge = self._objectsync.create_object(Edge,parent_id=parent_id,tail=new_tail,head=new_head)
 
         # Unimport old version
         self.unimport_extension(old_version.extension_name)
@@ -237,11 +277,8 @@ class ExtensionManager:
         '''
         Copy the current version of the extension to .grapycal/extensions, so it cannot be modified by the user.
         '''
-        if package_name == 'grapycal_builtin':
-            source_name = 'grapycal.grapycal_builtin'
-        else:
-            assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
-            source_name = package_name
+        assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
+        source_name = package_name
         source_path = dirname(importlib_util.find_spec(source_name).origin) # type: ignore
 
         if number is None:

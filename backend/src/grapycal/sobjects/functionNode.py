@@ -3,18 +3,18 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 class FunctionNode(Node):
     inputs = []
-    input_edge_limit = []
+    max_in_degree = []
     outputs = []
     display_port_names = True
 
     def build_node(self):
-        self._input_edge_limit = self.input_edge_limit[:]
-        while len(self._input_edge_limit) < len(self.inputs):
-            self._input_edge_limit.append(1)
-        for i in range(len(self._input_edge_limit)):
-            if self._input_edge_limit[i] is None:
-                self._input_edge_limit[i] = 64
-        for name, max_edges in zip(self.inputs,self._input_edge_limit): #type: ignore
+        self._max_in_degree = self.max_in_degree[:]
+        while len(self._max_in_degree) < len(self.inputs):
+            self._max_in_degree.append(None)
+        for i in range(len(self._max_in_degree)):
+            if self._max_in_degree[i] is None:
+                self._max_in_degree[i] = 1024
+        for name, max_edges in zip(self.inputs,self._max_in_degree): #type: ignore
             display_name = name if self.display_port_names else ''
             self.add_in_port(name,max_edges,display_name=display_name)
         for name in self.outputs:
@@ -31,13 +31,12 @@ class FunctionNode(Node):
         self.run(self.task)
 
     def task(self):
-        if self.destroyed:
+        if self.is_destroyed():
             return
-        inputs = []
+        inputs = {}
         for port in self.in_ports:
-            inputs.append([edge.get_data() for edge in port.edges])
-
-        result = self.calculate(inputs)
+            inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
+        result = self.calculate(**inputs)
 
         if result is None:
             return
@@ -45,16 +44,15 @@ class FunctionNode(Node):
         if len(self.out_ports) == 1:
             self.out_ports[0].push_data(result)
         else:
-            for port, data in zip(self.out_ports, result):
-                port.push_data(data)
+            for k,v in result.items():
+                self.get_out_port(k).push_data(v)
 
-
-    def calculate(self, inputs: list[Any]):
+    def calculate(self, **inputs)->Any:
         '''
         Define the function of this node here.
 
-        :param inputs: A list of lists. Each list contains the data from one input port. For example, if there is only one input port with two\
-            edges connected, the value of inputs will be `[[data_from_edge_1, data_from_edge_2]]`.
+        :param **inputs: A dict of lists. Each dict entry is the data from one input port. For example, if there is only one input port named "in" with two\
+            edges connected, the value of inputs will be `{'in':[data_from_edge_1, data_from_edge_2]}`.
         :return: A list of outputs. Each entry in the list will be pushed to one output port. For example, if there is only one output port,\
             the value of the return suold be `[data_to_port]`. If there are multiple edges connected to one output port,\
             they will all receive the same data.
@@ -65,9 +63,8 @@ class FunctionNode(Node):
                 inputs = ['items']
                 outputs = ['sum']
                 ...
-                def calculate(self, inputs):
-                    inp = inputs[0] # Retrieve the data from the input port
-                    return [sum(inp)] # Return the sum of the data
+                def calculate(self, items):
+                    return {'sum':sum(items)} # Return the sum of the data
         '''
         raise NotImplementedError
 

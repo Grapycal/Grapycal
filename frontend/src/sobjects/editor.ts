@@ -12,18 +12,18 @@ import { print } from "../devUtils"
 export class Editor extends CompSObject{
     readonly template: string = `
     <div style="width:100%;height:100%">
-        <div class="viewport" id="Viewport" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+        <div class="viewport" id="Viewport" style="width:100%;height:100%;top:0;left:0;">
             <div style="position:absolute;top:50%;left:50%">
                 
                 <div id="slot_default" class="editor" style="position:absolute;top:50%;left:50%;width:1px;height:1px;">
                 <svg class="bg" id="bg"
                     <defs>
                         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-                            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#444444" stroke-width="0.5" />
+                            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#222222" stroke-width="0.5" />
                         </pattern>
                         <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
                             <rect width="80" height="80" fill="url(#smallGrid)" />
-                            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#444444" stroke-width="1" />
+                            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#333" stroke-width="1" />
                         </pattern>
                     </defs>
 
@@ -46,7 +46,7 @@ export class Editor extends CompSObject{
     
     constructor(objectsync: ObjectSyncClient, id: string){
         super(objectsync,id);
-        this.htmlItem = new HtmlItem(this, document.body);
+        this.htmlItem = new HtmlItem(this, document.body.getElementsByClassName('main')[0] as HTMLElement);
         this.htmlItem.applyTemplate(this.template);
         let viewport = this.htmlItem.getHtmlEl('Viewport')
         let editor = this.htmlItem.getHtmlEl('slot_default')

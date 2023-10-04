@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
@@ -13,6 +13,7 @@ import { Sidebar } from './sidebar'
 import { Editor } from './editor'
 import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
+import { ErrorPopup } from '../ui_utils/errorPopup'
 
 export class ExposedAttributeInfo
 {
@@ -22,6 +23,7 @@ export class ExposedAttributeInfo
 }
 
 export class Node extends CompSObject {
+    errorPopup: ErrorPopup;
 
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
@@ -44,7 +46,8 @@ export class Node extends CompSObject {
     exposed_attributes: ListTopic<ExposedAttributeInfo> = this.getAttribute('exposed_attributes', ListTopic<ExposedAttributeInfo>)
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
-
+    running: IntTopic = this.getAttribute('running', IntTopic)
+    
     private _isPreview: boolean
     get isPreview(): boolean {
         return this._isPreview
@@ -63,7 +66,7 @@ export class Node extends CompSObject {
 
     protected readonly templates: {[key: string]: string} = {
     normal: 
-        `<div class="node normal-node">
+        `<div class="node normal-node" id="slot_default">
             
             <div class="node-border-container">
                 <div class="node-border" id="node-border">
@@ -74,14 +77,14 @@ export class Node extends CompSObject {
             <div class="node-content flex-vert space-between">
                 <div id="label" class="node-label full-width"></div>
                 <div class="flex-horiz space-between full-width">
-                    <div id="slot_input_port" class="no-width flex-vert space-evenly center slot-input-port"></div>
-                    <div id="slot_output_port" class="no-width flex-vert space-evenly center slot-output-port"></div>
+                    <div id="slot_input_port" class=" flex-vert space-evenly center slot-input-port"></div>
+                    <div id="slot_output_port" class=" flex-vert space-evenly center slot-output-port"></div>
                 </div>
                 <div id="slot_control" class="slot-control flex-vert space-between"> </div>
             </div>
         </div>`,
     simple:
-        `<div class="node simple-node node-content">
+        `<div class="node simple-node" id="slot_default">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
@@ -89,30 +92,32 @@ export class Node extends CompSObject {
             <div class="node-selection"></div>
             
             <div class=" flex-horiz space-between">
-                <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
 
-                <div class="full-width flex-vert space-evenly">
+                <div class="full-width flex-vert space-evenly node-content">
                     <div id="label" class="node-label full-width"></div>
                     <div id="slot_control"  class="slot-control"> </div>
                 </div>
 
-                <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
             </div>
         </div>`,
     round:
-        `<div class="node round-node flex-horiz space-between" >
+        `<div class="node round-node " id="slot_default">
             <div class="node-border-container">
                 <div class="node-border"id="node-border">
                 </div>
             </div>
             <div class="node-selection"></div>
-            <div id="slot_input_port" class="no-width flex-vert space-evenly slot-input-port"></div>
-            <div class="full-width flex-vert space-evenly"> 
-                <div id="label" class="center-align"></div>
+            <div class="flex-horiz node-content">
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+                <div class="full-width flex-vert space-evenly"> 
+                    <div id="label" class="center-align node-label"></div>
+                </div>
+                <div id="slot_control" style="display:none"></div>
+                
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
             </div>
-            <div id="slot_control" style="display:none"></div>
-            
-            <div id="slot_output_port" class="no-width flex-vert space-evenly slot-output-port"></div>
         </div>`,
     }
 
@@ -166,9 +171,37 @@ export class Node extends CompSObject {
             }
         })
 
+        this.link(this.running.onSet2, (_:number,running: number) => {
+            if(running == 0)
+                this.htmlItem.baseElement.classList.add('running')
+            else{
+                this.htmlItem.baseElement.classList.add('running')
+                let tmp =  running
+                setTimeout(() => {
+                    if(tmp == this.running.getValue())
+                        this.htmlItem.baseElement.classList.remove('running')
+                }, 200); //delay of chatrooom sending buffer is 200ms
+            }
+        })
+
+        if (this.running.getValue() == 0) this.htmlItem.baseElement.classList.add('running')
+
+        this.link(this.output.onInsert, ([type, value]: [string, string]) => {
+                if(type == 'error'){
+                this.objectsync.doAfterTransitionFinish(() => { 
+                    // Sometimes onInsert is invoked by reverted preview change.
+                    if(this.output.getValue().length == 0) return
+                    this.errorPopup.set('Error',value)
+                    this.errorPopup.show()
+                    })
+                }
+        })
+
+
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
+        this.errorPopup = new ErrorPopup(this)
 
         this.transform.pivot = new Vector2(0.5, 0)
         if(!this._isPreview){
@@ -187,6 +220,7 @@ export class Node extends CompSObject {
                 this.htmlItem.moveToFront()
             })
             this.transform.dragged.add((delta:Vector2) => {
+                print(this.transform.pivot)
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
                 this.objectsync.record(() => {
@@ -249,11 +283,11 @@ export class Node extends CompSObject {
         this.link(this.onRemoveChild,this.moved.invoke)
         this.link(this.transform.onChange,this.moved.invoke)
 
-        setTimeout(() => {
-            let border = this.htmlItem.getHtmlEl('node-border')
-            bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
+        // setTimeout(() => {
+        //     let border = this.htmlItem.getHtmlEl('node-border')
+        //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
-        }, 0);
+        // }, 0);
 
     }
 
@@ -263,8 +297,10 @@ export class Node extends CompSObject {
             newParent.addItem(this.htmlItem, this.category.getValue())
             this.transform.enabled = false
         }
-        else
+        else{
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
+            this.errorPopup.htmlItem.setParent(this.htmlItem.parent)
+        }
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
             this.transform.enabled = false
@@ -293,5 +329,6 @@ export class Node extends CompSObject {
         if(this.parent instanceof Sidebar){
             this.parent.removeItem(this.htmlItem, this.category.getValue())
         }
+        this.errorPopup.destroy()
     }
 }

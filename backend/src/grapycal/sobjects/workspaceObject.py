@@ -31,6 +31,13 @@ class WorkspaceObject(SObject):
             for port in node.in_ports.get() + node.out_ports.get():
                 for edge in port.edges:
                     edges.add(edge)
+                    
+        for edge in edges:
+            if edge.is_destroyed():
+                raise Exception(f'Edge {edge} is already destroyed')
+        for node in nodes:
+            if node.is_destroyed():
+                raise Exception(f'Node {node} is already destroyed')
 
         for edge in edges:
             edge.remove()

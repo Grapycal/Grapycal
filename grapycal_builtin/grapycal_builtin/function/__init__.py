@@ -40,8 +40,8 @@ class LambdaNode(Node):
             self.outputs.insert('')
             self.text_controls[''].text.set('x')
 
-    def recover_from_version(self, version, old: NodeInfo):
-        super().recover_from_version(version, old)
+    def restore_from_version(self, version, old: NodeInfo):
+        super().restore_from_version(version, old)
         self.input_args.set(old['input_args'])
         self.outputs.set(old['outputs'])
         for out_name in old['outputs']:
@@ -57,7 +57,7 @@ class LambdaNode(Node):
         self.add_out_port(name,display_name = name)
         new_control = self.add_control(TextControl,name=name)
         self.text_controls[name]=new_control
-        new_control.label.set(f'{name}= ')
+        new_control.label.set(f'{name} = ')
         
     def on_output_removed(self, name, position):
         self.remove_out_port(name)

@@ -3,7 +3,35 @@ import { Action, Constructor, Vector2, as, defined } from "../utils"
 import { Component, IComponentable } from "./component"
 import { Transform } from "./transform"
 
+function addPrefixToHtmlClasses(html: Element, prefix: string): void{
+    let target:Element|DocumentFragment = html;
+    if(html instanceof HTMLTemplateElement)
+        target = html.content;
+    target.querySelectorAll('[class]').forEach(element => {
+        const classList = element.classList;
+        classList.forEach(className => {
+            // The original class is preserved. For example, .class becomes .class .prefix-class
+            // The original class is used by the theme css.
+            classList.add(`${prefix}-${className}`);
+        });
+    });
+}
+
+function addCssToDocument(css:string){
+    var style = document.createElement('style')
+    style.innerHTML = css
+    document.head.prepend(style) // allow overriding by theme css
+}
+
+function addPrefixToCssClasses(css: string, prefix: string): string{
+    return css.replace(/\.([a-zA-Z0-9_-]+)[ ]*\{/g, (match, className) => {
+        return `.${prefix}-${className}{`;
+    });
+}
+
 export class HtmlItem extends Component{
+    private static styleAdded = new Set<string>()
+
     static templateIdGenerator: number = 0;
 
     baseElement: Element;
@@ -14,12 +42,26 @@ export class HtmlItem extends Component{
     children: {item:HtmlItem,slotName:string,order:'append'|'prepend'}[] = [];
     readonly templateChanged = new Action<[]>();
     templateId: string='';
+    private useCss: boolean = false;
 
-    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string|HTMLTemplateElement = null){
+    constructor(object:IComponentable, specifiedParentElement: HTMLElement = null, template: string|HTMLTemplateElement = null,
+        css = ''
+        ){
         super(object);
         this.baseElement = null;
         this.parent_ = null;
         this.parent_slot = specifiedParentElement;
+
+        if(css !== ''){
+            if (!HtmlItem.styleAdded.has(object.constructor.name)) {
+                HtmlItem.styleAdded.add(object.constructor.name)
+
+                css = addPrefixToCssClasses(css, this.object.constructor.name);
+                addCssToDocument(css);
+            }
+            this.useCss = true;
+        }
+
         if(template !== null)
             this.applyTemplate(template);
     }
@@ -35,6 +77,10 @@ export class HtmlItem extends Component{
             templateElement.innerHTML = template;
         }else{
             templateElement = template;
+        }
+
+        if(this.useCss){
+            addPrefixToHtmlClasses(templateElement, this.object.constructor.name);
         }
 
         this.baseElement = defined(templateElement.content.firstElementChild);
@@ -58,7 +104,11 @@ export class HtmlItem extends Component{
         // search for elements that id = slot_name
         // if found, add to slots:
         this.slots = new Map();
-        const slotElements = this.baseElement.querySelectorAll('[id^="slot_"]');
+        const slotElements = this.baseElement.querySelectorAll('[id^="slot_"]')
+        if(this.baseElement.id.startsWith('slot_')){
+            const slotName = this.baseElement.id.slice(5);
+            this.addSlot(slotName, as(this.baseElement,HTMLElement));
+        }
 
         for(let element of slotElements){
             const slotName = element.id.slice(5);
@@ -123,6 +173,40 @@ export class HtmlItem extends Component{
             return as(element,type);
         }
     }
+
+    getHtmlElByClass(className: string): HTMLElement{
+        //match class and template_id
+        const element = this.baseElement.querySelector(`[template_id="${this.templateId}"].${className}`);
+        //const element = this.baseElement.querySelector(`.${className}`);
+        //check baseElement
+        if (this.baseElement.classList.contains(className))
+            return as(this.baseElement,HTMLElement);
+        if (element === null)
+            throw new Error(`Element with class ${className} not found`);
+        return as(element,HTMLElement);
+    }
+
+    getElByClass<T extends Element>(className: string,type?:Constructor<T>): T{
+        //match class and template_id
+        const element = this.baseElement.querySelector(`[template_id="${this.templateId}"].${className}`);
+        //const element = this.baseElement.querySelector(`.${className}`);
+        //check baseElement
+        if (this.baseElement.classList.contains(className))
+            if(type === undefined){
+                return this.baseElement as any;
+            }else{
+                return as(this.baseElement,type);
+            }
+        if (element === null)
+            throw new Error(`Element with class ${className} not found`);
+        if(type === undefined){
+            return element as any;
+        }else{
+            return as(element,type);
+        }
+    }
+
+
 
     setParent(parent: HtmlItem, slot: string = 'default', order: "prepend"|"append"="append"): void{
         if (this.parent_ === parent) return;

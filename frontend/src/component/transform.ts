@@ -79,6 +79,13 @@ export class Transform extends Component{
         this.translationChanged.invoke(translation.x, translation.y);
         this.onChange.invoke();
     }
+
+    get globalPosition(){
+        if(this.parent instanceof TransformRoot)
+            return this.translation;
+        else
+            return this.parent.localToWorld(this.translation);
+    }
     set globalPosition(globalPosition: Vector2){
         this.translation = this.parent.worldToLocal(globalPosition);
     }
@@ -197,6 +204,13 @@ export class Transform extends Component{
     get size(){
         let rect = this.targetElement.getBoundingClientRect();
         return new Vector2(rect.width, rect.height);
+    }
+
+    get localSize(){
+        return new Vector2(
+            this.targetElement.offsetWidth,
+            this.targetElement.offsetHeight
+        );
     }
 
     // get worldCenter(){

@@ -30,7 +30,6 @@ export function bloomDiv(borderDiv: HTMLElement,textDiv: HTMLElement) {
     borderDiv.style.boxShadow = boxShadow.slice(0, -1)
     borderDiv.style.borderColor = brightess.toHex()
     textDiv.style.color = brightess.toHex()
-    print(borderDiv)
 }
 
 export function glowText(text: HTMLElement) {

@@ -17,12 +17,15 @@
 
 # -- Project information -----------------------------------------------------
 
+import os
+
+
 project = 'Grapycal'
 copyright = '2023, Grapycal Team'
 author = 'Grapycal Team'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.4.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -33,8 +36,12 @@ release = '0.2.0'
 extensions = [
     # 'sphinx.ext.autodoc',
     # 'sphinx.ext.autosummary',
-    'autoapi.extension'
+    "sphinx.ext.autosectionlabel",
 ]
+autosectionlabel_prefix_document = True
+
+if not os.environ.get('NO_BUILD_API_DOCS'):
+    extensions.append('autoapi.extension')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

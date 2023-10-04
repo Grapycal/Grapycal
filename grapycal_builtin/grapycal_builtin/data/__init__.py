@@ -35,9 +35,9 @@ class VariableNode(SourceNode):
         self.value = None
         self.has_value = False
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
-        self.recover_controls('variable_name')
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_controls('variable_name')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.in_port:
@@ -75,6 +75,10 @@ class SplitNode(Node):
     def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('keys')
 
     def add_key(self, key, position):
         self.add_out_port(key)

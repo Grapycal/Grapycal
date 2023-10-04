@@ -14,20 +14,34 @@ export class TextControl extends Control {
     protected template = `
     <div class="control flex-horiz">
         <div class="label" id="label">Text</div>
-        <input type="text" class="control-text text-field full-height full-width" id="text-field">
+        <input type="text" class="control-text text-field full-height " id="text-field">
     </div>
+    `
+
+    protected css: string = `
+        .label{
+            flex-shrink: 0;
+            min-width: 20px;
+        }
     `
 
     protected onStart(): void {
         super.onStart()
-        this.textField = this.htmlitem.getEl("text-field", HTMLInputElement)
+        this.textField = this.htmlItem.getEl("text-field", HTMLInputElement)
         this.textField.value = this.text.getValue()
         
         new BindInputBoxAndTopic(this,this.textField, this.text,this.objectsync,true)
 
-        let labelEl = this.htmlitem.getEl("label")
+        let labelEl = this.htmlItem.getEl("label", HTMLDivElement)
         this.link(this.label.onSet, (label) => {
-            labelEl.textContent = label
+            if (label == '') {
+                labelEl.style.display = 'none'
+                return
+            }
+            //replace spaces with non-breaking spaces
+            label = label.replace(/ /g, "\u00a0")
+
+            labelEl.innerHTML = label
         })
 
         this.link(this.editable.onSet, (editable) => {

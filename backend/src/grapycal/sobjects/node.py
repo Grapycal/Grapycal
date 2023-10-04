@@ -2,6 +2,11 @@ from abc import ABCMeta
 import io
 from itertools import count
 import logging
+import random
+from grapycal.sobjects.controls.buttonControl import ButtonControl
+from grapycal.sobjects.controls.imageControl import ImageControl
+
+from grapycal.sobjects.controls.textControl import TextControl
 logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
@@ -43,6 +48,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
+        self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
 
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
@@ -73,7 +79,6 @@ class Node(SObject,metaclass=NodeMeta):
         '''
 
         self.workspace:Workspace = self._server.globals.workspace
-        self.destroyed = False
         self.old_node_info :NodeInfo|None = None
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
@@ -84,7 +89,7 @@ class Node(SObject,metaclass=NodeMeta):
             self.editor = None
 
         self.on('double_click', self.double_click, is_stateful=False)
-        self.on('spawn', self._spawn , is_stateful=False)
+        self.on('spawn', self.spawn , is_stateful=False)
 
         
         self._output_stream = OutputStream(self.raw_print)
@@ -96,14 +101,14 @@ class Node(SObject,metaclass=NodeMeta):
     def init_node(self):
         pass
 
-    def recover_from_version(self,version:str,old:NodeInfo):
+    def restore_from_version(self,version:str,old:NodeInfo):
         '''
         Called when the node is created as a result of a old node being upgraded.
         The old node's information (including attribute values) is in the `old` argument.
         '''
         self.translation.set(old['translation'])
 
-    def recover_attributes(self,*attribute_names:str|tuple[str,str]):
+    def restore_attributes(self,*attribute_names:str|tuple[str,str]):
         '''
         Recover attributes from the old node.
         '''
@@ -126,7 +131,7 @@ class Node(SObject,metaclass=NodeMeta):
             else:
                 new_attr.set(old_attr)
 
-    def recover_controls(self,*control_names:str|tuple[str,str]):
+    def restore_controls(self,*control_names:str|tuple[str,str]):
         '''
         Recover controls from the old node.
         '''
@@ -142,9 +147,9 @@ class Node(SObject,metaclass=NodeMeta):
             if not (old_name in self.old_node_info.controls):
                 logger.warning(f'Control {old_name} does not exist in the old node of {self}')
                 continue
-            self.controls[new_name].recover_from(self.old_node_info.controls[old_name])
+            self.controls[new_name].restore_from(self.old_node_info.controls[old_name])
 
-    def _spawn(self, client_id):
+    def spawn(self, client_id):
         '''
         Called when a client wants to spawn a node.
         '''
@@ -157,7 +162,13 @@ class Node(SObject,metaclass=NodeMeta):
         Note: Overrided methods should call return super().destroy() at the end.
         '''
         self._output_stream.close()
-        self.destroyed = True
+        # remove all edges connected to the ports
+        for port in self.in_ports:
+            for edge in port.edges[:]:
+                edge.remove()
+        for port in self.out_ports:
+            for edge in port.edges[:]:
+                edge.remove()
         return super().destroy()
 
     def add_in_port(self,name:str,max_edges=64,display_name=None):
@@ -189,7 +200,7 @@ class Node(SObject,metaclass=NodeMeta):
             raise ValueError(f'Port with name {name} does not exist')
         
         #remove all edges connected to the port
-        for edge in port.edges: 
+        for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?   
 
         #remove the port
@@ -209,12 +220,14 @@ class Node(SObject,metaclass=NodeMeta):
             raise ValueError(f'Port with name {name} does not exist')
         
         #remove all edges connected to the port
-        for edge in port.edges: 
+        for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?
+            print('edge removed',edge)
 
         #remove the port
         self.out_ports.remove(port)
         port.remove()
+        print('port removed',port)
 
     def get_in_port(self,name:str) -> InputPort:
         '''
@@ -228,13 +241,33 @@ class Node(SObject,metaclass=NodeMeta):
     
     def get_out_port(self,name:str) -> OutputPort:
         '''
-        Get an output port by its name.
+        an output port by its name.
         '''
         for port in self.out_ports:
             assert port is not None
             if port.name.get() == name:
                 return port
         raise ValueError(f'Port with name {name} does not exist')
+    
+    def has_in_port(self,name:str) -> bool:
+        '''
+        Check if an input port exists.
+        '''
+        for port in self.in_ports:
+            assert port is not None
+            if port.name.get() == name:
+                return True
+        return False
+    
+    def has_out_port(self,name:str) -> bool:
+        '''
+        Check if an output port exists.
+        '''
+        for port in self.out_ports:
+            assert port is not None
+            if port.name.get() == name:
+                return True
+        return False
     
     T = TypeVar('T', bound=Control)
     def add_control(self,control_type:type[T],name:str|None=None,**kwargs) -> T:
@@ -255,6 +288,27 @@ class Node(SObject,metaclass=NodeMeta):
         self.controls.add(name,control)
         return control
     
+    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True,name:str|None=None) -> TextControl:
+        '''
+        Add a text control to the node.
+        '''
+        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable,name=name)
+        return control
+    
+    def add_button_control(self,label:str='',name:str|None=None) -> ButtonControl:
+        '''
+        Add a button control to the node.
+        '''
+        control = self.add_control(ButtonControl,label=label,name=name)
+        return control
+    
+    def add_image_control(self,name:str|None=None) -> ImageControl:
+        '''
+        Add an image control to the node.
+        '''
+        control = self.add_control(ImageControl,name=name)
+        return control
+
     def remove_control(self,control:str|Control):
         if isinstance(control,str):
             control = self.controls[control]
@@ -265,15 +319,15 @@ class Node(SObject,metaclass=NodeMeta):
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
     def add_attribute(
         self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
-        editor_type:str|None=None, editor_args:dict|None=None, display_name:str|None=None
+        editor_type:str|None=None, display_name:str|None=None, **editor_args
         ) -> T1: 
         
         attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful)
         if editor_type is not None:
-            self.expose_attribute(attribute,editor_type,editor_args,display_name)
+            self.expose_attribute(attribute,editor_type,display_name,**editor_args)
         return attribute
     
-    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,editor_args=None,display_name=None):
+    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,**editor_args):
         '''
         Expose an attribute to the editor.
         Args:
@@ -312,7 +366,7 @@ class Node(SObject,metaclass=NodeMeta):
     def raw_print(self,data):
         if data=='':
             return
-        if self.destroyed:
+        if self.is_destroyed():
             logger.debug(f'Output received from a destroyed node {self.get_id()}: {data}')
         else:
             if len(self.output) > 100:
@@ -343,12 +397,14 @@ class Node(SObject,metaclass=NodeMeta):
         Run a task in the background thread.
         '''
         def task_wrapper():
+            self.running.set(0)
             self.workspace.background_runner.set_exception_callback(self._on_exception)
             if redirect_output:
                 with self._redirect_output():
                     task()
             else:
                 task()
+            self.running.set(random.randint(0,100))
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
@@ -356,6 +412,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Run a task in the current thread.
         '''
+        self.running.set(0)
         try:
             if redirect_output:
                 with self._redirect_output():
@@ -364,6 +421,7 @@ class Node(SObject,metaclass=NodeMeta):
                 task()
         except Exception as e:
             self._on_exception(e)
+        self.running.set(random.randint(0,100))
 
     def run(self,task:Callable[[],Any],background=True,to_queue=True,redirect_output=False,**kwargs):
         '''
@@ -384,8 +442,9 @@ class Node(SObject,metaclass=NodeMeta):
             self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e):
+        self.running.set(random.randint(0,100))
         message = ''.join(traceback.format_exc())
-        if self.destroyed:
+        if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
             if len(self.output) > 100:

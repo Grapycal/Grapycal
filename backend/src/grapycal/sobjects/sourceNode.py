@@ -26,4 +26,5 @@ class SourceNode(Node):
         self.run(self.task)
 
     def on_activate(self, edge:Edge, port:InputPort):
+        self.run_port.get_data() # clear data_ready so UI looks resonable 
         self.run(self.task)
