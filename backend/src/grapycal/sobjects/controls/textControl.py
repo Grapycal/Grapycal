@@ -16,4 +16,6 @@ class TextControl(Control):
         self.text = self.add_attribute('text', StringTopic, text, is_stateful= not readonly)
         self.label = self.add_attribute('label', StringTopic, label)
         self.editable = self.add_attribute('editable', IntTopic, 1 if editable else 0)
-        
+    
+    def set(self, text:str):
+        self.text.set(text)

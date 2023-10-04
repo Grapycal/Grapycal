@@ -189,7 +189,7 @@ websockets = "^11.0.3"
 type = "git"
 url = "https://github.com/eri24816/ChatRoom.git"
 reference = "main"
-resolved_reference = "ce073b2807fad51172f5bf4f6eb5b108d8851625"
+resolved_reference = "81690b0b467a74fa29a298e053ad3eee98f57926"
 
 [[package]]
 name = "colorama"
@@ -412,7 +412,7 @@ chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
 type = "git"
 url = "https://github.com/eri24816/ObjectSync.git"
 reference = "master"
-resolved_reference = "33f22ca3308e107e54c85fb43e4c2d20224d946b"
+resolved_reference = "d032a1e5d44791214c2f02bb375ccebfbfb44199"
 
 [[package]]
 name = "packaging"

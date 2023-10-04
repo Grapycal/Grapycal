@@ -14,6 +14,8 @@ import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
 import { ImageControl } from './sobjects/controls/imageControl'
 import { Callback } from 'chatroom-client/src/utils'
+import { Footer } from './ui_utils/footer'
+import { Header } from './ui_utils/header'
 
 export const soundManager = new SoundManager();
 
@@ -61,12 +63,14 @@ document.addEventListener('keydown', function(event) {
     }
     if (event.key === 'Tab') {
         event.preventDefault();
-        let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
-        console.log(sidebar.classList);
-        if (sidebar.classList.contains('collapsed')) {
-            sidebar.classList.remove('collapsed');
+        let sidebarRight = document.getElementById('sidebar-collapse-right').parentElement;
+        let sidebarLeft = document.getElementById('sidebar-collapse-left').parentElement
+        if (sidebarRight.classList.contains('collapsed')) {
+            sidebarRight.classList.remove('collapsed');
+            sidebarLeft.classList.remove('collapsed');
         } else {
-            sidebar.classList.add('collapsed');
+            sidebarRight.classList.add('collapsed');
+            sidebarLeft.classList.add('collapsed');
         }
     }
 });
@@ -88,7 +92,6 @@ function documentReady(callback: Callback): void {
 documentReady(function(event) {
     document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
-        console.log(sidebar.classList);
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
         } else {
@@ -98,7 +101,6 @@ documentReady(function(event) {
 
     document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
-        console.log(sidebar.classList);
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
         } else {
@@ -110,3 +112,6 @@ documentReady(function(event) {
 
 
 expose('c',objectsync)
+
+new Header()
+new Footer()

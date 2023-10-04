@@ -1,6 +1,6 @@
 import io
-from typing import Any, Dict
-from grapycal import Node, Edge, InputPort, TextControl, ButtonControl
+from typing import Any, Dict, List
+from grapycal import Node, Edge, InputPort, TextControl, ButtonControl, IntTopic, FunctionNode
 from grapycal.core.workspace import Workspace
 from grapycal.sobjects.controls.imageControl import ImageControl
 from grapycal.sobjects.edge import Edge
@@ -35,20 +35,19 @@ class IsEvenNode(Node):
 
 
 class CounterNode(Node):
-    category = 'function'
-    def build_node(self, is_preview=False, **build_node_args):
-        self.text = self.add_control(TextControl)
-        self.text.text.set('0')
-        self.add_control(ButtonControl, label='Add').on_click += self.button_clicked
-        self.add_in_port('set')
-        self.add_out_port('get')
+    category = 'demo'
+
+    def build_node(self):
+        self.text = self.add_text_control('0')
+        self.button = self.add_button_control('Add')
+        self.i = self.add_attribute('count', IntTopic, 0)
 
     def init_node(self):
-        self.i=0
+        self.button.on_click += self.button_clicked
 
     def button_clicked(self):
-        self.i += 1
-        self.text.text.set(str(self.i))
+        self.i.set(self.i.get() + 1)
+        self.text.set(str(self.i.get()))
 
 # class TestNode2(Node):
 #     category = 'test'
@@ -66,3 +65,16 @@ class CounterNode(Node):
 #         self.add_in_port('in')
 #         self.label.set('<-')
 #         self.add_control(TextControl).text.set('<-')
+
+class AdditionNode(FunctionNode):
+    '''
+    Adds a set of numbers together.
+    '''
+    category = 'function/math'
+
+    inputs = ['numbers']
+    max_in_degree = [None]
+    outputs = ['sum']
+
+    def calculate(self, data: List[Any]):
+        return sum(data)

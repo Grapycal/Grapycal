@@ -5,3 +5,7 @@ edge{
 .edge-label{
     color: #aaaaaa;
 }
+
+.edge.data-ready{
+    stroke: var(--t2);
+}

@@ -15,7 +15,7 @@ export class ButtonControl extends Control {
 
     protected onStart(): void {
         super.onStart()
-        this.button = this.htmlitem.getEl("button")
+        this.button = this.htmlItem.getEl("button")
         this.link(this.label.onSet, (label) => {
             this.button.textContent = label
         })

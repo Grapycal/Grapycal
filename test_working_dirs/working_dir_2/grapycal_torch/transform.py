@@ -9,7 +9,7 @@ import torch
 
 class ToTensorNode(FunctionNode):
     category = 'torch/operations'
-    inputs = ['inp']
+    inputs = ['inputs']
     outputs = ['out']
     def build_node(self):
         super().build_node()
@@ -21,7 +21,7 @@ class ToTensorNode(FunctionNode):
         super().init_node()
 
     def calculate(self, inputs: list[Any]):
-        x = inputs[0][0]
+        x = inputs[0]
         match x:
             case torch.Tensor():
                 return x

@@ -1,6 +1,7 @@
+import random
 from typing import Any
 from grapycal.sobjects.port import InputPort, OutputPort, Port
-from objectsync import SObject, StringTopic, ObjTopic
+from objectsync import SObject, StringTopic, ObjTopic, IntTopic
 from objectsync.sobject import SObjectSerialized
 
 try:
@@ -16,9 +17,9 @@ class Edge(SObject):
         self.tail = self.add_attribute('tail', ObjTopic[OutputPort], tail)
         self.head = self.add_attribute('head', ObjTopic[InputPort], head)
         self.label = self.add_attribute('label', StringTopic, is_stateful=False)
+        self.data_ready_topic = self.add_attribute('data_ready',IntTopic,1,is_stateful=False) # 0 for running, other for not running
 
-    def init(self):
-        
+    def init(self):                
         self._data = None
         self._activated = False
         self._data_ready = False
@@ -32,6 +33,10 @@ class Edge(SObject):
 
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
+        if new_tail is None:
+            self.remove()
+            #return
+            raise Exception('Edge tail cannot be None')
         if old_tail:
             old_tail.remove_edge(self)
         if new_tail:
@@ -39,6 +44,10 @@ class Edge(SObject):
         self.label.set('')
 
     def on_head_set(self, old_head:Port|None, new_head:InputPort|None):
+        if new_head is None:
+            self.remove()
+            #return
+            raise Exception('Edge head cannot be None')
         if old_head:
             old_head.remove_edge(self)
         if new_head:
@@ -60,12 +69,14 @@ class Edge(SObject):
         self._activated = False
         if not self.reaquirable:
             self._data_ready = False
+            self.data_ready_topic.set(random.randint(0,10000))
         return self._data
     
     def push_data(self, data, label:str|None=None):
         self._data = data
         self._activated = True
         self._data_ready = True
+        self.data_ready_topic.set(0)
         if label:
             self.label.set(label)
         else:

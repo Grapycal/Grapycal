@@ -1,4 +1,5 @@
 from grapycal.app import GrapycalApp
+from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.utils.config import load_config
 from grapycal.sobjects.controls import TextControl, ButtonControl, ImageControl
 from grapycal.sobjects.node import Node

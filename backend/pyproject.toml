@@ -1,13 +1,25 @@
 [tool.poetry]
 name = "grapycal"
-version = "0.2.0"
-description = ""
-authors = ["eri24816 <a931eric@gmail.com>"]
+version = "0.4.0"
+description = "A highly interactive visual programming language"
+authors = [
+    "eri24816 <a931eric@gmail.com>",
+    "secminhr <secminhrian@gmail.com>",
+    "peterxcli <peterxcli@gmail.com>", 
+    "greenslime1024 <greenslime1024@gmail.com>",
+]
+
+maintainers = [
+    "eri24816 <a931eric@gmail.com>",
+]
+
+license = "BSD-3-Clause"
 readme = "README.md"
+documentation = "https://eri24816.github.io/Grapycal/"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = { git = "https://github.com/eri24816/ObjectSync.git", branch = "master"}
+objectsync = "^0.4.0"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"

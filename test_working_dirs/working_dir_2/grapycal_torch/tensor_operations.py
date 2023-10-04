@@ -12,7 +12,7 @@ class CatNode(FunctionNode):
         self.label.set('🐱0')
         self.shape.set('round')
         self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
-        self.add_in_port('in')
+        self.add_in_port('inputs')
         self.add_out_port('out')
     
     def init_node(self):
@@ -24,7 +24,7 @@ class CatNode(FunctionNode):
         self.label.set('🐱'+str(dim))
     
     def calculate(self, inputs: list[Any]):
-        return torch.cat(inputs[0],dim=self.dim.get())
+        return torch.cat(inputs,dim=self.dim.get())
 
 class StackNode(FunctionNode):
     category = 'torch/operations'
@@ -32,7 +32,7 @@ class StackNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('☰0')
         self.shape.set('round')
-        self.add_in_port('in')
+        self.add_in_port('inputs')
         self.add_out_port('out')
     
     def init_node(self):
@@ -44,7 +44,7 @@ class StackNode(FunctionNode):
         self.label.set('☰'+str(dim))
     
     def calculate(self, inputs: list[Any]):
-        return torch.stack(inputs[0],dim=self.dim.get())
+        return torch.stack(inputs,dim=self.dim.get())
     
 class UnsqueezeNode(FunctionNode):
     category = 'torch/operations'
@@ -52,7 +52,7 @@ class UnsqueezeNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('U0')
         self.shape.set('round')
-        self.add_in_port('in')
+        self.add_in_port('inputs')
         self.add_out_port('out')
     
     def init_node(self):
@@ -63,7 +63,7 @@ class UnsqueezeNode(FunctionNode):
     def dim_changed(self,dim):
         self.label.set('U'+str(dim))
     
-    def calculate(self, inputs: list[Any]):
+    def calculate(self, inputs):
         return torch.unsqueeze(inputs[0],dim=self.dim.get())
     
 class SqueezeNode(FunctionNode):
@@ -72,7 +72,7 @@ class SqueezeNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('S0')
         self.shape.set('round')
-        self.add_in_port('in')
+        self.add_in_port('inputs')
         self.add_out_port('out')
     
     def init_node(self):
@@ -83,7 +83,7 @@ class SqueezeNode(FunctionNode):
     def dim_changed(self,dim):
         self.label.set('S'+str(dim))
     
-    def calculate(self, inputs: list[Any]):
+    def calculate(self, inputs):
         return torch.squeeze(inputs[0],dim=self.dim.get())
     
 class RearrangeNode(FunctionNode):
@@ -93,7 +93,7 @@ class RearrangeNode(FunctionNode):
         self.pattern_control = self.add_control(TextControl,name='pattern_control',label='')
         self.label.set('Rearrange')
         self.shape.set('simple')
-        self.add_in_port('in')
+        self.add_in_port('inputs')
         self.add_out_port('out')
 
     def init_node(self):
@@ -101,11 +101,11 @@ class RearrangeNode(FunctionNode):
         if self.is_new:
             self.pattern_control.text.set('b c h w -> b (c h w)')
 
-    def recover_from_version(self, version: str, old: NodeInfo):
-        super().recover_from_version(version, old)
-        self.recover_controls(('pattern_control','pattern_control'))
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_controls(('pattern_control','pattern_control'))
 
-    def calculate(self, inputs: list[Any]):
+    def calculate(self, inputs):
         raw_arg = self.pattern_control.text.get().split(',')
         pattern = raw_arg[0]
         axes_lengths = {}
@@ -115,22 +115,22 @@ class RearrangeNode(FunctionNode):
             value = int(value.strip())
             axes_lengths[key] = value
             
-        return einops.rearrange(inputs[0][0],pattern,**axes_lengths)
+        return einops.rearrange(inputs[0],pattern,**axes_lengths)
     
 class BackwardNode(FunctionNode):
     category = 'torch/operations'
-    inputs = ['tensor']
+    inputs = ['inputs']
     def build_node(self):
         super().build_node()
         self.label.set('↤')
         self.shape.set('round')
 
     def calculate(self, inputs: list[Any]):
-        inputs[0][0].backward()
+        inputs[0].backward()
 
 class ToCudaNode(FunctionNode):
     category = 'torch/operations'
-    inputs = ['tensor']
+    inputs = ['inputs']
     outputs = ['tensor']
     display_port_names = False
     def build_node(self):
@@ -139,4 +139,4 @@ class ToCudaNode(FunctionNode):
         self.shape.set('round')
 
     def calculate(self, inputs: list[Any]):
-        return inputs[0][0].cuda()
+        return inputs[0].cuda()
