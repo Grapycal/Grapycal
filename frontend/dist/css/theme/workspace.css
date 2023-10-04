@@ -48,12 +48,25 @@ button{
 
     background-color: var(--z1);
     border: 1px solid var(--z3);
+    stroke: var(--z3);
 }
 
 .OptionsEditor-select{
     background-color: var(--z2);
     color: inherit;
 }
+
+input, textarea{
+    background-color: var(--z2);
+    color: inherit;
+    /* no resize */
+    resize: none;
+}
+
+textarea:disabled{
+    background-color: transparent;
+}
+
 
 ::-webkit-scrollbar {
   width: 5px; /* You can adjust the width as needed */

@@ -19,3 +19,6 @@ class TextControl(Control):
     
     def set(self, text:str):
         self.text.set(text)
+
+    def get(self):
+        return self.text.get()

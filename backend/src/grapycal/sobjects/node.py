@@ -17,7 +17,7 @@ from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic
+from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
@@ -49,6 +49,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
         self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
+        self.css_classes = self.add_attribute('css_classes',SetTopic,[])
 
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
@@ -106,7 +107,7 @@ class Node(SObject,metaclass=NodeMeta):
         Called when the node is created as a result of a old node being upgraded.
         The old node's information (including attribute values) is in the `old` argument.
         '''
-        self.translation.set(old['translation'])
+        self.restore_attributes('translation')
 
     def restore_attributes(self,*attribute_names:str|tuple[str,str]):
         '''
@@ -451,6 +452,11 @@ class Node(SObject,metaclass=NodeMeta):
                 self.output.set([])
                 self.output.insert(['error','Too many output lines. Cleared.'])
             self.output.insert(['error',message])
+
+
+    def flash_running_indicator(self):
+        self.running.set(0)
+        self.running.set(random.randint(0,100))
 
     '''
     Node events

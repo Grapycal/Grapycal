@@ -1,4 +1,4 @@
-import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic, SetTopic} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Transform } from '../component/transform'
@@ -47,6 +47,7 @@ export class Node extends CompSObject {
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
     running: IntTopic = this.getAttribute('running', IntTopic)
+    css_classes: SetTopic = this.getAttribute('css_classes', SetTopic)
     
     private _isPreview: boolean
     get isPreview(): boolean {
@@ -203,7 +204,7 @@ export class Node extends CompSObject {
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
         this.errorPopup = new ErrorPopup(this)
 
-        this.transform.pivot = new Vector2(0.5, 0)
+        this.transform.pivot = new Vector2(0,0)
         if(!this._isPreview){
             const [x, y] = this.translation.getValue().split(',').map(parseFloat)
             this.transform.translation=new Vector2(x, y)
@@ -288,6 +289,18 @@ export class Node extends CompSObject {
         //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
         // }, 0);
+
+        this.link(this.css_classes.onAppend, (className: string) => {
+            this.htmlItem.baseElement.classList.add(className)
+        })
+
+        this.link(this.css_classes.onRemove, (className: string) => {
+            this.htmlItem.baseElement.classList.remove(className)
+        })
+
+        for(let className of this.css_classes.getValue()){
+            this.htmlItem.baseElement.classList.add(className)
+        }
 
     }
 

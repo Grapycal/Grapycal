@@ -97,6 +97,8 @@ class FuncCallNode(Node):
     def end_function(self):
         if self.is_destroyed():
             return
+        if self.func_name.get() not in FuncDefManager.outs:
+            return # assume its intended to be a void function
         FuncDefManager.outs[self.func_name.get()].end_function(self)
 
     def push_result(self, result:dict):

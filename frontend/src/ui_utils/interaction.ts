@@ -2,6 +2,7 @@ import { Action, ObjectSyncClient, StringTopic } from "objectsync-client"
 import { Component, IComponentable } from "../component/component"
 import { Linker } from "../component/linker"
 import { print } from "../devUtils"
+import { TextBox } from "../utils"
 
 export function inputFinished(input: HTMLInputElement){
     let action = new Action<[],void>()
@@ -26,12 +27,12 @@ function longestCommonPrefixLength(a: string, b: string): number {
 }
 
 export class BindInputBoxAndTopic extends Component{
-    private input: HTMLInputElement
+    private input: HTMLInputElement|HTMLTextAreaElement|TextBox
     private topics: StringTopic[]
     private objectsync: ObjectSyncClient
     private linker: Linker
     private locked = false
-    constructor(object:IComponentable, input: HTMLInputElement, topic: StringTopic|StringTopic[], objectsync:ObjectSyncClient, updateEveryInput: boolean = false){
+    constructor(object:IComponentable, input: HTMLInputElement|HTMLTextAreaElement|TextBox, topic: StringTopic|StringTopic[], objectsync:ObjectSyncClient, updateEveryInput: boolean = false){
         super(object)
         this.input = input
         this.topics = topic instanceof Array ? topic : [topic]

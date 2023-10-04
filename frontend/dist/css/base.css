@@ -35,7 +35,7 @@ html, body{
     margin: 0;
 }
 
-input{
+input, textarea{
     
     font-size: inherit;
     color: inherit;
@@ -73,7 +73,7 @@ img{
     display: block;
 }
 
-input[disabled] {pointer-events:none}
+input[disabled],textarea[disabled] {pointer-events:none}
 
 footer{
     bottom: 0px;
@@ -382,15 +382,15 @@ footer{
     object-fit: contain;
 }
 
-input:enabled:hover{
+input:enabled:hover, textarea:enabled:hover{
     background-color: #8d8d8d2b;
 }
 
-input:focus-within{
+input:focus-within, textarea:focus-within{
     background-color: #6161612a;
 }
 
-input:enabled{
+input:enabled, textarea:enabled{
     background-color: #b1b1b117;
 }
 

@@ -4,6 +4,11 @@ import { print } from "../devUtils"
 
 type Callback<ARGS extends any[] = any[], OUT = any> = (...args: ARGS) => OUT;
 
+interface IHasAddEventListener{
+    addEventListener(eventName: string, callback: Callback): void;
+    removeEventListener(eventName: string, callback: Callback): void;
+}
+
 export class Linker extends Component{
 
     static staticLinkedCallbacks: {action: Action<any>, callback: Callback}[] = []
@@ -16,7 +21,7 @@ export class Linker extends Component{
 
 
     linkedCallbacks: {action: Action<any>, callback: Callback, bindedCallback: Callback}[] = []
-    linkedCallbacks2: {element: Node, eventName: string, callback: Callback}[] = []
+    linkedCallbacks2: {element: IHasAddEventListener, eventName: string, callback: Callback}[] = []
     /**
      * Use this method to link a callback to an action. 
      * The callback will be automatically bound to this object.
@@ -64,13 +69,13 @@ export class Linker extends Component{
     }
 
 
-    public link2(element: Node,eventName: string , callback: Callback, bindTarget:any=null): void{
+    public link2(element: IHasAddEventListener,eventName: string , callback: Callback, bindTarget:any=null): void{
         callback = callback.bind(bindTarget || this.object);
         this.linkedCallbacks2.push({element: element, eventName: eventName, callback: callback});
         element.addEventListener(eventName,callback);
     }
     
-    public unlink2(element: Node, eventName: string): void{
+    public unlink2(element: IHasAddEventListener, eventName: string): void{
         for(let i=0;i<this.linkedCallbacks2.length;i++){
             if (this.linkedCallbacks2[i].element == element && this.linkedCallbacks2[i].eventName == eventName){
                 element.removeEventListener(eventName,this.linkedCallbacks2[i].callback);
