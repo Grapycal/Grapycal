@@ -173,25 +173,6 @@ files = [
 ]
 
 [[package]]
-name = "chatroom"
-version = "0.6.1"
-description = ""
-optional = false
-python-versions = "^3.11"
-files = []
-develop = false
-
-[package.dependencies]
-termcolor = "^2.3.0"
-websockets = "^11.0.3"
-
-[package.source]
-type = "git"
-url = "https://github.com/eri24816/ChatRoom.git"
-reference = "main"
-resolved_reference = "81690b0b467a74fa29a298e053ad3eee98f57926"
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -401,18 +382,14 @@ name = "objectsync"
 version = "0.4.0"
 description = ""
 optional = false
-python-versions = "^3.11"
-files = []
-develop = false
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "objectsync-0.4.0-py3-none-any.whl", hash = "sha256:3c43236e055fd255575f6eb1bd3a734be08d5c720115582dd0691e7c8d2e4c0b"},
+    {file = "objectsync-0.4.0.tar.gz", hash = "sha256:b6b0016dc257d50d0b8d8fcbe758b6b46ad1b72ba58ea6552a961401166f0f41"},
+]
 
 [package.dependencies]
-chatRoom = {git = "https://github.com/eri24816/ChatRoom.git", branch = "main"}
-
-[package.source]
-type = "git"
-url = "https://github.com/eri24816/ObjectSync.git"
-reference = "master"
-resolved_reference = "d032a1e5d44791214c2f02bb375ccebfbfb44199"
+topicsync = ">=0.6.1,<0.7.0"
 
 [[package]]
 name = "packaging"
@@ -709,6 +686,21 @@ files = [
 tests = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "topicsync"
+version = "0.6.3"
+description = "A communication tool for multi-client applications over WebSockets."
+optional = false
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "topicsync-0.6.3-py3-none-any.whl", hash = "sha256:b571bb510d10ce82daba4d8cada806fc733d69df084175f1d43aa9125dd3c4bc"},
+    {file = "topicsync-0.6.3.tar.gz", hash = "sha256:c528663a33518d36b372df9af93d8cb5be0f6b907b7031fb899a293b42a26d17"},
+]
+
+[package.dependencies]
+termcolor = ">=2.3.0,<3.0.0"
+websockets = ">=11.0.3,<12.0.0"
+
+[[package]]
 name = "urllib3"
 version = "2.0.3"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -905,4 +897,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "afa39b4e647ef4d1a70557015cddfbaa700e25f6177470f2c9adf9beec968785"
+content-hash = "b1739439a42e1a9a80a20ce86ffb43b7f7c1b4e999bcc096f72e486a6a3e4523"
