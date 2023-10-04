@@ -13,7 +13,6 @@ import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
 import { ImageControl } from './sobjects/controls/imageControl'
-import { Callback } from 'chatroom-client/src/utils'
 import { Footer } from './ui_utils/footer'
 import { Header } from './ui_utils/header'
 
@@ -79,7 +78,7 @@ document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
 });
 
-function documentReady(callback: Callback): void {
+function documentReady(callback: Function): void {
     if (document.readyState === "complete" || document.readyState === "interactive") 
         callback()
     else
@@ -89,7 +88,7 @@ function documentReady(callback: Callback): void {
 
   }
 
-documentReady(function(event) {
+documentReady(function(event: Event) {
     document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
         if (sidebar.classList.contains('collapsed')) {
