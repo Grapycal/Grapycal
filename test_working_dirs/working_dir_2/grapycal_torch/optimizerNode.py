@@ -66,7 +66,7 @@ class OptimizerNode(Node):
     def step(self):
         self.recreate_optimizer_if_needed()
         if self.tracked_modules == set():
-            return
+            raise Exception('No modules to optimize')
         self.optimizer.step()
 
     def zero_grad(self):

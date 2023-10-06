@@ -95,6 +95,7 @@ class RearrangeNode(FunctionNode):
         self.shape.set('simple')
         self.add_in_port('inputs')
         self.add_out_port('out')
+        self.css_classes.append('fit-content')
 
     def init_node(self):
         super().init_node()
@@ -103,7 +104,7 @@ class RearrangeNode(FunctionNode):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.restore_controls(('pattern_control','pattern_control'))
+        self.restore_controls('pattern_control')
 
     def calculate(self, inputs):
         raw_arg = self.pattern_control.text.get().split(',')

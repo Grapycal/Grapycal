@@ -156,8 +156,10 @@ export class Edge extends CompSObject {
                 this.svg.classList.add('data-ready')
                 let tmp =  data_ready
                 setTimeout(() => {
+                    try{
                     if(tmp == this.data_ready.getValue())
                         this.svg.classList.remove('data-ready')
+                    }catch{}
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })

@@ -236,6 +236,10 @@ export class TextBox{
             this.textarea.style.height = '0';
             this.textarea.style.height = this.textarea.scrollHeight + 'px';
 
+            // if(this.textarea.value=='' && this.textarea.disabled){
+            //     this.textarea.style.height='0px'
+            // }
+
             if(this.textarea.scrollHeight!=this.prevHeight||this.textarea.clientWidth!=this.prevWidth){
                 this.onResize.invoke(this.textarea.scrollHeight,this.prevHeight)
                 this.prevHeight = this.textarea.scrollHeight

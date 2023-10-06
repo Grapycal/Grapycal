@@ -223,12 +223,10 @@ class Node(SObject,metaclass=NodeMeta):
         #remove all edges connected to the port
         for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?
-            print('edge removed',edge)
 
         #remove the port
         self.out_ports.remove(port)
         port.remove()
-        print('port removed',port)
 
     def get_in_port(self,name:str) -> InputPort:
         '''
@@ -424,7 +422,7 @@ class Node(SObject,metaclass=NodeMeta):
             self._on_exception(e)
         self.running.set(random.randint(0,100))
 
-    def run(self,task:Callable[[],Any],background=True,to_queue=True,redirect_output=False,**kwargs):
+    def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 

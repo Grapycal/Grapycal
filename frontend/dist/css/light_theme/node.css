@@ -9,7 +9,6 @@ Define styles for different node categories
     /* text-shadow:  0 0px 5px var(--cate-color); */
     /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
     background-color: var(--cate-color);
-    border: black 1px solid;
     box-shadow: 2px 2px 2px black;
 }
 
@@ -20,7 +19,7 @@ Define styles for different node categories
 
 
 .node-border{
-    border-color: var(--cate-color);
+    border-color: black;
 }
 
 .node.running{

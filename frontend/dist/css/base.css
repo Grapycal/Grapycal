@@ -220,6 +220,10 @@ footer{
     border-radius: 20px;
 }
 
+.normal-node, .simple-node{
+    border-radius: 2px;
+}
+
 .round-node .node-border{
     border-radius: 50%;
 }

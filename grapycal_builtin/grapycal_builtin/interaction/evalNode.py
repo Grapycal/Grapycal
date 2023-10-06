@@ -33,6 +33,7 @@ class EvalNode(SourceNode):
 
     def task(self):
         expression = self.expr_control.text.get()
+        self.workspace.vars().update({'print':self.print,'self':self})
         value = eval(expression,self.workspace.vars())
         for edge in self.out_port.edges:
             edge.push_data(value)

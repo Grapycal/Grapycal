@@ -9,12 +9,13 @@ class ProcedureNode(Node):
 
     def build_node(self):
         self.in_port = self.add_in_port('',1)
-        self.label.set('Procedure')
+        self.label.set('Steps')
         self.shape.set('normal')
         self.steps = self.add_attribute('steps', ListTopic, editor_type='list')
         self.add_btn = self.add_control(ButtonControl)
         self.add_btn.label.set('+')
         self.add_btn.on_click.add_auto(self.add_pressed)
+        self.css_classes.append('thin')
 
     def init_node(self):
         self.steps.add_validator(ListTopic.unique_validator)
@@ -44,11 +45,11 @@ class ProcedureNode(Node):
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task)
 
-    def input_edge_added(self, edge: Edge, port: InputPort):
+    def double_click(self):
         self.run(self.task)
 
     def task(self):
-        self.data = self.in_port.get_one_data()
+        self.data = self.in_port.get_one_data(allow_no_data=True)
         self.iterator = iter(self.steps.get()) #type: ignore
         self.run(self.next)
         
@@ -56,9 +57,11 @@ class ProcedureNode(Node):
         try:
             step = next(self.iterator) #type: ignore
         except StopIteration:
+            # release memory
             del self.data
             del self.iterator
             return
+        self.run(self.next,to_queue=False)
+
         port = self.get_out_port(step)
         port.push_data(self.data)
-        self.run(self.next,to_queue=False)
