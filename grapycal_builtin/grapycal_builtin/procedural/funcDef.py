@@ -1,28 +1,29 @@
-from typing import Dict, List
+from typing import Dict, Generic, List, TypeVar
 from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
 
-class ListDict:
+T = TypeVar('T')
+class ListDict(Generic[T]):
     def __init__(self):
-        self.d:Dict[str,List] = {}
+        self.d:Dict[str,List[T]] = {}
 
-    def append(self, key, value):
+    def append(self, key:str, value:T):
         if key not in self.d:
             self.d[key] = []
         self.d[key].append(value)
 
-    def remove(self, key, value):
+    def remove(self, key:str, value:T):
         self.d[key].remove(value)
         if len(self.d[key]) == 0:
             self.d.pop(key)
 
-    def has(self, key):
+    def has(self, key:str):
         return key in self.d
     
-    def get(self, key):
+    def get(self, key:str):
         if key not in self.d:
             return []
         return self.d[key]

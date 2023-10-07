@@ -1,4 +1,5 @@
 .node.fit-content {
+  min-width: 10px;
   width: fit-content;
   max-width: 500px;
 }

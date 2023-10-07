@@ -153,6 +153,7 @@ footer{
 :is(.normal-node,.simple-node) .node-label{
     font-size: 12px;
     padding: 4px 5px 0px 5px;
+    text-wrap: nowrap;
 }
 
 .node-selection{

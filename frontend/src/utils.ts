@@ -176,7 +176,6 @@ export class TextBox{
     public readonly textarea = document.createElement("textarea")
     private sizeSimulator = document.createElement("div")
     public onResize = new Action<[number,number]>()
-    minWidth = 150
     set value(value:string){
         this.textarea.value = value
         this.resize()
@@ -209,6 +208,7 @@ export class TextBox{
         this.textarea.disabled = value
     }
     constructor(parent:HTMLElement=document.body){
+        this.textarea.classList.add('grow')
         this.sizeSimulator.style.width = 0 + 'px';
         this.sizeSimulator.style.position = 'absolute';
         this.sizeSimulator.style.visibility = 'hidden';
@@ -230,8 +230,8 @@ export class TextBox{
             //sync padding
             this.sizeSimulator.style.padding = window.getComputedStyle(this.textarea).padding;
             this.sizeSimulator.innerHTML = textToHtml(this.textarea.value);
-            let calculatedWidth = Math.max(this.minWidth, this.sizeSimulator.scrollWidth)
-            this.textarea.style.width = calculatedWidth + 10 + 'px'; // I don't know why it needs more 10px
+            let calculatedWidth =this.sizeSimulator.scrollWidth+ 10 // I don't know why it needs more 10px
+            this.textarea.style.width = calculatedWidth+ 'px';
             
             this.textarea.style.height = '0';
             this.textarea.style.height = this.textarea.scrollHeight + 'px';

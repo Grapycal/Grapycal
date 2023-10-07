@@ -17,6 +17,40 @@ export class TransformRoot extends Component{
     }
 }
 
+class RequestFrameManager{
+    static instance: RequestFrameManager = new RequestFrameManager();
+    private callbacks: (() => void)[] = [];
+    private requestSent: boolean = false;
+    private ids: Set<any> = new Set();
+    private constructor(){
+        window.requestAnimationFrame(this.update.bind(this));
+        this.requestSent = true;
+    }
+    private update(){
+        this.requestSent = false;
+        for(let callback of this.callbacks){
+            callback();
+        }
+        this.ids.clear();
+        this.callbacks = [];
+    }
+
+    public request(callback: () => void,id: any=null){
+        if(this.ids.has(id)){
+            return;
+        }
+        if(id !== null){
+            this.ids.add(id);
+        }
+        this.callbacks.push(callback);
+        if(!this.requestSent){
+            window.requestAnimationFrame(this.update.bind(this));
+            this.requestSent = true;
+        }
+    }
+
+}
+
 
 // Dependency: HtmlItem
 export class Transform extends Component{
@@ -50,7 +84,7 @@ export class Transform extends Component{
     set pivot(pivot: Vector2){
         this._pivot = pivot;
         this.targetElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
     }
     
     get scale(){return this._scale;}
@@ -63,19 +97,19 @@ export class Transform extends Component{
             scale = this.minScale;
         }
         this._scale = scale;
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
         this.scaleChanged.invoke(scale);
     }
     setscale(scale: number){
         this._scale = scale;
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
     }
     
     get translation(){return this._translation;}
     translationChanged = new Action<[number, number]>();
     set translation(translation: Vector2){
         this._translation = translation;
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
         this.translationChanged.invoke(translation.x, translation.y);
         this.onChange.invoke();
     }
@@ -229,7 +263,8 @@ export class Transform extends Component{
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
 
         this.updateParent();
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        
     }
 
     private templateChanged(){
@@ -237,7 +272,7 @@ export class Transform extends Component{
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
         this.enabled = false
         this.enabled = true
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
     }
 
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
@@ -260,7 +295,7 @@ export class Transform extends Component{
         let a = Math.exp(-this.scrollSmoothness);
         let startMouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.scale *= Math.exp(amount*a);
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
         let mouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.translate(new Vector2(
             (mouseLocal.x - startMouseLocal.x)*this.scale,
@@ -281,7 +316,7 @@ export class Transform extends Component{
     public scaleBy(scale: number){
         this.scale *= scale;
         this.onChange.invoke();
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
     }
 
 
@@ -289,7 +324,7 @@ export class Transform extends Component{
         this.parent = this.htmlItem.findTransformParent() || new TransformRoot(this.object);
     }
 
-    private updateUI(){
+    private updateUI(_:any=null){
         if(!this.enabled)
             return;
         if (this.targetElement === null)
@@ -309,7 +344,7 @@ export class Transform extends Component{
     }
 
     public getAbsoluteOrigin(){
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
         let rect = this.targetElement.getBoundingClientRect()
         return new Vector2(
             rect.x + rect.width*this.pivot.x,
@@ -318,7 +353,7 @@ export class Transform extends Component{
     }
 
     public getAbsoluteScale(){
-        this.updateUI();
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
         // Only works if element size is not zero
         // let rect = this.targetElement.getBoundingClientRect()
         // return {
