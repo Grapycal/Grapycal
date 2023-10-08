@@ -164,7 +164,6 @@ export class Edge extends CompSObject {
             }
         })
         if(this.data_ready.getValue() == 0) this.svg.classList.add('data-ready')
-
         this.updateSVG()
     }
 
@@ -183,6 +182,7 @@ export class Edge extends CompSObject {
     protected onParentChangedTo(newValue: SObject): void {
         super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || this.editor.htmlItem) //>????????????
+        this.updateSVG()
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {

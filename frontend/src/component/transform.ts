@@ -84,7 +84,7 @@ export class Transform extends Component{
     set pivot(pivot: Vector2){
         this._pivot = pivot;
         this.targetElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
     }
     
     get scale(){return this._scale;}
@@ -97,19 +97,19 @@ export class Transform extends Component{
             scale = this.minScale;
         }
         this._scale = scale;
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
         this.scaleChanged.invoke(scale);
     }
     setscale(scale: number){
         this._scale = scale;
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
     }
     
     get translation(){return this._translation;}
     translationChanged = new Action<[number, number]>();
     set translation(translation: Vector2){
         this._translation = translation;
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
         this.translationChanged.invoke(translation.x, translation.y);
         this.onChange.invoke();
     }
@@ -263,7 +263,8 @@ export class Transform extends Component{
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
 
         this.updateParent();
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
+        this.updateUI();
         
     }
 
@@ -272,7 +273,7 @@ export class Transform extends Component{
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
         this.enabled = false
         this.enabled = true
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
     }
 
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
@@ -288,14 +289,14 @@ export class Transform extends Component{
 
     private onScroll(e:WheelEvent){
         e.stopPropagation();
-        this.smoothScroll(-0.001*e.deltaY);
+        this.smoothScroll(-0.002*e.deltaY);
     }
 
     private smoothScroll(amount:number){
         let a = Math.exp(-this.scrollSmoothness);
         let startMouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.scale *= Math.exp(amount*a);
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
         let mouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.translate(new Vector2(
             (mouseLocal.x - startMouseLocal.x)*this.scale,
@@ -316,7 +317,7 @@ export class Transform extends Component{
     public scaleBy(scale: number){
         this.scale *= scale;
         this.onChange.invoke();
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
     }
 
 
@@ -324,7 +325,11 @@ export class Transform extends Component{
         this.parent = this.htmlItem.findTransformParent() || new TransformRoot(this.object);
     }
 
-    private updateUI(_:any=null){
+    public updateUI(_:any=null){
+        /*
+        Frequently calling this function costs a lot of performance.
+        Call requestUpdateUI() instead to do the update right before the next paint.
+        */
         if(!this.enabled)
             return;
         if (this.targetElement === null)
@@ -337,6 +342,10 @@ export class Transform extends Component{
         this.targetElement.style.transform = transformString;
     }
 
+    public requestUpdateUI(){
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+    }
+
     private notifyChangeToChildren(){
         for(let child of this.htmlItem.findTransformChildren()){
             child.onChange.invoke();
@@ -344,7 +353,7 @@ export class Transform extends Component{
     }
 
     public getAbsoluteOrigin(){
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
         let rect = this.targetElement.getBoundingClientRect()
         return new Vector2(
             rect.x + rect.width*this.pivot.x,
@@ -353,7 +362,7 @@ export class Transform extends Component{
     }
 
     public getAbsoluteScale(){
-        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
+        this.requestUpdateUI()
         // Only works if element size is not zero
         // let rect = this.targetElement.getBoundingClientRect()
         // return {

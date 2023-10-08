@@ -204,6 +204,24 @@ export class Node extends CompSObject {
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
         this.errorPopup = new ErrorPopup(this)
 
+        // Before setting up the transform, we need to add classes to the element then call updateUI so the shape is correct
+        
+        this.link(this.css_classes.onAppend, (className: string) => {
+            this.htmlItem.baseElement.classList.add(className)
+        })
+        
+        this.link(this.css_classes.onRemove, (className: string) => {
+            this.htmlItem.baseElement.classList.remove(className)
+        })
+        
+        for(let className of this.css_classes.getValue()){
+            this.htmlItem.baseElement.classList.add(className)
+        }
+
+        this.transform.updateUI()
+
+        // Setup the transform
+
         this.transform.pivot = new Vector2(0,0)
         if(!this._isPreview){
             const [x, y] = this.translation.getValue().split(',').map(parseFloat)
@@ -284,24 +302,13 @@ export class Node extends CompSObject {
         this.link(this.onRemoveChild,this.moved.invoke)
         this.link(this.transform.onChange,this.moved.invoke)
 
+        this.transform.updateUI() // This line is necessary to make edges spawning in this frame to be connected to the node
+
         // setTimeout(() => {
         //     let border = this.htmlItem.getHtmlEl('node-border')
         //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
         // }, 0);
-
-        this.link(this.css_classes.onAppend, (className: string) => {
-            this.htmlItem.baseElement.classList.add(className)
-        })
-
-        this.link(this.css_classes.onRemove, (className: string) => {
-            this.htmlItem.baseElement.classList.remove(className)
-        })
-
-        for(let className of this.css_classes.getValue()){
-            this.htmlItem.baseElement.classList.add(className)
-        }
-
     }
 
     onParentChangedTo(newParent: SObject): void {
