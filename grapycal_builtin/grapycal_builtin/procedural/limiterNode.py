@@ -1,5 +1,6 @@
 import time
 from grapycal import FloatTopic, IntTopic, Node
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from threading import Lock
@@ -25,6 +26,10 @@ class LimiterNode(Node):
         self.counter = 0
         self.last_push_time = 0
         self.workspace.clock.on_tick += (self.tick)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('reduce_factor', 'time_span')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         with self.lock:

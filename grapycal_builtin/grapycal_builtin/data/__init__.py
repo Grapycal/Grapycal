@@ -29,6 +29,7 @@ class VariableNode(SourceNode):
         self.variable_name = self.add_control(TextControl,name='variable_name')
         self.label.set('Variable')
         self.shape.set('simple')
+        self.css_classes.append('fit-content')
 
     def init_node(self):
         super().init_node()

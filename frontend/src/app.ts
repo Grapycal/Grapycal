@@ -110,7 +110,7 @@ documentReady(function(event: Event) {
 
 
 
-expose('c',objectsync)
+expose('o',objectsync)
 
 new Header()
 new Footer()
