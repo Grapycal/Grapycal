@@ -8,6 +8,14 @@ body{
     border: var(--z1) 1px solid;
 }
 
+.sidebar-left{
+    border-right: #303335 1px solid;
+}
+
+.sidebar-right{
+    border-left: #303335 1px solid;
+}
+
 header{
     font-size: 16px;
     color: var(--text-low);
@@ -19,6 +27,7 @@ footer{
     height: 23px;
     background-color: var(--t1);
     color: var(--text-high);
+    border-top: #303335 1px solid;
 }
 
 button{
