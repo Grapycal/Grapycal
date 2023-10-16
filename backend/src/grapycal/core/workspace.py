@@ -3,7 +3,7 @@ from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
-from grapycal.sobjects.workspaceObject import WorkspaceObject
+from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
 logger = setup_logging()
@@ -54,6 +54,8 @@ class Workspace:
 
         self.clock = Clock(0.1)
 
+        self.webcam: WebcamStream|None = None
+
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
 
@@ -84,6 +86,8 @@ class Workspace:
         self._objectsync.register(TextControl)
         self._objectsync.register(ButtonControl)
         self._objectsync.register(ImageControl)
+
+        self._objectsync.register(WebcamStream)
         
         '''
         Register all built-in node types

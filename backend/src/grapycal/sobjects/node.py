@@ -154,7 +154,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Called when a client wants to spawn a node.
         '''
-        new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
+        new_node = self.workspace.get_workspace_object().main_editor.create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
 
     def destroy(self) -> SObjectSerialized:
@@ -403,7 +403,7 @@ class Node(SObject,metaclass=NodeMeta):
                     task()
             else:
                 task()
-            self.running.set(random.randint(0,100))
+            self.running.set(random.randint(0,10000))
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
@@ -420,7 +420,7 @@ class Node(SObject,metaclass=NodeMeta):
                 task()
         except Exception as e:
             self._on_exception(e)
-        self.running.set(random.randint(0,100))
+        self.running.set(random.randint(0,10000))
 
     def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,**kwargs):
         '''
@@ -441,7 +441,7 @@ class Node(SObject,metaclass=NodeMeta):
             self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e):
-        self.running.set(random.randint(0,100))
+        self.running.set(random.randint(0,10000))
         message = ''.join(traceback.format_exc())
         if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
@@ -454,7 +454,7 @@ class Node(SObject,metaclass=NodeMeta):
 
     def flash_running_indicator(self):
         self.running.set(0)
-        self.running.set(random.randint(0,100))
+        self.running.set(random.randint(0,10000))
 
     '''
     Node events

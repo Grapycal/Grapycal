@@ -8,7 +8,7 @@ import { Port } from './sobjects/port'
 import { Edge } from './sobjects/edge'
 import { SoundManager } from './ui_utils/soundManager';
 import { Sidebar } from './sobjects/sidebar'
-import { Workspace } from './sobjects/workspace'
+import { WebcamStream, Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
@@ -32,6 +32,8 @@ objectsync.register(Sidebar);
 objectsync.register(TextControl)
 objectsync.register(ButtonControl)
 objectsync.register(ImageControl)
+
+objectsync.register(WebcamStream)
 
 setTimeout(() => { // fix this
     new ExtensionsSetting(objectsync);

@@ -33,23 +33,21 @@ class Edge(SObject):
 
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
-        if new_tail is None:
-            self.remove()
-            return
-            #raise Exception('Edge tail cannot be None')
         if old_tail:
             old_tail.remove_edge(self)
+        if new_tail is None:
+            self.remove()
+            raise Exception(f'{self} tail cannot be None')
         if new_tail:
             new_tail.add_edge(self)
         self.label.set('')
 
     def on_head_set(self, old_head:Port|None, new_head:InputPort|None):
-        if new_head is None:
-            self.remove()
-            return
-            #raise Exception('Edge head cannot be None')
         if old_head:
             old_head.remove_edge(self)
+        if new_head is None:
+            self.remove()
+            raise Exception(f'{self} head cannot be None')
         if new_head:
             new_head.add_edge(self)
             if self._activated:

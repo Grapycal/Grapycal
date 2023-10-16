@@ -179,8 +179,10 @@ export class Node extends CompSObject {
                 this.htmlItem.baseElement.classList.add('running')
                 let tmp =  running
                 setTimeout(() => {
-                    if(tmp == this.running.getValue())
+                    try{
+                    if( tmp == this.running.getValue())
                         this.htmlItem.baseElement.classList.remove('running')
+                    }catch(e){}
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })
