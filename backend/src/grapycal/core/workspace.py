@@ -30,6 +30,13 @@ from grapycal.sobjects.node import Node
 
 from . import running_module
 
+def deserialize_sort_key(x: SObjectSerialized) -> int:
+    if x.type == 'Edge':
+        return 1000000000 # Edges should be created after nodes
+    if x.id.startswith('0_'):
+        return int(x.id[2:])
+    return 0
+
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
@@ -46,7 +53,7 @@ class Workspace:
 
         self.background_runner = BackgroundRunner()
 
-        self._objectsync = objectsync.Server(port,host)
+        self._objectsync = objectsync.Server(port,host,deserialize_sort_key=deserialize_sort_key)
         
         self._extention_manager = ExtensionManager(self._objectsync,self)
 
