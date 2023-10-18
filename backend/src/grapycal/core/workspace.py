@@ -1,6 +1,7 @@
 
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
+from grapycal.sobjects.controls.threeControl import ThreeControl
 from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
@@ -93,6 +94,7 @@ class Workspace:
         self._objectsync.register(TextControl)
         self._objectsync.register(ButtonControl)
         self._objectsync.register(ImageControl)
+        self._objectsync.register(ThreeControl)
 
         self._objectsync.register(WebcamStream)
         

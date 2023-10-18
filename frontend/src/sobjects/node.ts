@@ -241,7 +241,6 @@ export class Node extends CompSObject {
                 this.htmlItem.moveToFront()
             })
             this.transform.dragged.add((delta:Vector2) => {
-                print(this.transform.pivot)
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
                 this.objectsync.record(() => {

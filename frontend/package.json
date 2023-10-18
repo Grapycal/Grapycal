@@ -16,6 +16,8 @@
     "monitor": "npx webpack serve --port 9000 --entry ./node_modules/chatroom-client/src/testApp.ts"
   },
   "dependencies": {
+    "@types/three": "^0.157.0",
+    "three": "^0.157.0",
     "buffer": "^6.0.3",
     "objectsync-client": "github:eri24816/ObjectSyncClient_ts#master"
   },

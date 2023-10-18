@@ -422,7 +422,7 @@ class Node(SObject,metaclass=NodeMeta):
             self._on_exception(e)
         self.running.set(random.randint(0,10000))
 
-    def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,**kwargs):
+    def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,*args,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
@@ -434,7 +434,7 @@ class Node(SObject,metaclass=NodeMeta):
             - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
             If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
         '''
-        task = functools.partial(task,**kwargs)
+        task = functools.partial(task,*args,**kwargs)
         if background:
             self._run_in_background(task,to_queue,redirect_output=False)
         else:
