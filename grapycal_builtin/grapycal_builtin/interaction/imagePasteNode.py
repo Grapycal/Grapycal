@@ -146,7 +146,7 @@ class ImageDisplayNode(Node):
         buf = io.BytesIO()
         fig = plt.figure()
         try:
-            plt.imshow(data,cmap=self.cmap.get())
+            plt.imshow(data,cmap=self.cmap.get(),vmin=self.vmin.get(),vmax=self.vmax.get())
             plt.axis('off')
             plt.savefig(buf,format='jpg',bbox_inches='tight', transparent="True", pad_inches=0)
         finally:

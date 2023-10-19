@@ -4,6 +4,7 @@ from grapycal import FunctionNode, IntTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.textControl import TextControl
 import torch
+import torch.nn.functional as F
 import einops
 
 class CatNode(FunctionNode):
@@ -141,3 +142,27 @@ class ToCudaNode(FunctionNode):
 
     def calculate(self, inputs: list[Any]):
         return inputs[0].cuda()
+    
+class FConv2DNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['x','kernel']
+    max_in_degree = [1,1]
+    outputs = ['result']
+    def build_node(self):
+        super().build_node()
+        self.label.set('Conv2D')
+        self.shape.set('normal')
+
+    def calculate(self, x:torch.Tensor, kernel:torch.Tensor):
+        orig_x = x
+        orig_kernel = kernel
+        if len(x.shape) == 2:
+            x = x.unsqueeze(0)
+        if len(kernel.shape) == 2:
+            kernel = kernel.unsqueeze(0).unsqueeze(0)
+        elif len(kernel.shape) == 3:
+            kernel = kernel.unsqueeze(0)
+        y = F.conv2d(x,kernel,padding=kernel.shape[-1]//2)
+        if len(orig_x.shape) == 2:
+            y = y.squeeze(0)
+        return y

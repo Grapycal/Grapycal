@@ -35,7 +35,10 @@ class FunctionNode(Node):
             return
         inputs = {}
         for port in self.in_ports:
-            inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
+            if port.max_edges.get() == 1:
+                inputs[port.get_name()] = port.edges[0].get_data()
+            else:
+                inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
         result = self.calculate(**inputs)
 
         if result is None:

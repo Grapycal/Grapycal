@@ -10,6 +10,7 @@ from .transform import *
 from .dataloader import *
 from .normalize import *
 from .loss import *
+from .generative import *
 
 
 
