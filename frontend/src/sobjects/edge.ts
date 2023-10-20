@@ -203,7 +203,7 @@ export class Edge extends CompSObject {
             if(object instanceof Port){
                 let port = object
                 if(this.state == EdgeState.DraggingTail){
-                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge()){
+                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge){
                         this.objectsync.record(() => {
                             this.tail.set(port)
                         },true)
@@ -211,7 +211,7 @@ export class Edge extends CompSObject {
                     }
                 }
                 else if(this.state == EdgeState.DraggingHead){
-                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge()){
+                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge){
                         this.objectsync.record(() => {
                             this.head.set(port)
                         },true)
