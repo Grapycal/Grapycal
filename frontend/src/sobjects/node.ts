@@ -75,13 +75,13 @@ export class Node extends CompSObject {
             </div>
             
             <div class="node-selection"></div>
-            <div class="node-content flex-vert space-between">
-                <div id="label" class="node-label full-width"></div>
-                <div class="flex-horiz space-between full-width">
+            <div id="label" class="node-label full-width"></div>
+            <div class=" flex-vert space-between">
+                <div class="flex-horiz space-between full-width port-section">
                     <div id="slot_input_port" class=" flex-vert space-evenly center slot-input-port"></div>
                     <div id="slot_output_port" class=" flex-vert space-evenly center slot-output-port"></div>
                 </div>
-                <div id="slot_control" class="slot-control flex-vert space-between"> </div>
+                <div id="slot_control" class="slot-control flex-vert space-between"></div>
             </div>
         </div>`,
     simple:
@@ -92,15 +92,17 @@ export class Node extends CompSObject {
             </div>
             <div class="node-selection"></div>
             
-            <div class=" flex-horiz space-between">
-                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+            <div class="flex-horiz stretch-align space-between">
+                <div id="slot_input_port" class=" flex-vert justify-start slot-input-port"></div>
 
-                <div class="full-width flex-vert space-evenly node-content">
-                    <div id="label" class="node-label full-width"></div>
-                    <div id="slot_control"  class="slot-control"> </div>
+                <div class="full-width flex-vert space-evenly">
+                    <div class="node-label full-width flex-horiz center-align">
+                        <div id="label"></div>
+                    </div>
+                    <div id="slot_control"  class="slot-control"></div>
                 </div>
 
-                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_output_port" class=" flex-vert justify-start slot-output-port"></div>
             </div>
         </div>`,
     round:
@@ -112,8 +114,8 @@ export class Node extends CompSObject {
             <div class="node-selection"></div>
             <div class="flex-horiz node-content">
                 <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-                <div class="full-width flex-vert space-evenly"> 
-                    <div id="label" class="center-align node-label"></div>
+                <div class="full-width flex-vert space-evenly node-label"> 
+                    <div id="label" class="center-align"></div>
                 </div>
                 <div id="slot_control" style="display:none"></div>
                 

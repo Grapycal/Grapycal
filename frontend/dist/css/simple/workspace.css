@@ -1,0 +1,89 @@
+body{
+    background-color: var(--z0);
+    color: var(--text-high);
+}
+
+.sidebar{
+    background-color: var(--t0);
+    border: var(--z1) 1px solid;
+}
+
+.sidebar-left{
+    border-right: #303335 1px solid;
+}
+
+.sidebar-right{
+    border-left: #303335 1px solid;
+}
+
+header{
+    font-size: 16px;
+    color: var(--text-low);
+    height: 40px;
+    background-color: var(--z2);
+}
+
+footer{
+    height: 23px;
+    background-color: var(--t1);
+    color: var(--text-high);
+    border-top: #303335 1px solid;
+}
+
+button{
+    background-color: var(--z2);
+    border: none;
+    color: var(--text-high);
+}
+
+.option{
+    background-color: var(--z2);
+}
+.option:hover{
+    background-color: var(--z3);
+}
+
+.ListEditorItem-item{
+    border-radius: 4px;
+    background-color: var(--z2);
+    border: var(--z1) 1px solid;
+    color: var(--text-high);
+}
+
+.ListEditorItem-item button{
+    border: var(--z3) 1px solid;
+}
+
+.ErrorPopup-error-popup{
+
+    background-color: var(--z1);
+    border: 1px solid var(--z3);
+    stroke: var(--z3);
+}
+
+.OptionsEditor-select{
+    background-color: var(--z2);
+    color: inherit;
+}
+
+input, textarea{
+    background-color: var(--z2);
+    color: inherit;
+    /* no resize */
+    resize: none;
+}
+
+textarea:disabled{
+    background-color: transparent;
+}
+
+
+::-webkit-scrollbar {
+  width: 5px; /* You can adjust the width as needed */
+}
+
+/* Style the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background-color: var(--z3); /* Change the color as desired */
+  border-radius: 1px; /* Add rounded corners if you like */
+}
