@@ -7,7 +7,7 @@ import { print } from '../devUtils'
 import { Port } from './port'
 import { bloomDiv as bloomDiv, glowText } from '../ui_utils/effects'
 import { Vector2, as } from '../utils'
-import { EventDispatcher } from '../component/eventDispatcher'
+import { EventDispatcher, GlobalEventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { Sidebar } from './sidebar'
 import { Editor } from './editor'
@@ -62,6 +62,8 @@ export class Node extends CompSObject {
     selectable: Selectable;
     functionalSelectable: Selectable;
     mouseOverDetector: MouseOverDetector
+
+    private draggingTargetPos: Vector2 = new Vector2(0,0)
     
     public moved: Action<[]> = new Action();
 
@@ -96,7 +98,7 @@ export class Node extends CompSObject {
                 <div id="slot_input_port" class=" flex-vert justify-start slot-input-port"></div>
 
                 <div class="full-width flex-vert space-evenly">
-                    <div class="node-label full-width flex-horiz center-align">
+                    <div class="node-label full-width flex-horiz">
                         <div id="label"></div>
                     </div>
                     <div id="slot_control"  class="slot-control"></div>
@@ -237,14 +239,31 @@ export class Node extends CompSObject {
                 }
             })
 
+            this.eventDispatcher.onDragStart.add((e: Event,pos: Vector2) => {
+                this.draggingTargetPos = this.transform.translation
+            })
+
             this.eventDispatcher.onDrag.add((e: Event,newPos: Vector2,oldPos: Vector2) => {
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
-                let delta = newPos.sub(oldPos)
+
+                let delta = this.transform.worldToLocalDisplacement(newPos.sub(oldPos))
+                let snappedDelta = delta
+                print(GlobalEventDispatcher.instance.isKeyDown('Alt'))
+                if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
+                    this.draggingTargetPos = this.draggingTargetPos.add(delta)
+                    const snap = 20
+                    const snapped = new Vector2(
+                        Math.round(this.draggingTargetPos.x/snap)*snap,
+                        Math.round(this.draggingTargetPos.y/snap)*snap
+                    )
+                    snappedDelta = snapped.sub(this.transform.translation)
+                }
+
                 for(let selectable of this.selectable.selectedObjects){
                     if(selectable.object instanceof Node){
                         let node = selectable.object
-                        node.transform.translate(delta,Space.World)
+                        node.transform.translate(snappedDelta,Space.Local)
                         node.htmlItem.moveToFront()
                     }
                 }

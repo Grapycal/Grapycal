@@ -263,6 +263,7 @@ footer{
 
 .slot-output-port{
     padding-top : 3px;
+    padding-bottom: 3px;
 }
 
 .slot-input-port .port-knob{
