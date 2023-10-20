@@ -161,6 +161,9 @@ export class BindInputBoxAndTopic extends Component{
         const oldText = this.input.value
         const newText = oldText.slice(0, position) + insertion + oldText.slice(position)
         this.input.value = newText
+        if (document.activeElement != this.input) {
+            return
+        }
         if(oldSelectionStart >= position){
             this.input.selectionStart = oldSelectionStart + insertion.length
         }else{
@@ -180,7 +183,9 @@ export class BindInputBoxAndTopic extends Component{
         const oldText = this.input.value
         const newText = oldText.slice(0, position) + oldText.slice(position + deletion.length)
         this.input.value = newText
-        
+        if (document.activeElement != this.input) {
+            return
+        }
         if(oldSelectionStart > position){
             this.input.selectionStart = oldSelectionStart - deletion.length
         }else{
