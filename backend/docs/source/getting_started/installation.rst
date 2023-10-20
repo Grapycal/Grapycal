@@ -24,9 +24,15 @@ b. via poetry
     cd backend
     poetry install
 
-    
+3. Install builtin nodes
 
-3. Install frontend dependencies
+.. code-block:: bash
+
+    # from Grapycal folder
+    cd grapycal_builtin
+    pip install -e .
+
+4. Install frontend dependencies
 
 .. code-block:: bash
 
