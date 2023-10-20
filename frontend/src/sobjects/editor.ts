@@ -51,7 +51,7 @@ export class Editor extends CompSObject{
         let viewport = this.htmlItem.getHtmlEl('Viewport')
         let editor = this.htmlItem.getHtmlEl('slot_default')
         
-        this.transform = new Transform(this,editor,viewport);
+        this.transform = new Transform(this,editor);
 
         this.eventDispatcher = new EventDispatcher(this, viewport);
         this.linker.link(this.eventDispatcher.onMoveGlobal,this.mouseMove)

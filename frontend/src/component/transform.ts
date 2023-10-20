@@ -51,9 +51,12 @@ class RequestFrameManager{
 
 }
 
-
+export enum Space{
+    Local,World
+}
 // Dependency: HtmlItem
 export class Transform extends Component{
+
     htmlItem: HtmlItem = null;
     linker = new Linker(this);
     parent: Transform | TransformRoot = null;
@@ -61,12 +64,11 @@ export class Transform extends Component{
     get targetElement(){return this._targetElement;}
     set targetElement(targetElement: HTMLElement){
         this._targetElement = targetElement;
-        if(targetElement != null && this.draggable){
-            if(this.actuallyDraggable){
-                this.targetElement.style.position = 'absolute'
-                this.targetElement.style.left = '0px'
-                this.targetElement.style.top = '0px'
-            }
+        if(targetElement != null && this.positionAbsolute){
+            this.targetElement.style.position = 'absolute'
+            this.targetElement.style.left = '0px'
+            this.targetElement.style.top = '0px'
+                
         }
     }
     specifiedTargetElement: HTMLElement = null;
@@ -77,6 +79,7 @@ export class Transform extends Component{
     private _pivot: Vector2 = new Vector2(0.5, 0.5);
     private _scale: number = 1;
     private _translation: Vector2 = Vector2.zero;
+    private positionAbsolute: boolean = false;
 
     public scrollSmoothness: number = 0;
 
@@ -106,12 +109,9 @@ export class Transform extends Component{
     }
     
     get translation(){return this._translation;}
-    translationChanged = new Action<[number, number]>();
     set translation(translation: Vector2){
         this._translation = translation;
         this.requestUpdateUI()
-        this.translationChanged.invoke(translation.x, translation.y);
-        this.onChange.invoke();
     }
 
     get globalPosition(){
@@ -143,14 +143,10 @@ export class Transform extends Component{
 
         if (actuallyDraggable){
             this.linker.link(this.getComponent(EventDispatcher).onDrag,this.onDrag);
-            this.targetElement.style.position = 'absolute'
-            this.targetElement.style.left = '0px'
-            this.targetElement.style.top = '0px'
         }
         else
         {
             this.linker.unlink(this.getComponent(EventDispatcher).onDrag);
-            this.targetElement.style.position = 'relative'
         }
     }
 
@@ -254,10 +250,11 @@ export class Transform extends Component{
     //     }
     // }
     
-    constructor(object:IComponentable, targetElement:HTMLElement=null, eventEl: HTMLElement=null){
+    constructor(object:IComponentable, targetElement:HTMLElement=null, positionAbsolute:boolean=false){
         super(object);
         this.htmlItem = this.getComponent(HtmlItem);
         this.specifiedTargetElement = targetElement;
+        this.positionAbsolute = positionAbsolute;
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
 
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
@@ -310,8 +307,15 @@ export class Transform extends Component{
         
     }
 
-    public translate(translation: Vector2){  
-        this.translation = this.translation.add(translation);
+    public translate(translation: Vector2, space: Space = Space.Local){  
+        switch(space){
+            case Space.Local:
+                this.translation = this.translation.add(translation);
+                break;
+            case Space.World:
+                this.translation = this.translation.add(this.worldToLocalDisplacement(translation));
+                break;
+        }
     }
 
     public scaleBy(scale: number){
@@ -340,6 +344,8 @@ export class Transform extends Component{
         transformString += `translate(${this._translation.x}px,${this._translation.y}px)`;
         transformString += `scale(${this._scale})`
         this.targetElement.style.transform = transformString;
+
+        this.onChange.invoke();
     }
 
     public requestUpdateUI(){
@@ -353,7 +359,6 @@ export class Transform extends Component{
     }
 
     public getAbsoluteOrigin(){
-        this.requestUpdateUI()
         let rect = this.targetElement.getBoundingClientRect()
         return new Vector2(
             rect.x + rect.width*this.pivot.x,
@@ -362,7 +367,6 @@ export class Transform extends Component{
     }
 
     public getAbsoluteScale(){
-        this.requestUpdateUI()
         // Only works if element size is not zero
         // let rect = this.targetElement.getBoundingClientRect()
         // return {
@@ -387,12 +391,28 @@ export class Transform extends Component{
         )
     }
 
+    public worldToLocalDisplacement(displacement: Vector2){
+        let absScale = this.getAbsoluteScale();
+        return new Vector2(
+            displacement.x/absScale.x,
+            displacement.y/absScale.y
+        )
+    }
+
     public localToWorld(pos: Vector2){
         let absOrigin = this.getAbsoluteOrigin();
         let absScale = this.getAbsoluteScale();
         return new Vector2(
             pos.x*absScale.x + absOrigin.x,
             pos.y*absScale.y + absOrigin.y
+        )
+    }
+
+    public localToWorldDisplacement(displacement: Vector2){
+        let absScale = this.getAbsoluteScale();
+        return new Vector2(
+            displacement.x*absScale.x,
+            displacement.y*absScale.y
         )
     }
 

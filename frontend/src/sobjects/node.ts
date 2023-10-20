@@ -1,7 +1,7 @@
 import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic, SetTopic} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
-import { Transform } from '../component/transform'
+import { Space, Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 import { print } from '../devUtils'
 import { Port } from './port'
@@ -58,7 +58,7 @@ export class Node extends CompSObject {
     editor: Editor;
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
-    transform: Transform = new Transform(this);
+    transform: Transform = null
     selectable: Selectable;
     functionalSelectable: Selectable;
     mouseOverDetector: MouseOverDetector
@@ -219,16 +219,14 @@ export class Node extends CompSObject {
         for(let className of this.css_classes.getValue()){
             this.htmlItem.baseElement.classList.add(className)
         }
-
-        this.transform.updateUI()
-
+        
         // Setup the transform
 
-        this.transform.pivot = new Vector2(0,0)
-        if(!this._isPreview){
-            const [x, y] = this.translation.getValue().split(',').map(parseFloat)
-            this.transform.translation=new Vector2(x, y)
-            this.transform.draggable = true
+        if (!this.isPreview){
+            this.transform = new Transform(this,null,true)
+            this.transform.updateUI()
+            this.transform.pivot = new Vector2(0,0)
+        
             this.translation.onSet.add((translation: string) => {
                 if(!this.eventDispatcher.isDragging){ // prevent the node from jumping when dragging
                     let v = Vector2.fromString(translation);
@@ -236,18 +234,25 @@ export class Node extends CompSObject {
                         this.transform.translation=Vector2.fromString(translation)
                 }
             })
-            this.transform.translationChanged.add((x: number, y: number) => {
-                this.translation.set(`${x},${y}`)
-                this.htmlItem.moveToFront()
-            })
-            this.transform.dragged.add((delta:Vector2) => {
+
+            this.eventDispatcher.onDrag.add((e: Event,newPos: Vector2,oldPos: Vector2) => {
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
+                let delta = newPos.sub(oldPos)
+                for(let selectable of this.selectable.selectedObjects){
+                    if(selectable.object instanceof Node){
+                        let node = selectable.object
+                        node.transform.translate(delta,Space.World)
+                        node.htmlItem.moveToFront()
+                    }
+                }
+            })
+            this.eventDispatcher.onDragEnd.add((e: Event,pos: Vector2) => {
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
-                        if(selectable.object instanceof Node && selectable.object != this){
+                        if(selectable.object instanceof Node){
                             let node = selectable.object
-                            node.transform.translate(delta)
+                            node.translation.set(node.transform.translation.toString())
                         }
                     }
                 })
@@ -301,9 +306,10 @@ export class Node extends CompSObject {
 
         this.link(this.onAddChild,this.moved.invoke)
         this.link(this.onRemoveChild,this.moved.invoke)
-        this.link(this.transform.onChange,this.moved.invoke)
-
-        this.transform.updateUI() // This line is necessary to make edges spawning in this frame to be connected to the node
+        if(!this.isPreview){
+            this.link(this.transform.onChange,this.moved.invoke)
+            this.transform.updateUI() // This line is necessary to make edges spawning in this frame to be connected to the node
+        }
 
         // setTimeout(() => {
         //     let border = this.htmlItem.getHtmlEl('node-border')
@@ -316,7 +322,8 @@ export class Node extends CompSObject {
         super.onParentChangedTo(newParent)
         if(newParent instanceof Sidebar){
             newParent.addItem(this.htmlItem, this.category.getValue())
-            this.transform.enabled = false
+            if(!this.isPreview)
+                this.transform.enabled = false
         }
         else{
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
@@ -324,7 +331,8 @@ export class Node extends CompSObject {
         }
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
-            this.transform.enabled = false
+            if(!this.isPreview)
+                this.transform.enabled = false
         }
     }
 
