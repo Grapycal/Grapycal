@@ -25,6 +25,7 @@ export class ThreeControl extends Control{
 
     protected onStart(): void {
         super.onStart();
+        if(this.node.isPreview) return;
         this.eventDispatcher = new EventDispatcher(this, this.htmlItem.baseElement as HTMLDivElement);
         
         this.points.onSet.add(()=>this.dirty = true)
