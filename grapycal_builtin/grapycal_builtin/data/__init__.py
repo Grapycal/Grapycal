@@ -5,7 +5,7 @@ from grapycal.sobjects.controls import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort
-from objectsync import ListTopic
+from grapycal import ListTopic, StringTopic
 
 class VariableNode(SourceNode):
     '''
@@ -29,6 +29,7 @@ class VariableNode(SourceNode):
         self.variable_name = self.add_control(TextControl,name='variable_name')
         self.label.set('Variable')
         self.shape.set('simple')
+        self.css_classes.append('fit-content')
 
     def init_node(self):
         super().init_node()
@@ -71,6 +72,7 @@ class SplitNode(Node):
         self.label.set('Split')
         self.shape.set('normal')
         self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
+        self.key_mode = self.add_attribute('key mode', StringTopic, 'string', editor_type='options', options=['string','eval']) 
 
     def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
@@ -78,7 +80,7 @@ class SplitNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.restore_attributes('keys')
+        self.restore_attributes('keys','key mode')
 
     def add_key(self, key, position):
         self.add_out_port(key)
@@ -88,14 +90,14 @@ class SplitNode(Node):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task)
-
-    def input_edge_added(self, edge: Edge, port: InputPort):
-        self.run(self.task)
-
+        
     def task(self):
         data = self.in_port.get_one_data()
         for out_port in self.out_ports:
             key = out_port.name.get()
-            out_port.push_data(eval(f'_data[{key}]',self.workspace.vars(),{'_data':data}))
+            if self.key_mode.get() == 'eval':
+                out_port.push_data(eval(f'_data[{key}]',self.workspace.vars(),{'_data':data}))
+            else:
+                out_port.push_data(data[key])
 
         

@@ -17,7 +17,7 @@ from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic
+from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
@@ -49,6 +49,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
         self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
+        self.css_classes = self.add_attribute('css_classes',SetTopic,[])
 
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
@@ -106,7 +107,7 @@ class Node(SObject,metaclass=NodeMeta):
         Called when the node is created as a result of a old node being upgraded.
         The old node's information (including attribute values) is in the `old` argument.
         '''
-        self.translation.set(old['translation'])
+        self.restore_attributes('translation')
 
     def restore_attributes(self,*attribute_names:str|tuple[str,str]):
         '''
@@ -153,7 +154,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Called when a client wants to spawn a node.
         '''
-        new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
+        new_node = self.workspace.get_workspace_object().main_editor.create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
 
     def destroy(self) -> SObjectSerialized:
@@ -222,12 +223,10 @@ class Node(SObject,metaclass=NodeMeta):
         #remove all edges connected to the port
         for edge in port.edges[:]: 
             edge.remove() # do this in port.remove()?
-            print('edge removed',edge)
 
         #remove the port
         self.out_ports.remove(port)
         port.remove()
-        print('port removed',port)
 
     def get_in_port(self,name:str) -> InputPort:
         '''
@@ -404,7 +403,7 @@ class Node(SObject,metaclass=NodeMeta):
                     task()
             else:
                 task()
-            self.running.set(random.randint(0,100))
+            self.running.set(random.randint(0,10000))
 
         self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
         
@@ -421,9 +420,9 @@ class Node(SObject,metaclass=NodeMeta):
                 task()
         except Exception as e:
             self._on_exception(e)
-        self.running.set(random.randint(0,100))
+        self.running.set(random.randint(0,10000))
 
-    def run(self,task:Callable[[],Any],background=True,to_queue=True,redirect_output=False,**kwargs):
+    def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,*args,**kwargs):
         '''
         Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
 
@@ -435,14 +434,14 @@ class Node(SObject,metaclass=NodeMeta):
             - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
             If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
         '''
-        task = functools.partial(task,**kwargs)
+        task = functools.partial(task,*args,**kwargs)
         if background:
             self._run_in_background(task,to_queue,redirect_output=False)
         else:
             self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e):
-        self.running.set(random.randint(0,100))
+        self.running.set(random.randint(0,10000))
         message = ''.join(traceback.format_exc())
         if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
@@ -451,6 +450,11 @@ class Node(SObject,metaclass=NodeMeta):
                 self.output.set([])
                 self.output.insert(['error','Too many output lines. Cleared.'])
             self.output.insert(['error',message])
+
+
+    def flash_running_indicator(self):
+        self.running.set(0)
+        self.running.set(random.randint(0,10000))
 
     '''
     Node events

@@ -10,6 +10,7 @@ from .transform import *
 from .dataloader import *
 from .normalize import *
 from .loss import *
+from .generative import *
 
 
 
@@ -25,18 +26,16 @@ matplotlib.use('agg') # use non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 
-class MnistDatasetNode(Node):
+class MnistDatasetNode(SourceNode):
     category = 'torch/dataset'
     def build_node(self):
-        self.label.set('MNIST')
-        self.out = self.add_out_port('dataset')
+        super().build_node()
+        self.label.set('MNIST Dataset')
+        self.out = self.add_out_port('MNIST Dataset')
 
     def task(self):
         ds = torchvision.datasets.mnist.MNIST('data', download=True)
         self.out.push_data(ds)
-
-    def double_click(self):
-        self.run(self.task)
 
 
 del ModuleNode, SimpleModuleNode, Node, SourceNode, FunctionNode

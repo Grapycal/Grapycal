@@ -1,13 +1,13 @@
-import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic} from 'objectsync-client'
+import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic, SetTopic} from 'objectsync-client'
 import { soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
-import { Transform } from '../component/transform'
+import { Space, Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
 import { print } from '../devUtils'
 import { Port } from './port'
 import { bloomDiv as bloomDiv, glowText } from '../ui_utils/effects'
 import { Vector2, as } from '../utils'
-import { EventDispatcher } from '../component/eventDispatcher'
+import { EventDispatcher, GlobalEventDispatcher } from '../component/eventDispatcher'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { Sidebar } from './sidebar'
 import { Editor } from './editor'
@@ -47,6 +47,7 @@ export class Node extends CompSObject {
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
     running: IntTopic = this.getAttribute('running', IntTopic)
+    css_classes: SetTopic = this.getAttribute('css_classes', SetTopic)
     
     private _isPreview: boolean
     get isPreview(): boolean {
@@ -57,10 +58,12 @@ export class Node extends CompSObject {
     editor: Editor;
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
-    transform: Transform = new Transform(this);
+    transform: Transform = null
     selectable: Selectable;
     functionalSelectable: Selectable;
     mouseOverDetector: MouseOverDetector
+
+    private draggingTargetPos: Vector2 = new Vector2(0,0)
     
     public moved: Action<[]> = new Action();
 
@@ -74,13 +77,13 @@ export class Node extends CompSObject {
             </div>
             
             <div class="node-selection"></div>
-            <div class="node-content flex-vert space-between">
-                <div id="label" class="node-label full-width"></div>
-                <div class="flex-horiz space-between full-width">
+            <div id="label" class="node-label full-width"></div>
+            <div class=" flex-vert space-between">
+                <div class="flex-horiz space-between full-width port-section">
                     <div id="slot_input_port" class=" flex-vert space-evenly center slot-input-port"></div>
                     <div id="slot_output_port" class=" flex-vert space-evenly center slot-output-port"></div>
                 </div>
-                <div id="slot_control" class="slot-control flex-vert space-between"> </div>
+                <div id="slot_control" class="slot-control flex-vert space-between"></div>
             </div>
         </div>`,
     simple:
@@ -91,15 +94,17 @@ export class Node extends CompSObject {
             </div>
             <div class="node-selection"></div>
             
-            <div class=" flex-horiz space-between">
-                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+            <div class="flex-horiz stretch-align space-between">
+                <div id="slot_input_port" class=" flex-vert justify-start slot-input-port"></div>
 
-                <div class="full-width flex-vert space-evenly node-content">
-                    <div id="label" class="node-label full-width"></div>
-                    <div id="slot_control"  class="slot-control"> </div>
+                <div class="full-width flex-vert space-evenly">
+                    <div class="node-label full-width flex-horiz">
+                        <div id="label"></div>
+                    </div>
+                    <div id="slot_control"  class="slot-control"></div>
                 </div>
 
-                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_output_port" class=" flex-vert justify-start slot-output-port"></div>
             </div>
         </div>`,
     round:
@@ -111,8 +116,8 @@ export class Node extends CompSObject {
             <div class="node-selection"></div>
             <div class="flex-horiz node-content">
                 <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-                <div class="full-width flex-vert space-evenly"> 
-                    <div id="label" class="center-align node-label"></div>
+                <div class="full-width flex-vert space-evenly node-label"> 
+                    <div id="label" class="center-align"></div>
                 </div>
                 <div id="slot_control" style="display:none"></div>
                 
@@ -178,8 +183,10 @@ export class Node extends CompSObject {
                 this.htmlItem.baseElement.classList.add('running')
                 let tmp =  running
                 setTimeout(() => {
-                    if(tmp == this.running.getValue())
+                    try{
+                    if( tmp == this.running.getValue())
                         this.htmlItem.baseElement.classList.remove('running')
+                    }catch(e){}
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })
@@ -203,11 +210,27 @@ export class Node extends CompSObject {
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
         this.errorPopup = new ErrorPopup(this)
 
-        this.transform.pivot = new Vector2(0.5, 0)
-        if(!this._isPreview){
-            const [x, y] = this.translation.getValue().split(',').map(parseFloat)
-            this.transform.translation=new Vector2(x, y)
-            this.transform.draggable = true
+        // Before setting up the transform, we need to add classes to the element then call updateUI so the shape is correct
+        
+        this.link(this.css_classes.onAppend, (className: string) => {
+            this.htmlItem.baseElement.classList.add(className)
+        })
+        
+        this.link(this.css_classes.onRemove, (className: string) => {
+            this.htmlItem.baseElement.classList.remove(className)
+        })
+        
+        for(let className of this.css_classes.getValue()){
+            this.htmlItem.baseElement.classList.add(className)
+        }
+        
+        // Setup the transform
+
+        if (!this.isPreview){
+            this.transform = new Transform(this,null,true)
+            this.transform.updateUI()
+            this.transform.pivot = new Vector2(0,0)
+        
             this.translation.onSet.add((translation: string) => {
                 if(!this.eventDispatcher.isDragging){ // prevent the node from jumping when dragging
                     let v = Vector2.fromString(translation);
@@ -215,19 +238,42 @@ export class Node extends CompSObject {
                         this.transform.translation=Vector2.fromString(translation)
                 }
             })
-            this.transform.translationChanged.add((x: number, y: number) => {
-                this.translation.set(`${x},${y}`)
-                this.htmlItem.moveToFront()
+
+            this.eventDispatcher.onDragStart.add((e: Event,pos: Vector2) => {
+                this.draggingTargetPos = this.transform.translation
             })
-            this.transform.dragged.add((delta:Vector2) => {
-                print(this.transform.pivot)
+
+            this.eventDispatcher.onDrag.add((e: Event,newPos: Vector2,oldPos: Vector2) => {
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
+
+                let delta = this.transform.worldToLocalDisplacement(newPos.sub(oldPos))
+                let snappedDelta = delta
+                print(GlobalEventDispatcher.instance.isKeyDown('Alt'))
+                if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
+                    this.draggingTargetPos = this.draggingTargetPos.add(delta)
+                    const snap = 20
+                    const snapped = new Vector2(
+                        Math.round(this.draggingTargetPos.x/snap)*snap,
+                        Math.round(this.draggingTargetPos.y/snap)*snap
+                    )
+                    snappedDelta = snapped.sub(this.transform.translation)
+                }
+
+                for(let selectable of this.selectable.selectedObjects){
+                    if(selectable.object instanceof Node){
+                        let node = selectable.object
+                        node.transform.translate(snappedDelta,Space.Local)
+                        node.htmlItem.moveToFront()
+                    }
+                }
+            })
+            this.eventDispatcher.onDragEnd.add((e: Event,pos: Vector2) => {
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
-                        if(selectable.object instanceof Node && selectable.object != this){
+                        if(selectable.object instanceof Node){
                             let node = selectable.object
-                            node.transform.translate(delta)
+                            node.translation.set(node.transform.translation.toString())
                         }
                     }
                 })
@@ -281,21 +327,24 @@ export class Node extends CompSObject {
 
         this.link(this.onAddChild,this.moved.invoke)
         this.link(this.onRemoveChild,this.moved.invoke)
-        this.link(this.transform.onChange,this.moved.invoke)
+        if(!this.isPreview){
+            this.link(this.transform.onChange,this.moved.invoke)
+            this.transform.updateUI() // This line is necessary to make edges spawning in this frame to be connected to the node
+        }
 
         // setTimeout(() => {
         //     let border = this.htmlItem.getHtmlEl('node-border')
         //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
         // }, 0);
-
     }
 
     onParentChangedTo(newParent: SObject): void {
         super.onParentChangedTo(newParent)
         if(newParent instanceof Sidebar){
             newParent.addItem(this.htmlItem, this.category.getValue())
-            this.transform.enabled = false
+            if(!this.isPreview)
+                this.transform.enabled = false
         }
         else{
             this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
@@ -303,7 +352,8 @@ export class Node extends CompSObject {
         }
         if(newParent instanceof Node){
             as(this.htmlItem.baseElement,HTMLDivElement).style.borderColor = 'transparent'
-            this.transform.enabled = false
+            if(!this.isPreview)
+                this.transform.enabled = false
         }
     }
 

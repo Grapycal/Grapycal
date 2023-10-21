@@ -1,0 +1,17 @@
+@import url(workspace.css);
+@import url(edge.css);
+@import url(node.css);
+@import url(port.css);
+
+:root {
+    --z0: #121212;
+    --z1: #1d1d1d;
+    --z2: #313131;
+    --z3: #4d4d4d;
+    --t0: #191A19;
+    --t1: #1E5128;
+    --t2: #4E9F3D;
+    --t3: #D8E9A8;
+    --text-low: #9a9a9a;
+    --text-high: #dfdfdf;
+}

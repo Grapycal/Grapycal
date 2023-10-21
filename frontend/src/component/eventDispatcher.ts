@@ -195,6 +195,10 @@ export class EventDispatcher extends Component{
         this.eventElement?.removeEventListener('mousedown', this._onMouseDown);
         this.eventElement?.removeEventListener('wheel', this.onScroll.invoke);
         this.eventElement?.removeEventListener('dblclick', this._onDoubleClick);
+        this.eventElement?.removeEventListener('mouseover', this.onMouseOver.invoke);
+        this.eventElement?.removeEventListener('mouseleave', this.onMouseLeave.invoke);
+        document.removeEventListener('mousemove', this._onMouseMove);
+        document.removeEventListener('mouseup', this._onMouseUp);
         super.onDestroy();
     }
 }

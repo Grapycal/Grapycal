@@ -1,4 +1,4 @@
-import { ObjectSyncClient, ObjectTopic} from "objectsync-client"
+import { ObjectSyncClient, ObjectTopic, StringTopic, GenericTopic, IntTopic} from "objectsync-client"
 import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
@@ -7,6 +7,8 @@ import { Inspector } from "../inspector/inspector"
 import { Node } from "./node"
 import { Edge } from "./edge"
 import { Footer } from "../ui_utils/footer"
+import { Buffer } from "buffer";
+import { print } from "../devUtils"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -18,6 +20,9 @@ export class Workspace extends CompSObject{
     readonly functionalSelection = new SelectionManager(this) 
     readonly inspector = new Inspector()
     readonly record: ObjectSyncClient['record']
+    get clientId(){
+        return this.objectsync.clientId
+    }
     constructor(objectsync: ObjectSyncClient, id: string) {
         super(objectsync, id);
         (this.selection as any).name = 'selection';
@@ -48,9 +53,6 @@ export class Workspace extends CompSObject{
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
         Footer.setStatus('Workspace loaded.')
     }
-    public getObjectSync(): ObjectSyncClient{
-        return this.objectsync
-    }
     private deletePressed(){
         let selectedIds = []
         for(let s of this.selection.selected){
@@ -61,4 +63,104 @@ export class Workspace extends CompSObject{
         }
         this.objectsync.emit('delete',{ids:selectedIds})
     }
+}
+
+export class WebcamStream extends CompSObject{
+        image: StringTopic
+    sourceClient: IntTopic
+    stream: MediaStream = null
+    interval:number = 200
+    timer: NodeJS.Timer
+    
+    protected onStart(): void {
+        (navigator as any).getUserMedia = (navigator as any).getUserMedia || (navigator as any).webkitGetUserMedia || (navigator as any).mozGetUserMedia || (navigator as any).msGetUserMedia
+        
+        this.image = this.getAttribute('image', StringTopic)
+        this.sourceClient = this.getAttribute('source_client', IntTopic)
+        this.sourceClient.onSet.add((sourceClient)=>{
+            if(sourceClient == Workspace.instance.clientId){
+                this.startStreaming()
+            }else{
+                this.stopStreaming()
+            }
+        })
+    }
+
+    private startStreaming(){
+        if (this.stream) return;
+        print('publishing');
+        (navigator as any).getUserMedia( {video: { width: 480, height: 320 }, audio: false},
+            
+        (stream: MediaStream) => {
+            this.stream = stream
+            // start loop
+            this.timer = setInterval(()=>{
+                this.publish()
+            },this.interval)
+            video.srcObject = stream;
+            video.onloadeddata = () => {
+            
+                video.play();
+            }
+        }
+
+        , function(err: any) {
+            console.error(err);
+        })
+    }
+
+    private publish(){
+        let image = getImageFromStream(this.stream)
+        image.then((blob: Blob)=>{
+            let reader = new FileReader()
+            reader.onload = (event) => {
+                let buf =Buffer.from( reader.result as ArrayBuffer)
+                var base64String = buf.toString('base64')
+                this.image.set(base64String)
+            }
+            reader.readAsArrayBuffer(blob)
+        })
+    }
+
+    private stopStreaming(){
+        if(this.stream==null) return;
+        clearInterval(this.timer)
+        this.stream = null
+    }
+
+
+}
+
+const video = document.createElement('video');
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+
+//https://stackoverflow.com/questions/62446301/alternative-for-the-imagecapture-api-for-better-browser-support
+function getImageFromStream(stream: MediaStream) {
+
+  if (false && 'ImageCapture' in window) {
+
+    const videoTrack = stream.getVideoTracks()[0];
+    const imageCapture = new (window as any).ImageCapture(videoTrack);
+    return imageCapture.takePhoto({imageWidth: 48, imageHeight: 32});
+    
+  } else {
+
+
+
+    return new Promise((resolve, reject) => {
+        //const { videoWidth, videoHeight } = video;
+        const { videoWidth, videoHeight } = {videoWidth: 480, videoHeight: 320};
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
+
+        try {
+          context.drawImage(video, 0, 0, videoWidth, videoHeight);
+          canvas.toBlob(resolve, 'image/jpg');
+        } catch (error) {
+          reject(error);
+        }
+      });
+  }
+  
 }

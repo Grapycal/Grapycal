@@ -1,5 +1,27 @@
+import io
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.sobjects.controls import TextControl
+from grapycal import ListTopic
+
+import ast
+# exec that prints correctly
+def exec_(script,globals=None, locals=None,print_=print):
+    stmts = list(ast.iter_child_nodes(ast.parse(script)))
+    output=''
+    if stmts == []:
+        return
+    if isinstance(stmts[-1], ast.Expr):
+        if len(stmts) > 1:
+            ast_module = ast.parse("")
+            ast_module.body=stmts[:-1]
+            exec(compile(ast_module, filename="<ast>", mode="exec"), globals, locals)
+        last = eval(compile(ast.Expression(body=stmts[-1].value), filename="<ast>", mode="eval"), globals, locals)
+        if last:
+            print_(last)
+    else:    
+        exec(script, globals, locals)
+    return output
 
 class ExecNode(SourceNode):
     '''
@@ -19,12 +41,55 @@ class ExecNode(SourceNode):
     def build_node(self):
         super().build_node()
         self.out_port = self.add_out_port('done')
-        self.text_control = self.add_control(TextControl)
+        self.text_control = self.add_text_control(name='text')
         self.label.set('Execute')
         self.shape.set('simple')
-        self.expose_attribute(self.text_control.text,'text',display_name='statements')
+        self.css_classes.append('fit-content')
+        self.output_control = self.add_text_control('',readonly=True,name='output_control')
+        self.inputs = self.add_attribute('inputs',ListTopic,[],editor_type='list')
+        self.outputs = self.add_attribute('outputs',ListTopic,[],editor_type='list')
+
+    def init_node(self):
+        super().init_node()
+        self.inputs.on_insert.add_auto(self.add_input)
+        self.inputs.on_pop.add_auto(self.pop_input)
+        self.outputs.on_insert.add_auto(self.add_output)
+        self.outputs.on_pop.add_auto(self.pop_output)
+
+    def add_input(self, name,_):
+        self.add_in_port(name,1)
+
+    def pop_input(self, name,_):
+        self.remove_in_port(name)
+
+    def add_output(self, name,_):
+        self.add_out_port(name)
+
+    def pop_output(self, name,_):
+        self.remove_out_port(name)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_controls('text','output_control')
+        self.restore_attributes('inputs','outputs')
 
     def task(self):
+        self.output_control.set('')
         stmt = self.text_control.text.get()
-        exec(stmt,self.workspace.vars())
+        for name in self.inputs:
+            port = self.get_in_port(name)
+            if port.is_all_edge_ready():
+                self.workspace.vars().update({name:port.get_one_data()})
+        self.workspace.vars().update({'print':self.print,'self':self})
+        exec_(stmt,self.workspace.vars(),print_=self.print)
         self.out_port.push_data(None)
+        for name in self.outputs:
+            self.get_out_port(name).push_data(self.workspace.vars()[name])
+
+    def print(self, *args, **kwargs):
+        output = io.StringIO()
+        print(*args, file=output, **kwargs)
+        contents = output.getvalue()
+        output.close()
+        self.output_control.set(self.output_control.get()+contents)
+        

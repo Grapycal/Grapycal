@@ -1,28 +1,29 @@
-from typing import Dict, List
+from typing import Dict, Generic, List, TypeVar
 from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
 
-class ListDict:
+T = TypeVar('T')
+class ListDict(Generic[T]):
     def __init__(self):
-        self.d:Dict[str,List] = {}
+        self.d:Dict[str,List[T]] = {}
 
-    def append(self, key, value):
+    def append(self, key:str, value:T):
         if key not in self.d:
             self.d[key] = []
         self.d[key].append(value)
 
-    def remove(self, key, value):
+    def remove(self, key:str, value:T):
         self.d[key].remove(value)
         if len(self.d[key]) == 0:
             self.d.pop(key)
 
-    def has(self, key):
+    def has(self, key:str):
         return key in self.d
     
-    def get(self, key):
+    def get(self, key:str):
         if key not in self.d:
             return []
         return self.d[key]
@@ -35,7 +36,7 @@ class FuncDefManager:
 class FuncCallNode(Node):
     category = 'function'
     def build_node(self):
-        self.label.set('FuncCall')
+        self.label.set('Call:')
         self.shape.set('normal')
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
 
@@ -48,7 +49,7 @@ class FuncCallNode(Node):
         self.restore_attributes('func_name')
 
     def on_func_name_changed(self, old, new):
-        self.label.set(f'Call {new}')
+        self.label.set(f'Call: {new}')
         FuncDefManager.calls.remove(old,self)
         FuncDefManager.calls.append(new,self)
         self.update_input_ports()
@@ -97,6 +98,8 @@ class FuncCallNode(Node):
     def end_function(self):
         if self.is_destroyed():
             return
+        if self.func_name.get() not in FuncDefManager.outs:
+            return # assume its intended to be a void function
         FuncDefManager.outs[self.func_name.get()].end_function(self)
 
     def push_result(self, result:dict):
@@ -117,7 +120,6 @@ class FuncInNode(Node):
     #     new_node.add_tag(f'spawned_by_{client_id}')
 
     def build_node(self):
-        self.label.set('FuncIn')
         self.shape.set('normal')
 
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
@@ -149,7 +151,7 @@ class FuncInNode(Node):
         self.update_label()
 
     def update_label(self):
-        self.label.set(f'Input of {self.func_name.get()}')
+        self.label.set(f'Input of: {self.func_name.get()}')
 
 
     def restore_from_version(self, version, old: NodeInfo):
@@ -180,7 +182,6 @@ class FuncInNode(Node):
 class FuncOutNode(Node):
     category = 'function'
     def build_node(self):
-        self.label.set('FuncOut')
         self.shape.set('normal')
 
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
@@ -215,7 +216,7 @@ class FuncOutNode(Node):
         self.update_label()
 
     def update_label(self):
-        self.label.set(f'Output of {self.func_name.get()}')
+        self.label.set(f'Output of: {self.func_name.get()}')
 
     def on_input_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)

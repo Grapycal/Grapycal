@@ -19,7 +19,7 @@ documentation = "https://eri24816.github.io/Grapycal/"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = "^0.4.0"
+objectsync = "^0.5.0"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"

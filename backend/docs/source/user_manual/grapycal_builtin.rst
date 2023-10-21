@@ -70,6 +70,240 @@ To make it run, either send in a signal to the `run` input port, or double click
 
 |
 
+
+ImagePaste
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/imagepaste.jpg
+    :width: 10em
+    :align: right
+    :alt: [ImagePaste image]
+
+
+
+ImageDisplay
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/imagedisplay.jpg
+    :width: 10em
+    :align: right
+    :alt: [ImageDisplay image]
+
+
+
+Label
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/label.jpg
+    :width: 10em
+    :align: right
+    :alt: [Label image]
+
+
+Function/math
+------------------
+
+
+Addition
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/addition.jpg
+    :width: 10em
+    :align: right
+    :alt: [Addition image]
+
+Adds a set of values together. The values can be of any addable type, such as numbers, NumPy arrays,
+PyTorch tensors, or strings.
+
+:Inputs:
+    - **values**: a set of values
+    
+:Outputs:
+    - **sum**: sum of all values
+
+|
+
+
+Subtraction
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/subtraction.jpg
+    :width: 10em
+    :align: right
+    :alt: [Subtraction image]
+
+Calculates sum(`B`) - sum(`A`).
+
+:Inputs:
+   - **A**: A set of values, `A`
+   - **B**: A set of values, `B`
+
+:Outputs:
+    - **Difference**: sum(`A`) - sum(`B`)
+
+|
+
+
+Multiplication
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/multiplication.jpg
+    :width: 10em
+    :align: right
+    :alt: [Multiplication image]
+
+Multiplies a set of values together. The values can be of any multipliable type, such as numbers, NumPy arrays, or
+PyTorch tensors.
+
+:Inputs:
+    - **values**: a set of values
+
+:Outputs:
+    - **product**: product of all values
+
+|
+
+
+Division
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/division.jpg
+    :width: 10em
+    :align: right
+    :alt: [Division image]
+
+Calculates product(`B`) / product(`A`).
+
+:Inputs:
+    - **A**: A set of values, `A`
+    - **B**: A set of values, `B`
+
+:Outputs:
+    - **Quotient**: product(`B`) / product(`A`)
+
+|
+
+Procedural
+------------------
+
+
+For
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/for.jpg
+    :width: 10em
+    :align: right
+    :alt: [For image]
+
+Iterate through an iterable object. Each iteration will push the next item to the ``item`` port.
+Double click to interrupt the iteration.
+
+|
+
+
+Event
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/event.jpg
+    :width: 10em
+    :align: right
+    :alt: [Event image]
+
+
+
+Procedure
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/procedure.jpg
+    :width: 10em
+    :align: right
+    :alt: [Procedure image]
+
+
+
+Limiter
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/limiter.jpg
+    :width: 10em
+    :align: right
+    :alt: [Limiter image]
+
+
+
+InPortal
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/inportal.jpg
+    :width: 10em
+    :align: right
+    :alt: [InPortal image]
+
+
+
+OutPortal
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/outportal.jpg
+    :width: 10em
+    :align: right
+    :alt: [OutPortal image]
+
+
+Function
+------------------
+
+
+Lambda
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/lambda.jpg
+    :width: 10em
+    :align: right
+    :alt: [Lambda image]
+
+LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function, which is
+similar to Python's lambda function.
+
+It can be freely configured to be any function of any number of inputs and outputs. For each output, the node
+provides an input box for you to define the function with an expression.
+
+:Inputs:
+    - **x**: input 1
+    
+
+|
+
+
+FuncCall
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/funccall.jpg
+    :width: 10em
+    :align: right
+    :alt: [FuncCall image]
+
+
+
+FuncIn
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/funcin.jpg
+    :width: 10em
+    :align: right
+    :alt: [FuncIn image]
+
+
+
+FuncOut
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/funcout.jpg
+    :width: 10em
+    :align: right
+    :alt: [FuncOut image]
+
+
 Data
 ------------------
 
@@ -118,152 +352,12 @@ Multiple keys can be used at the same time. Each value will be sent to a corresp
 
 |
 
-Function/math
-------------------
 
-
-Addition
+List
 ~~~~~~~~~~~~~~~~~~~
 
-.. image:: ./node_imgs/addition.jpg
+.. image:: ./node_imgs/list.jpg
     :width: 10em
     :align: right
-    :alt: [Addition image]
-
-Adds a set of values together. The values can be of any addable type, such as numbers, NumPy arrays,
-PyTorch tensors, or strings.
-
-:Inputs:
-    - **values**: a set of values
-    
-:Outputs:
-    - **sum**: sum of all values
-
-|
-
-
-Subtraction
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/subtraction.jpg
-    :width: 10em
-    :align: right
-    :alt: [Subtraction image]
-
-Calculates sum(`B`) - sum(`A`).
-
-:Inputs:
-   - **A**: A set of values, `A`
-   - **B**: A set of values, `B`
-
-:Outputs:
-    - **Difference**: sum(`B`) - sum(`A`)
-
-|
-
-
-Multiplication
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/multiplication.jpg
-    :width: 10em
-    :align: right
-    :alt: [Multiplication image]
-
-Multiplies a set of values together. The values can be of any multipliable type, such as numbers, NumPy arrays, or
-PyTorch tensors.
-
-:Inputs:
-    - **values**: a set of values
-
-:Outputs:
-    - **product**: product of all values
-
-|
-
-
-Division
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/division.jpg
-    :width: 10em
-    :align: right
-    :alt: [Division image]
-
-Calculates product(`B`) / product(`A`).
-
-:Inputs:
-    - **A**: A set of values, `A`
-    - **B**: A set of values, `B`
-
-:Outputs:
-    - **Quotient**: product(`B`) / product(`A`)
-
-|
-
-Function
-------------------
-
-
-Lambda
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/lambda.jpg
-    :width: 10em
-    :align: right
-    :alt: [Lambda image]
-
-LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function, which is
-similar to Python's lambda function.
-
-It can be freely configured to be any function of any number of inputs and outputs. For each output, the node
-provides an input box for you to define the function with an expression.
-
-:Inputs:
-    - **x**: input 1
-    
-
-|
-
-Procedural
-------------------
-
-
-For
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/for.jpg
-    :width: 10em
-    :align: right
-    :alt: [For image]
-
-
-
-Event
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/event.jpg
-    :width: 10em
-    :align: right
-    :alt: [Event image]
-
-
-
-Procedure
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/procedure.jpg
-    :width: 10em
-    :align: right
-    :alt: [Procedure image]
-
-
-
-Limiter
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/limiter.jpg
-    :width: 10em
-    :align: right
-    :alt: [Limiter image]
+    :alt: [List image]
 

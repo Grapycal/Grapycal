@@ -24,6 +24,7 @@ class EvalNode(SourceNode):
         self.expr_control = self.add_control(TextControl,name='expr_control')
         self.label.set('Evaluate')
         self.shape.set('simple')
+        self.css_classes.append('fit-content')
         self.expose_attribute(self.expr_control.text,'text',display_name='expression')
 
     def restore_from_version(self, version: str, old: NodeInfo):
@@ -32,6 +33,7 @@ class EvalNode(SourceNode):
 
     def task(self):
         expression = self.expr_control.text.get()
+        self.workspace.vars().update({'print':self.print,'self':self})
         value = eval(expression,self.workspace.vars())
         for edge in self.out_port.edges:
             edge.push_data(value)

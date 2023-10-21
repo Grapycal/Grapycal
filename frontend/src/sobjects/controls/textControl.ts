@@ -2,11 +2,12 @@ import { IntTopic, StringTopic } from "objectsync-client"
 import { Control } from "./control"
 import { print } from "../../devUtils"
 import { BindInputBoxAndTopic } from "../../ui_utils/interaction"
+import { TextBox} from "../../utils"
 
 
 export class TextControl extends Control {
     
-    textField: HTMLInputElement
+    textBox: TextBox
     text = this.getAttribute("text", StringTopic)
     label = this.getAttribute("label", StringTopic)
     editable = this.getAttribute("editable", IntTopic)
@@ -14,7 +15,6 @@ export class TextControl extends Control {
     protected template = `
     <div class="control flex-horiz">
         <div class="label" id="label">Text</div>
-        <input type="text" class="control-text text-field full-height " id="text-field">
     </div>
     `
 
@@ -27,10 +27,12 @@ export class TextControl extends Control {
 
     protected onStart(): void {
         super.onStart()
-        this.textField = this.htmlItem.getEl("text-field", HTMLInputElement)
-        this.textField.value = this.text.getValue()
+        this.textBox = new TextBox(this.htmlItem.getElByClass("control"))
+        this.textBox.textarea.classList.add("control-text","text-field")
+        this.textBox.value = this.text.getValue()
+        this.textBox.onResize.add(()=>{this.node.moved.invoke()})
         
-        new BindInputBoxAndTopic(this,this.textField, this.text,this.objectsync,true)
+        new BindInputBoxAndTopic(this,this.textBox, this.text,this.objectsync,true)
 
         let labelEl = this.htmlItem.getEl("label", HTMLDivElement)
         this.link(this.label.onSet, (label) => {
@@ -45,7 +47,7 @@ export class TextControl extends Control {
         })
 
         this.link(this.editable.onSet, (editable) => {
-            this.textField.disabled = !editable
+            this.textBox.disabled = !editable
         })
     }
 

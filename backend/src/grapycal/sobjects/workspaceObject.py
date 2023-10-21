@@ -2,16 +2,16 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.sidebar import Sidebar
-from objectsync import SObject, ObjTopic
+from objectsync import SObject, ObjTopic, StringTopic, IntTopic
 
 class WorkspaceObject(SObject):
     frontend_type = 'Workspace'
         
     def build(self):
-        self.main_editor = self.add_attribute('main_editor',ObjTopic[Editor])
-        self.add_child(Sidebar)
-        self.main_editor.set(self.add_child(Editor))
-        self.sidebar = self.get_child_of_type(Sidebar)
+        self.webcam = self.add_child(WebcamStream)
+        self.sidebar =self.add_child(Sidebar)
+        self.main_editor = self.add_child(Editor)
+        self.add_attribute('main_editor',ObjTopic).set(self.main_editor)
 
     def init(self):
         self._server.on('delete',self._delete_callback,is_stateful=False)
@@ -43,3 +43,13 @@ class WorkspaceObject(SObject):
             edge.remove()
         for node in nodes:
             node.remove()
+
+class WebcamStream(SObject):
+    frontend_type = 'WebcamStream'
+    def build(self):
+        self.image = self.add_attribute('image',StringTopic)
+        self.source_client = self.add_attribute('source_client',IntTopic,-1)
+
+    def init(self):
+        self.source_client.set(-1)
+        self._server.globals.workspace.webcam = self

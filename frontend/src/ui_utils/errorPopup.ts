@@ -9,7 +9,7 @@ export class ErrorPopup extends Componentable{
             <div class="error-popup">
                 <div class="message"></div>
                 <svg width="20px" height="20px" style="position: absolute; bottom: -20px; left: -20px;">
-                    <line x1="20" y1="0" x2="0" y2="20" style="stroke:#CF6679;stroke-width:2" />
+                    <line x1="20" y1="0" x2="0" y2="20" />
                 </svg>
             </div>
         `
@@ -27,6 +27,8 @@ export class ErrorPopup extends Componentable{
                 border-radius: 2px;
                 border: 1px solid black;
                 padding: 2px;
+                stroke:#CF6679;
+                stroke-width:2;
             }
             .message{
                 max-width: 400px;
@@ -62,7 +64,10 @@ export class ErrorPopup extends Componentable{
 
         this.transform.pivot = new Vector2(0.,1)
         this.baseDiv.addEventListener("wheel",(e)=>{
-            e.stopPropagation()
+            //if scrollable, stop propagation
+            if(this.messageDiv.scrollHeight > this.messageDiv.clientHeight){
+                e.stopPropagation()
+            }
         })
     }
 
