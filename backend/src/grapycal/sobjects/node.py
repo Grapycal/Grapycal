@@ -397,7 +397,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         def task_wrapper():
             self.running.set(0)
-            self.workspace.background_runner.set_exception_callback(self._on_exception)
+            self.workspace.background_runner.set_exception_callback(lambda e:self._on_exception(e,truncate=3))
             if redirect_output:
                 with self._redirect_output():
                     task()
@@ -419,7 +419,7 @@ class Node(SObject,metaclass=NodeMeta):
             else:
                 task()
         except Exception as e:
-            self._on_exception(e)
+            self._on_exception(e,truncate=1)
         self.running.set(random.randint(0,10000))
 
     def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,*args,**kwargs):
@@ -440,9 +440,9 @@ class Node(SObject,metaclass=NodeMeta):
         else:
             self._run_directly(task,redirect_output=False)
 
-    def _on_exception(self, e):
+    def _on_exception(self, e, truncate=0):
         self.running.set(random.randint(0,10000))
-        message = ''.join(traceback.format_exc())
+        message = ''.join(traceback.format_exception(e)[truncate:])
         if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
