@@ -27,6 +27,7 @@ export class GlobalEventDispatcher{
     public readonly onMouseDown = new Action<[MouseEvent]>();
     public readonly onMouseUp = new Action<[MouseEvent]>();
     public readonly onKeyDown = new ActionDict<string,[KeyboardEvent]>()
+    public readonly onAnyKeyDown = new Action<[KeyboardEvent]>();
 
     public readonly keyState: {[key: string]: boolean} = {};
 
@@ -34,12 +35,13 @@ export class GlobalEventDispatcher{
     get mousePos(){return this._mousePos;}
     
     constructor(){
-        document.addEventListener('mousemove', this._onMouseMove.bind(this));
-        document.addEventListener('mousedown', this._onMouseDown.bind(this));
-        document.addEventListener('mouseup', this._onMouseUp.bind(this));
-        document.addEventListener('keydown', this._onKeyDown.bind(this));
-        document.addEventListener('keyup', this._onKeyUp.bind(this));
-        window.addEventListener('blur', this._onBlur.bind(this));
+        // All listen on capture phase
+        document.addEventListener('mousemove', this._onMouseMove.bind(this),true);
+        document.addEventListener('mousedown', this._onMouseDown.bind(this),true);
+        document.addEventListener('mouseup', this._onMouseUp.bind(this),true);
+        document.addEventListener('keydown', this._onKeyDown.bind(this),true);
+        document.addEventListener('keyup', this._onKeyUp.bind(this),true);
+        window.addEventListener('blur', this._onBlur.bind(this),true);
     }
 
     private _onMouseMove(event: MouseEvent){
@@ -63,6 +65,7 @@ export class GlobalEventDispatcher{
 
     private _onKeyDown(event: KeyboardEvent){
         this.onKeyDown.invoke(event.key,event);
+        this.onAnyKeyDown.invoke(event);
         this.keyState[event.key] = true;
     }
 

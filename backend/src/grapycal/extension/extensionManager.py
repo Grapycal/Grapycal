@@ -32,6 +32,7 @@ class ExtensionManager:
         # Use this topic to inform the client about the extensions
         self._imported_extensions_topic = self._objectsync.create_topic('imported_extensions',objectsync.DictTopic,is_stateful=False)
         self._avaliable_extensions_topic = self._objectsync.create_topic('avaliable_extensions',objectsync.DictTopic,is_stateful=False)
+        self._node_types_topic = self._objectsync.create_topic('node_types',objectsync.DictTopic,is_stateful=False)
         self._objectsync.on('import_extension',self.import_extension,is_stateful=False)
         self._objectsync.on('unimport_extension',self.unimport_extension,is_stateful=False)
         self._objectsync.on('update_extension',self.update_extension,is_stateful=False)
@@ -295,6 +296,11 @@ class ExtensionManager:
         self._imported_extensions_topic.add(name,{
             'name':name
         })
+        for node_type_name, node_type in self._extensions[name].node_types.items():
+            self._node_types_topic.add(node_type_name,{
+                'name':node_type_name,
+                'category':node_type.category
+            })
         return self._extensions[name]
     
     def _check_extension_not_used(self, name: str) -> None:
@@ -310,6 +316,8 @@ class ExtensionManager:
             self._objectsync.unregister(node_type)
         self._extensions.pop(name)
         self._imported_extensions_topic.pop(name)
+        for node_type_name in node_types:
+            self._node_types_topic.pop(node_type_name)
     
     def _create_preview_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types

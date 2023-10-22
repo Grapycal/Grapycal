@@ -8,6 +8,7 @@ import { CompSObject } from "./compSObject"
 import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
+import { AddNodeMenu } from "../ui_utils/addNodeMenu"
 
 export class Editor extends CompSObject{
     readonly template: string = `
@@ -50,6 +51,7 @@ export class Editor extends CompSObject{
     eventDispatcher: EventDispatcher;
     htmlItem: HtmlItem;
     transform: Transform;
+    mouseOverDetector: MouseOverDetector;
     
     constructor(objectsync: ObjectSyncClient, id: string){
         super(objectsync,id);
@@ -62,7 +64,7 @@ export class Editor extends CompSObject{
 
         this.eventDispatcher = new EventDispatcher(this, viewport);
         this.linker.link(this.eventDispatcher.onMoveGlobal,this.mouseMove)
-        new MouseOverDetector(this, viewport);
+        this.mouseOverDetector = new MouseOverDetector(this, viewport);
         
         this.transform.scale = 1
         this.transform.maxScale = 8
@@ -70,6 +72,11 @@ export class Editor extends CompSObject{
         this.transform.draggable = true;
         this.transform.scrollable = true;
 
+    }
+
+    protected onStart(): void {
+        
+        new AddNodeMenu(this)
     }
 
     private mouseMove(e: MouseEvent){
@@ -92,5 +99,10 @@ export class Editor extends CompSObject{
     
     public createEdge(tailId: string, headId: string): void{
         this.makeRequest('create_edge',{tail_id:tailId,head_id:headId})
+    }
+
+    public createNode(type: string,args:any={}): void{
+        args.node_type = type
+        this.makeRequest('create_node',args)
     }
 }

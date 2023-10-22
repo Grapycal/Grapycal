@@ -70,6 +70,9 @@ export class MouseOverDetector extends Component{
         this._eventElement = element;
         MouseOverDetectorMaster.instance.add(this.object, element);
     }
+    get mouseOver(): boolean{
+        return MouseOverDetectorMaster.instance.objectsUnderMouse.includes(this.object);
+    }
     constructor(object: IComponentable, eventElement: Element = null){
         super(object);
         if (eventElement != null)

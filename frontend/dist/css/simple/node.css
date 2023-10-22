@@ -31,6 +31,11 @@ Define styles for different node categories
     border-width: 10px;
 }
 
+
+.hover .node-border{
+    border-color: var(--z4);
+}
+
 .selected .node-border{
     border-color: var(--t2);
 }

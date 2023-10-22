@@ -138,6 +138,7 @@ export function getStaticField(object: any, fieldName: string): any {
     return object.constructor[fieldName];
 }
 
+
 export class ActionDict<K,ARGS extends any[], OUT=void> {
     private actions = new Map<K,Action<ARGS,OUT>>()
     add(key:K,callback: Callback<ARGS, OUT>) {
@@ -154,6 +155,26 @@ export class ActionDict<K,ARGS extends any[], OUT=void> {
         if(!this.actions.has(key))return []
         return this.actions.get(key).invoke(...args)
     }
+
+    slice(key:K):ActionDictSlice<K,ARGS,OUT>{
+        return new ActionDictSlice(this,key)
+    }
+}
+
+class ActionDictSlice<K,ARGS extends any[], OUT=void> {
+    constructor(private actionDict:ActionDict<K,ARGS,OUT>,private key:K){}
+    add(callback: Callback<ARGS, OUT>) {
+        this.actionDict.add(this.key,callback)
+    }
+    
+    remove(callback: Callback<ARGS, OUT>) {
+        this.actionDict.remove(this.key,callback)
+    }
+
+    invoke(...args: ARGS): OUT[] {
+        return this.actionDict.invoke(this.key,...args)
+    }
+
 }
 
 export function eatEvents(el:HTMLTextAreaElement|HTMLInputElement){

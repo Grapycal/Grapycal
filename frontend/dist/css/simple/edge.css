@@ -9,3 +9,11 @@
 .edge.data-ready{
     stroke: var(--t2);
 }
+
+.edge.hover{
+    stroke: var(--z4);
+}
+
+.edge.selected{
+    stroke: var(--t2);
+}

@@ -38,13 +38,13 @@ class Node(SObject,metaclass=NodeMeta):
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
 
-    def build(self,is_preview=False,**build_node_args):
+    def build(self,is_preview=False,translation='0,0',**build_node_args):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
         self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
-        self.translation = self.add_attribute('translation', StringTopic)
+        self.translation = self.add_attribute('translation', StringTopic,translation)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])

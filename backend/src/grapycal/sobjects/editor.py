@@ -9,9 +9,13 @@ class Editor(SObject):
     def init(self):
         # called by client
         self.register_service('create_edge',self.create_edge_service)
+        self.register_service('create_node',self.create_node_service)
 
     def create_node(self, node_type: type, **kwargs) -> Node:
         return self.add_child(node_type, is_preview=False, **kwargs)
+    
+    def create_node_service(self, node_type: str, **kwargs):
+        self.add_child_s(node_type, is_preview=False, **kwargs)
     
     def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
         # Check the tail and head have space for the edge
