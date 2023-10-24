@@ -31,7 +31,7 @@ export class GlobalEventDispatcher{
 
     public readonly keyState: {[key: string]: boolean} = {};
 
-    private _mousePos: Vector2 = Vector2.zero;
+    private _mousePos: Vector2 = new Vector2(window.innerWidth/2, window.innerHeight/2);
     get mousePos(){return this._mousePos;}
     
     constructor(){

@@ -154,6 +154,7 @@ class FConv2DNode(FunctionNode):
         self.shape.set('normal')
 
     def calculate(self, x:torch.Tensor, kernel:torch.Tensor):
+        is_c1hw = False
         orig_x = x
         orig_kernel = kernel
         if len(x.shape) == 2:
@@ -162,7 +163,12 @@ class FConv2DNode(FunctionNode):
             kernel = kernel.unsqueeze(0).unsqueeze(0)
         elif len(kernel.shape) == 3:
             kernel = kernel.unsqueeze(0)
+        if len(x.shape) == 3 and x.shape[0] != 1 and kernel.shape[1] == 1:
+            is_c1hw = True
+            x = x.unsqueeze(1)
         y = F.conv2d(x,kernel,padding=kernel.shape[-1]//2)
+        if is_c1hw:
+            y = y.squeeze(1)
         if len(orig_x.shape) == 2:
             y = y.squeeze(0)
         return y

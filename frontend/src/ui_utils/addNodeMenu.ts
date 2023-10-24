@@ -160,8 +160,15 @@ class SubstringSearchIndex{
         }
         candidates.resetCursor()
         let res = []
+        //sort by current pos
+        let sorted = []
         for(let stridx = candidates.get();candidates.hasNext();candidates.next()){
             stridx = candidates.get()
+            sorted.push([stridx,this.currentPos[stridx]])
+        }
+        sorted.sort((a,b)=>a[1]-b[1])
+        for(let i = 0;i<sorted.length;i++){
+            let stridx = sorted[i][0]
             res.push(this.values[stridx])
         }
         return res
@@ -212,7 +219,7 @@ export class AddNodeMenu extends PopupMenu{
         return option
     }
     private onKeyDown(e:KeyboardEvent){
-        if(MouseOverDetector.objectsUnderMouse.length<0 || MouseOverDetector.objectsUnderMouse[0] != this.editor){
+        if(!MouseOverDetector.objectsUnderMouse.includes(this.editor)){
             return
         }
         if(document.activeElement==document.body && !this.opened && e.key.length == 1 && e.key.match(/[a-zA-Z0-9_]/) &&!e.ctrlKey && !e.altKey && !e.metaKey
@@ -233,7 +240,7 @@ export class AddNodeMenu extends PopupMenu{
         let values:string[] = []
         nodeTypes.forEach((nodeType,nodeTypeName)=>{
             nodeTypeName = nodeTypeName as string
-            keys.push(nodeTypeName.toLowerCase().split('.')[1])
+            keys.push(nodeTypeName.toLowerCase().split('.')[1].slice(0,-4)) // remove Node suffix
             values.push(nodeTypeName)
         })
         this.substringSearchIndex.setStrings(keys,values)
@@ -247,11 +254,12 @@ export class AddNodeMenu extends PopupMenu{
         let query = this.search.value.toLowerCase()
         let results = this.substringSearchIndex.search(query)
         this.clearOptions()
+        let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos).toString()
         for(let i = 0;i<results.length;i++){
             let result = results[i]
-            let displayName = result.split('.')[1]
+            let displayName = result.split('.')[1].slice(0,-4)
             this.addOption(displayName,()=>{
-                let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos).toString()
+                
                 this.editor.createNode(result,{translation:translation})
             })
         }

@@ -91,8 +91,9 @@ export class PopupMenu extends Componentable{
         this.opened = true
     }
 
-    private onArrowDown(){
+    private onArrowDown(e:KeyboardEvent){
         if(!this.opened) return
+        e.preventDefault()
         if (this.focusedOption == this.optionElements.length-1){
             return
         }
@@ -103,8 +104,9 @@ export class PopupMenu extends Componentable{
         }
     }
 
-    private onArrowUp(){
+    private onArrowUp(e:KeyboardEvent){
         if(!this.opened) return
+        e.preventDefault()
         if (this.focusedOption > 0){
             this.focusedOption--
             this.focusOptionChange(this.focusedOption+1,this.focusedOption)

@@ -61,27 +61,27 @@ Define styles for different node categories
 }
 
 .cate-interaction{
-    --cate-color: #dbad48;
+    --cate-color: #DCDCA8;
 }
 
 .cate-function{
-    --cate-color: #34c534;
+    --cate-color: #7bc361;
 }
 
 .cate-data{
-    --cate-color: #f8a941;
+    --cate-color: #ce9177;
 }
 
 .cate-test{
-    --cate-color: #50ced2;
+    --cate-color: #569BD1;
 }
 
 .cate-procedural{
-    --cate-color: #54b9fc;
+    --cate-color: #569BD1;
 }
 
 .cate-torch{
-    --cate-color: #4caff6;
+    --cate-color: #9cdcfe;
 }
 /* 
 .cate-function-math{

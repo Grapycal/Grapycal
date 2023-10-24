@@ -6,7 +6,7 @@ from grapycal import Node, TextControl, StringTopic, FloatTopic, IntTopic
 
 
 class ZeroesNode(SourceNode):
-    category = 'torch/tensor'
+    category = 'torch/generative'
     def build_node(self):
         super().build_node()
         self.shape.set('simple')
@@ -26,7 +26,7 @@ class ZeroesNode(SourceNode):
         self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class OnesNode(SourceNode):
-    category = 'torch/tensor'
+    category = 'torch/generative'
     def build_node(self):
         super().build_node()
         self.shape.set('simple')
@@ -46,7 +46,7 @@ class OnesNode(SourceNode):
         self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class RandNode(SourceNode):
-    category = 'torch/tensor'
+    category = 'torch/generative'
     def build_node(self):
         super().build_node()
         self.shape.set('simple')
@@ -68,7 +68,7 @@ class RandNode(SourceNode):
         self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
 
 class RandnNode(SourceNode):
-    category = 'torch/tensor'
+    category = 'torch/generative'
     def build_node(self):
         super().build_node()
         self.shape.set('simple')
@@ -88,7 +88,7 @@ class RandnNode(SourceNode):
         self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class GridNode(SourceNode):
-    category = 'torch/tensor'
+    category = 'torch/generative'
     def build_node(self):
         super().build_node()
         self.shape.set('simple')
