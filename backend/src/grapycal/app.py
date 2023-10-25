@@ -50,13 +50,14 @@ class GrapycalApp:
         while True:
             break_flag = False
             try:
-                while True: # Restart workspace when it exits. Convenient for development
+            
+                # Start webpage server
+                if not self._config['no_serve_webpage']:
+                    webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
+                    print(f'Strating webpage server at localhost:9001 from {webpage_path}')
+                    subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
 
-                    # Start webpage server
-                    if not self._config['no_serve_webpage']:
-                        webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
-                        print(f'Strating webpage server at localhost:9001 from {webpage_path}')
-                        subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
+                while True: # Restart workspace when it exits. Convenient for development
 
                     # Start workspace
                     print(f'Starting workspace {self._config["path"]}')
@@ -72,6 +73,10 @@ class GrapycalApp:
                         if workspace.poll() is not None:
                             print('Workspace exited with code',workspace.poll())
                             break
+
+                    if not self._config['restart']:
+                        break
+
             except KeyboardInterrupt:
                 print('Shutting down Grapycal server will force kill all workspaces. Press Ctrl+C again to confirm.')
                 try:
