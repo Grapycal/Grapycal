@@ -1,3 +1,9 @@
+## v0.5.1 (2023-10-25)
+
+### Fix
+
+- include webpage in build
+
 ## v0.5.0 (2023-10-25)
 
 ### Feat
