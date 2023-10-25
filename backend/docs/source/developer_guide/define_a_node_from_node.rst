@@ -19,7 +19,7 @@ The category is used to group nodes in the node list. For example:
 -------------------------
 The ``build_node()`` method is called once when a node is created. This is where you define the structure of the node, including      :doc:`controls`,
 :doc:`port`,
-and :doc:`attribute`.
+and Attributes.
 Here's an example:
 
 .. code-block:: python
