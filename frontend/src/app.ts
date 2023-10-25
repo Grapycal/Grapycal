@@ -110,11 +110,11 @@ documentReady(function(event: Event) {
             sidebar.classList.add('collapsed');
         }
     });  
+    
+    new Header()
+    new Footer()
 })
 
 
 
 expose('o',objectsync)
-
-new Header()
-new Footer()

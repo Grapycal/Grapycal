@@ -5,7 +5,6 @@ module.exports = {
     module: { rules: [] },
     resolve: { extensions: [".ts", ".js"] },
     mode: "development",
-    watch: true,
     module: {
         rules: [
             {

@@ -1,4 +1,5 @@
 
+import time
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.threeControl import ThreeControl
@@ -105,8 +106,10 @@ class Workspace:
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit())
 
         if file_exists(self.path):
+            print(f'Found existing workspace file {self.path}. Loading')
             self.load_workspace(self.path)
         else:
+            print(f'No workspace file found at {self.path}. Creating new workspace')
             self.initialize_workspace()
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
@@ -139,6 +142,8 @@ class Workspace:
             'workspace_serialized': workspace_serialized.to_dict(),
         }
         json_write(path, data)
+        time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f'Workspace saved to {path} at {time_str}')
 
     def load_workspace(self, path: str) -> None:
         data = json_read(path)

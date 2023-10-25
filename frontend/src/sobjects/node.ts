@@ -249,16 +249,15 @@ export class Node extends CompSObject {
 
                 let delta = this.transform.worldToLocalDisplacement(newPos.sub(oldPos))
                 let snappedDelta = delta
-                print(GlobalEventDispatcher.instance.isKeyDown('Alt'))
-                if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
-                    this.draggingTargetPos = this.draggingTargetPos.add(delta)
-                    const snap = 20
-                    const snapped = new Vector2(
-                        Math.round(this.draggingTargetPos.x/snap)*snap,
-                        Math.round(this.draggingTargetPos.y/snap)*snap
-                    )
-                    snappedDelta = snapped.sub(this.transform.translation)
-                }
+                // if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
+                //     this.draggingTargetPos = this.draggingTargetPos.add(delta)
+                //     const snap = 20
+                //     const snapped = new Vector2(
+                //         Math.round(this.draggingTargetPos.x/snap)*snap,
+                //         Math.round(this.draggingTargetPos.y/snap)*snap
+                //     )
+                //     snappedDelta = snapped.sub(this.transform.translation)
+                // }
 
                 for(let selectable of this.selectable.selectedObjects){
                     if(selectable.object instanceof Node){

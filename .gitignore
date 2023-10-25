@@ -11,3 +11,6 @@
 
 
 .idea/
+
+backend/src/grapycal/webpage
+frontend/dist/main.js

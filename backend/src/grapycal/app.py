@@ -29,10 +29,9 @@ class GrapycalApp:
             / /_/ / /  / /_/ / /_/ / /_/ / /__/ /_/ / /  
             \____/_/   \__,_/ .___/\__, /\___/\__,_/_/   
                            /_/    /____/
-                                           ''','red') + termcolor.colored('0.1.0', 'grey'))
+                                           ''','red') + termcolor.colored('0.4.0', 'grey'))
         print()
         print('Starting Grapycal server...')
-        print(f'Listening on {self._config.host}:{self._config.port}')
 
         if not os.path.exists('./.grapycal'):
             os.mkdir('./.grapycal')
@@ -50,10 +49,22 @@ class GrapycalApp:
             break_flag = False
             try:
                 while True: # Restart workspace when it exits. Convenient for development
+
+                    # Start webpage server
+                    if not self._config['no_serve_webpage']:
+                        print(f'Strating webpage server at localhost:9001')
+                        webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
+                        subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
+
+                    # Start workspace
+                    print(f'Starting workspace {self._config["path"]}')
+                    print(f'Host: {self._config["host"]}')
+                    print(f'Port: {self._config["port"]}')
                     workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace',
                         '--port', str(self._config['port']),
                         '--host', self._config['host'],
                         '--path', self._config['path']],start_new_session=True)
+                    
                     while True:
                         time.sleep(1)
                         if workspace.poll() is not None:
