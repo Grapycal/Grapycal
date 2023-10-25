@@ -54,8 +54,8 @@ class GrapycalApp:
 
                     # Start webpage server
                     if not self._config['no_serve_webpage']:
-                        print(f'Strating webpage server at localhost:9001')
                         webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
+                        print(f'Strating webpage server at localhost:9001 from {webpage_path}')
                         subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
 
                     # Start workspace

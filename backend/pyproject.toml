@@ -17,6 +17,8 @@ license = "BSD-3-Clause"
 readme = "README.md"
 documentation = "https://eri24816.github.io/Grapycal/"
 
+include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
+
 [tool.poetry.dependencies]
 python = "^3.11"
 objectsync = "^0.5.1"
