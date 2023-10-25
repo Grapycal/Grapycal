@@ -40,6 +40,14 @@ version_scheme = "pep440"
 version_provider = "poetry"
 update_changelog_on_bump = true
 major_version_zero = true
+version_files = [
+    "docs/source/conf.py:release",
+    "../frontend/package.json:version",
+    "../grapycal_builtin/pyproject.toml:version",
+    "../grapycal_builtin/pyproject.toml:grapycal"
+]
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

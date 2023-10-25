@@ -7,6 +7,7 @@ import subprocess
 from .utils.file import get_direct_sub_folders
 import termcolor
 import time
+from importlib.metadata import version as get_version
 
 class GrapycalApp:
     """
@@ -21,6 +22,7 @@ class GrapycalApp:
         """
         Server main loop
         """
+        version = get_version('grapycal')
         print(
             termcolor.colored(r'''
                ______                                  __
@@ -29,7 +31,7 @@ class GrapycalApp:
             / /_/ / /  / /_/ / /_/ / /_/ / /__/ /_/ / /  
             \____/_/   \__,_/ .___/\__, /\___/\__,_/_/   
                            /_/    /____/
-                                           ''','red') + termcolor.colored('0.4.0', 'grey'))
+                                           ''','red') + termcolor.colored('v'+version, 'grey'))
         print()
         print('Starting Grapycal server...')
 
