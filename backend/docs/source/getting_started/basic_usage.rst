@@ -20,6 +20,7 @@ The rest of the window is the editor, where you can construct your graph.
 
 The node library contains all the nodes that are available to use. 
 Drag them into the editor to create new instances of them.
+Or, you can also type the name of the node directly into the editor to create it.
 
 Construct a Graph
 -------------------

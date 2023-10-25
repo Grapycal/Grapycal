@@ -1,11 +1,14 @@
 Run Grapycal
 ==================
 
-Run the Grapycal server with:
+Start Grapycal with:
 
 .. code-block:: bash
 
     python -m grapycal
 
-It includes a HTTP server at http://localhost:9001/ that serves the webpage and a WebSocket server at ws://localhost:8765/ that
-handles the interaction between the webpage and the Grapycal server. To access the webpage, open http://localhost:9001/ in a web browser.
+, and go to http://localhost:9001/ to interact with it. Next, go ahead to :doc:`basic_usage`.
+
+.. note::
+    The Grapycal server includes a HTTP server at http://localhost:9001/ that serves the webpage and a WebSocket server at ws://localhost:8765/ that
+    handles the interaction between the webpage and the Grapycal server.

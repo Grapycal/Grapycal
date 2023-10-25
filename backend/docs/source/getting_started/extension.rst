@@ -13,12 +13,12 @@ Create an Extension
 
 Let's create an extension named `grapycal_myext` that defines a node named `IsEvenNode`.
 
-1. In ``working_dir``, create a directory named `grapycal_myext`.
+1. In your working directory (the one where you run ``python -m grapycal``), create a directory named ``grapycal_myext``.
 
-.. note:: The extension folder must be placed in the working directory of the workspace and must start with `grapycal_` to 
+.. note:: The extension folder must be placed in the working directory and must start with ``grapycal_`` to 
     be discovered by Grapycal.
 
-2. In `grapycal_myext`, create a file named `__init__.py` with the following content:
+2. In ``grapycal_myext``, create ``__init__.py`` with the following content:
 
 .. code-block:: python
 
@@ -83,6 +83,6 @@ The node should now work as expected.
     :align: center
     :width: 80%
 
-.. note:: Don't forget to double click on EvalNodes!
+.. note:: Don't forget to double click on EvalNodes to update their output value.
 
 For more details about defining nodes and the related API, see :doc:`../developer_guide/define_a_node`.
