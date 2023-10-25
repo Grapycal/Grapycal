@@ -17,6 +17,7 @@ export class Componentable implements IComponentable {
     protected readonly link
     protected readonly link2
     protected readonly unlink
+    protected readonly unlink2
     readonly eventDispatcher: EventDispatcher
 
     constructor() {
@@ -28,6 +29,7 @@ export class Componentable implements IComponentable {
         this.link = this.linker.link.bind(this.linker)
         this.link2 = this.linker.link2.bind(this.linker)
         this.unlink = this.linker.unlink.bind(this.linker)
+        this.unlink2 = this.linker.unlink2.bind(this.linker)
         this.eventDispatcher = new EventDispatcher(this)
 
         this.componentManager.onDestroy.add(this.onDestroy.bind(this))

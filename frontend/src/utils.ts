@@ -138,6 +138,7 @@ export function getStaticField(object: any, fieldName: string): any {
     return object.constructor[fieldName];
 }
 
+
 export class ActionDict<K,ARGS extends any[], OUT=void> {
     private actions = new Map<K,Action<ARGS,OUT>>()
     add(key:K,callback: Callback<ARGS, OUT>) {
@@ -154,4 +155,126 @@ export class ActionDict<K,ARGS extends any[], OUT=void> {
         if(!this.actions.has(key))return []
         return this.actions.get(key).invoke(...args)
     }
+
+    slice(key:K):ActionDictSlice<K,ARGS,OUT>{
+        return new ActionDictSlice(this,key)
+    }
+}
+
+class ActionDictSlice<K,ARGS extends any[], OUT=void> {
+    constructor(private actionDict:ActionDict<K,ARGS,OUT>,private key:K){}
+    add(callback: Callback<ARGS, OUT>) {
+        this.actionDict.add(this.key,callback)
+    }
+    
+    remove(callback: Callback<ARGS, OUT>) {
+        this.actionDict.remove(this.key,callback)
+    }
+
+    invoke(...args: ARGS): OUT[] {
+        return this.actionDict.invoke(this.key,...args)
+    }
+
+}
+
+export function eatEvents(el:HTMLTextAreaElement|HTMLInputElement){
+    let f = (e:Event)=>{
+        if(el==document.activeElement||e.type=="pointerdown"||e.type=="mousedown")
+            e.stopPropagation()
+    }
+    for(let key in el){
+        if(key.startsWith("on")){
+            el.addEventListener(key.slice(2),f)
+        }
+    }
+}
+
+export function textToHtml(text:string){
+    return text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;")
+}
+
+export class TextBox{
+    public readonly textarea = document.createElement("textarea")
+    private sizeSimulator = document.createElement("div")
+    public onResize = new Action<[number,number]>()
+    set value(value:string){
+        this.textarea.value = value
+        this.resize()
+    }
+    get value(){
+        return this.textarea.value
+    }
+    get selectionStart(){
+        return this.textarea.selectionStart
+    }
+    get selectionEnd(){
+        return this.textarea.selectionEnd
+    }
+    set selectionStart(value:number){
+        this.textarea.selectionStart = value
+    }
+    set selectionEnd(value:number){
+        this.textarea.selectionEnd = value
+    }
+    get placeholder(){
+        return this.textarea.placeholder
+    }
+    set placeholder(value:string){
+        this.textarea.placeholder = value
+    }
+    get disabled(){
+        return this.textarea.disabled
+    }
+    set disabled(value:boolean){
+        this.textarea.disabled = value
+    }
+    constructor(parent:HTMLElement=document.body){
+        this.textarea.classList.add('grow')
+        this.sizeSimulator.style.width = 0 + 'px';
+        this.sizeSimulator.style.position = 'absolute';
+        this.sizeSimulator.style.visibility = 'hidden';
+        //no wrap
+        this.sizeSimulator.style.whiteSpace = 'nowrap';
+        eatEvents(this.textarea)
+        this.textarea.addEventListener("input",()=>{
+            this.resize()
+        })
+        parent.appendChild(this.textarea)
+        parent.appendChild(this.sizeSimulator)
+    }
+
+    private prevHeight = 0
+    private prevWidth = 0
+    resize (){
+        setTimeout(() => {
+            this.sizeSimulator.style.font = window.getComputedStyle(this.textarea).font;
+            //sync padding
+            this.sizeSimulator.style.padding = window.getComputedStyle(this.textarea).padding;
+            this.sizeSimulator.innerHTML = textToHtml(this.textarea.value);
+            let calculatedWidth =this.sizeSimulator.scrollWidth+ 10 // I don't know why it needs more 10px
+            this.textarea.style.width = calculatedWidth+ 'px';
+            
+            this.textarea.style.height = '0';
+            this.textarea.style.height = this.textarea.scrollHeight + 'px';
+
+            // if(this.textarea.value=='' && this.textarea.disabled){
+            //     this.textarea.style.height='0px'
+            // }
+
+            if(this.textarea.scrollHeight!=this.prevHeight||this.textarea.clientWidth!=this.prevWidth){
+                this.onResize.invoke(this.textarea.scrollHeight,this.prevHeight)
+                this.prevHeight = this.textarea.scrollHeight
+                this.prevWidth = this.textarea.scrollWidth
+            }
+        }, 0);
+    }
+
+    addEventListener(eventName:string,callback:EventListenerOrEventListenerObject){
+        this.textarea.addEventListener(eventName,callback)
+    }
+
+    removeEventListener(eventName:string,callback:EventListenerOrEventListenerObject){
+        this.textarea.removeEventListener(eventName,callback)
+    }
+    
 }

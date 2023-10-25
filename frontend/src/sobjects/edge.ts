@@ -156,13 +156,14 @@ export class Edge extends CompSObject {
                 this.svg.classList.add('data-ready')
                 let tmp =  data_ready
                 setTimeout(() => {
+                    try{
                     if(tmp == this.data_ready.getValue())
                         this.svg.classList.remove('data-ready')
+                    }catch{}
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })
         if(this.data_ready.getValue() == 0) this.svg.classList.add('data-ready')
-
         this.updateSVG()
     }
 
@@ -181,6 +182,7 @@ export class Edge extends CompSObject {
     protected onParentChangedTo(newValue: SObject): void {
         super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || this.editor.htmlItem) //>????????????
+        this.updateSVG()
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
@@ -201,7 +203,7 @@ export class Edge extends CompSObject {
             if(object instanceof Port){
                 let port = object
                 if(this.state == EdgeState.DraggingTail){
-                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge()){
+                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge){
                         this.objectsync.record(() => {
                             this.tail.set(port)
                         },true)
@@ -209,7 +211,7 @@ export class Edge extends CompSObject {
                     }
                 }
                 else if(this.state == EdgeState.DraggingHead){
-                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge()){
+                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge){
                         this.objectsync.record(() => {
                             this.head.set(port)
                         },true)

@@ -25,9 +25,9 @@ class MouseOverDetectorMaster{
         }
         return this._elementsUnderMouse;
     }
-    private isDirty: boolean = false;
+    private isDirty: boolean = true;
     private allObjects = new Map<Element,IComponentable>();
-    private mousePos = {x: 0, y: 0};
+    private mousePos = {x: window.innerWidth/2, y: window.innerHeight/2};
 
     constructor(){
         document.addEventListener("mousemove", (event) => {
@@ -39,6 +39,8 @@ class MouseOverDetectorMaster{
     private check(){
         let els = document.elementsFromPoint(this.mousePos.x, this.mousePos.y)
         this._objectsUnderMouse = els.map(el => this.allObjects.get(el)).filter(obj => obj != undefined).map(obj => obj!);
+        this.isDirty = false;
+        print('check',this._objectsUnderMouse)
     }
 
     public add(object: IComponentable, element: Element){
@@ -69,6 +71,9 @@ export class MouseOverDetector extends Component{
             MouseOverDetectorMaster.instance.remove(this.object);
         this._eventElement = element;
         MouseOverDetectorMaster.instance.add(this.object, element);
+    }
+    get mouseOver(): boolean{
+        return MouseOverDetectorMaster.instance.objectsUnderMouse.includes(this.object);
     }
     constructor(object: IComponentable, eventElement: Element = null){
         super(object);

@@ -6,6 +6,8 @@ If the node behaves like a function, extend ``FunctionNode``. If the node behave
 
 If they do not fit your needs, you can extend the ``Node`` class directly.
 
+The source code of `grapycal-builtin <https://github.com/eri24816/Grapycal/tree/dev/grapycal_builtin/grapycal_builtin>`_ contains many concrete examples of node definitions. You can use them as a reference.
+
 See:
 
 .. toctree::

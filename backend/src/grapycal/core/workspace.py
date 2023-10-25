@@ -1,9 +1,11 @@
 
+import time
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
+from grapycal.sobjects.controls.threeControl import ThreeControl
 from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
-from grapycal.sobjects.workspaceObject import WorkspaceObject
+from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
 from grapycal.utils.logging import setup_logging
 logger = setup_logging()
@@ -30,6 +32,13 @@ from grapycal.sobjects.node import Node
 
 from . import running_module
 
+def deserialize_sort_key(x: SObjectSerialized) -> int:
+    if x.type == 'Edge':
+        return 1000000000 # Edges should be created after nodes
+    if x.id.startswith('0_'):
+        return int(x.id[2:])
+    return 0
+
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
@@ -46,13 +55,15 @@ class Workspace:
 
         self.background_runner = BackgroundRunner()
 
-        self._objectsync = objectsync.Server(port,host)
+        self._objectsync = objectsync.Server(port,host,deserialize_sort_key=deserialize_sort_key)
         
         self._extention_manager = ExtensionManager(self._objectsync,self)
 
         self.do_after_transition = self._objectsync.do_after_transition
 
         self.clock = Clock(0.1)
+
+        self.webcam: WebcamStream|None = None
 
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
@@ -84,6 +95,9 @@ class Workspace:
         self._objectsync.register(TextControl)
         self._objectsync.register(ButtonControl)
         self._objectsync.register(ImageControl)
+        self._objectsync.register(ThreeControl)
+
+        self._objectsync.register(WebcamStream)
         
         '''
         Register all built-in node types
@@ -92,8 +106,10 @@ class Workspace:
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit())
 
         if file_exists(self.path):
+            print(f'Found existing workspace file {self.path}. Loading')
             self.load_workspace(self.path)
         else:
+            print(f'No workspace file found at {self.path}. Creating new workspace')
             self.initialize_workspace()
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
@@ -126,6 +142,8 @@ class Workspace:
             'workspace_serialized': workspace_serialized.to_dict(),
         }
         json_write(path, data)
+        time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f'Workspace saved to {path} at {time_str}')
 
     def load_workspace(self, path: str) -> None:
         data = json_read(path)

@@ -58,7 +58,9 @@ class InputPort(Port):
     def get_data(self):
         return [edge.get_data() for edge in self.edges]
     
-    def get_one_data(self):
+    def get_one_data(self,allow_no_data=False):
+        if allow_no_data and not self.is_all_edge_ready():
+            return None
         return self.edges[0].get_data()
     
     def edge_activated(self, edge:'Edge'):

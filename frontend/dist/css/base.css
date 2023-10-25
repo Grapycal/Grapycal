@@ -1,7 +1,6 @@
 /* App */
 * { margin: 0; box-sizing: border-box; }
 body{
-    color: #e7e7e7;
     background-color: rgb(0,0,0);
     /*no scroll*/
     overflow: hidden;
@@ -35,7 +34,7 @@ html, body{
     margin: 0;
 }
 
-input{
+input, textarea{
     
     font-size: inherit;
     color: inherit;
@@ -73,7 +72,7 @@ img{
     display: block;
 }
 
-input[disabled] {pointer-events:none}
+input[disabled],textarea[disabled] {pointer-events:none}
 
 footer{
     bottom: 0px;
@@ -135,15 +134,17 @@ footer{
     block-size: fit-content;
 }
 
+.simple-node .node-label{
+    max-width: 100%;
+    flex-grow: 1;
+}
+
 .round-node{
     border-radius: 50%;
     width: 30px;
     height: 30px;
 }
 
-.node-content{
-    position: relative;
-}
 
 .round-node .node-content{
     
@@ -151,9 +152,18 @@ footer{
     height: 30px;
 }
 
+.round-node .node-label{
+    
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
 :is(.normal-node,.simple-node) .node-label{
     font-size: 12px;
-    padding: 4px 5px 0px 5px;
+    line-height: 14px;
+    text-wrap: nowrap;
+    padding: 4px 10px 4px 10px;
 }
 
 .node-selection{
@@ -171,16 +181,6 @@ footer{
     border-image-width: 12px;
     image-rendering: pixelated;
     filter: opacity(0);
-}
-
-.node.running{
-    /* background-image: rgb(47, 79, 79); */
-    background-color:rgb(47, 79, 79);
-}
-
-.node:not(.running){
-
-    transition: background-color 0.2s ease-out;
 }
 
 .node.hover .node-selection{
@@ -221,6 +221,10 @@ footer{
     border-radius: 20px;
 }
 
+.normal-node, .simple-node{
+    border-radius: 2px;
+}
+
 .round-node .node-border{
     border-radius: 50%;
 }
@@ -239,9 +243,6 @@ footer{
     align-items: center;
 }
 
-.normal-node .port{
-    padding: 0px 5px;
-}
 
 .port-knob{
     position: absolute;
@@ -251,12 +252,26 @@ footer{
     background-color : #4d4d4d;
 }
 
+.port-section{
+    margin: 0px 0px 4px 0px;
+}
+
+.slot-input-port{
+    padding-top : 3px;
+    padding-bottom: 3px;
+}
+
+.slot-output-port{
+    padding-top : 3px;
+    padding-bottom: 3px;
+}
+
 .slot-input-port .port-knob{
-    left: -13px;
+    left: -5px;
 }
 
 .slot-output-port .port-knob{
-    right: -13px;
+    right: -5px;
 }
 
 .port-knob-hitbox{
@@ -284,42 +299,33 @@ footer{
     
     
     font-size: 12px;
-    color: #bababa;
 }
 
 :is(.simple-node,.round-node) .slot-input-port .port-label{
     font-size: 10px;
     position: absolute;
-    right: 12px;
-    transform: translate(0px,-8px);
+    left: auto;
+    right: 10px;
+    transform: translate(0px,-6px);
 }
 
 :is(.simple-node,.round-node) .slot-output-port .port-label{
     font-size: 10px;
     position: absolute;
-    left: 12px;
-    transform: translate(0px,-8px);
+    left: 10px;
+    transform: translate(0px,-6px);
 }
 
 .slot-input-port{
     position: relative;
     gap:2px;
-    padding-bottom: 2px;
 }
 
 .slot-output-port{
     position: relative;
     gap:2px;
-    padding-bottom: 2px;
 }
 
-.round-node .slot-input-port{
-    left: 8px;
-}
-
-.round-node .slot-output-port{
-    right: 8px;
-}
 
 
 :is(.simple-node,.round-node){
@@ -339,7 +345,11 @@ footer{
 }
 
 .slot-output-port .port-label{
-    right: 5px;
+    right: 10px;
+}
+
+.slot-input-port .port-label{
+    left: 10px;
 }
 
 /* Control */
@@ -348,16 +358,17 @@ footer{
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    padding: 0px 5px;
-
-    color: #bababa;
-
     gap:2px;
-    padding-bottom: 5px;
+
+    position: relative;
+    margin: 2px 0px 4px 0px;
+    padding: 0px 10px;
 }
 
 .slot-control:empty{
+    height: 0px;
     padding: 0px;
+    margin: 0px;
 }
 
 .control{
@@ -365,7 +376,6 @@ footer{
     width: 100%;
     /* border-radius: 2px; */
     overflow: hidden;
-    color : #d5d5d5;
     font-size: 12px;
     min-height: 15px;
 }
@@ -382,15 +392,15 @@ footer{
     object-fit: contain;
 }
 
-input:enabled:hover{
+input:enabled:hover, textarea:enabled:hover{
     background-color: #8d8d8d2b;
 }
 
-input:focus-within{
+input:focus-within, textarea:focus-within{
     background-color: #6161612a;
 }
 
-input:enabled{
+input:enabled, textarea:enabled{
     background-color: #b1b1b117;
 }
 
@@ -623,11 +633,6 @@ input:enabled{
     font-size: 18px;
     line-height: 24px;
 }
-
-#extension_name{
-    color: #ababab;
-}
-
 #output_display{
     overflow:auto;
     white-space: nowrap;
@@ -637,9 +642,6 @@ input:enabled{
     color: #ff4949;
 }
 
-.output{
-    color: #ffffff;
-}
 
 .output-item{
     margin: 5px 0px;
@@ -717,6 +719,14 @@ hr{
   justify-content: flex-end;
   align-items: flex-end;
   text-align: right;
+}
+
+.stretch-align {
+  align-items: stretch;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .pointerEventsNone {

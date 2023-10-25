@@ -30,6 +30,10 @@ class BackgroundRunner:
     def interrupt(self):
         signal.raise_signal(signal.SIGINT)
 
+    def clear_tasks(self):
+        self._queue.clear()
+        self._stack.clear()
+
     def set_exception_callback(self, callback: Callable[[Exception], None]):
         self._exception_callback = callback
 
@@ -80,4 +84,5 @@ class BackgroundRunner:
                 logger.info("runner catch keyboardinterrupt")
 
             except Exception as e:
+                self.clear_tasks()
                 self._exception_callback(e)

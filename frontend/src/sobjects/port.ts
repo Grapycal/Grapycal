@@ -101,7 +101,7 @@ export class Port extends CompSObject {
 
 
 
-    public acceptsEdge(): boolean {
+    public get acceptsEdge(): boolean {
         if(this.max_edges.getValue() > this.edges.length) return true
         return false
     }
@@ -121,6 +121,8 @@ export class Port extends CompSObject {
 
     private generateEdge(): void {
         if(this.node.isPreview)
+            return;
+        if(!this.acceptsEdge)
             return;
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {

@@ -17,9 +17,46 @@ export class TransformRoot extends Component{
     }
 }
 
+class RequestFrameManager{
+    static instance: RequestFrameManager = new RequestFrameManager();
+    private callbacks: (() => void)[] = [];
+    private requestSent: boolean = false;
+    private ids: Set<any> = new Set();
+    private constructor(){
+        window.requestAnimationFrame(this.update.bind(this));
+        this.requestSent = true;
+    }
+    private update(){
+        this.requestSent = false;
+        for(let callback of this.callbacks){
+            callback();
+        }
+        this.ids.clear();
+        this.callbacks = [];
+    }
 
+    public request(callback: () => void,id: any=null){
+        if(this.ids.has(id)){
+            return;
+        }
+        if(id !== null){
+            this.ids.add(id);
+        }
+        this.callbacks.push(callback);
+        if(!this.requestSent){
+            window.requestAnimationFrame(this.update.bind(this));
+            this.requestSent = true;
+        }
+    }
+
+}
+
+export enum Space{
+    Local,World
+}
 // Dependency: HtmlItem
 export class Transform extends Component{
+
     htmlItem: HtmlItem = null;
     linker = new Linker(this);
     parent: Transform | TransformRoot = null;
@@ -27,12 +64,11 @@ export class Transform extends Component{
     get targetElement(){return this._targetElement;}
     set targetElement(targetElement: HTMLElement){
         this._targetElement = targetElement;
-        if(targetElement != null && this.draggable){
-            if(this.actuallyDraggable){
-                this.targetElement.style.position = 'absolute'
-                this.targetElement.style.left = '0px'
-                this.targetElement.style.top = '0px'
-            }
+        if(targetElement != null && this.positionAbsolute){
+            this.targetElement.style.position = 'absolute'
+            this.targetElement.style.left = '0px'
+            this.targetElement.style.top = '0px'
+                
         }
     }
     specifiedTargetElement: HTMLElement = null;
@@ -43,6 +79,7 @@ export class Transform extends Component{
     private _pivot: Vector2 = new Vector2(0.5, 0.5);
     private _scale: number = 1;
     private _translation: Vector2 = Vector2.zero;
+    private positionAbsolute: boolean = false;
 
     public scrollSmoothness: number = 0;
 
@@ -50,7 +87,7 @@ export class Transform extends Component{
     set pivot(pivot: Vector2){
         this._pivot = pivot;
         this.targetElement.style.transformOrigin = `${pivot.x*100}% ${pivot.y*100}%`;
-        this.updateUI();
+        this.requestUpdateUI()
     }
     
     get scale(){return this._scale;}
@@ -63,21 +100,18 @@ export class Transform extends Component{
             scale = this.minScale;
         }
         this._scale = scale;
-        this.updateUI();
+        this.requestUpdateUI()
         this.scaleChanged.invoke(scale);
     }
     setscale(scale: number){
         this._scale = scale;
-        this.updateUI();
+        this.requestUpdateUI()
     }
     
     get translation(){return this._translation;}
-    translationChanged = new Action<[number, number]>();
     set translation(translation: Vector2){
         this._translation = translation;
-        this.updateUI();
-        this.translationChanged.invoke(translation.x, translation.y);
-        this.onChange.invoke();
+        this.requestUpdateUI()
     }
 
     get globalPosition(){
@@ -109,14 +143,10 @@ export class Transform extends Component{
 
         if (actuallyDraggable){
             this.linker.link(this.getComponent(EventDispatcher).onDrag,this.onDrag);
-            this.targetElement.style.position = 'absolute'
-            this.targetElement.style.left = '0px'
-            this.targetElement.style.top = '0px'
         }
         else
         {
             this.linker.unlink(this.getComponent(EventDispatcher).onDrag);
-            this.targetElement.style.position = 'relative'
         }
     }
 
@@ -220,16 +250,19 @@ export class Transform extends Component{
     //     }
     // }
     
-    constructor(object:IComponentable, targetElement:HTMLElement=null, eventEl: HTMLElement=null){
+    constructor(object:IComponentable, targetElement:HTMLElement=null, positionAbsolute:boolean=false){
         super(object);
         this.htmlItem = this.getComponent(HtmlItem);
         this.specifiedTargetElement = targetElement;
+        this.positionAbsolute = positionAbsolute;
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
 
         this.htmlItem.templateChanged.add(this.templateChanged.bind(this));
 
         this.updateParent();
+        this.requestUpdateUI()
         this.updateUI();
+        
     }
 
     private templateChanged(){
@@ -237,7 +270,7 @@ export class Transform extends Component{
         this.targetElement = this.specifiedTargetElement || as(this.htmlItem.baseElement,HTMLElement);
         this.enabled = false
         this.enabled = true
-        this.updateUI();
+        this.requestUpdateUI()
     }
 
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
@@ -253,14 +286,14 @@ export class Transform extends Component{
 
     private onScroll(e:WheelEvent){
         e.stopPropagation();
-        this.smoothScroll(-0.001*e.deltaY);
+        this.smoothScroll(-0.002*e.deltaY);
     }
 
     private smoothScroll(amount:number){
         let a = Math.exp(-this.scrollSmoothness);
         let startMouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.scale *= Math.exp(amount*a);
-        this.updateUI();
+        this.requestUpdateUI()
         let mouseLocal = this.worldToLocal(GlobalEventDispatcher.instance.mousePos);
         this.translate(new Vector2(
             (mouseLocal.x - startMouseLocal.x)*this.scale,
@@ -274,14 +307,21 @@ export class Transform extends Component{
         
     }
 
-    public translate(translation: Vector2){  
-        this.translation = this.translation.add(translation);
+    public translate(translation: Vector2, space: Space = Space.Local){  
+        switch(space){
+            case Space.Local:
+                this.translation = this.translation.add(translation);
+                break;
+            case Space.World:
+                this.translation = this.translation.add(this.worldToLocalDisplacement(translation));
+                break;
+        }
     }
 
     public scaleBy(scale: number){
         this.scale *= scale;
         this.onChange.invoke();
-        this.updateUI();
+        this.requestUpdateUI()
     }
 
 
@@ -289,7 +329,11 @@ export class Transform extends Component{
         this.parent = this.htmlItem.findTransformParent() || new TransformRoot(this.object);
     }
 
-    private updateUI(){
+    public updateUI(_:any=null){
+        /*
+        Frequently calling this function costs a lot of performance.
+        Call requestUpdateUI() instead to do the update right before the next paint.
+        */
         if(!this.enabled)
             return;
         if (this.targetElement === null)
@@ -300,6 +344,12 @@ export class Transform extends Component{
         transformString += `translate(${this._translation.x}px,${this._translation.y}px)`;
         transformString += `scale(${this._scale})`
         this.targetElement.style.transform = transformString;
+
+        this.onChange.invoke();
+    }
+
+    public requestUpdateUI(){
+        RequestFrameManager.instance.request(this.updateUI.bind(this),this)
     }
 
     private notifyChangeToChildren(){
@@ -309,7 +359,6 @@ export class Transform extends Component{
     }
 
     public getAbsoluteOrigin(){
-        this.updateUI();
         let rect = this.targetElement.getBoundingClientRect()
         return new Vector2(
             rect.x + rect.width*this.pivot.x,
@@ -318,7 +367,6 @@ export class Transform extends Component{
     }
 
     public getAbsoluteScale(){
-        this.updateUI();
         // Only works if element size is not zero
         // let rect = this.targetElement.getBoundingClientRect()
         // return {
@@ -343,12 +391,28 @@ export class Transform extends Component{
         )
     }
 
+    public worldToLocalDisplacement(displacement: Vector2){
+        let absScale = this.getAbsoluteScale();
+        return new Vector2(
+            displacement.x/absScale.x,
+            displacement.y/absScale.y
+        )
+    }
+
     public localToWorld(pos: Vector2){
         let absOrigin = this.getAbsoluteOrigin();
         let absScale = this.getAbsoluteScale();
         return new Vector2(
             pos.x*absScale.x + absOrigin.x,
             pos.y*absScale.y + absOrigin.y
+        )
+    }
+
+    public localToWorldDisplacement(displacement: Vector2){
+        let absScale = this.getAbsoluteScale();
+        return new Vector2(
+            displacement.x*absScale.x,
+            displacement.y*absScale.y
         )
     }
 

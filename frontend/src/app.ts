@@ -8,13 +8,14 @@ import { Port } from './sobjects/port'
 import { Edge } from './sobjects/edge'
 import { SoundManager } from './ui_utils/soundManager';
 import { Sidebar } from './sobjects/sidebar'
-import { Workspace } from './sobjects/workspace'
+import { WebcamStream, Workspace } from './sobjects/workspace'
 import { ExtensionsSetting } from './ui_utils/extensionsSettings'
 import { TextControl } from './sobjects/controls/textControl'
 import { ButtonControl } from './sobjects/controls/buttonControl'
 import { ImageControl } from './sobjects/controls/imageControl'
 import { Footer } from './ui_utils/footer'
 import { Header } from './ui_utils/header'
+import { ThreeControl } from './sobjects/controls/threeControl'
 
 export const soundManager = new SoundManager();
 
@@ -32,6 +33,9 @@ objectsync.register(Sidebar);
 objectsync.register(TextControl)
 objectsync.register(ButtonControl)
 objectsync.register(ImageControl)
+objectsync.register(ThreeControl)
+
+objectsync.register(WebcamStream)
 
 setTimeout(() => { // fix this
     new ExtensionsSetting(objectsync);
@@ -106,11 +110,11 @@ documentReady(function(event: Event) {
             sidebar.classList.add('collapsed');
         }
     });  
+    
+    new Header()
+    new Footer()
 })
 
 
 
-expose('c',objectsync)
-
-new Header()
-new Footer()
+expose('o',objectsync)

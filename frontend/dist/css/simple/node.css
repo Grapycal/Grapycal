@@ -1,0 +1,89 @@
+/*
+Define styles for different node categories
+*/
+
+.node{
+    --cate-color: #8d97a0;
+
+    color: var(--text-high);
+    /* text-shadow:  0 0px 5px var(--cate-color); */
+    /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
+    background-color: var(--z2);
+}
+
+.node-label{
+    color: var(--cate-color);
+}
+
+:is(.normal-node,.simple-node) .node-label{
+    font-size: 12px;
+    line-height: 14px;
+    text-wrap: nowrap;
+    /* background: linear-gradient(180deg, rgb(58, 58, 58) 90%, var(--cate-color) 90%); */
+    background-color: var(--z1);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+
+.node-border{
+    border-color: var(--z3);
+    border-width: 10px;
+}
+
+
+.hover .node-border{
+    border-color: var(--z4);
+}
+
+.selected .node-border{
+    border-color: var(--t2);
+}
+
+.node-selection{
+    display: none;
+}
+
+.node.running .node-label{
+    background-color: var(--t1);
+}
+
+
+
+.node:not(.running){
+
+    transition: background-color 0.2s ease-out;
+}
+
+.hierarchy-node{
+    border-color: var(--cate-color);
+    color: var(--cate-color);
+}
+
+.cate-interaction{
+    --cate-color: #DCDCA8;
+}
+
+.cate-function{
+    --cate-color: #7bc361;
+}
+
+.cate-data{
+    --cate-color: #ce9177;
+}
+
+.cate-test{
+    --cate-color: #569BD1;
+}
+
+.cate-procedural{
+    --cate-color: #569BD1;
+}
+
+.cate-torch{
+    --cate-color: #9cdcfe;
+}
+/* 
+.cate-function-math{
+    --cate-color: #59C059;
+} */

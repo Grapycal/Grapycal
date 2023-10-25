@@ -1,8 +1,12 @@
 Extension
 ================
 
-Each extension defines a set of nodes that can be used in a Grapycal workspace. The extension `grapycal_builtin` is automatically included in 
-every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes.
+All nodes in Grapycal are defined in extensions. An extension is a Python package that
+defines a set of nodes for a specific domain. For example, there would be an extension for image processing, another one for
+deep learning, etc.
+The extension `grapycal_builtin` is automatically included in every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes doing arbitrary tasks. 
+
+Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see :doc:`../developer_guide/define_a_node`.
 
 Create an Extension
 -------------------
@@ -29,7 +33,7 @@ Let's create an extension named `grapycal_myext` that defines a node named `IsEv
 
 The extension is now ready to be imported in a workspace. 
 
-3. Go to the web interface and click on the `Settings` button.
+3. Go to the web interface and click on the `File` button.
 You should see the extension in the list of available extensions. Right click on it and select `Import to workspace`.
 
 .. image:: https://i.imgur.com/pQu7ZSQ.png
@@ -80,3 +84,5 @@ The node should now work as expected.
     :width: 80%
 
 .. note:: Don't forget to double click on EvalNodes!
+
+For more details about defining nodes and the related API, see :doc:`../developer_guide/define_a_node`.

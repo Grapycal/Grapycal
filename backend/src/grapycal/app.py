@@ -7,6 +7,7 @@ import subprocess
 from .utils.file import get_direct_sub_folders
 import termcolor
 import time
+from importlib.metadata import version as get_version
 
 class GrapycalApp:
     """
@@ -21,6 +22,7 @@ class GrapycalApp:
         """
         Server main loop
         """
+        version = get_version('grapycal')
         print(
             termcolor.colored(r'''
                ______                                  __
@@ -29,10 +31,9 @@ class GrapycalApp:
             / /_/ / /  / /_/ / /_/ / /_/ / /__/ /_/ / /  
             \____/_/   \__,_/ .___/\__, /\___/\__,_/_/   
                            /_/    /____/
-                                           ''','red') + termcolor.colored('0.1.0', 'grey'))
+                                           ''','red') + termcolor.colored('v'+version, 'grey'))
         print()
         print('Starting Grapycal server...')
-        print(f'Listening on {self._config.host}:{self._config.port}')
 
         if not os.path.exists('./.grapycal'):
             os.mkdir('./.grapycal')
@@ -49,16 +50,33 @@ class GrapycalApp:
         while True:
             break_flag = False
             try:
+            
+                # Start webpage server
+                if not self._config['no_serve_webpage']:
+                    webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
+                    print(f'Strating webpage server at localhost:9001 from {webpage_path}')
+                    subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
+
                 while True: # Restart workspace when it exits. Convenient for development
+
+                    # Start workspace
+                    print(f'Starting workspace {self._config["path"]}')
+                    print(f'Host: {self._config["host"]}')
+                    print(f'Port: {self._config["port"]}')
                     workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace',
                         '--port', str(self._config['port']),
                         '--host', self._config['host'],
                         '--path', self._config['path']],start_new_session=True)
+                    
                     while True:
                         time.sleep(1)
                         if workspace.poll() is not None:
                             print('Workspace exited with code',workspace.poll())
                             break
+
+                    if not self._config['restart']:
+                        break
+
             except KeyboardInterrupt:
                 print('Shutting down Grapycal server will force kill all workspaces. Press Ctrl+C again to confirm.')
                 try:

@@ -1,78 +1,139 @@
+import { Componentable } from "../component/componentable"
+import { GlobalEventDispatcher } from "../component/eventDispatcher"
 import { print } from "../devUtils"
 
-export class PopupMenu{
+export class PopupMenu extends Componentable{
     static _instance:PopupMenu
     static get instance(){
         if(!this._instance){
-            this._instance = new PopupMenu(0,0)
+            this._instance = new PopupMenu()
         }
         return this._instance
     }
-    private popup: HTMLElement
+    private base: HTMLElement
+    private optionTemplate: HTMLTemplateElement
+    protected opened:boolean = false
+    private optionElements: HTMLElement[] = []
+    private focusedOption: number = 0
 
-    constructor(x:number,y:number){
-        let popup = document.createElement('div')
-        popup.classList.add('popup')
-        popup.style.left = x+'px'
-        popup.style.top = y+'px'
-        document.body.appendChild(popup)
-        this.popup = popup
-        this.onElsewhereClick = this.onElsewhereClick.bind(this)
-        document.addEventListener('mousedown',this.onElsewhereClick)
+    get template():string{
+        return `
+        <div class="base">
+            <template id="option-template">
+                <div class="option">
+                </div>
+            </template>
+        </div>
+        `
+    }
+
+    get style():string{
+        return `
+        .base{
+            position: absolute;
+            display: none;
+            background-color: var(--z2);
+            border: 1px solid var(--text-low);
+            border-radius: 2px;
+            box-shadow: 0px 0px 5px 0px black;
+            z-index: 100;
+        }
+        .option{ 
+            cursor: pointer;
+            padding: 5px;
+        }
+        .option.focused{
+            background-color: var(--t1);
+        }
+        `
+    }
+
+    constructor(){
+        super()
+        this.htmlItem.setParentElement(document.body)
+        this.link(GlobalEventDispatcher.instance.onMouseDown,this.onElsewhereClick)
+        this.base = this.htmlItem.baseElement as HTMLElement
+        this.optionTemplate = this.htmlItem.getHtmlEl('option-template') as HTMLTemplateElement
+        
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ArrowDown'),this.onArrowDown)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ArrowUp'),this.onArrowUp)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Enter'),this.onEnter)
     }
 
     onElsewhereClick(e:MouseEvent){
-        if(!this.popup.contains(e.target as Node)){
+        if(!this.base.contains(e.target as Node)){
             this.close()
         }
     }
 
-    addOption(text:string,onclick:()=>void){
-        let option = document.createElement('div')
-        option.classList.add('popup-option')
-        option.innerText = text
-        option.addEventListener('click',()=>{
+    protected generateOptionElement():HTMLElement{
+        let option = this.optionTemplate.content.firstElementChild.cloneNode(true) as HTMLElement
+        return option
+    }
+
+    protected addOptionElement(el:HTMLElement,onclick:()=>void){
+        el.classList.add(this.constructor.name+'-option')
+        el.addEventListener('click',()=>{
             this.close()
             onclick()
         })
-        this.popup.appendChild(option)
-    }
-    reset(x:number,y:number):PopupMenu{
-        this.popup.style.left = x+'px'
-        this.popup.style.top = y+'px'
-        this.popup.style.display = 'block'
-        //remove all children
-        while(this.popup.firstChild){
-            this.popup.removeChild(this.popup.firstChild)
+        this.base.appendChild(el)
+        this.optionElements.push(el)
+        if(this.optionElements.length == 1){
+            this.focusOptionChange(0,0)
         }
-        return this
+    }
+
+    open(x:number,y:number){
+        this.base.style.left = x+'px'
+        this.base.style.top = y+'px'
+        this.base.style.display = 'block'
+        this.opened = true
+    }
+
+    private onArrowDown(e:KeyboardEvent){
+        if(!this.opened) return
+        e.preventDefault()
+        if (this.focusedOption == this.optionElements.length-1){
+            return
+        }
+        if (this.focusedOption < this.optionElements.length-1){
+            this.focusedOption++
+
+            this.focusOptionChange(this.focusedOption-1,this.focusedOption)
+        }
+    }
+
+    private onArrowUp(e:KeyboardEvent){
+        if(!this.opened) return
+        e.preventDefault()
+        if (this.focusedOption > 0){
+            this.focusedOption--
+            this.focusOptionChange(this.focusedOption+1,this.focusedOption)
+        }
+    }
+
+    private onEnter(){
+        if(!this.opened) return
+        this.optionElements[this.focusedOption].click()
+    }
+
+    private focusOptionChange(from:number, to:number){
+        this.optionElements[from].classList.remove(this.constructor.name+'-focused')
+        this.optionElements[to].classList.add(this.constructor.name+'-focused')
     }
 
     close(){
-        if(PopupMenu.instance != this){
-            this.remove()
-            return
-        }
-        while(this.popup.firstChild){
-            this.popup.removeChild(this.popup.firstChild)
-        }
-        this.popup.style.display = 'none'
+        this.base.style.display = 'none'
+        this.opened = false
+        this.clearOptions()
     }
 
-    remove(){
-        document.body.removeChild(this.popup)
-        document.removeEventListener('mousedown',this.onElsewhereClick)
+    clearOptions(){
+        for(let option of this.optionElements){
+            option.remove()
+        }
+        this.optionElements = []
+        this.focusedOption = 0
     }
 }
-
-/*
-css:
-.popup{
-    position:absolute;
-    width:200px;
-}
-.popup-option{
-    padding:10px;
-    cursor:pointer;
-}
-*/

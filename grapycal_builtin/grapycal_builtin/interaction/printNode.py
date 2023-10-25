@@ -19,13 +19,16 @@ class PrintNode(Node):
         self.text_control = self.add_control(TextControl, readonly=True)
         self.label.set('Print')
         self.shape.set('simple')
+        self.css_classes.append('fit-content')
 
     def edge_activated(self, edge, port):
+        self.flash_running_indicator()
         data = edge.get_data()
         self.text_control.text.set(str(data))
 
     def input_edge_added(self, edge: Edge, port: InputPort):
         if edge.is_data_ready():
+            self.flash_running_indicator()
             data = edge.get_data()
             self.text_control.text.set(str(data))
 

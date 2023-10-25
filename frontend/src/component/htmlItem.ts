@@ -212,6 +212,10 @@ export class HtmlItem extends Component{
         if (this.parent_ === parent) return;
         this.parent_ = parent;
         this.parent_slot = parent.addChild(this,slot,order);
+        if(this.hasComponent(Transform)){
+            const transform = this.getComponent(Transform);
+            transform.updateUI();
+        }
     }
 
     setParentElement(parent: Element): void{

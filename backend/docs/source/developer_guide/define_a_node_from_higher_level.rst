@@ -21,6 +21,8 @@ To define a ``FunctionNode``, simply define the following:
 -   ``display_port_names`` (Optional): A boolean that determines whether the port names are displayed on the node. Defaults to ``True``.
 -   Since ``FunctionNode`` is a subclass of ``Node``, you can also do everything in :doc:`define_a_node_from_node` to further customize the node.
 
+For example:
+
 .. code-block:: python
 
     class AdditionNode(FunctionNode):

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal"
-version = "0.4.0"
+version = "0.5.1"
 description = "A highly interactive visual programming language"
 authors = [
     "eri24816 <a931eric@gmail.com>",
@@ -17,9 +17,11 @@ license = "BSD-3-Clause"
 readme = "README.md"
 documentation = "https://eri24816.github.io/Grapycal/"
 
+include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
+
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = "^0.4.0"
+objectsync = "^0.5.1"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
@@ -31,6 +33,22 @@ optional = true
 sphinx = "~7.0"
 furo = "~2023.5"
 sphinx-autoapi = "~2.1"
+
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "poetry"
+update_changelog_on_bump = true
+major_version_zero = true
+version_files = [
+    "docs/source/conf.py:release",
+    "../frontend/package.json:version",
+    "../grapycal_builtin/pyproject.toml:version",
+    "../grapycal_builtin/pyproject.toml:grapycal"
+]
+
 
 [build-system]
 requires = ["poetry-core"]

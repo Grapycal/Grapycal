@@ -1,0 +1,60 @@
+/*
+Define styles for different node categories
+*/
+
+.node{
+    --cate-color: #8d97a0;
+
+    color: var(--text-high);
+    /* text-shadow:  0 0px 5px var(--cate-color); */
+    /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
+    background-color: var(--cate-color);
+    box-shadow: 2px 2px 2px black;
+}
+
+.node-label{
+    color: black;
+    font-weight: 600;
+}
+
+
+.node-border{
+    border-color: black;
+}
+
+.node.running{
+    background-color: var(--t1);
+}
+
+.hierarchy-node{
+    border-color: var(--cate-color);
+    color: var(--cate-color);
+}
+
+.cate-interaction{
+    --cate-color: #daab45;
+}
+
+.cate-function{
+    --cate-color: #06c206;
+}
+
+.cate-data{
+    --cate-color: #fe9000;
+}
+
+.cate-test{
+    --cate-color: #36cdd2;
+}
+
+.cate-procedural{
+    --cate-color: #17a0fb;
+}
+
+.cate-torch{
+    --cate-color: #1199fb;
+}
+/* 
+.cate-function-math{
+    --cate-color: #59C059;
+} */

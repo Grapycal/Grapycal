@@ -8,6 +8,7 @@ import { CompSObject } from "./compSObject"
 import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
+import { AddNodeMenu } from "../ui_utils/addNodeMenu"
 
 export class Editor extends CompSObject{
     readonly template: string = `
@@ -17,17 +18,24 @@ export class Editor extends CompSObject{
                 
                 <div id="slot_default" class="editor" style="position:absolute;top:50%;left:50%;width:1px;height:1px;">
                 <svg class="bg" id="bg"
+                    
                     <defs>
                         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-                            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#222222" stroke-width="0.5" />
+                            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="var(--z2)" stroke-width="0.5" />
                         </pattern>
                         <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
                             <rect width="80" height="80" fill="url(#smallGrid)" />
-                            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#333" stroke-width="1" />
+                            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="var(--z2)"stroke-width="1" />
                         </pattern>
                     </defs>
 
-                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    <defs>
+                        <pattern id="dots" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <circle cx="5" cy="5" r="1" fill="var(--z2)" />
+                        </pattern>
+                    </defs>
+
+                    <rect width="100%" height="100%" fill="url(#dots)" />
                     
                 </svg>
                 </div>
@@ -43,6 +51,7 @@ export class Editor extends CompSObject{
     eventDispatcher: EventDispatcher;
     htmlItem: HtmlItem;
     transform: Transform;
+    mouseOverDetector: MouseOverDetector;
     
     constructor(objectsync: ObjectSyncClient, id: string){
         super(objectsync,id);
@@ -51,11 +60,11 @@ export class Editor extends CompSObject{
         let viewport = this.htmlItem.getHtmlEl('Viewport')
         let editor = this.htmlItem.getHtmlEl('slot_default')
         
-        this.transform = new Transform(this,editor,viewport);
+        this.transform = new Transform(this,editor);
 
         this.eventDispatcher = new EventDispatcher(this, viewport);
         this.linker.link(this.eventDispatcher.onMoveGlobal,this.mouseMove)
-        new MouseOverDetector(this, viewport);
+        this.mouseOverDetector = new MouseOverDetector(this, viewport);
         
         this.transform.scale = 1
         this.transform.maxScale = 8
@@ -63,6 +72,11 @@ export class Editor extends CompSObject{
         this.transform.draggable = true;
         this.transform.scrollable = true;
 
+    }
+
+    protected onStart(): void {
+        
+        new AddNodeMenu(this)
     }
 
     private mouseMove(e: MouseEvent){
@@ -85,5 +99,10 @@ export class Editor extends CompSObject{
     
     public createEdge(tailId: string, headId: string): void{
         this.makeRequest('create_edge',{tail_id:tailId,head_id:headId})
+    }
+
+    public createNode(type: string,args:any={}): void{
+        args.node_type = type
+        this.makeRequest('create_node',args)
     }
 }
