@@ -29,13 +29,14 @@ export class ThreeControl extends Control{
         this.eventDispatcher = new EventDispatcher(this, this.htmlItem.baseElement as HTMLDivElement);
         
         this.points.onSet.add(()=>this.dirty = true)
+        this.lines.onSet.add(()=>this.dirty = true)
 
         this.disc = new THREE.TextureLoader().load( 'disc.png' );
         this.disc.colorSpace = THREE.SRGBColorSpace;
 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x222222 );
-        this.camera = new THREE.PerspectiveCamera( 60, 320/180, 0.1, 2000 );
+        this.camera = new THREE.PerspectiveCamera( 50, 320/180, 0.1, 2000 );
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(320,180);
@@ -121,7 +122,7 @@ export class ThreeControl extends Control{
 
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.computeBoundingSphere();
-        const material = new THREE.PointsMaterial( { color: 0x918532,size:20,map:this.disc,alphaTest: 0.5,transparent:true} );
+        const material = new THREE.PointsMaterial( { color: 0x918532,size:100,map:this.disc,alphaTest: 0.5,transparent:true} );
         this.pointCloud = new THREE.Points( geometry, material );
         this.baseObject.add( this.pointCloud );
 

@@ -15,7 +15,7 @@ class ForNode(Node):
         self.iterable_port = self.add_in_port('iterable')
         self.item_port = self.add_out_port('item')
         self.label.set('For')
-        self.shape.set('normal')
+        self.shape.set('simple')
 
     def init_node(self):
         super().init_node()

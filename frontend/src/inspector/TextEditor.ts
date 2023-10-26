@@ -17,13 +17,13 @@ export class TextEditor implements IComponentable {
     readonly template: string = `
     <div class="attribute-editor flex-horiz stretch">
         <div id="attribute-name"></div>
-        <textarea id="input" type="text" class="text-editor"></textarea>
+        <input id="input" type="text" class="text-editor"></input>
     </div>
     `;
 
     readonly componentManager = new ComponentManager();
     readonly htmlItem: HtmlItem
-    readonly input: HTMLTextAreaElement
+    readonly input: HTMLTextAreaElement|HTMLInputElement
     readonly linker = new Linker(this);
     readonly connectedAttributes: StringTopic[]
     private locked = false;
@@ -32,7 +32,7 @@ export class TextEditor implements IComponentable {
         this.connectedAttributes = connectedAttributes
         this.htmlItem = new HtmlItem(this)
         this.htmlItem.applyTemplate(this.template)
-        this.input = as(this.htmlItem.getHtmlEl('input'), HTMLTextAreaElement)
+        this.input = this.htmlItem.getHtmlEl('input') as HTMLTextAreaElement|HTMLInputElement
         this.htmlItem.getHtmlEl('attribute-name').innerText = displayName
         new BindInputBoxAndTopic(this,this.input, this.connectedAttributes,Workspace.instance.objectsync)
     }

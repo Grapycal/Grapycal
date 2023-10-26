@@ -22,7 +22,7 @@ Define styles for different node categories
     border-color: black;
 }
 
-.node.running{
+.node.running .node-label{
     background-color: var(--t1);
 }
 
