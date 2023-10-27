@@ -25,7 +25,7 @@ Grapycal is not (yet):
 
 ## Motivation
 
-In our daily lives, countless ideas emerge in our minds, only to be dismissed because the perceived cost of realizing them outweighs their potential value. Over time, sadly, we tend to forget our inherent creativity.
+In our daily lives, countless ideas emerge in our minds, only to be dismissed because the perceived cost of realizing them is too high. Over time, sadly, we tend to forget our inherent creativity.
 
 The mission of Grapycal is to push more ideas over the line to be worthy of trying out.
 
