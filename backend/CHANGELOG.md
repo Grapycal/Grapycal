@@ -4,7 +4,7 @@
 
 - untrack files that should not be tracked
 - update build.bat
-- change app logic
+- include webpage server into grapycal server
 
 ## v0.5.1 (2023-10-25)
 

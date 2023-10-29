@@ -1,4 +1,5 @@
 import { Componentable } from "../component/componentable"
+import { LIB_VERSION } from '../version';
 
 export class Footer extends Componentable{
     static ins: Footer
@@ -10,7 +11,7 @@ export class Footer extends Componentable{
             <div class="footer">
                 <p id="workspace-name"></p>
                 <p id="status"></p>
-                <p class="float-left">Grapycal v0.4.0</p>
+                <p class="float-left">Grapycal v${LIB_VERSION}</p>
             </div>
             `;
         }

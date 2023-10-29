@@ -14,6 +14,7 @@
   "scripts": {
     "app": "npx webpack serve --port 9001 ",
     "monitor": "npx webpack serve --port 9000 --entry ./node_modules/chatroom-client/src/testApp.ts",
+    "prebuild": "node -p \"'export const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "npx webpack --mode development"
   },
   "dependencies": {
