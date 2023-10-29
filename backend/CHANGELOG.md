@@ -1,3 +1,11 @@
+## v0.5.2 (2023-10-29)
+
+### Fix
+
+- untrack files that should not be tracked
+- update build.bat
+- change app logic
+
 ## v0.5.1 (2023-10-25)
 
 ### Fix

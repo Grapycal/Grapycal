@@ -1,5 +1,6 @@
 
 import functools
+import os
 import time
 from typing import Any, Dict, List
 from grapycal import Node, Edge, InputPort, TextControl, ButtonControl, IntTopic, FunctionNode
@@ -50,12 +51,32 @@ class PoseEstimateNode(Node):
         self.shape.set('normal')
         self.add_in_port('image',1)
         self.add_out_port('points')
-        self.add_out_port('annotated')
+        self.add_out_port('annotated img')
+        self.load_detector_button = self.add_button_control('load detector','load detector')
+        self.load_detector_button.on_click += lambda: self.run(self.load_detector)
 
     def init_node(self):
         super().init_node()
-        if self.is_preview.get():
+        self.detector = None
+        self.load_detector_button.label.set('load detector')
+
+    def load_detector(self):
+
+        if self.detector is not None:
+            self.print('detector already loaded')
             return
+
+        if not os.path.exists('pose_landmarker_heavy.task'):
+            self.print('detector model not found in local directory, downloading...')
+            import requests
+            url = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task'
+            r = requests.get(url, allow_redirects=True)
+            open('pose_landmarker_heavy.task', 'wb').write(r.content)
+            self.print('detector model downloaded')
+        else:
+            self.print('detector model found in local directory')
+
+        self.print('loading detector model...')
         base_options = python.BaseOptions(model_asset_path='pose_landmarker_heavy.task')
         result_callback = lambda result,image,timestamp: self.run(self.result_callback,result=result,image=image,timestamp=timestamp)
         options = vision.PoseLandmarkerOptions(
@@ -66,11 +87,15 @@ class PoseEstimateNode(Node):
             )
         self.detector = vision.PoseLandmarker.create_from_options(options)
 
+        self.print('detector model loaded')
+        self.load_detector_button.label.set('detector loaded')
+
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task,image=edge.get_data())
 
     def task(self,image):
-        
+        if self.detector is None:
+            raise Exception('detector not loaded. click load detector button to load detector')
         image = mp.Image(image_format=mp.ImageFormat.SRGB, data=(image.transpose(1,2,0)*255).astype(np.uint8))
         self.detector.detect_async(image,int(time.time()*1000))
 
@@ -79,6 +104,9 @@ class PoseEstimateNode(Node):
         y_scale = image.numpy_view().shape[0]/image.numpy_view().shape[1]
         points = []
         self.workspace.vars()['result'] = result
+        if len(result.pose_world_landmarks) == 0:
+            self.print('no pose detected')
+            return
         for landmark in result.pose_world_landmarks[0]:
             points.append([
                 landmark.x,
