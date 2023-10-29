@@ -47,7 +47,10 @@ version_files = [
     "../frontend/package.json:version",
     "../grapycal_builtin/pyproject.toml:version",
     "../grapycal_builtin/pyproject.toml:grapycal",
-    "../frontend/src/version.ts:grapycal:export const LIB_VERSION = \""
+]
+
+pre_bump_hooks = [
+    "pre_bump.bat",
 ]
 
 
