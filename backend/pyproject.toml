@@ -46,7 +46,8 @@ version_files = [
     "docs/source/conf.py:release",
     "../frontend/package.json:version",
     "../grapycal_builtin/pyproject.toml:version",
-    "../grapycal_builtin/pyproject.toml:grapycal"
+    "../grapycal_builtin/pyproject.toml:grapycal",
+    "../frontend/src/version.ts:grapycal:export const LIB_VERSION = \""
 ]
 
 
