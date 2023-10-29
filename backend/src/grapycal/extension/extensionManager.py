@@ -40,14 +40,19 @@ class ExtensionManager:
 
         self._update_available_extensions_topic()
 
-    def load_extensions(self,extension_names) -> None:
+    def load_extensions(self,extension_names) -> List[str]:
+        
+        refetched_extensions = []
         for name in extension_names:
             if not Extension.extension_exists(name):
                 logger.info(f'Extension {name} is not fetched. Fetching...')
                 self._fetch_extension(name.split('_')[0]+'_'+name.split('_')[1],name.split('_')[2])
+                refetched_extensions.append(name)
             self._load_extension(name)
         
         self._update_available_extensions_topic()
+
+        return refetched_extensions
 
     def import_extension(self, package_name: str) -> Extension:
         name = self._fetch_extension(package_name)
@@ -57,9 +62,9 @@ class ExtensionManager:
         return extension
 
     def update_extension(self, extension_name: str) -> None:
-        logger.info(f'Updating extension {extension_name}')
-        old_version = self._extensions[extension_name]
         package_name = '_'.join(extension_name.split('_')[:-1])
+        logger.info(f'Updating extension {package_name}')
+        old_version = self._extensions[extension_name]
         new_version = self._load_extension(self._fetch_extension(package_name))
 
         # Get diff between old and new version
@@ -189,8 +194,6 @@ class ExtensionManager:
             
             #TODO: let the new node class handle the recovery for backwards compatibility
 
-        logger.info(f'Updated extension {package_name} from {old_version.extension_name} to {new_version.extension_name}')
-
 
         # Recover edges if possible
         def port_id_map(old_port_id:str) -> str|None:
@@ -230,6 +233,8 @@ class ExtensionManager:
         # Unimport old version
         self.unimport_extension(old_version.extension_name)
         self._create_preview_nodes(new_version.extension_name)
+
+        logger.info(f'Updated extension {package_name}')
 
         #TODO: cut history
 
@@ -301,6 +306,7 @@ class ExtensionManager:
                 'name':node_type_name,
                 'category':node_type.category
             })
+        logger.info(f'Loaded extension {name}')
         return self._extensions[name]
     
     def _check_extension_not_used(self, name: str) -> None:
@@ -318,6 +324,7 @@ class ExtensionManager:
         self._imported_extensions_topic.pop(name)
         for node_type_name in node_types:
             self._node_types_topic.pop(node_type_name)
+        logger.info(f'Unloaded extension {name}')
     
     def _create_preview_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types

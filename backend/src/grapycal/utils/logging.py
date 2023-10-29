@@ -3,7 +3,7 @@ import os
 
 def setup_logging():
     logger = logging.getLogger()
-    level = logging.WARNING
+    level = logging.INFO
     #level = logging.DEBUG
     logging.basicConfig(level=level)
     ch = logging.StreamHandler()

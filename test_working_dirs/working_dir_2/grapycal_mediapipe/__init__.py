@@ -50,15 +50,15 @@ class PoseEstimateNode(Node):
         self.label.set('Pose Estimate')
         self.shape.set('normal')
         self.add_in_port('image',1)
-        self.add_out_port('points')
-        self.add_out_port('annotated img')
+        self.points_port = self.add_out_port('points')
+        self.annotated_img_port = self.add_out_port('annotated img')
         self.load_detector_button = self.add_button_control('load detector','load detector')
-        self.load_detector_button.on_click += lambda: self.run(self.load_detector)
 
     def init_node(self):
         super().init_node()
         self.detector = None
         self.load_detector_button.label.set('load detector')
+        self.load_detector_button.on_click += lambda: self.run(self.load_detector)
 
     def load_detector(self):
 
@@ -123,8 +123,8 @@ class PoseEstimateNode(Node):
             point[1]-=centery
             point[2]-=centerz
 
-        self.get_out_port('points').push_data(points)
-        self.get_out_port('annotated').push_data(annotated_image.transpose(2,0,1)/255)
+        self.points_port.push_data(points)
+        self.annotated_img_port.push_data(annotated_image.transpose(2,0,1)/255)
 
 class ThreeNode(Node):
     category = 'mediapipe'
@@ -142,4 +142,5 @@ class ThreeNode(Node):
         elif port is self.lines_port:
             self.three.lines.set(edge.get_data())
 
-    
+
+del Node,FunctionNode

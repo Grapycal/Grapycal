@@ -1,10 +1,11 @@
 import importlib
 import inspect
 from typing import Dict
-from warnings import warn
 
 from grapycal.sobjects.node import Node
 from objectsync import SObject
+import logging
+logger = logging.getLogger(__name__)
 
 class Extension:
     @staticmethod
@@ -34,7 +35,7 @@ class Extension:
                 Not very elegant, but hope it works.
                 '''
                 if obj in existing_node_types.values():
-                    warn(f'Node type {type_name} already exists. Skipping')
+                    logger.warning(f'Node type {type_name} already exists. Skipping')
                     continue
 
                 self.node_types[type_name] = obj

@@ -143,15 +143,20 @@ class Workspace:
         }
         json_write(path, data)
         time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        print(f'Workspace saved to {path} at {time_str}')
+        logger.info(f'Workspace saved to {path} at {time_str}')
 
     def load_workspace(self, path: str) -> None:
         data = json_read(path)
         self._objectsync.set_client_id_count(data['client_id_count'])
         self._objectsync.set_id_count(data['id_count'])
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
-        self._extention_manager.load_extensions(data['extensions'])
+        refetched_extensions = self._extention_manager.load_extensions(data['extensions'])
         self._objectsync.create_object(WorkspaceObject, parent_id='root', serialized=workspace_serialized, id=workspace_serialized.id)
+        
+        # because the existing nodes of refetched extensions are desearilzed from old versions,
+        # we need to recreate them to the new versions of the extensions
+        for extension in refetched_extensions:
+            self._extention_manager.update_extension(extension)
 
     def get_workspace_object(self) -> WorkspaceObject:
         # In case this called in self._objectsync.create_object(WorkspaceObject), 
