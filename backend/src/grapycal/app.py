@@ -17,6 +17,8 @@ class GrapycalApp:
     """
     def __init__(self, config) -> None:
         self._config = config
+        if not config['path'].endswith('.grapycal'):
+            config['path'] += '.grapycal'
 
     def run(self) -> None:
         """
@@ -31,7 +33,7 @@ class GrapycalApp:
             / /_/ / /  / /_/ / /_/ / /_/ / /__/ /_/ / /  
             \____/_/   \__,_/ .___/\__, /\___/\__,_/_/   
                            /_/    /____/
-                                           ''','red') + termcolor.colored('v'+version, 'grey'))
+                                           ''','red') + termcolor.colored('v'+version, 'white'))
         print()
         print('Starting Grapycal server...')
 
@@ -54,15 +56,16 @@ class GrapycalApp:
                 # Start webpage server
                 if not self._config['no_serve_webpage']:
                     webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
-                    print(f'Strating webpage server at localhost:9001 from {webpage_path}')
-                    subprocess.Popen([sys.executable,'-m', 'http.server','9001'],start_new_session=True,cwd=webpage_path)
+                    print(f'Strating webpage server at localhost:{self._config["http_port"]} from {webpage_path}...')
+                    subprocess.Popen([sys.executable,'-m', 'http.server',str(self._config["http_port"])],
+                                     start_new_session=True,cwd=webpage_path,
+                                     stdout=subprocess.DEVNULL
+                                     )
 
                 while True: # Restart workspace when it exits. Convenient for development
 
                     # Start workspace
-                    print(f'Starting workspace {self._config["path"]}')
-                    print(f'Host: {self._config["host"]}')
-                    print(f'Port: {self._config["port"]}')
+                    print(f'Starting workspace {self._config["path"]} at {self._config["host"]}:{self._config["port"]}...')
                     workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace',
                         '--port', str(self._config['port']),
                         '--host', self._config['host'],
