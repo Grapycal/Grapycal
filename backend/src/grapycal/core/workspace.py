@@ -2,6 +2,7 @@
 import time
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
+from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
 from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
@@ -98,6 +99,7 @@ class Workspace:
         self._objectsync.register(ThreeControl)
 
         self._objectsync.register(WebcamStream)
+        self._objectsync.register(LinePlotControl)
         
         '''
         Register all built-in node types

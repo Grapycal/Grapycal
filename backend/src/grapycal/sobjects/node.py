@@ -5,6 +5,7 @@ import logging
 import random
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.imageControl import ImageControl
+from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 
 from grapycal.sobjects.controls.textControl import TextControl
 logger = logging.getLogger(__name__)
@@ -307,6 +308,13 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         control = self.add_control(ImageControl,name=name)
         return control
+    
+    def add_lineplot_control(self,name:str|None=None) -> LinePlotControl:
+        '''
+        Add a line plot control to the node.
+        '''
+        control = self.add_control(LinePlotControl,name=name)
+        return control
 
     def remove_control(self,control:str|Control):
         if isinstance(control,str):
@@ -318,10 +326,16 @@ class Node(SObject,metaclass=NodeMeta):
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
     def add_attribute(
         self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
-        editor_type:str|None=None, display_name:str|None=None, **editor_args
+        editor_type:str|None=None, display_name:str|None=None, order_strict:bool|None=None, **editor_args
         ) -> T1: 
+        '''
+        If order_strict is None, it will be set to the ame as is_stateful.
+        '''
+
+        if order_strict is None:
+            order_strict = is_stateful
         
-        attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful)
+        attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful,order_strict=order_strict)
         if editor_type is not None:
             self.expose_attribute(attribute,editor_type,display_name,**editor_args)
         return attribute

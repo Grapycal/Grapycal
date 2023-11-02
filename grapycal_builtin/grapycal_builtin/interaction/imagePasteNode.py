@@ -155,3 +155,64 @@ class ImageDisplayNode(Node):
 
     def input_edge_removed(self, edge: Edge, port: InputPort):
         self.img.set(None)
+
+class LinePlotNode(Node):
+    category = 'interaction'
+
+    def build_node(self):
+        super().build_node()
+        self.label.set('Line Plot')
+        self.shape.set('simple')
+        self.line_plot = self.add_lineplot_control(name='lineplot')
+        self.expose_attribute(self.line_plot.lines,'list')
+        self.css_classes.append('fit-content')
+        self.clear_port = self.add_in_port('clear', 1)
+        self.x_coord_port = self.add_in_port('x coord', 1)
+
+    def init_node(self):
+        super().init_node()
+        self.x_coord = None
+        self.line_plot.lines.on_insert.add_auto(self.add_line)
+        self.line_plot.lines.on_pop.add_auto(self.remove_line)
+        if self.is_new:
+            self.line_plot.lines.insert('line',0)
+
+    def add_line(self,name,_):
+        self.add_in_port(name,1)
+
+    def remove_line(self,name,_):
+        self.remove_in_port(name)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_controls('lineplot')
+    
+    def edge_activated(self, edge: Edge, port: InputPort):
+        match port:
+            case self.clear_port:
+                port.get_one_data()
+                self.line_plot.clear_all()
+            case self.x_coord_port:
+                self.x_coord = port.get_one_data()
+            case _:
+                self.run(self.update_plot,ys = port.get_one_data(),name = port.name.get())
+
+    def update_plot(self,ys,name):
+        if isinstance(ys, float|int):
+            ys = [ys]
+
+        if HAS_NUMPY and isinstance(ys, np.ndarray):
+            ys = ys.tolist()
+        if HAS_TORCH and isinstance(ys, torch.Tensor):
+            ys = ys.detach().cpu().numpy().tolist()
+
+        if self.x_coord is None:
+            self.x_coord = list(range(len(ys)))
+        else:
+            if HAS_NUMPY and isinstance(self.x_coord, np.ndarray):
+                self.x_coord = self.x_coord.tolist()
+            if HAS_TORCH and isinstance(self.x_coord, torch.Tensor):
+                self.x_coord = self.x_coord.detach().cpu().numpy().tolist()
+
+        xs = self.x_coord
+        self.line_plot.add_points(name,xs,ys)

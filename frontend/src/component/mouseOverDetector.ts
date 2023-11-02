@@ -39,8 +39,7 @@ class MouseOverDetectorMaster{
     private check(){
         let els = document.elementsFromPoint(this.mousePos.x, this.mousePos.y)
         this._objectsUnderMouse = els.map(el => this.allObjects.get(el)).filter(obj => obj != undefined).map(obj => obj!);
-        this.isDirty = false;
-        print('check',this._objectsUnderMouse)
+        this.isDirty = false; 
     }
 
     public add(object: IComponentable, element: Element){

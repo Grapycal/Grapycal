@@ -16,6 +16,7 @@ import { ImageControl } from './sobjects/controls/imageControl'
 import { Footer } from './ui_utils/footer'
 import { Header } from './ui_utils/header'
 import { ThreeControl } from './sobjects/controls/threeControl'
+import { LinePlotControl } from './sobjects/controls/linePlotControl'
 
 export const soundManager = new SoundManager();
 
@@ -34,6 +35,7 @@ objectsync.register(TextControl)
 objectsync.register(ButtonControl)
 objectsync.register(ImageControl)
 objectsync.register(ThreeControl)
+objectsync.register(LinePlotControl)
 
 objectsync.register(WebcamStream)
 

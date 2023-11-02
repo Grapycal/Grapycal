@@ -36,6 +36,14 @@ button{
     color: var(--text-high);
 }
 
+button:hover{
+    background-color: var(--z3);
+}
+
+button:active{
+    background-color: var(--z4);
+}
+
 .option{
     background-color: var(--z2);
 }

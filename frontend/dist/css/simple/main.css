@@ -3,8 +3,8 @@
 @import url(node.css);
 @import url(port.css);
 
-:root {
-    --z0: #121212;
+/* :root {
+    --z0: #101010;
     --z1: #1d1d1d;
     --z2: #313131;
     --z3: #4d4d4d;
@@ -15,18 +15,18 @@
     --t3: #D8E9A8;
     --text-low: #9a9a9a;
     --text-high: #dfdfdf;
-}
+} */
 
-/* :root {
+:root {
     --z0: #1a1b29;
     --z1: #231e36;
     --z2: #3b3049;
-    --z3: #4d4d4d;
-    --z4: #616161;
-    --t0: #191A19;
+    --z3: #6c6c6c;
+    --z4: #b4b4b4;
+    --t0: #10001e;
     --t1: #324988;
     --t2: #699ec2;
     --t3: #9091d3;
     --text-low: #9a9a9a;
     --text-high: #dfdfdf;
-} */
+}

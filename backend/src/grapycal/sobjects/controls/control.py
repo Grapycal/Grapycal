@@ -12,6 +12,7 @@ class Control(SObject):
         for different Grapycal versions.
         '''
         for k,v in old.attributes.items():
-            self.get_attribute(k).set(v)
+            if self.has_attribute(k):
+                self.get_attribute(k).set(v)
         
          

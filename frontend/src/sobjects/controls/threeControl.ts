@@ -13,7 +13,8 @@ export class ThreeControl extends Control{
     private camera: THREE.PerspectiveCamera
     private renderer: THREE.WebGLRenderer
     private baseObject: THREE.Object3D
-    private dirty = false;
+    private objectsDirty = false;
+    private renderDirty = false;
 
     private points = this.getAttribute('points', ListTopic<[number,number,number]>)
     private lines = this.getAttribute('lines', ListTopic<[number,number,number,number,number,number]>)
@@ -28,8 +29,8 @@ export class ThreeControl extends Control{
         if(this.node.isPreview) return;
         this.eventDispatcher = new EventDispatcher(this, this.htmlItem.baseElement as HTMLDivElement);
         
-        this.points.onSet.add(()=>this.dirty = true)
-        this.lines.onSet.add(()=>this.dirty = true)
+        this.points.onSet.add(()=>this.setObjectsDirty())
+        this.lines.onSet.add(()=>this.setObjectsDirty())
 
         this.disc = new THREE.TextureLoader().load( 'disc.png' );
         this.disc.colorSpace = THREE.SRGBColorSpace;
@@ -67,7 +68,6 @@ export class ThreeControl extends Control{
 
         this.camera.position.z = 800;
 
-        requestAnimationFrame( this.animate.bind(this) );
 
         this.link(this.eventDispatcher.onDrag,(e:MouseEvent,begin:Vector2,end:Vector2)=>{
             //rotate the base object
@@ -76,16 +76,13 @@ export class ThreeControl extends Control{
             this.baseObject.rotation.x += delta.y/100;
             // this.baseObject.rotateOnWorldAxis(new THREE.Vector3(0,-1,0),delta.x/100);
             // this.baseObject.rotateOnWorldAxis(new THREE.Vector3(-1,0,0),delta.y/100);
+            this.setRenderDirty();
         })
-       
+        this.setRenderDirty();
     }
-    private animate(): void {
-        if(this.destroyed) return;
-        requestAnimationFrame( this.animate.bind(this) );
-        if(this.dirty){
-            this.updateObjects();
-            this.dirty = false;
-        }
+
+    private render(): void {
+
         const rect = (this.htmlItem.baseElement as HTMLDivElement).getBoundingClientRect()
         const nodeScale = this.node.transform.getAbsoluteScale().x;
         const w = nodeScale*320;
@@ -106,6 +103,7 @@ export class ThreeControl extends Control{
     }
 
     private updateObjects(): void {
+        if (this.destroyed) return;
         this.baseObject.remove(this.pointCloud);
         this.baseObject.remove(this.line);
         
@@ -143,5 +141,23 @@ export class ThreeControl extends Control{
         const lineMaterial = new THREE.LineBasicMaterial( { color: 0x888888 } );
         this.line = new THREE.LineSegments( lineGeometry, lineMaterial );
         this.baseObject.add( this.line );
+    }
+
+    setRenderDirty(): void {
+        if(this.renderDirty) return;
+        this.renderDirty = true;
+        requestAnimationFrame(()=>{
+            this.render();
+            this.renderDirty = false;
+        });
+    }
+
+    setObjectsDirty(): void {
+        if (this.objectsDirty) return;
+        this.objectsDirty = true;
+        requestAnimationFrame(()=>{
+            this.updateObjects();
+            this.objectsDirty = false;
+        });
     }
 }

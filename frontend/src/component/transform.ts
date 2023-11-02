@@ -366,6 +366,14 @@ export class Transform extends Component{
         );
     }
 
+    public getElAbsoluteOrigin(el: HTMLElement){
+        let rect = el.getBoundingClientRect()
+        return new Vector2(
+            rect.x,
+            rect.y
+        );
+    }
+
     public getAbsoluteScale(){
         // Only works if element size is not zero
         // let rect = this.targetElement.getBoundingClientRect()
@@ -396,6 +404,15 @@ export class Transform extends Component{
         return new Vector2(
             displacement.x/absScale.x,
             displacement.y/absScale.y
+        )
+    }
+
+    public WroldToEl(pos: Vector2,el: HTMLElement){
+        let absOrigin = this.getElAbsoluteOrigin(el);
+        let absScale = this.getAbsoluteScale();
+        return new Vector2(
+            (pos.x - absOrigin.x)/absScale.x,
+            (pos.y - absOrigin.y)/absScale.y
         )
     }
 

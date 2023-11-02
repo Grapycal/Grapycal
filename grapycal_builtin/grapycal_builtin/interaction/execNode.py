@@ -17,7 +17,7 @@ def exec_(script,globals=None, locals=None,print_=print):
             ast_module.body=stmts[:-1]
             exec(compile(ast_module, filename="<ast>", mode="exec"), globals, locals)
         last = eval(compile(ast.Expression(body=stmts[-1].value), filename="<ast>", mode="eval"), globals, locals)
-        if last:
+        if last is not None:
             print_(last)
     else:    
         exec(script, globals, locals)

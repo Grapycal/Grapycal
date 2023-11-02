@@ -19,7 +19,7 @@ export class Footer extends Componentable{
     protected get style(): string{
         return `
             .footer{
-                padding: 0 15px;
+                padding: 0 30px;
                 display: flex;
                 align-items: center;
                 height: 100%;
