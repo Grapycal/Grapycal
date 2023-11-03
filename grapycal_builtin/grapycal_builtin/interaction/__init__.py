@@ -1,3 +1,4 @@
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
@@ -15,14 +16,36 @@ class LabelNode(Node):
 
 class WebcamNode(Node):
     category = 'interaction'
+
+    def spawn(self, client_id):
+        '''
+        Called when a client wants to spawn a node.
+        '''
+        existing = self.workspace.get_workspace_object().top_down_search(
+            type=WebcamNode,
+            stop=lambda obj: isinstance(obj,Node)
+            )
+        if len(existing)<2:
+            super().spawn(client_id)
+        else:
+            for node in existing:
+                if node != self:
+                    node._on_exception(Exception('Only one webcam node is allowed per workspace'))
+
     def build_node(self):
         self.label.set('Webcam')
         self.shape.set('simple')
-        self.format = self.add_attribute('format',StringTopic,'torch',editor_type='options',options=['torch','numpy'])
+        self.format = self.add_attribute('format',StringTopic,'numpy',editor_type='options',options=['torch','numpy'])
         self.out_port = self.add_out_port('img')
-        self.button = self.add_button_control('start','button')
+        self.button = self.add_button_control('Start streamimg','button')
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('format')
 
     def init_node(self):
+        if self.is_preview.get():
+            return
         self.webcam = self.workspace.webcam
         if not self.is_preview.get():
             self.webcam.image.on_set.add_manual(self._on_image_set)
@@ -65,4 +88,16 @@ class WebcamNode(Node):
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
             self.webcam.image.on_set.remove(self._on_image_set)
+            self.webcam.source_client.on_set.remove(self._source_client_changed)
         return super().destroy()
+    
+class NoneNode(Node):
+    category = 'interaction'
+    def build_node(self):
+        self.shape.set('simple')
+        self.label.set('None')
+        self.css_classes.append('fit-content')
+        self.add_out_port('None')
+
+    def double_click(self):
+        self.out_ports[0].push_data(None)

@@ -48,7 +48,7 @@ class WebcamStream(SObject):
     frontend_type = 'WebcamStream'
     def build(self):
         self.image = self.add_attribute('image',StringTopic)
-        self.source_client = self.add_attribute('source_client',IntTopic,-1)
+        self.source_client = self.add_attribute('source_client',IntTopic,-1,is_stateful=False)
 
     def init(self):
         self.source_client.set(-1)

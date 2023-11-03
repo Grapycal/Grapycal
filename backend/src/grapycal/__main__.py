@@ -15,7 +15,7 @@ def main(s: usersettings.Settings):
 if __name__ == '__main__':
     #parse arguments
     parser = argparse.ArgumentParser(description='Grapycal backend server')
-    parser.add_argument('path', type=str, help='path to workspace file')
+    parser.add_argument('path', type=str, help='path to workspace file', nargs='?', default=None)
     parser.add_argument('--port', type=int, help='port to listen on')
     parser.add_argument('--http-port', type=int, help='http port to listen on (to serve webpage)')
     parser.add_argument('--host', type=str, help='host to listen on')

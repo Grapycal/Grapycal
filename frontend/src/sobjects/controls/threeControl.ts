@@ -157,6 +157,7 @@ export class ThreeControl extends Control{
         this.objectsDirty = true;
         requestAnimationFrame(()=>{
             this.updateObjects();
+            this.render();
             this.objectsDirty = false;
         });
     }

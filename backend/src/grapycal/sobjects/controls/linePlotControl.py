@@ -19,7 +19,7 @@ class LinePlotControl(Control):
             ys = [ys]
             
         if len(xs) != len(ys):
-            raise ValueError('xs and ys must have the same length')
+            raise ValueError(f'xs and ys must have the same length. Got {len(xs)} and {len(ys)}')
         
         self.add_points_topic.emit(name=name,xs=xs,ys=ys)
 

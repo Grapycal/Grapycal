@@ -1,5 +1,7 @@
 import io
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.port import InputPort
 from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.sobjects.controls import TextControl
 from grapycal import ListTopic
@@ -72,6 +74,16 @@ class ExecNode(SourceNode):
         super().restore_from_version(version, old)
         self.restore_controls('text','output_control')
         self.restore_attributes('inputs','outputs')
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        super().edge_activated(edge, port)
+        if port == self.run_port:
+            return
+        for name in self.inputs:
+            port = self.get_in_port(name)
+            if not port.is_all_edge_ready():
+                return
+        self.run(self.task)
 
     def task(self):
         self.output_control.set('')

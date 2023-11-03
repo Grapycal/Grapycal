@@ -207,12 +207,12 @@ class LinePlotNode(Node):
             ys = ys.detach().cpu().numpy().tolist()
 
         if self.x_coord is None:
-            self.x_coord = list(range(len(ys)))
+            xs = list(range(len(ys)))
         else:
             if HAS_NUMPY and isinstance(self.x_coord, np.ndarray):
                 self.x_coord = self.x_coord.tolist()
             if HAS_TORCH and isinstance(self.x_coord, torch.Tensor):
                 self.x_coord = self.x_coord.detach().cpu().numpy().tolist()
-
-        xs = self.x_coord
+            xs = self.x_coord
+        
         self.line_plot.add_points(name,xs,ys)
