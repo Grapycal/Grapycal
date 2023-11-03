@@ -1,3 +1,14 @@
+## v0.6.0 (2023-11-03)
+
+### Feat
+
+- allow specify http-port
+- add linePlotControl
+
+### Fix
+
+- fix bugs
+
 ## v0.5.5 (2023-10-29)
 
 ### Fix
