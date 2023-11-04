@@ -1,6 +1,6 @@
 # Grapycal
 
-![Image](https://i.imgur.com/8dT7ko4.png)
+![Image](https://i.imgur.com/z4fRALC.png)
 
 Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and runnig programs as a graph.
 
