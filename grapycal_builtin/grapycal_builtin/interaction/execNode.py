@@ -10,7 +10,6 @@ import ast
 # exec that prints correctly
 def exec_(script,globals=None, locals=None,print_=print):
     stmts = list(ast.iter_child_nodes(ast.parse(script)))
-    output=''
     if stmts == []:
         return
     if isinstance(stmts[-1], ast.Expr):
@@ -21,9 +20,9 @@ def exec_(script,globals=None, locals=None,print_=print):
         last = eval(compile(ast.Expression(body=stmts[-1].value), filename="<ast>", mode="eval"), globals, locals)
         if last is not None:
             print_(last)
+        return last
     else:    
         exec(script, globals, locals)
-    return output
 
 class ExecNode(SourceNode):
     '''
@@ -93,8 +92,8 @@ class ExecNode(SourceNode):
             if port.is_all_edge_ready():
                 self.workspace.vars().update({name:port.get_one_data()})
         self.workspace.vars().update({'print':self.print,'self':self})
-        exec_(stmt,self.workspace.vars(),print_=self.print)
-        self.out_port.push_data(None)
+        result = exec_(stmt,self.workspace.vars(),print_=self.print)
+        self.out_port.push_data(result)
         for name in self.outputs:
             self.get_out_port(name).push_data(self.workspace.vars()[name])
 

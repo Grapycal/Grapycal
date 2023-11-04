@@ -1,4 +1,5 @@
 import io
+from typing import Never
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
@@ -13,14 +14,18 @@ from matplotlib import pyplot as plt
 try:
     import torch
     HAS_TORCH = True
+    from torch import Tensor
 except ImportError:
     HAS_TORCH = False
+    Tensor = None
 
 try:
     import numpy as np
     HAS_NUMPY = True
+    from numpy import ndarray
 except ImportError:
     HAS_NUMPY = False
+    ndarray = None
 
 try:
     from PIL import Image
@@ -156,6 +161,22 @@ class ImageDisplayNode(Node):
     def input_edge_removed(self, edge: Edge, port: InputPort):
         self.img.set(None)
 
+def to_list(data):
+    if ndarray and isinstance(data, ndarray):
+        data = data.tolist()
+    elif Tensor and isinstance(data, Tensor):
+        data = data.detach().cpu().numpy().tolist()
+    elif isinstance(data, float|int):
+        data = [data]
+    elif isinstance(data, list):
+        if len(data) == 0:
+            return []
+        elif Tensor and isinstance(data[0], Tensor):
+            data = [float(d.detach().cpu()) for d in data] #type: ignore
+        elif ndarray and isinstance(data[0], ndarray):
+            data = [float(d) for d in data]
+    return data
+
 class LinePlotNode(Node):
     category = 'interaction'
 
@@ -193,26 +214,14 @@ class LinePlotNode(Node):
                 port.get_one_data()
                 self.line_plot.clear_all()
             case self.x_coord_port:
-                self.x_coord = port.get_one_data()
+                self.x_coord = to_list(port.get_one_data())
             case _:
                 self.run(self.update_plot,ys = port.get_one_data(),name = port.name.get())
 
     def update_plot(self,ys,name):
-        if isinstance(ys, float|int):
-            ys = [ys]
-
-        if HAS_NUMPY and isinstance(ys, np.ndarray):
-            ys = ys.tolist()
-        if HAS_TORCH and isinstance(ys, torch.Tensor):
-            ys = ys.detach().cpu().numpy().tolist()
-
+        ys = to_list(ys)
         if self.x_coord is None:
             xs = list(range(len(ys)))
         else:
-            if HAS_NUMPY and isinstance(self.x_coord, np.ndarray):
-                self.x_coord = self.x_coord.tolist()
-            if HAS_TORCH and isinstance(self.x_coord, torch.Tensor):
-                self.x_coord = self.x_coord.detach().cpu().numpy().tolist()
             xs = self.x_coord
-        
         self.line_plot.add_points(name,xs,ys)

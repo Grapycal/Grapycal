@@ -6,6 +6,7 @@ body{
 .sidebar{
     background-color: var(--t0);
     border: var(--z1) 1px solid;
+    background-color: var(--z0);
 }
 
 .sidebar-left{

@@ -8,7 +8,7 @@ Define styles for different node categories
     color: var(--text-high);
     /* text-shadow:  0 0px 5px var(--cate-color); */
     /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
-    background-color: var(--z2);
+    background-color: var(--z1);
 }
 
 .node-label{
@@ -20,7 +20,7 @@ Define styles for different node categories
     line-height: 14px;
     text-wrap: nowrap;
     /* background: linear-gradient(180deg, rgb(58, 58, 58) 90%, var(--cate-color) 90%); */
-    background-color: var(--z1);
+    background-color: var(--z2);
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
 }
@@ -28,16 +28,23 @@ Define styles for different node categories
 
 .node-border{
     border-color: var(--z3);
-    border-width: 10px;
+    border-width: 8px;
 }
 
 
 .hover .node-border{
     border-color: var(--z4);
+    border-width: 10px;
 }
 
 .selected .node-border{
     border-color: var(--t2);
+    border-width: 10px;
+}
+
+.functional-selected .node-border{
+    border-color: var(--t4);
+    border-width: 10px;
 }
 
 .node-selection{

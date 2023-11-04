@@ -46,7 +46,7 @@ input, textarea{
     border: none; 
     outline: none;
     background: none;
-    padding: 0.5px 1px;
+    padding: 0px 2.5px;
 }
 
 input{
@@ -119,7 +119,7 @@ footer{
 }
 
 .normal-node{
-    width: 140px;
+    width: 116.25px;
     min-height: 24px;
 
     box-sizing: border-box;
@@ -127,16 +127,21 @@ footer{
 }
 
 .simple-node{
-    width: 120px;
+    width: 116.25px;
     min-height: 20px;
 
     box-sizing: border-box;
     block-size: fit-content;
 }
 
+.node-label{
+    height: 20.5px;
+}
+
 .simple-node .node-label{
     max-width: 100%;
     flex-grow: 1;
+    height: 30px;
 }
 
 .round-node{
@@ -229,6 +234,11 @@ footer{
     border-radius: 50%;
 }
 
+.main-section{
+    gap:2px;
+    padding: 4px 0px;
+}
+
 /* 
 .node.selected{
     background-color: #54360f8f;
@@ -252,19 +262,6 @@ footer{
     background-color : #4d4d4d;
 }
 
-.port-section{
-    margin: 0px 0px 4px 0px;
-}
-
-.slot-input-port{
-    padding-top : 3px;
-    padding-bottom: 3px;
-}
-
-.slot-output-port{
-    padding-top : 3px;
-    padding-bottom: 3px;
-}
 
 .slot-input-port .port-knob{
     left: -5px;
@@ -326,6 +323,13 @@ footer{
     gap:2px;
 }
 
+.simple-node .slot-input-port{
+    padding-top:7.5px;
+}
+
+.simple-node .slot-output-port{
+    padding-top:7.5px;        
+}
 
 
 :is(.simple-node,.round-node){
@@ -355,20 +359,20 @@ footer{
 /* Control */
 
 .slot-control{
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box; 
     gap:2px;
 
     position: relative;
-    margin: 2px 0px 4px 0px;
-    padding: 0px 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .slot-control:empty{
-    height: 0px;
-    padding: 0px;
-    margin: 0px;
+    display: none;
 }
 
 .control{
@@ -728,6 +732,11 @@ hr{
 .justify-start {
   justify-content: flex-start;
 }
+
+.align-start {
+  align-items: flex-start;
+}
+
 
 .pointerEventsNone {
     pointer-events: none;

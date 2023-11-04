@@ -63,6 +63,8 @@ export class Node extends CompSObject {
     functionalSelectable: Selectable;
     mouseOverDetector: MouseOverDetector
 
+    dragEndCorrection: Vector2 = new Vector2(0,0)
+
     private draggingTargetPos: Vector2 = new Vector2(0,0)
     
     public moved: Action<[]> = new Action();
@@ -78,10 +80,10 @@ export class Node extends CompSObject {
             
             <div class="node-selection"></div>
             <div id="label" class="node-label full-width"></div>
-            <div class=" flex-vert space-between">
-                <div class="flex-horiz space-between full-width port-section">
-                    <div id="slot_input_port" class=" flex-vert space-evenly center slot-input-port"></div>
-                    <div id="slot_output_port" class=" flex-vert space-evenly center slot-output-port"></div>
+            <div class=" flex-vert space-between main-section">
+                <div class="flex-horiz space-between full-width port-section align-start">
+                    <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+                    <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
                 </div>
                 <div id="slot_control" class="slot-control flex-vert space-between"></div>
             </div>
@@ -101,7 +103,7 @@ export class Node extends CompSObject {
                     <div class="node-label full-width flex-horiz">
                         <div id="label"></div>
                     </div>
-                    <div id="slot_control"  class="slot-control"></div>
+                    <div id="slot_control"  class="slot-control main-section"></div>
                 </div>
 
                 <div id="slot_output_port" class=" flex-vert justify-start slot-output-port"></div>
@@ -249,15 +251,18 @@ export class Node extends CompSObject {
 
                 let delta = this.transform.worldToLocalDisplacement(newPos.sub(oldPos))
                 let snappedDelta = delta
-                // if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
-                //     this.draggingTargetPos = this.draggingTargetPos.add(delta)
-                //     const snap = 20
-                //     const snapped = new Vector2(
-                //         Math.round(this.draggingTargetPos.x/snap)*snap,
-                //         Math.round(this.draggingTargetPos.y/snap)*snap
-                //     )
-                //     snappedDelta = snapped.sub(this.transform.translation)
-                // }
+                if(!GlobalEventDispatcher.instance.isKeyDown('Alt')){
+                    this.draggingTargetPos = this.draggingTargetPos.add(delta)
+                    const snap = 17
+                    let snapped = new Vector2(
+                        Math.round(this.draggingTargetPos.x/snap)*snap,
+                        Math.round(this.draggingTargetPos.y/snap)*snap
+                    )
+                    const delta2 = snapped.sub(this.draggingTargetPos)
+                    this.dragEndCorrection = delta2.mulScalar(0.1)
+                    snapped = snapped.sub(delta2.mulScalar(0.1))
+                    snappedDelta = snapped.sub(this.transform.translation)
+                }
 
                 for(let selectable of this.selectable.selectedObjects){
                     if(selectable.object instanceof Node){
@@ -272,6 +277,7 @@ export class Node extends CompSObject {
                     for(let selectable of this.selectable.selectedObjects){
                         if(selectable.object instanceof Node){
                             let node = selectable.object
+                            node.transform.translate(this.dragEndCorrection,Space.Local)
                             node.translation.set(node.transform.translation.toString())
                         }
                     }
