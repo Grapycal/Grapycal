@@ -22,19 +22,20 @@ class LazyDict(Generic[I,O]):
 
 
 class AttrInfo:
-    def __init__(self, name, type_name, value, is_stateful):
+    def __init__(self, name, type_name, value, is_stateful, order_strict):
         self.name = name
         self.type = type_name
         self.value = value
         self.is_stateful = is_stateful
+        self.order_strict = order_strict
 
 class SObjectInfo:
     def __init__(self,serialized:SObjectSerialized):
         self.serialized = serialized
         self.attr_info: Dict[str,AttrInfo] = {}
         self.attributes: Dict[str,Any] = {}
-        for name, type_name, value, is_stateful in self.serialized.attributes:
-            self.attr_info[name] = AttrInfo(name, type_name, value, is_stateful)
+        for name, type_name, value, is_stateful, order_strict  in self.serialized.attributes:
+            self.attr_info[name] = AttrInfo(name, type_name, value, is_stateful, order_strict)
             self.attributes[name] = value
 
         

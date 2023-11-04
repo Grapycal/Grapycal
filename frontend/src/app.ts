@@ -72,10 +72,10 @@ document.addEventListener('keydown', function(event) {
         let sidebarLeft = document.getElementById('sidebar-collapse-left').parentElement
         if (sidebarRight.classList.contains('collapsed')) {
             sidebarRight.classList.remove('collapsed');
-            sidebarLeft.classList.remove('collapsed');
+            // sidebarLeft.classList.remove('collapsed');
         } else {
             sidebarRight.classList.add('collapsed');
-            sidebarLeft.classList.add('collapsed');
+            // sidebarLeft.classList.add('collapsed');
         }
     }
 });

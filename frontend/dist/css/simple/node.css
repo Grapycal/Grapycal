@@ -42,14 +42,12 @@ Define styles for different node categories
     border-width: 10px;
 }
 
-.functional-selected .node-border{
-    border-color: var(--t4);
-    border-width: 10px;
-}
 
-.node-selection{
+.node:not(.functional-selected) .node-selection{
     display: none;
 }
+
+
 
 .node.running .node-label{
     background-color: var(--t1);
@@ -57,7 +55,7 @@ Define styles for different node categories
 
 
 
-.node:not(.running){
+.node:not(.running) .node-label{
 
     transition: background-color 0.2s ease-out;
 }

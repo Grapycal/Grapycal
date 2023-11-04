@@ -48,6 +48,7 @@ class GrapycalApp:
         #TODO: Websocket multiplexing
 
         workspace = None
+        http_server = None
         # Here simply start one workspace in background
         while True:
             break_flag = False
@@ -57,7 +58,7 @@ class GrapycalApp:
                 if not self._config['no_serve_webpage']:
                     webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
                     print(f'Strating webpage server at localhost:{self._config["http_port"]} from {webpage_path}...')
-                    subprocess.Popen([sys.executable,'-m', 'http.server',str(self._config["http_port"])],
+                    http_server = subprocess.Popen([sys.executable,'-m', 'http.server',str(self._config["http_port"])],
                                      start_new_session=True,cwd=webpage_path,
                                      stdout=subprocess.DEVNULL
                                      )
@@ -95,6 +96,9 @@ class GrapycalApp:
         if workspace:
             workspace.send_signal(signal.SIGTERM)
             workspace.wait()
+        if http_server:
+            http_server.send_signal(signal.SIGTERM)
+            http_server.wait()
         self.clean_unused_fetched_extensions()
         print('Grapycal server terminated')
         return

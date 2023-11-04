@@ -17,3 +17,8 @@
 .edge.selected{
     stroke: var(--t2);
 }
+
+.edge:not(.data-ready){
+
+    transition: stroke 0.2s ease-out;
+}

@@ -106,6 +106,10 @@ export class LinePlotControl extends Control{
             const line = this.lines.get(name)
             const positionAttribute = line.geometry.getAttribute( 'position' );
             const orig_length = line.geometry.drawRange.count;
+
+            if(orig_length+xs.length > positionAttribute.count)
+                return
+
             for(let i=0; i<xs.length; i++){
                 positionAttribute.setXYZ(orig_length+i,xs[i],ys[i],0);
                 boundary.expandByPoint(new THREE.Vector3(xs[i],ys[i],0))
@@ -313,7 +317,16 @@ export class LinePlotControl extends Control{
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,0)
         
-        const material = new THREE.LineBasicMaterial( { color: 0x33ff33 } );
+        const color = [ // green, red, blue, yellow, purple, cyan, gray
+            0x33bb33,
+            0xbb3333,
+            0x3333bb,
+            0xbbbb33,
+            0xbb33bb,
+            0x33bbbb,
+            0x888888,
+        ] [this.lines.size % 7]
+        const material = new THREE.LineBasicMaterial( { color: color } );
         const line = new THREE.Line( geometry, material );
         this.baseObject.add( line );
         this.lines.set(name,line);
