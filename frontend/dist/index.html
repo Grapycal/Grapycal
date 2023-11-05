@@ -9,12 +9,62 @@
     <script src="/main.js" type="module" async defer></script>
   </head>
   <body spellcheck="false">
-    <header></header>
+    <!-- <header></header> -->
     <div class="main">
       <div class="sidebar sidebar-left" id="sidebar-left">
-        <button class="sidebar-collapse-left" id="sidebar-collapse-left">&lt</button>
-        <div class = "sidebar-container">
-          <div class="sidebar-slot" id="slot_sidebar"></div>
+        <div class="sidebar-tab-selector">
+          <button class="sidebar-tab-btn" id="tab-btn-1" title="about">
+            <img src="icon.png" alt="icon" width="27" height="27"></img>
+          </button>
+          <button class="sidebar-tab-btn" id="tab-btn-4"><div class="sidebar-tab-btn-icon">📁</div></button>
+          <button class="sidebar-tab-btn" id="tab-btn-node-list"><div class="sidebar-tab-btn-icon" title="nodes">📜</div></button>
+          <button class="sidebar-tab-btn" id="tab-btn-3"><div class="sidebar-tab-btn-icon">🚀</div></button>
+          <button class="sidebar-tab-btn" id="tab-btn-examples"><div class="sidebar-tab-btn-icon">💡</div></button>
+          <button class="sidebar-tab-btn" id="tab-btn-5"><div class="sidebar-tab-btn-icon">🛠️</div></button>
+        </div>
+        <div class = "sidebar-container" id="left-sidebar-container">
+          <div class="sidebar-tab" id="tab-1" style="display: none;">
+            <h1>About</h1>
+            <hr>
+            Grapycal is an open source project <a href="https://github.com/eri24816/Grapycal">[Github]</a>.
+            Welcome to join and contribute!
+            <br></br>
+            Grapycal is designed with the goal to align with human perception at best, while being powerful with the help of Python, its backend. 
+
+            <br><br>
+            
+            If you're new, you may be unfamiliar with the syntax, but you'll soon find it easy to use! These may help you get started:
+            <ul>
+              <li><a href="https://eri24816.github.io/Grapycal/index.html">Documentation</a></li>
+              <!-- link to id=tab-examples -->
+              <li>💡Example tab in the left</li>
+          </div>
+
+          <div class="sidebar-tab" id="tab-4" style="display: none;">
+            <h1>Files</h1>
+            <hr>
+          </div>
+
+          <div class="sidebar-tab" id="tab-node-list" style="display: none;">
+            <h1>Node List</h1>
+            <hr>
+            <div id="node-list-container"></div>
+
+            <hr>
+            Want more nodes? Extend the list at 🚀Extensions tab.
+
+          </div>
+          <div class="sidebar-tab" id="tab-3" style="display: none;">
+            <h1>Extensions</h1>
+            <hr>
+            <h2>In Use</h2>
+            <div class="card-gallery" id="imported-extensions"></div>
+            <h2>Avaliable</h2>
+            <div class="card-gallery"  id="avaliable-extensions"></div>
+            <button id="refresh-extensions">Refresh</button>
+          </div>
+          <div class="sidebar-tab" id="tab-5" style="display: none;"></div>
+          <div class="sidebar-tab" id="tab-examples" style="display: none;"></div>
         </div>
       </div>
 
@@ -26,13 +76,7 @@
       <div id="settings-page" class="settings-page">
         <div class="settings-page-overlay" id="settings-page-overlay"></div>
         <div class="settings-page-content">
-          <h1>⚙️ Extensions</h1>
-          <h2>In Use</h2>
-          <div class="card-gallery" id="imported-extensions"></div>
-          <h2>Avaliable</h2>
-          <div class="card-gallery"  id="avaliable-extensions"></div>
-          <button id="refresh-extensions">Refresh</button>
-          <button class="settings-page-close" id="settings-page-close">✕</button>
+          
         </div>
       </div>
     </div>

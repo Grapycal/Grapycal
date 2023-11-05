@@ -34,7 +34,7 @@ export class Editor extends CompSObject{
                     </defs>
 
                     <defs>
-                        <pattern id="dots" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
                             <circle cx="5" cy="5" r="1" fill="var(--z2)" />
                         </pattern>
                     </defs>
@@ -160,7 +160,6 @@ export class Editor extends CompSObject{
         const matchEdge = (edge:SObject)=>{
             if(!(edge instanceof Edge)) return false;
             let edgebox = edge.path.getBoundingClientRect()
-            print(edgebox)
             return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.right &&
             Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.left &&
             Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.bottom &&

@@ -19,18 +19,6 @@ export class ExtensionsSetting extends Componentable{
     constructor(objectsync:ObjectSyncClient){
         super()
 
-        document.getElementById('settings-page-close').addEventListener('click',()=>{
-            document.getElementById('settings-page').classList.toggle('open')
-        })
-
-        document.getElementById('refresh-extensions').addEventListener('click',()=>{
-            objectsync.emit('refresh_extensions')
-        })
-
-        document.getElementById('settings-page-overlay').addEventListener('click',()=>{
-            document.getElementById('settings-page').classList.toggle('open')
-        })
-
         this.objectsync = objectsync
 
         this.importedExtensionsTopic = this.objectsync.getTopic('imported_extensions',DictTopic<string,any>)

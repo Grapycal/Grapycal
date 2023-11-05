@@ -332,10 +332,12 @@ footer{
 
 .simple-node .slot-input-port{
     padding-top:7.5px;
+    padding-bottom: 7.5px;
 }
 
 .simple-node .slot-output-port{
-    padding-top:7.5px;        
+    padding-top:7.5px;    
+    padding-bottom: 7.5px;    
 }
 
 
@@ -477,7 +479,6 @@ input:enabled, textarea:enabled{
 
 .sidebar{
     position: absolute;
-    padding: 10px;
     bottom: 0px; 
     top: 0px;
     z-index: 10;
@@ -486,7 +487,31 @@ input:enabled, textarea:enabled{
 
 .sidebar-left{
     left: 0px;
-    width: 300px;
+    display: flex;
+    flex-direction: row;
+}
+
+.sidebar-tab-selector{
+    position: relative;
+    width: 45px;
+    height: 100%;
+    background-color: var(--z2);
+}
+
+.sidebar-tab-btn{
+    width: 100%;
+    height: 45px;
+}
+
+.sidebar-tab-btn-icon{
+    width: 100%;
+    height: 100%;
+    line-height: 45px;
+    font-size: large;
+}
+
+.sidebar-tab-btn img{
+    margin: auto;
 }
 
 .sidebar-right{
@@ -494,20 +519,29 @@ input:enabled, textarea:enabled{
     width: 300px;
 }
 
-.collapsed .sidebar-container{
+.collapsed.sidebar-container{
     display: none;
 }
 
 .sidebar-container{
     height: 100%;
+    padding: 10px;
+    position: relative;
+    width: 300px;
+    flex-grow: 1;
 }
 
-.sidebar-slot{
+.sidebar-left .sidebar-container{
+    width: 280px;
+}
+
+.sidebar-tab{
     overflow: scroll;
     user-select: none;
     position: absolute;
     padding: 10px;
     padding-bottom: 100px;
+    padding-left: 12px;
     height:auto;
     bottom: 0px; 
     left: 0px;
@@ -515,8 +549,13 @@ input:enabled, textarea:enabled{
     right: 0px;
 }
 
-.sidebar-slot::-webkit-scrollbar {
+.sidebar-tab::-webkit-scrollbar {
   display: none;
+}
+
+.sidebar-tab h1{
+    margin-left: 4px;
+    margin-top: 2px;
 }
 
 .sidebar-collapse-left{
@@ -574,21 +613,25 @@ input:enabled, textarea:enabled{
 /* Hierarchy */
 
 .hierarchy-node{
-    
     margin-bottom: 10px;
     padding-bottom: 2px;
     padding-top: 4px;
-    border-left: #97d11b solid 3px;
+    border-left: #97d11b solid 1px;
     border-radius: 3px;
     font-size: 18px;
 }
+
+/* to omit the border of non first level nodes */
+/* .hierarchy-node .hierarchy-node{
+    border-left: none;
+} */
 
 .hierarchy-name{
     padding-left: 15px;
 }
 
 .hierarchy-indent{
-    margin: 10px 20px 0px 20px;
+    margin: 8px 20px 0px 20px;
 }
 /* .hierarchy-child-node-slot{
 
@@ -811,18 +854,17 @@ hr{
 .card-gallery{
     display: flex;
     flex-wrap: wrap;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
 }
 
 .card{
     margin: 10px;
-    width: 200px;
-    height: 140px;
+    width: 160px;
+    height: 100px;
     border-radius: 8px;
-    background-color: rgba(45, 45, 45, 0.54);
+    background-color: var(--z2);
     border: #4b4b4b solid 1px;
-    cursor: pointer;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
@@ -830,15 +872,14 @@ hr{
 
 .card-image{
     width: 100%;
-    height: 70%;
+    height: 80%;
     background-size: cover;  
     background-repeat:   no-repeat;
     background-position: center center; 
-    cursor: pointer;
 }
 
 .card-title{
-    font-size: 18px;
-    padding: 10px 10px;
-    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 10px;
+    text-align: center;
 }

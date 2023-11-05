@@ -3,6 +3,10 @@ body{
     color: var(--text-high);
 }
 
+a{
+    color: var(--t2);
+}
+
 .sidebar{
     background-color: var(--t0);
     border: var(--z1) 1px solid;
@@ -11,6 +15,11 @@ body{
 
 .sidebar-left{
     border-right: #303335 1px solid;
+}
+
+.sidebar-tab-btn.active{
+    background-color: var(--z3);
+    color: var(--text-high);
 }
 
 .sidebar-right{
@@ -41,7 +50,7 @@ button:hover{
     background-color: var(--z3);
 }
 
-button:active{
+button:active:hover{
     background-color: var(--z4);
 }
 

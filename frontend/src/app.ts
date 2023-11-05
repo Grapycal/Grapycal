@@ -69,7 +69,6 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Tab') {
         event.preventDefault();
         let sidebarRight = document.getElementById('sidebar-collapse-right').parentElement;
-        let sidebarLeft = document.getElementById('sidebar-collapse-left').parentElement
         if (sidebarRight.classList.contains('collapsed')) {
             sidebarRight.classList.remove('collapsed');
             // sidebarLeft.classList.remove('collapsed');
@@ -95,25 +94,18 @@ function documentReady(callback: Function): void {
   }
 
 documentReady(function(event: Event) {
-    document.getElementById('sidebar-collapse-left').addEventListener('click', function(event) {
-        let sidebar = document.getElementById('sidebar-collapse-left').parentElement;
-        if (sidebar.classList.contains('collapsed')) {
-            sidebar.classList.remove('collapsed');
-        } else {
-            sidebar.classList.add('collapsed');
-        }   
-    });
-
     document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
+            document.getElementById('sidebar-collapse-right').innerText = '>'
         } else {
             sidebar.classList.add('collapsed');
+            document.getElementById('sidebar-collapse-right').innerText = '<'
         }
     });  
     
-    new Header()
+    // new Header()
     new Footer()
 })
 

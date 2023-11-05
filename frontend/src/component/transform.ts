@@ -20,11 +20,11 @@ export class TransformRoot extends Component{
 export enum MouseButton{
     Left = 1,
     Middle = 2,
-    LeftAndMiddle = 3,
+    LeftOrMiddle = 3,
     Right = 4,
-    LeftAndRight = 5,
-    MiddleAndRight = 6,
-    All = 7
+    LeftOrRight = 5,
+    MiddleOrRight = 6,
+    Any = 7
 }
 
 class RequestFrameManager{
@@ -145,7 +145,7 @@ export class Transform extends Component{
             this.actuallyDraggable = false;
     }
 
-    dragButton: MouseButton = MouseButton.Left;
+    dragButton: MouseButton = MouseButton.Any;
 
     _actuallyDraggable: boolean = false; // Yes I ran out of naming ideas
     private get actuallyDraggable(){return this._actuallyDraggable;}
@@ -286,7 +286,7 @@ export class Transform extends Component{
     }
 
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
-        if(e.buttons !== this.dragButton)
+        if((e.buttons & this.dragButton) == 0)
             return;
         let startMouseLocal = this.worldToLocal(prevMousePos);
         let mouseLocal = this.worldToLocal(mousePos);
