@@ -17,6 +17,16 @@ export class TransformRoot extends Component{
     }
 }
 
+export enum MouseButton{
+    Left = 1,
+    Middle = 2,
+    LeftAndMiddle = 3,
+    Right = 4,
+    LeftAndRight = 5,
+    MiddleAndRight = 6,
+    All = 7
+}
+
 class RequestFrameManager{
     static instance: RequestFrameManager = new RequestFrameManager();
     private callbacks: (() => void)[] = [];
@@ -134,6 +144,8 @@ export class Transform extends Component{
         else
             this.actuallyDraggable = false;
     }
+
+    dragButton: MouseButton = MouseButton.Left;
 
     _actuallyDraggable: boolean = false; // Yes I ran out of naming ideas
     private get actuallyDraggable(){return this._actuallyDraggable;}
@@ -274,6 +286,8 @@ export class Transform extends Component{
     }
 
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
+        if(e.buttons !== this.dragButton)
+            return;
         let startMouseLocal = this.worldToLocal(prevMousePos);
         let mouseLocal = this.worldToLocal(mousePos);
         let delta = new Vector2(
@@ -407,9 +421,12 @@ export class Transform extends Component{
         )
     }
 
-    public WroldToEl(pos: Vector2,el: HTMLElement){
+    public WroldToEl(pos: Vector2,el: HTMLElement,useScale:boolean=true){
         let absOrigin = this.getElAbsoluteOrigin(el);
-        let absScale = this.getAbsoluteScale();
+        let absScale = new Vector2(1,1);
+        if(useScale){
+            absScale = this.getAbsoluteScale();
+        }
         return new Vector2(
             (pos.x - absOrigin.x)/absScale.x,
             (pos.y - absOrigin.y)/absScale.y

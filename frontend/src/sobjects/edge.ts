@@ -164,6 +164,16 @@ export class Edge extends CompSObject {
             }
         })
         if(this.data_ready.getValue() == 0) this.svg.classList.add('data-ready')
+
+        this.link(this.eventDispatcher.onMouseDown, (e: MouseEvent) => {
+            // pass the event to the editor to box select
+            if(e.ctrlKey){
+                this.eventDispatcher.forwardEvent()
+                return
+            }  
+        })
+        
+
         this.updateSVG()
     }
 
@@ -186,6 +196,7 @@ export class Edge extends CompSObject {
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
+        if(event.ctrlKey) return;
         let maxR = 200
         let distToTail = this.tail.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)
         let distToHead = this.head.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)

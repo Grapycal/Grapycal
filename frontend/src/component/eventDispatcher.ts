@@ -147,12 +147,12 @@ export class EventDispatcher extends Component{
     }
 
     private _onMouseDown(event: MouseEvent){
-        this.onMouseDown.invoke(event);
         this.fowardCalled = false;
+        this.onMouseDown.invoke(event);
         document.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mouseup', this._onMouseUp);
         this.prevMousePos = new Vector2(this.mousePos.x, this.mousePos.y);
-        if (!this.fowardCalled && this.onDragStart.numCallbacks > 0 ||this.onDragStart.numCallbacks > 0 || this.onDrag.numCallbacks > 0 || this.onDragEnd.numCallbacks > 0){
+        if (!this.fowardCalled && (this.onDragStart.numCallbacks > 0 || this.onDrag.numCallbacks > 0 || this.onDragEnd.numCallbacks > 0)){
             event.stopPropagation();
         }
         this.fowardCalled = false;

@@ -13,6 +13,7 @@ body{
 
 header{
     height: 40px;
+    z-index: 50;
 }
 
 footer{
@@ -81,6 +82,12 @@ footer{
     height: 50px;
     background-color: #000000;
     z-index: 10;
+}
+
+.box-selection{
+    z-index: 10;
+    border: #aaaaaa solid 1px;
+    background-color: #ffffff0a;
 }
 
 /* Scrollbar */

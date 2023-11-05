@@ -241,11 +241,24 @@ export class Node extends CompSObject {
                 }
             })
 
-            this.eventDispatcher.onDragStart.add((e: Event,pos: Vector2) => {
+            this.link(this.eventDispatcher.onMouseDown, (e: MouseEvent) => {
+                // pass the event to the editor to box select
+                if(e.ctrlKey){
+                    this.eventDispatcher.forwardEvent()
+                    return
+                }
+            })
+
+            this.eventDispatcher.onDragStart.add((e: MouseEvent,pos: Vector2) => {
                 this.draggingTargetPos = this.transform.translation
             })
 
-            this.eventDispatcher.onDrag.add((e: Event,newPos: Vector2,oldPos: Vector2) => {
+            this.eventDispatcher.onDrag.add((e: MouseEvent,newPos: Vector2,oldPos: Vector2) => {
+                // pass the event to the editor to box select
+                if(e.ctrlKey){
+                    this.eventDispatcher.forwardEvent()
+                    return
+                }
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
 

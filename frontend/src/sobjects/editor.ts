@@ -1,4 +1,4 @@
-import { ObjectSyncClient } from "objectsync-client"
+import { ObjectSyncClient, SObject } from "objectsync-client"
 import { ComponentManager } from "../component/component"
 import { EventDispatcher as EventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
@@ -9,10 +9,14 @@ import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
 import { AddNodeMenu } from "../ui_utils/addNodeMenu"
+import { Vector2 } from "../utils"
+import { Node } from "./node"
+import { Workspace } from "./workspace"
+import { Edge } from "./edge"
 
 export class Editor extends CompSObject{
     readonly template: string = `
-    <div style="width:100%;height:100%">
+    <div style="width:100%;height:100%; position:relative;">
         <div class="viewport" id="Viewport" style="width:100%;height:100%;top:0;left:0;">
             <div style="position:absolute;top:50%;left:50%">
                 
@@ -43,6 +47,7 @@ export class Editor extends CompSObject{
             
         </div>
 
+        <div id="box_selection" class="box-selection" style="position:absolute;width:0px;height:0px; display:none;"></div>
     </div>
     `;
 
@@ -71,6 +76,10 @@ export class Editor extends CompSObject{
         this.transform.minScale = 0.4
         this.transform.draggable = true;
         this.transform.scrollable = true;
+
+        this.link(this.eventDispatcher.onDragStart,this.onDragStart)
+        this.link(this.eventDispatcher.onDrag,this.onDrag)
+        this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
 
     }
 
@@ -105,4 +114,72 @@ export class Editor extends CompSObject{
         args.node_type = type
         this.makeRequest('create_node',args)
     }
+
+    private boxSelectionStart: Vector2;
+    private boxSelectionStartClient: Vector2;
+
+    private onDragStart(e: MouseEvent, mousePos: Vector2){
+        if(e.ctrlKey){
+            e.stopPropagation()
+            this.transform.draggable = false;
+            this.boxSelectionStart = this.transform.WroldToEl(mousePos,this.htmlItem.baseElement as HTMLElement,false)
+            this.boxSelectionStartClient = mousePos
+            this.htmlItem.getHtmlEl('box_selection').style.display = 'block'
+        }
+    }
+
+    private onDrag(e: MouseEvent, mousePos: Vector2, prevMousePos: Vector2){
+        if(!this.boxSelectionStart) return;
+        mousePos = this.transform.WroldToEl(mousePos,this.htmlItem.baseElement as HTMLElement,false)
+        let boxSelection = new Vector2(mousePos.x-this.boxSelectionStart.x,mousePos.y-this.boxSelectionStart.y)
+        let boxSelectionSize = new Vector2(Math.abs(boxSelection.x),Math.abs(boxSelection.y))
+        let boxSelectionPos = new Vector2(Math.min(this.boxSelectionStart.x,mousePos.x),Math.min(this.boxSelectionStart.y,mousePos.y))
+        this.htmlItem.getHtmlEl('box_selection').style.width = boxSelectionSize.x+'px'
+        this.htmlItem.getHtmlEl('box_selection').style.height = boxSelectionSize.y+'px'
+        this.htmlItem.getHtmlEl('box_selection').style.left = boxSelectionPos.x+'px'
+        this.htmlItem.getHtmlEl('box_selection').style.top = boxSelectionPos.y+'px'
+    }
+
+    private onDragEnd(e: MouseEvent, mousePos: Vector2){
+        if(!this.boxSelectionStart) return;
+        this.htmlItem.getHtmlEl('box_selection').style.display = 'none'
+        this.transform.draggable = true;
+        let boxSelectionEnd = mousePos
+        let boxSelectionStart = this.boxSelectionStartClient
+
+        const match = (node:SObject)=>{
+            if(!(node instanceof Node)) return false;
+            let nodebox = node.htmlItem.baseElement.getBoundingClientRect()
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < nodebox.right &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > nodebox.left &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < nodebox.bottom &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > nodebox.top
+        }
+        const nodes = this.TopDownSearch(Node,match,match)
+
+        const matchEdge = (edge:SObject)=>{
+            if(!(edge instanceof Edge)) return false;
+            let edgebox = edge.path.getBoundingClientRect()
+            print(edgebox)
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.right &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.left &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.bottom &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > edgebox.top
+        }
+        const edges = this.TopDownSearch(Edge,matchEdge,matchEdge)
+
+        Workspace.instance.selection.clearSelection()
+        Workspace.instance.functionalSelection.clearSelection()
+        for(let node of nodes){
+            node.selectable.select()
+            node.functionalSelectable.select()
+        }
+        for(let edge of edges){
+            edge.selectable.select()
+            edge.functionalSelectable.select()
+        }
+
+        this.boxSelectionStart = null;
+    }
+
 }
