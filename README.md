@@ -1,4 +1,3 @@
-# Grapycal
 
 ![Image](https://i.imgur.com/z4fRALC.png)
 
