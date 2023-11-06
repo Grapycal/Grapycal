@@ -14,13 +14,7 @@ import { Editor } from './editor'
 import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
-
-export class ExposedAttributeInfo
-{
-    name:string
-    display_name:string
-    editor_args:any
-}
+import { ExposedAttributeInfo } from '../inspector/inspector'
 
 export class Node extends CompSObject {
     errorPopup: ErrorPopup;

@@ -3,12 +3,12 @@ import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
 import { SelectionManager } from "../component/selectionManager"
-import { Inspector } from "../inspector/inspector"
 import { Node } from "./node"
 import { Edge } from "./edge"
 import { Footer } from "../ui_utils/footer"
 import { Buffer } from "buffer";
 import { print } from "../devUtils"
+import { NodeInspector } from "../ui_utils/nodeInspector"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -18,7 +18,7 @@ export class Workspace extends CompSObject{
     readonly selection = new SelectionManager(this) 
     // This selection manager is used by attr editors in the inspector
     readonly functionalSelection = new SelectionManager(this) 
-    readonly inspector = new Inspector()
+    readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
     get clientId(){
         return this.objectsync.clientId

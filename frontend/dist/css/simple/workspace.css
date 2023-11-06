@@ -19,6 +19,7 @@ a{
 
 .sidebar-tab-btn.active{
     background-color: var(--z3);
+    border-left: var(--z4) 2px solid;
     color: var(--text-high);
 }
 

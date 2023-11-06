@@ -6,7 +6,7 @@ import { Node } from "../sobjects/node"
 
 export class HierarchyNode implements IComponentable{
     readonly template: string = `
-    <div class="hierarchy-node">
+    <div class="hierarchy-node full-width">
         <span id="name" class="hierarchy-name"></span>
         <div id="indent" class="hierarchy-indent">
             <div id="slot_childnode" class="hierarchy-child-node-slot">
