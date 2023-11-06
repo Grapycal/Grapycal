@@ -2,6 +2,7 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.sidebar import Sidebar
+from grapycal.sobjects.settings import Settings
 from objectsync import SObject, ObjTopic, StringTopic, IntTopic
 
 class WorkspaceObject(SObject):
@@ -11,9 +12,15 @@ class WorkspaceObject(SObject):
         self.webcam = self.add_child(WebcamStream)
         self.sidebar =self.add_child(Sidebar)
         self.main_editor = self.add_child(Editor)
+        self.settings = self.add_child(Settings)
         self.add_attribute('main_editor',ObjTopic).set(self.main_editor)
 
     def init(self):
+
+        # In v0.6.1 and before, workspace does not have settings
+        if not hasattr(self,'settings'):
+            self.settings = self.add_child(Settings)
+            
         self._server.on('delete',self._delete_callback,is_stateful=False)
 
     def _delete_callback(self,ids):

@@ -4,6 +4,7 @@ import { HierarchyNode } from '../ui_utils/hierarchyNode'
 import { Workspace } from './workspace'
 import { as } from '../utils'
 import { print } from '../devUtils'
+import { Settings } from '../ui_utils/settings'
 
 export class Sidebar extends CompSObject {
     private items: HtmlItem[] = []

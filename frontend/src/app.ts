@@ -17,6 +17,7 @@ import { Footer } from './ui_utils/footer'
 import { Header } from './ui_utils/header'
 import { ThreeControl } from './sobjects/controls/threeControl'
 import { LinePlotControl } from './sobjects/controls/linePlotControl'
+import { Settings } from './ui_utils/settings'
 
 export const soundManager = new SoundManager();
 
@@ -26,6 +27,7 @@ const objectsync = new ObjectSyncClient(`ws://${host}:8765`);
 objectsync.register(Root);
 objectsync.register(Workspace);
 objectsync.register(Editor);
+objectsync.register(Settings)
 objectsync.register(Node);
 objectsync.register(Port);
 objectsync.register(Edge);
