@@ -9,13 +9,13 @@ export class ExtensionsSetting extends Componentable{
     avaliableExtensionsTopic: DictTopic<string,any>
     importedDiv = document.getElementById('imported-extensions')
     avaliableDiv = document.getElementById('avaliable-extensions')
-    cards: {[key:string]:HTMLElement} = {}
     cardTemplate = `
     <div class="card">
         <div class="card-image"></div>
         <div class="card-title"></div>
     </div>
     `
+    cards: {imported:{[name:string]:HTMLElement},avaliable:{[name:string]:HTMLElement}} = {'imported':{},'avaliable':{}}
     constructor(objectsync:ObjectSyncClient){
         super()
 
@@ -26,8 +26,7 @@ export class ExtensionsSetting extends Componentable{
             this.addCard(newExtension,'imported')
         })
         this.linker.link(this.importedExtensionsTopic.onPop,(name,oldExtension)=>{
-            this.cards[name].remove()
-            delete this.cards[name]
+            this.cards.imported[name].remove()
         })
         
         this.avaliableExtensionsTopic = this.objectsync.getTopic('avaliable_extensions',DictTopic<string,any>)
@@ -35,8 +34,7 @@ export class ExtensionsSetting extends Componentable{
             this.addCard(newExtension,'avaliable')
         })
         this.linker.link(this.avaliableExtensionsTopic.onPop,(name,oldExtension)=>{
-            this.cards[name].remove()
-            delete this.cards[name]
+            this.cards.avaliable[name].remove()
         })
     }
 
@@ -62,12 +60,12 @@ export class ExtensionsSetting extends Componentable{
                 })
             }else{
                 popup.addOption('Import to workspace',()=>{
-                    this.objectsync.emit('import_extension',{package_name:newExtension.name})
+                    this.objectsync.emit('import_extension',{extension_name:newExtension.name})
                 })
             }
         })
 
-        this.cards[newExtension.name] = card
+        this.cards[status][newExtension.name] = card
         if(status == 'imported'){
             this.importedDiv.appendChild(card)
             this.sortCards(this.importedDiv)

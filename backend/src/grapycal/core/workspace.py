@@ -164,13 +164,14 @@ class Workspace:
                 resolve_deprecated_attr_format(child)
         resolve_deprecated_attr_format(workspace_serialized)
 
-        refetched_extensions = self._extention_manager.load_extensions(data['extensions'])
+        for extension_name in data['extensions']:
+            self._extention_manager.import_extension(extension_name,create_preview_nodes=False)
+
         self._objectsync.create_object(WorkspaceObject, parent_id='root', old=workspace_serialized, id=workspace_serialized.id)
-        
-        # because the existing nodes of refetched extensions are desearilzed from old versions,
-        # we need to recreate them to the new versions of the extensions
-        for extension in refetched_extensions:
-            self._extention_manager.update_extension(extension)
+
+        for extension_name in data['extensions']:
+            self._extention_manager.create_preview_nodes(extension_name)
+
 
     def get_workspace_object(self) -> WorkspaceObject:
         # In case this called in self._objectsync.create_object(WorkspaceObject), 

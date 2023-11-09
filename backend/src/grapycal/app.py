@@ -37,13 +37,6 @@ class GrapycalApp:
         print()
         print('Starting Grapycal server...')
 
-        if not os.path.exists('./.grapycal'):
-            os.mkdir('./.grapycal')
-        if not os.path.exists('./.grapycal/extensions'):
-            os.mkdir('./.grapycal/extensions')
-            
-        self.clean_unused_fetched_extensions()
-
         #TODO: Support multiple workspaces
         #TODO: Websocket multiplexing
 
@@ -99,36 +92,6 @@ class GrapycalApp:
         if http_server:
             http_server.send_signal(signal.SIGTERM)
             http_server.wait()
-        self.clean_unused_fetched_extensions()
         print('Grapycal server terminated')
         return
     
-    def clean_unused_fetched_extensions(self):
-        used_extensions = []
-        for f in os.listdir('.'):
-            if f.endswith('.grapycal') and not f.startswith('.'):
-                used_extensions += self.parse_extensions_from_workspace(f)
-        for dir in get_direct_sub_folders('./.grapycal/extensions'):
-            if dir not in used_extensions:
-                shutil.rmtree(f'./.grapycal/extensions/{dir}')
-                
-    def parse_extensions_from_workspace(self,workspace_path: str) -> list[str]:
-        extensions_field = ''
-        pre_match = '{"extensions":['
-        with open(workspace_path,'r') as f:
-            while len(pre_match) > 0:
-                char = f.read(1)
-                if char == ' ' or char == '\n':
-                    continue
-                assert char == pre_match[0], f'Expected {pre_match[0]} but got {char}'
-                pre_match = pre_match[1:]
-            while True:
-                char = f.read(1)
-                if char == ' ' or char == '\n' or char == '"':
-                    continue
-                if char == ']':
-                    break
-                extensions_field += char
-        return extensions_field.split(',')
-
-

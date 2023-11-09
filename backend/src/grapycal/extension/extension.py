@@ -15,10 +15,11 @@ class Extension:
             return True
         except ModuleNotFoundError:
             return False
-    def __init__(self,extension_name:str,existing_node_types:Dict[str,type[SObject]]={}) -> None:
+    def __init__(self,extension_name:str,existing_node_types:set[type[SObject]]=set()) -> None:
+        if not self.extension_exists(extension_name):
+            raise Exception(f'Extension {extension_name} not found')
         self.module = importlib.import_module(extension_name)
         self.extension_name = extension_name
-        self.package_name ='_'.join( extension_name.split('_')[:-1])
 
         self.node_types:Dict[str,type[Node]] = {}
         self.node_types_without_extension_name:Dict[str,type[Node]] = {}
@@ -34,7 +35,7 @@ class Extension:
                 if the node type already exists in the existing_node_types dict. If it does, we skip it.
                 Not very elegant, but hope it works.
                 '''
-                if obj in existing_node_types.values():
+                if obj in existing_node_types:
                     logger.warning(f'Node type {type_name} already exists. Skipping')
                     continue
 

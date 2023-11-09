@@ -1,4 +1,5 @@
 import logging
+import pkgutil
 
 from grapycal.extension.utils import NodeInfo
 logger = logging.getLogger(__name__)
@@ -40,35 +41,19 @@ class ExtensionManager:
 
         self._update_available_extensions_topic()
 
-    def load_extensions(self,extension_names) -> List[str]:
-        
-        refetched_extensions = []
-        for name in extension_names:
-            if not Extension.extension_exists(name):
-                logger.info(f'Extension {name} is not fetched. Fetching...')
-                self._fetch_extension(name.split('_')[0]+'_'+name.split('_')[1],name.split('_')[2])
-                refetched_extensions.append(name)
-            self._load_extension(name)
-        
-        self._update_available_extensions_topic()
-
-        return refetched_extensions
-
-    def import_extension(self, package_name: str) -> Extension:
-        name = self._fetch_extension(package_name)
-        extension = self._load_extension(name)
-        self._create_preview_nodes(name)
+    def import_extension(self, extension_name: str, create_preview_nodes = True) -> Extension:
+        extension = self._load_extension(extension_name)
+        if create_preview_nodes:
+            self.create_preview_nodes(extension_name)
         self._update_available_extensions_topic()
         return extension
 
     def update_extension(self, extension_name: str) -> None:
-        package_name = '_'.join(extension_name.split('_')[:-1])
-        logger.info(f'Updating extension {package_name}')
         old_version = self._extensions[extension_name]
-        new_version = self._load_extension(self._fetch_extension(package_name),regsiter=False)
+        old_node_types = set(old_version.node_types_without_extension_name.keys())
+        new_version = Extension(extension_name,set(self._objectsync.get_all_node_types().values())-set(old_version.node_types.values()))
 
         # Get diff between old and new version
-        old_node_types = set(old_version.node_types_without_extension_name.keys())
         new_node_types = set(new_version.node_types_without_extension_name.keys())
         removed_node_types = old_node_types - new_node_types
         added_node_types = new_node_types - old_node_types
@@ -81,7 +66,7 @@ class ExtensionManager:
             type_name_without_extension = node.get_type_name().split('.')[1]
             if type_name_without_extension in removed_node_types:
                 self._unload_extension(extension_name)
-                raise Exception(f'Cannot update extension {package_name} because there are still nodes of type {type_name_without_extension} in the workspace.')
+                raise Exception(f'Cannot update extension {extension_name} because there are still nodes of type {type_name_without_extension} in the workspace.')
 
         # Find nodes of changed types
         def hit(node:objectsync.SObject) -> bool:
@@ -92,13 +77,10 @@ class ExtensionManager:
                 return False
             
             # ... and are of the changed types.
-            # Node type name format: grapycal_packagename_version.node_type_name
+            # Node type name format: grapycal_packagename.node_type_name
             node_type_name = node.get_type_name() 
-            a = node_type_name.rfind('_',0,node_type_name.find('.'))
-            b = node_type_name.find('.')
-            node_package_name = node_type_name[:a]
-            node_type_name_without_extension = node_type_name[b+1:]
-            return node_package_name == package_name and node_type_name_without_extension in changed_node_types
+            node_extension_name,node_type_name_without_extension = node_type_name.split('.')
+            return node_extension_name == extension_name and node_type_name_without_extension in changed_node_types
 
         nodes_to_update = self._workspace.get_workspace_object().main_editor.top_down_search(
             accept=hit,
@@ -136,23 +118,22 @@ class ExtensionManager:
         # Unimport old version
         self._destroy_preview_nodes(old_version.extension_name)
         self.unimport_extension(old_version.extension_name)
-        self._register_extension(new_version.extension_name)
+        self.import_extension(new_version.extension_name,create_preview_nodes=False)
 
         self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
 
-        self._create_preview_nodes(new_version.extension_name)
+        self.create_preview_nodes(new_version.extension_name)
+        self._update_available_extensions_topic()
 
-        logger.info(f'Updated extension {package_name}')
+        logger.info(f'Updated extension {extension_name}')
 
         #TODO: cut history
 
     def unimport_extension(self, extension_name: str) -> None:
-        self._check_extension_not_used(extension_name)
         self._destroy_preview_nodes(extension_name)
+        self._check_extension_not_used(extension_name)
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
-        # Don't unfetch now, because the user might change their mind.
-        # The Grapycal App will unfetch the unused extension when closing.
 
     def _update_available_extensions_topic(self) -> None:
         available_extensions = self._scan_available_extensions()
@@ -170,42 +151,15 @@ class ExtensionManager:
         Returns a list of available extensions in local folder.
         '''
         available_extensions = []
-        # Local
-        for name in get_direct_sub_folders('.'):
-            if not name.startswith('grapycal_'):
-                continue
-            continue_flag = False
-            for extension in self._extensions.values():
-                if name == extension.package_name:
-                    continue_flag = True
-                    break
-            if continue_flag:
-                continue
-
-            available_extensions.append(name)
-
-        # TODO: pip
+        for pkg in pkgutil.iter_modules():
+            if  pkg.name.startswith('grapycal_') and pkg.name != 'grapycal':
+                if pkg.name not in self._extensions:
+                    available_extensions.append(pkg.name)
         return available_extensions
 
-    def _fetch_extension(self, package_name: str, number=None) -> str:
-        '''
-        Copy the current version of the extension to .grapycal/extensions, so it cannot be modified by the user.
-        '''
-        assert package_name.startswith('grapycal_'), f'Extension name must start with grapycal_, got {package_name}'
-        source_name = package_name
-        source_path = dirname(importlib_util.find_spec(source_name).origin) # type: ignore
-
-        if number is None:
-            number = random.randint(0,1000000)
-        extension_name = f'{package_name}_{number}'
-        assert source_path is not None
-        shutil.copytree(source_path,join(self._local_extension_dir,extension_name),dirs_exist_ok=True)
-        return extension_name
-
-    def _load_extension(self, name: str, regsiter=True) -> Extension:
-        self._extensions[name] = Extension(name,self._objectsync.get_all_node_types())
-        if regsiter:
-            self._register_extension(name)
+    def _load_extension(self, name: str) -> Extension:
+        self._extensions[name] = Extension(name,set(self._objectsync.get_all_node_types().values()))
+        self._register_extension(name)
         self._imported_extensions_topic.add(name,{
             'name':name
         })
@@ -214,7 +168,6 @@ class ExtensionManager:
                 'name':node_type_name,
                 'category':node_type.category
             })
-        logger.info(f'Loaded extension {name}')
         return self._extensions[name]
     
     def _register_extension(self, name: str) -> None:
@@ -225,7 +178,7 @@ class ExtensionManager:
         node_types = self._extensions[name].node_types
         for obj in self._objectsync.get_objects():
             if isinstance(obj, Node):
-                if not obj.is_preview.get() and obj.get_type_name() in node_types:
+                if obj.get_type_name() in node_types:
                     raise Exception(f'Cannot unload extension {name}, there are still objects of this type in the workspace')
 
     def _unload_extension(self, name: str) -> None:
@@ -236,9 +189,8 @@ class ExtensionManager:
         self._imported_extensions_topic.pop(name)
         for node_type_name in node_types:
             self._node_types_topic.pop(node_type_name)
-        logger.info(f'Unloaded extension {name}')
-    
-    def _create_preview_nodes(self, name: str) -> None:
+            
+    def create_preview_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types
         for node_type in node_types.values():
             if not node_type.category == 'hidden':
