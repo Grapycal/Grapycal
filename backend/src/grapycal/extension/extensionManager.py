@@ -65,7 +65,7 @@ class ExtensionManager:
         package_name = '_'.join(extension_name.split('_')[:-1])
         logger.info(f'Updating extension {package_name}')
         old_version = self._extensions[extension_name]
-        new_version = self._load_extension(self._fetch_extension(package_name))
+        new_version = self._load_extension(self._fetch_extension(package_name),regsiter=False)
 
         # Get diff between old and new version
         old_node_types = set(old_version.node_types_without_extension_name.keys())
@@ -100,138 +100,46 @@ class ExtensionManager:
             node_type_name_without_extension = node_type_name[b+1:]
             return node_package_name == package_name and node_type_name_without_extension in changed_node_types
 
-        nodes_to_update = self._objectsync.get_root_object().top_down_search(
+        nodes_to_update = self._workspace.get_workspace_object().main_editor.top_down_search(
             accept=hit,
             stop=hit,
             type=Node
         )
         
         # Remove nodes of the changed types
-        nodes_to_recover:List[Tuple[objectsync.sobject.SObjectSerialized,str]] = []
-        wrapped_topics:set[Tuple[str,str]] = set()
-        edges_to_recover:Dict[str,Tuple[str,str,str]] = {}
-        removed_ports = set[str]()
-        port_map_1 = {}
+        nodes_to_recover:List[objectsync.sobject.SObjectSerialized] = []
+        edges_to_recover:List[objectsync.sobject.SObjectSerialized] = []
+        
         for node in nodes_to_update:
             # First serialize the node
-            nodes_to_recover.append((node.serialize(),node.get_parent().get_id()))
-
-            for name, topic in node._attributes.items():
-                if isinstance(topic,objectsync.WrappedTopic):
-                    wrapped_topics.add((node.get_id(),name))
-
-            # To handle edge recovery, we need to know the mapping between old and new port ids.
-            # We use the port name and the node id to identify a port.
-            # The mapping can be accessed by combining the following maps:
-            #   port_map_1: old id -> (port name, old node id)
-            #   node_id_map: old node id -> new node id
-            #   port_map_2: (port name, new node id) -> new id
+            nodes_to_recover.append(node.serialize())
             ports: List[Port] = node.in_ports.get() + node.out_ports.get() # type: ignore
             for port in ports:
-                port_map_1[port.get_id()] = (port.is_input.get(),port.name.get(),node.get_id())
-            for port in ports:
-                removed_ports.add(port.get_id())
                 for edge in port.edges.copy():
-                    edges_to_recover[edge.get_id()] = (edge.tail._topic.get(),edge.head._topic.get(),edge.get_parent().get_id())
+                    edges_to_recover.append(edge.serialize())
                     self._objectsync.destroy_object(edge.get_id())
 
             # Then destroy the node
             self._objectsync.destroy_object(node.get_id())
 
+        type_map = {}
+        for type_name in changed_node_types:
+            type_map[old_version.add_extension_name_to_node_type(type_name)] = new_version.add_extension_name_to_node_type(type_name)
+            
+        for node in nodes_to_recover:
+            node.update_type_names(type_map)
 
         '''
         Now, the old nodes, ports and edges are destroyed. Their information is stored in nodes_to_recover and edges_to_recover.
         '''
-        
-        # Recover nodes with new version
-        
-        node_id_map = {}
-        new_nodes:Dict[str,Tuple[objectsync.sobject.SObjectSerialized,Node]] = {}
-        for old_serialized, parent_id in nodes_to_recover:
-            type_name = f'{new_version.extension_name}.{old_serialized.type.split(".")[1]}'
-
-            # Create the new node instance
-            new_node: Node = self._objectsync.create_object_s(type_name,parent_id=parent_id) # type: ignore
-            new_nodes[new_node.get_id()] = (old_serialized,new_node)
-            node_id_map[old_serialized.id] = new_node.get_id()
-        
-        # Update values of wrapped topics
-        for old_serialized,new_node in new_nodes.values():
-            for attr in old_serialized.attributes:
-                if (old_serialized.id,attr[0]) in wrapped_topics:
-                    if isinstance(attr[2],list):
-                        tmp = []
-                        for value in attr[2]:
-                            if value in node_id_map:
-                                tmp.append(node_id_map[value])
-                            else:
-                                tmp.append(value)
-                        attr[2] = tmp
-                    elif isinstance(attr[2],dict):
-                        tmp = {}
-                        for key,value in attr[2].items():
-                            if value in node_id_map:
-                                tmp[key] = node_id_map[value]
-                            else:
-                                tmp[key] = value
-                        attr[2] = tmp
-                    else:
-                        attr[2] = node_id_map[attr[2]] if attr[2] in node_id_map else attr[2]
-                        
-
-        # Recover the new nodes
-        port_map_2 = {}
-        for old_serialized,new_node in new_nodes.values():
-            # Let the node handle the recovery
-            old_node_info = NodeInfo(old_serialized)
-            new_node.old_node_info = old_node_info
-            new_node.restore_from_version('',old_node_info) #TODO version name
-
-
-            ports: List[Port] = new_node.in_ports.get() + new_node.out_ports.get() # type: ignore
-            for port in ports:
-                port_map_2[(port.is_input.get(),port.name.get(),new_node.get_id())] = port.get_id()
-            
-            #TODO: let the new node class handle the recovery for backwards compatibility
-
-
-        # Recover edges if possible
-        def port_id_map(old_port_id:str) -> str|None:
-            
-            try:
-                is_input, port_name, old_node_id = port_map_1[old_port_id]
-            except KeyError:
-                return None
-            
-            new_node_id = node_id_map[old_node_id]
-
-            try:
-                new_port_id =  port_map_2[(is_input,port_name,new_node_id)]
-            except KeyError:
-                return None
-            
-            return new_port_id
-
-        for tail_id, head_id, parent_id in edges_to_recover.values():
-            #print('tail_id:',tail_id,'head_id:',head_id,'parent_id:',parent_id,port_map_1,port_map_2,node_id_map)
-            if tail_id not in removed_ports:
-                new_tail_id = tail_id
-            else:
-                new_tail_id = port_id_map(tail_id)
-            if head_id not in removed_ports:
-                new_head_id = head_id
-            else:
-                new_head_id = port_id_map(head_id)
-
-            if new_tail_id is None or new_head_id is None:
-                continue # The port does not present in the new version, unfortunately we cannot recover the edge.
-            
-            new_tail = self._objectsync.get_object(new_tail_id)
-            new_head = self._objectsync.get_object(new_head_id)
-            new_edge = self._objectsync.create_object(Edge,parent_id=parent_id,tail=new_tail,head=new_head)
 
         # Unimport old version
+        self._destroy_preview_nodes(old_version.extension_name)
         self.unimport_extension(old_version.extension_name)
+        self._register_extension(new_version.extension_name)
+
+        self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
+
         self._create_preview_nodes(new_version.extension_name)
 
         logger.info(f'Updated extension {package_name}')
@@ -294,10 +202,10 @@ class ExtensionManager:
         shutil.copytree(source_path,join(self._local_extension_dir,extension_name),dirs_exist_ok=True)
         return extension_name
 
-    def _load_extension(self, name: str) -> Extension:
+    def _load_extension(self, name: str, regsiter=True) -> Extension:
         self._extensions[name] = Extension(name,self._objectsync.get_all_node_types())
-        for node_type_name, node_type in self._extensions[name].node_types.items():
-            self._objectsync.register(node_type,node_type_name)
+        if regsiter:
+            self._register_extension(name)
         self._imported_extensions_topic.add(name,{
             'name':name
         })
@@ -308,6 +216,10 @@ class ExtensionManager:
             })
         logger.info(f'Loaded extension {name}')
         return self._extensions[name]
+    
+    def _register_extension(self, name: str) -> None:
+        for node_type_name, node_type in self._extensions[name].node_types.items():
+            self._objectsync.register(node_type,node_type_name)
     
     def _check_extension_not_used(self, name: str) -> None:
         node_types = self._extensions[name].node_types

@@ -81,6 +81,8 @@ class ConvolutionKernelNode(SourceNode):
         'edge_detect': (torch.tensor([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]) , 1/8),
         'outline': (torch.tensor([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]]), 1),
         'identity': (torch.tensor([[0, 0, 0], [0, 1, 0], [0, 0, 0]]) , 1),
+        'ridge_x': (torch.tensor([[-1, -1, -1], [2, 2, 2], [-1, -1, -1]]), 1/3),
+        'ridge_y': (torch.tensor([[-1, 2, -1], [-1, 2, -1], [-1, 2, -1]]), 1/3),
     }
 
     def build_node(self):

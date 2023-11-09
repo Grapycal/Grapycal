@@ -40,3 +40,6 @@ class Extension:
 
                 self.node_types[type_name] = obj
                 self.node_types_without_extension_name[obj.__name__] = obj
+
+    def add_extension_name_to_node_type(self,node_type:str)->str:
+        return f'{self.extension_name}.{node_type}'

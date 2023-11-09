@@ -34,7 +34,7 @@ export class Editor extends CompSObject{
                     </defs>
 
                     <defs>
-                        <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
+                        <pattern id="dots" width="68" height="68" patternUnits="userSpaceOnUse">
                             <circle cx="5" cy="5" r="1" fill="var(--z2)" />
                         </pattern>
                     </defs>

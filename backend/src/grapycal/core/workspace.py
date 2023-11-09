@@ -154,8 +154,18 @@ class Workspace:
         self._objectsync.set_client_id_count(data['client_id_count'])
         self._objectsync.set_id_count(data['id_count'])
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
+
+        # DEPRECATED: The old format of attributes is [name, type, value, value].
+        def resolve_deprecated_attr_format(obj: SObjectSerialized):
+            for attr in obj.attributes:
+                if attr.__len__() == 4:
+                    attr.append(attr[3])
+            for child in obj.children.values():
+                resolve_deprecated_attr_format(child)
+        resolve_deprecated_attr_format(workspace_serialized)
+
         refetched_extensions = self._extention_manager.load_extensions(data['extensions'])
-        self._objectsync.create_object(WorkspaceObject, parent_id='root', serialized=workspace_serialized, id=workspace_serialized.id)
+        self._objectsync.create_object(WorkspaceObject, parent_id='root', old=workspace_serialized, id=workspace_serialized.id)
         
         # because the existing nodes of refetched extensions are desearilzed from old versions,
         # we need to recreate them to the new versions of the extensions
