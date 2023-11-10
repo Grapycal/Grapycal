@@ -7,13 +7,14 @@ import { Selectable } from "../component/selectable"
 import { Edge } from "../sobjects/edge"
 import { Node } from "../sobjects/node"
 import { print } from "../devUtils"
+import { Editor } from "./Editor"
 
-export class ObjSetEditor extends Componentable {
+export class ObjSetEditor extends Editor<ObjSetTopic<Node|Edge>> {
 
     get template() {
         return `
         <div class="attribute-editor flex-horiz stretch">
-            <div id="attribute-name"></div>
+            <div id="attribute-name" class="attribute-name"></div>
             <button id="input" type="button" class="grow btn">Select</button>
         </div>
         `

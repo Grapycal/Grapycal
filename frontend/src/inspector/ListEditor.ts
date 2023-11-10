@@ -4,13 +4,14 @@ import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
 import { print } from "../devUtils"
 import { object_equal } from "./inspector"
+import { Editor } from "./Editor"
 
-export class ListEditor extends Componentable {
+export class ListEditor extends Editor<ListTopic<any>> {
 
     get template() {
         return `
         <div class="attribute-editor flex-horiz stretch">
-            <div id="attribute-name"></div>
+            <div id="attribute-name" class="attribute-name"></div>
             <div class="container">
                 <div class="container" id="slot_container"></div>
                 <div class="container horiz">
@@ -46,7 +47,6 @@ export class ListEditor extends Componentable {
     private readonly container: HTMLDivElement
     private readonly addButton: HTMLButtonElement
     private readonly addInput: HTMLInputElement
-    private readonly connectedAttributes: ListTopic<any>[]
     private readonly items: Set<ListEditorItem> = new Set();
     private locked = false;
 

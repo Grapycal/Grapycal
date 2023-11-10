@@ -15,6 +15,7 @@ import { print } from "../devUtils"
 import { ButtonEditor } from "./ButtonEditor"
 import { OptionsEditor as OptionsEditor } from "./OptionEditor"
 import { Componentable } from "../component/componentable"
+import { Editor } from "./Editor"
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -25,7 +26,7 @@ export class Inspector extends Componentable{
     linker = new Linker(this);
     hierarchy: HierarchyNode;
 
-    nameEditorMap: {[key:string]:any}={
+    static nameEditorMap: {[key:string]:Constructor<Editor<any>>}={
         'text':TextEditor,
         'list':ListEditor,
         'int':IntEditor,
@@ -71,7 +72,7 @@ export class Inspector extends Componentable{
             if(accept){
                 let editorArgs = infos[0].editor_args;
                 let displayName = infos[0].display_name;
-                let editorType = this.nameEditorMap[editorArgs.type]
+                let editorType = Inspector.nameEditorMap[editorArgs.type]
                 let connectedAttributes :(Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>)[] = [];
                 for(let info of infos){
                     connectedAttributes.push(this.getTopicForEditor(info.name,editorType));
@@ -84,19 +85,23 @@ export class Inspector extends Componentable{
     }
 
     private getTopicForEditor(topicName:string,editorType:Constructor<any>){
-            if(editorType === ObjSetEditor){
-                return Workspace.instance.objectsync.getTopic(topicName,ObjSetTopic);
-            }else{
-                return Workspace.instance.objectsync.getTopic(topicName);
-            }
+        if(editorType === ObjSetEditor){
+            return Workspace.instance.objectsync.getTopic(topicName,ObjSetTopic);
+        }else{
+            return Workspace.instance.objectsync.getTopic(topicName);
         }
     }
+
+    public addEditor<T extends Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>>(editor:Editor<T>): T{
+        this.hierarchy.addLeaf(editor.htmlItem,'');
+        return editor.topic;
+    }
+}
+
 
 export class ExposedAttributeInfo {
     name: string
     display_name: string
-    editor_args: any
+    editor_args: {type: keyof typeof Inspector.nameEditorMap}
 }
-
-
 

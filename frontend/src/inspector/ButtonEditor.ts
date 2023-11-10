@@ -1,8 +1,8 @@
 import { EventTopic, Topic } from "objectsync-client"
-import { Componentable } from "../component/componentable"
 import { as } from "../utils"
+import { Editor } from "./Editor"
 
-export class ButtonEditor extends Componentable {
+export class ButtonEditor extends Editor<EventTopic> {
 
     get template() {
         return `
@@ -21,8 +21,6 @@ export class ButtonEditor extends Componentable {
     }
 
     readonly button: HTMLButtonElement
-    readonly connectedAttributes: EventTopic[] = []
-    private locked = false;
 
     constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]) {
         super()

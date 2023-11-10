@@ -3,13 +3,14 @@ import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
 import { inputFinished } from "../ui_utils/interaction"
+import { Editor } from "./Editor"
 
-export class OptionsEditor extends Componentable {
+export class OptionsEditor extends Editor<StringTopic> {
 
     get template() {
         return `
         <div class="attribute-editor flex-horiz stretch">
-            <div id="attribute-name"></div>
+            <div id="attribute-name" class="attribute-name"></div>
             <select class="select" id="select">
             </select>
         </div>
@@ -31,8 +32,11 @@ export class OptionsEditor extends Componentable {
     readonly connectedAttributes: StringTopic[] = []
     private locked = false;
 
-    constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]) {
+    constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]|null=null) {
         super()
+        if (connectedAttributes === null) {
+            connectedAttributes = [new StringTopic()]
+        }
         for (let attr of connectedAttributes) {
             this.connectedAttributes.push(as(attr, StringTopic))
         }

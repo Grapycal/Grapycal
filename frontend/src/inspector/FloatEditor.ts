@@ -3,13 +3,14 @@ import { Componentable } from "../component/componentable"
 import { as } from "../utils"
 import { Workspace } from "../sobjects/workspace"
 import { inputFinished } from "../ui_utils/interaction"
+import { Editor } from "./Editor"
 
-export class FloatEditor extends Componentable {
+export class FloatEditor extends Editor<FloatTopic> {
 
     get template() {
         return `
         <div class="attribute-editor flex-horiz stretch">
-            <div id="attribute-name"></div>
+            <div id="attribute-name" class="attribute-name"></div>
             <input id="input" type="number" class="text-editor">
         </div>
         `
@@ -24,12 +25,11 @@ export class FloatEditor extends Componentable {
     }
 
     readonly input: HTMLInputElement
-    readonly connectedAttributes: Topic<any>[]
     private locked = false;
 
     constructor(displayName: string, editorArgs: any, connectedAttributes: Topic<any>[]) {
         super()
-        this.connectedAttributes = connectedAttributes
+        this.connectedAttributes = connectedAttributes as FloatTopic[]
         this.input = as(this.htmlItem.getHtmlEl('input'), HTMLInputElement)
         this.htmlItem.getHtmlEl('attribute-name').innerText = displayName
         for (let attr of connectedAttributes) {

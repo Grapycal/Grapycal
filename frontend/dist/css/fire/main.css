@@ -1,0 +1,16 @@
+@import url("../simple/main.css");
+/*fire*/
+
+:root {
+    --z0: #0B111C;
+    --z1: #3D1117;
+    --z2: #682f2c;
+    --z3: #4d4d4d;
+    --z4: #616161;
+    --t0: #191A19;
+    --t1: #612e09;
+    --t2: #E7680E;
+    --t3: #F9AB56;
+    --text-low: #9a9a9a;
+    --text-high: #dfdfdf;
+}

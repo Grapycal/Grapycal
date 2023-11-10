@@ -67,7 +67,7 @@ class WorkspaceObject(SObject):
 class WebcamStream(SObject):
     frontend_type = 'WebcamStream'
     def build(self,old:SObjectSerialized|None=None):
-        self.image = self.add_attribute('image',StringTopic)
+        self.image = self.add_attribute('image',StringTopic,is_stateful=False)
         self.source_client = self.add_attribute('source_client',IntTopic,-1,is_stateful=False)
 
     def init(self):

@@ -35,6 +35,10 @@ html, body{
     margin: 0;
 }
 
+select{
+    outline: none;
+}
+
 input, textarea{
     
     font-size: inherit;
@@ -121,7 +125,7 @@ footer{
 }
 
 .node-preview{
-    margin: 20px auto;
+    margin: 5px auto;
     position: relative;
 }
 
@@ -639,6 +643,8 @@ input:enabled, textarea:enabled{
 
 .hierarchy-leaf-slot{
     justify-content: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .hierarchy-h1{
@@ -674,6 +680,10 @@ input:enabled, textarea:enabled{
 .text-editor{
     margin: 0px 10px;
     flex: 1;
+}
+
+.attribute-name{
+    width: 80px;
 }
 
 #node_info{

@@ -1,0 +1,16 @@
+@import url(../simple/main.css);
+
+
+:root {
+    --z0: #1a1b29;
+    --z1: #282438;
+    --z2: #3b3049;
+    --z3: #625079;
+    --z4: #8b74aa;
+    --t0: #181b24;
+    --t1: #324988;
+    --t2: #699ec2;
+    --t3: #9091d3;
+    --text-low: #9a9a9a;
+    --text-high: #dfdfdf;
+}

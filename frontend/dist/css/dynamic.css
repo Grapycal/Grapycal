@@ -1,4 +1,4 @@
-.node.fit-content {
+.node.fit-content:not(.node-preview) {
   min-width: 10px;
   width: fit-content;
   max-width: 500px;
