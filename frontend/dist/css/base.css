@@ -176,10 +176,23 @@ footer{
 }
 
 :is(.normal-node,.simple-node) .node-label{
+    display: flex;
+    align-items: center;
     font-size: 12px;
     line-height: 14px;
     text-wrap: nowrap;
-    padding: 4px 10px 4px 10px;
+    padding: 6px 8px 6px 8px;
+}
+
+.node-icon{
+    width: 18px;
+    height: 18px;   
+    flex-shrink: 0;
+    object-fit: contain;
+    opacity: 1;
+    z-index: 1;
+    fill: var(--cate-color);
+    margin-right: 6px;
 }
 
 .node-selection{

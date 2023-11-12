@@ -36,7 +36,7 @@ class FuncDefManager:
 class FuncCallNode(Node):
     category = 'function'
     def build_node(self):
-        self.label.set('Call:')
+        self.label.set('')
         self.shape.set('normal')
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
 
@@ -49,7 +49,7 @@ class FuncCallNode(Node):
         self.restore_attributes('func_name')
 
     def on_func_name_changed(self, old, new):
-        self.label.set(f'Call: {new}')
+        self.label.set(f' {new}')
         FuncDefManager.calls.remove(old,self)
         FuncDefManager.calls.append(new,self)
         self.update_input_ports()
@@ -151,7 +151,7 @@ class FuncInNode(Node):
         self.update_label()
 
     def update_label(self):
-        self.label.set(f'Input of: {self.func_name.get()}')
+        self.label.set(f'{self.func_name.get()}')
 
 
     def restore_from_version(self, version, old: NodeInfo):
@@ -216,7 +216,7 @@ class FuncOutNode(Node):
         self.update_label()
 
     def update_label(self):
-        self.label.set(f'Output of: {self.func_name.get()}')
+        self.label.set(f'{self.func_name.get()}')
 
     def on_input_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)

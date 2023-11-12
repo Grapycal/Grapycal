@@ -14,6 +14,7 @@ class BatchNorm2dNode(SimpleModuleNode):
         super().build_node()
         self.label.set('BatchNorm2d')
         self.num_features = self.add_attribute('num_features',IntTopic,1,editor_type='int')
+        self.icon_path.set('bn')
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)

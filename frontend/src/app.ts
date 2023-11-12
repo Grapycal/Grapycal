@@ -18,6 +18,7 @@ import { Header } from './ui_utils/header'
 import { ThreeControl } from './sobjects/controls/threeControl'
 import { LinePlotControl } from './sobjects/controls/linePlotControl'
 import { Settings } from './ui_utils/settings'
+import { FetchWithCache } from './utils'
 
 export const soundManager = new SoundManager();
 
@@ -114,3 +115,7 @@ documentReady(function(event: Event) {
 
 
 expose('o',objectsync)
+
+let fetchWithCache = new FetchWithCache().fetch
+
+export {fetchWithCache}

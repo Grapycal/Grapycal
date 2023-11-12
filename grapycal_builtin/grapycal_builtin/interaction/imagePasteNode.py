@@ -42,6 +42,7 @@ class ImagePasteNode(SourceNode):
         self.img = self.add_image_control(name='img')
         self.format = self.add_attribute('format',StringTopic,'torch',editor_type='options',options=['torch','numpy'])
         self.out_port = self.add_out_port('img')
+        self.icon_path.set('image')
         
     def init_node(self):
         super().init_node()
@@ -93,6 +94,7 @@ class ImageDisplayNode(Node):
         self.vmax = self.add_attribute('vmax',FloatTopic,1,editor_type='float')
         self.slice = self.add_text_control(label='slice: ',name='slice',text=':')
         self.in_port = self.add_in_port('data', 1)
+        self.icon_path.set('image')
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)

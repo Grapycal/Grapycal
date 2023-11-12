@@ -4,7 +4,6 @@ from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
 from .forNode import ForNode
-from .eventNode import EventNode
 from .procedureNode import ProcedureNode
 from .limiterNode import LimiterNode
 from .funcDef import *
@@ -17,7 +16,8 @@ class InPortalNode(Node):
     category = 'procedural'
     def build_node(self):
         self.shape.set('simple')
-        self.label.set('🔵')
+        if self.is_preview.get():
+            self.label.set('In Portal')
         self.name = self.add_attribute('name',StringTopic,editor_type='text')
         self.in_port = self.add_in_port('jump',display_name='')
         self.out_port = self.add_out_port('then',display_name='')
@@ -32,7 +32,7 @@ class InPortalNode(Node):
         self.restore_attributes('name')
 
     def on_name_set(self, old, new):
-        self.label.set(f'🔵{new}')
+        self.label.set(f'{new}')
         PortalManager.ins.remove(old,self)
         PortalManager.ins.append(new,self)
     
@@ -54,12 +54,13 @@ class InPortalNode(Node):
     def destroy(self) -> SObjectSerialized:
         PortalManager.ins.remove(self.name.get(),self)
         return super().destroy()
-
+    
 class OutPortalNode(Node):
     category = 'procedural'
     def build_node(self):
         self.shape.set('simple')
-        self.label.set('🟠')
+        if self.is_preview.get():
+            self.label.set('Out Portal')
         self.name = self.add_attribute('name',StringTopic,editor_type='text')
         self.out_port = self.add_out_port('do',display_name='')
         self.css_classes.append('fit-content')
@@ -73,7 +74,7 @@ class OutPortalNode(Node):
         self.restore_attributes('name')
         
     def on_name_set(self, old, new):
-        self.label.set(f'🟠{new}')
+        self.label.set(f'{new}')
         PortalManager.outs.remove(old,self)
         PortalManager.outs.append(new,self)
 

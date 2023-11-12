@@ -15,7 +15,8 @@ class ProcedureNode(Node):
         self.add_btn = self.add_control(ButtonControl)
         self.add_btn.label.set('+')
         self.add_btn.on_click.add_auto(self.add_pressed)
-        self.css_classes.append('thin')
+        self.css_classes.append('fit-content')
+        self.icon_path.set('steps')
 
     def init_node(self):
         self.steps.add_validator(ListTopic.unique_validator)

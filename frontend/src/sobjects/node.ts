@@ -1,5 +1,5 @@
 import {ObjectSyncClient, SObject, StringTopic, FloatTopic, ListTopic, ObjListTopic, Action, IntTopic, SetTopic} from 'objectsync-client'
-import { soundManager } from '../app'
+import { fetchWithCache, soundManager } from '../app'
 import { HtmlItem } from '../component/htmlItem'
 import { Space, Transform } from '../component/transform'
 import { CompSObject } from './compSObject'
@@ -42,6 +42,7 @@ export class Node extends CompSObject {
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
     running: IntTopic = this.getAttribute('running', IntTopic)
     css_classes: SetTopic = this.getAttribute('css_classes', SetTopic)
+    icon_path: StringTopic = this.getAttribute('icon_path', StringTopic)
     
     private _isPreview: boolean
     get isPreview(): boolean {
@@ -73,7 +74,9 @@ export class Node extends CompSObject {
             </div>
             
             <div class="node-selection"></div>
-            <div id="label" class="node-label full-width"></div>
+            <div class="node-label full-width">
+                <div id="label"></div>
+            </div>
             <div class=" flex-vert space-between main-section">
                 <div class="flex-horiz space-between full-width port-section align-start">
                     <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
@@ -343,12 +346,50 @@ export class Node extends CompSObject {
             this.link(this.transform.onChange,this.moved.invoke)
             this.transform.updateUI() // This line is necessary to make edges spawning in this frame to be connected to the node
         }
-
+        //set background image
+        if(this.icon_path.getValue() != ''){
+            this.setIcon(this.icon_path.getValue())
+        }
         // setTimeout(() => {
         //     let border = this.htmlItem.getHtmlEl('node-border')
         //     bloomDiv(border,this.htmlItem.baseElement as HTMLElement)
 
         // }, 0);
+    }
+
+    setIcon(path: string){
+        fetchWithCache('svg/list.txt')
+        .then(list => {
+            if(list.replaceAll('\r','').split('\n').indexOf(path) != -1){
+                this.setIconFromSvg(`svg/${path}.svg`)
+            }
+        })
+    }
+
+    setIconFromSvg(path: string){
+        const base = (this.htmlItem.getElByClass('node-label') as HTMLDivElement)
+        // load svg from url
+        // the reason not using img tag is because its tint color cannot be changed by css
+        fetchWithCache(path)
+        .then(svg => {
+            let t = document.createElement('template')
+            t.innerHTML = svg
+            let svgEl = null;
+            for(let child of t.content.childNodes){
+                if(child instanceof SVGElement){
+                    svgEl = child
+                    break
+                }
+            }
+            if(svgEl == null) return
+            base.prepend(svgEl)
+            for(let dec of svgEl.querySelectorAll('path,rect,g')){
+                (dec as HTMLElement).style.fill = ''
+                dec.setAttribute('fill','')
+            }
+            svgEl.classList.add('node-icon')
+            this.moved.invoke()
+        })   
     }
 
     onParentChangedTo(newParent: SObject): void {

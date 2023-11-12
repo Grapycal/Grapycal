@@ -152,6 +152,7 @@ class FConv2DNode(FunctionNode):
         super().build_node()
         self.label.set('Conv2D')
         self.shape.set('normal')
+        self.icon_path.set('cnn')
 
     def calculate(self, x:torch.Tensor, kernel:torch.Tensor):
         is_c1hw = False

@@ -278,3 +278,17 @@ export class TextBox{
     }
     
 }
+
+export class FetchWithCache{
+    private cache = new Map<string,Promise<string>>()
+    constructor(){
+        this.fetch = this.fetch.bind(this)
+    }
+    fetch(url:string){
+        if(!this.cache.has(url)){
+            const p = window.fetch(url)
+            this.cache.set(url,p.then(r=>r.text()))
+        }
+        return this.cache.get(url)
+    }
+}

@@ -43,7 +43,7 @@ class Node(SObject,metaclass=NodeMeta):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
-        self.label = self.add_attribute('label', StringTopic, 'Node', is_stateful=False)
+        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False)
         self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
         self.translation = self.add_attribute('translation', StringTopic,translation)
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
@@ -51,6 +51,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
         self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
         self.css_classes = self.add_attribute('css_classes',SetTopic,[])
+        self.icon_path = self.add_attribute('icon_path',StringTopic,f'{self.__class__.__name__[:-4].lower()}',is_stateful=False)
 
         # for inspector
         self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())

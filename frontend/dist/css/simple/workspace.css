@@ -17,10 +17,13 @@ a{
     border-right: #303335 1px solid;
 }
 
+.sidebar-tab-btn{
+    border-left: var(--z1) 2px solid;
+}
+
 .sidebar-tab-btn.active{
     background-color: var(--z3);
     border-left: var(--z4) 2px solid;
-    color: var(--text-high);
 }
 
 .sidebar-right{

@@ -47,11 +47,16 @@ export class NodeInspector extends Componentable{
     outputDisplayDiv: HTMLElement;
     clearOutputButton: HTMLElement;
 
+    sidebarEl: HTMLElement;
+    baseEl: HTMLElement;
+
     constructor(){
         super()
         this.inspector = new Inspector()
         this.inspector.htmlItem.setParent(this.htmlItem,'inspector')
         this.htmlItem.setParentElement(document.getElementById('slot_inspector'))
+        this.sidebarEl = document.getElementById('sidebar-right');
+        this.baseEl = this.htmlItem.baseElement as HTMLElement;
         this.nodeTypeDiv = this.htmlItem.getHtmlEl('node_type');
         this.extensionNameDiv = this.htmlItem.getHtmlEl('extension_name');
         this.nodeDescriptionDiv = this.htmlItem.getHtmlEl('node_description');
@@ -65,8 +70,8 @@ export class NodeInspector extends Componentable{
         }
 
         this.outputDisplayDiv.style.bottom = '0px';
-        as(this.htmlItem.baseElement,HTMLElement).style.display = 'none';
-        as(this.htmlItem.baseElement,HTMLElement).style.alignItems = 'stretch'
+        this.sidebarEl.style.display = 'none';
+        this.baseEl.style.alignItems = 'stretch'
         
     }
 
@@ -93,10 +98,10 @@ export class NodeInspector extends Componentable{
         this.outputDisplayDiv.innerText = '';
     
         if(this.nodes.length === 0){
-            as(this.htmlItem.baseElement,HTMLElement).style.display = 'none';
+            this.sidebarEl.style.display = 'none';
             return;
         }else{
-            as(this.htmlItem.baseElement,HTMLElement).style.display = 'flex';
+            this.sidebarEl.style.display = 'flex';
         }
         this.linker.unlink(this.addOutput,false)
         this.linker.unlink(this.onOutputSet,false)

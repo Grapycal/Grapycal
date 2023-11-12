@@ -14,6 +14,7 @@ class ModuleNode(Node):
         self.shape.set('simple')
         self.label.set('Module')
         self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button')
+        self.icon_path.set('nn')
 
     def init_node(self):
         self.module: nn.Module|None = None

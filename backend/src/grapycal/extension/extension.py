@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import sys
 from typing import Dict
 
 from grapycal.sobjects.node import Node
@@ -7,20 +8,35 @@ from objectsync import SObject
 import logging
 logger = logging.getLogger(__name__)
 
-class Extension:
-    @staticmethod
-    def extension_exists(extension_name:str) -> bool:
-        try:
-            importlib.import_module(extension_name)
-            return True
-        except ModuleNotFoundError:
-            return False
-    def __init__(self,extension_name:str,existing_node_types:set[type[SObject]]=set()) -> None:
-        if not self.extension_exists(extension_name):
-            raise Exception(f'Extension {extension_name} not found')
-        self.module = importlib.import_module(extension_name)
-        self.extension_name = extension_name
+def load_or_reload_module(module_name:str):
+    if module_name not in sys.modules:
+        module = importlib.import_module(module_name)
+        
+        print(f'imported {module_name}')
+    else:
+        # delete all decentants of the module from sys.modules.
+        # this trick makes importlib.import_module reload the module completely
+        # (importlib.reload only reloads the module itself, not its decentants)
+        for submodule_name in list(sys.modules.keys()):
+            root_name = submodule_name.split('.')[0]
+            if root_name == module_name:
+                sys.modules.pop(submodule_name)
 
+        module = importlib.import_module(module_name)
+    return module
+
+class Extension:
+    def __init__(self,extension_name:str,existing_node_types:set[type[SObject]]=set(),reload=False) -> None:
+        try:
+            if reload:
+                self.module = load_or_reload_module(extension_name)
+            else:
+                self.module = importlib.import_module(extension_name)
+        except ModuleNotFoundError:
+            logger.error(f'Extension {extension_name} does not exist')
+            raise ModuleNotFoundError(f'Extension {extension_name} does not exist')
+        self.extension_name = extension_name
+        
         self.node_types:Dict[str,type[Node]] = {}
         self.node_types_without_extension_name:Dict[str,type[Node]] = {}
         for name, obj in inspect.getmembers(self.module):

@@ -49,6 +49,7 @@ class ExecNode(SourceNode):
         self.output_control = self.add_text_control('',readonly=True,name='output_control')
         self.inputs = self.add_attribute('inputs',ListTopic,[],editor_type='list')
         self.outputs = self.add_attribute('outputs',ListTopic,[],editor_type='list')
+        self.icon_path.set('python')
 
     def init_node(self):
         super().init_node()

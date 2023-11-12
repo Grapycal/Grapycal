@@ -15,6 +15,7 @@ class Conv2dNode(ModuleNode):
         self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3,3')
         self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1,1')
         self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1,1')
+        self.icon_path.set('cnn')
 
     def init_node(self):
         super().init_node()
@@ -54,6 +55,7 @@ class ConvTranspose2dNode(ModuleNode):
         self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3,3')
         self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1,1')
         self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1,1')
+        self.icon_path.set('cnn')
 
     def init_node(self):
         super().init_node()

@@ -51,7 +51,7 @@ class ExtensionManager:
     def update_extension(self, extension_name: str) -> None:
         old_version = self._extensions[extension_name]
         old_node_types = set(old_version.node_types_without_extension_name.keys())
-        new_version = Extension(extension_name,set(self._objectsync.get_all_node_types().values())-set(old_version.node_types.values()))
+        new_version = Extension(extension_name,set(self._objectsync.get_all_node_types().values())-set(old_version.node_types.values()),reload=True)
 
         # Get diff between old and new version
         new_node_types = set(new_version.node_types_without_extension_name.keys())
