@@ -1,0 +1,3 @@
+[submodule "frontend/dist/svg"]
+	path = frontend/dist/svg
+	url = git@github.com:eri24816/grapycal-resource.git
