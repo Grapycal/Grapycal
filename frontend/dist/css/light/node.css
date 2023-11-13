@@ -17,6 +17,10 @@ Define styles for different node categories
     font-weight: 600;
 }
 
+.node-icon{
+    fill: #222222;
+}
+
 
 .node-border{
     border-color: black;
