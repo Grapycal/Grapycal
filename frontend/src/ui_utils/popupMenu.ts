@@ -115,6 +115,7 @@ export class PopupMenu extends Componentable{
 
     private onEnter(){
         if(!this.opened) return
+        if(this.optionElements[this.focusedOption] === undefined) return
         this.optionElements[this.focusedOption].click()
     }
 

@@ -73,7 +73,7 @@ export class WebcamStream extends CompSObject{
     timer: NodeJS.Timer
     
     protected onStart(): void {
-        (navigator as any).getUserMedia = (navigator as any).getUserMedia || (navigator as any).webkitGetUserMedia || (navigator as any).mozGetUserMedia || (navigator as any).msGetUserMedia
+        // (navigator.mediaDevices as any).getUserMedia = (navigator.mediaDevices as any).getUserMedia || (navigator.mediaDevices as any).webkitGetUserMedia || (navigator.mediaDevices as any).mozGetUserMedia || (navigator.mediaDevices as any).msGetUserMedia
         
         this.image = this.getAttribute('image', StringTopic)
         this.sourceClient = this.getAttribute('source_client', IntTopic)
@@ -88,23 +88,23 @@ export class WebcamStream extends CompSObject{
 
     private startStreaming(){
         if (this.stream) return;
-        print('publishing');
-        (navigator as any).getUserMedia( {video: { width: 480, height: 320 }, audio: false},
-            
-        (stream: MediaStream) => {
+        (navigator.mediaDevices as any).getUserMedia( {video: { width: 480, height: 320 }, audio: false})
+        .then((stream: MediaStream) => {
+            console.log('got stream')
             this.stream = stream
             // start loop
             this.timer = setInterval(()=>{
                 this.publish()
             },this.interval)
             video.srcObject = stream;
+
+            video.setAttribute('autoplay', 'true');
             video.onloadeddata = () => {
             
                 video.play();
             }
-        }
-
-        , function(err: any) {
+        })
+        .catch(function(err: any) {
             console.error(err);
         })
     }

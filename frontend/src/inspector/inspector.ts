@@ -92,8 +92,8 @@ export class Inspector extends Componentable{
         }
     }
 
-    public addEditor<T extends Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>>(editor:Editor<T>): T{
-        this.hierarchy.addLeaf(editor.htmlItem,'');
+    public addEditor<T extends Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>>(editor:Editor<T>,category=''): T{
+        this.hierarchy.addLeaf(editor.htmlItem,category);
         return editor.topic;
     }
 }

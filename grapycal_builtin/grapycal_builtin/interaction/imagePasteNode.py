@@ -98,8 +98,8 @@ class ImageDisplayNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.restore_controls('img')
-        self.restore_attributes('cmap')
+        self.restore_controls('img','slice')
+        self.restore_attributes('cmap','vmin','vmax')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.update_image,data = self.in_port.get_one_data())
@@ -168,8 +168,6 @@ def to_list(data) -> list:
         data = data.tolist()
     elif Tensor and isinstance(data, Tensor):
         data = data.detach().cpu().numpy().tolist()
-    elif isinstance(data, float|int):
-        data = [data]
     elif isinstance(data, list):
         if len(data) == 0:
             return []
@@ -177,6 +175,9 @@ def to_list(data) -> list:
             data = [float(d.detach().cpu()) for d in data] #type: ignore
         elif ndarray and isinstance(data[0], ndarray):
             data = [float(d) for d in data]
+            
+    if isinstance(data, float|int):
+        data = [data]
     return data
 
 class LinePlotNode(Node):

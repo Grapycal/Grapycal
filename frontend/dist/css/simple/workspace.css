@@ -9,12 +9,11 @@ a{
 
 .sidebar{
     background-color: var(--t0);
-    border: var(--z1) 1px solid;
     background-color: var(--z0);
 }
 
 .sidebar-left{
-    border-right: #303335 1px solid;
+    border-right: var(--z1) 1px solid;
 }
 
 .sidebar-tab-btn{
@@ -27,7 +26,7 @@ a{
 }
 
 .sidebar-right{
-    border-left: #303335 1px solid;
+    border-left: var(--z1) 1px solid;
 }
 
 header{
@@ -41,7 +40,7 @@ footer{
     height: 23px;
     background-color: var(--t1);
     color: var(--text-high);
-    border-top: #303335 1px solid;
+    border-top: var(--z1) 1px solid;
 }
 
 button{

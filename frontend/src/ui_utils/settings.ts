@@ -8,7 +8,7 @@ export class Settings extends CompSObject{
     protected onStart(): void {
         this.inspector.htmlItem.setParentElement(document.getElementById('tab-settings'))
         let editor = new OptionsEditor('theme',{'options':['light','simple','purple','fire']})
-        this.inspector.addEditor(editor)
+        this.inspector.addEditor(editor,'Appearance')
         editor.topic.set('simple')
         editor.topic.onSet.add((value)=>{
             // Seamless theme change

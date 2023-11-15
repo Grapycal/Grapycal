@@ -130,7 +130,7 @@ footer{
 }
 
 .normal-node{
-    width: 116.25px;
+    width: 146.25px;
     min-height: 24px;
 
     box-sizing: border-box;
@@ -138,7 +138,7 @@ footer{
 }
 
 .simple-node{
-    width: 116.25px;
+    /* width: 146.25px; */
     min-height: 20px;
 
     box-sizing: border-box;
@@ -185,7 +185,7 @@ footer{
 
 .node-icon{
     width: 18px;
-    height: 18px;   
+    height: 16px;   
     flex-shrink: 0;
     object-fit: contain;
     opacity: 1;
@@ -484,7 +484,6 @@ input:enabled, textarea:enabled{
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 10px;
-    
 }
 
 /* Editor */
@@ -642,7 +641,7 @@ input:enabled, textarea:enabled{
     padding-top: 4px;
     border-left: #97d11b solid 1px;
     border-radius: 3px;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 /* to omit the border of non first level nodes */
@@ -652,6 +651,7 @@ input:enabled, textarea:enabled{
 
 .hierarchy-name{
     padding-left: 15px;
+    font-size: 15px;
 }
 
 .hierarchy-indent{
