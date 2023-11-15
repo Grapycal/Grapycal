@@ -89,7 +89,7 @@ class SplitNode(Node):
         self.remove_out_port(key)
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.run(self.task)
+        self.run(self.task,background=False)
         
     def task(self):
         data = self.in_port.get_one_data()

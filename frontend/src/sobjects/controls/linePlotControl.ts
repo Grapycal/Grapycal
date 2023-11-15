@@ -105,10 +105,16 @@ export class LinePlotControl extends Control{
             const boundary = this.boundary.get(name);
             const line = this.lines.get(name)
             const positionAttribute = line.geometry.getAttribute( 'position' );
-            const orig_length = line.geometry.drawRange.count;
+            let orig_length = line.geometry.drawRange.count;
 
-            if(orig_length+xs.length > positionAttribute.count)
-                return
+            if(orig_length+xs.length > positionAttribute.count){
+                line.geometry.setDrawRange(0,0) // clear the line if it is too long
+                this.boundary.set(name,new THREE.Box3());
+                
+            }
+
+
+            orig_length = line.geometry.drawRange.count;
 
             for(let i=0; i<xs.length; i++){
                 positionAttribute.setXYZ(orig_length+i,xs[i],ys[i],0);
@@ -118,17 +124,12 @@ export class LinePlotControl extends Control{
             this.setRenderDirty();
             line.geometry.attributes.position.needsUpdate = true;
             line.geometry.computeBoundingSphere();
+
             this.fitBoundary();
         })
 
         this.on('clear',({name}:{name:string})=>{
-            const line = this.lines.get(name)
-            line.geometry.setDrawRange(0,0)
-            line.geometry.attributes.position.needsUpdate = true;
-            line.geometry.computeBoundingSphere();
-            this.boundary.set(name,new THREE.Box3());
-            this.fitBoundary();
-            this.setRenderDirty();
+            this.clear(name);
         })
 
         this.linesTopic.onPop.add((name:string)=>{
@@ -187,6 +188,16 @@ export class LinePlotControl extends Control{
         })
     }
 
+    clear(name:string){
+        const line = this.lines.get(name)
+        line.geometry.setDrawRange(0,0)
+        line.geometry.attributes.position.needsUpdate = true;
+        line.geometry.computeBoundingSphere();
+        this.boundary.set(name,new THREE.Box3());
+        this.fitBoundary();
+        this.setRenderDirty();
+    }   
+
     getMousePos(e:MouseEvent): THREE.Vector3 {
         let tmp = this.node.transform.WroldToEl(this.eventDispatcher.mousePos,this.renderer.domElement)
         const originalMousePos = new THREE.Vector3(tmp.x,tmp.y,0).sub(this.size.clone().divideScalar(2))
@@ -221,7 +232,7 @@ export class LinePlotControl extends Control{
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,4)
 
-        const material = new THREE.LineBasicMaterial( { color: 0x888888, linewidth:2 } );
+        const material = new THREE.LineBasicMaterial( { color: 0x888888, linewidth:3 } );
         const axis = new THREE.LineSegments( geometry, material );
         this.baseObject.add(axis);
     }
@@ -313,20 +324,20 @@ export class LinePlotControl extends Control{
 
     addLine(name:string): void {
         const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(500*3);
+        const positions = new Float32Array(5000*3);
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,0)
         
-        const color = [ // green, red, blue, yellow, purple, cyan, gray
-            0x33bb33,
-            0xbb3333,
-            0x3333bb,
+        const color = [ // yellow, purple, cyan, green, red, blue,gray
             0xbbbb33,
             0xbb33bb,
             0x33bbbb,
+            0x33bb33,
+            0xbb3333,
+            0x3333bb,
             0x888888,
         ] [this.lines.size % 7]
-        const material = new THREE.LineBasicMaterial( { color: color } );
+        const material = new THREE.LineBasicMaterial( { color: color , linewidth:5 } );
         const line = new THREE.Line( geometry, material );
         this.baseObject.add( line );
         this.lines.set(name,line);
@@ -362,6 +373,8 @@ export class LinePlotControl extends Control{
         //padding
         boundary.expandByVector(boundary.getSize(new THREE.Vector3()).multiplyScalar(0.05));
         if(boundary.isEmpty()) return;
+        if(boundary.getSize(new THREE.Vector3()).x == 0) boundary.expandByVector(new THREE.Vector3(1,0,0));
+        if(boundary.getSize(new THREE.Vector3()).y == 0) boundary.expandByVector(new THREE.Vector3(0,1,0));
         const size = boundary.getSize(new THREE.Vector3());
         const scale = this.size.clone().divide(size)
         this.baseObject.scale.set(scale.x,scale.y,1);

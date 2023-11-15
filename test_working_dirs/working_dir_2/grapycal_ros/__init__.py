@@ -31,7 +31,9 @@ class RosbridgeNode(Node):
         self.subs_info = self.add_attribute('subs_info', DictTopic, {}) # internal use only. data: {'name':str,'type':str}
         self.subsciptions = self.add_attribute('subsciptions', ListTopic, [], editor_type='list') # for user to manipulate
         self.subscription_type = self.add_attribute('subscription type', StringTopic, 'std_msgs/String',editor_type='options',
-            options=['std_msgs/String','std_msgs/Int32','std_msgs/Float32','std_msgs/Bool','sensor_msgs/Image'])
+            options=['std_msgs/String','std_msgs/Int32','std_msgs/Float32','std_msgs/Bool','sensor_msgs/Image',
+            'sensor_msgs/msg/JointState'
+            ])
         
     def init_node(self):
         self.status = RosbridgeNode.Status.NOT_CONNECTED
@@ -113,19 +115,27 @@ class RosbridgeNode(Node):
     def on_tick(self):
         if self.status != RosbridgeNode.Status.CONNECTED:
             return
-        try:
-            msg = self.ws.recv(0)
-        except TimeoutError:
-            return
-        except Exception as e:
-            self.connection_error(e)
-            return
-        if msg is None:
-            return
-        self.recv_port.push_data(msg)
+        msgs = []
+        while True:
+            try:
+                # The 0.00001 (instead of 0) is required to recieve multiple messages in one tick.
+                # Maybe it's a bug of websockets.
+                msg = self.ws.recv(0.00001)
+            except TimeoutError:
+                break
+            except Exception as e:
+                self.connection_error(e)
+                break
+            msgs.append(msg)
+            
+        for msg in msgs:
+            self.on_recv_msg(msg)
+        
+    def on_recv_msg(self, msg_str: str):
+        self.recv_port.push_data(msg_str)
         self.flash_running_indicator()
 
-        msg = json.loads(msg)
+        msg = json.loads(msg_str)
         if msg['op'] == 'publish':
             topic_name = msg['topic']
             if self.has_out_port(topic_name):
