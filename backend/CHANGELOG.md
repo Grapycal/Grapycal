@@ -1,3 +1,26 @@
+## v0.7.0 (2023-11-15)
+
+### Feat
+
+- node icon
+- changable theme
+- abandon fetching process of extensions
+- switch from desearialize to manual build
+- add tabs to sidebar
+- box selection
+
+### Fix
+
+- minor fix
+- further unify node height
+- add submodule svg
+- fix bugs
+- make ports well aligned when snapped
+
+### Refactor
+
+- **inspector.ts**: separate inspector and nodeinspector
+
 ## v0.6.1 (2023-11-03)
 
 ### Fix

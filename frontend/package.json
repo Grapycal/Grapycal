@@ -1,6 +1,6 @@
 {
   "name": "grapycal-client",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "main": "app.ts",
   "license": "BSD-3-Clause",
   "devDependencies": {
