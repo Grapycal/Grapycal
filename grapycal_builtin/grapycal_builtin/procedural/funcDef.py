@@ -34,6 +34,13 @@ class FuncDefManager:
     outs: Dict[str,'FuncOutNode'] = {}
 
 class FuncCallNode(Node):
+    '''
+    A FuncCallNode represents a call to a specific function.
+    Once you assign a function name to the FuncCallNode, Grapycal will search for a FuncInNode and a FuncOutNode existing
+    in the workspace with the same function name. Then, its ports will be updated accroding to the function
+    definition.
+    '''
+
     category = 'function'
     def build_node(self):
         self.label.set('')

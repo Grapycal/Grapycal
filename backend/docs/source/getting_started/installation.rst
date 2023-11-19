@@ -1,6 +1,12 @@
 Installation
 ============
 
+
+Prerequisites:
+
+- Python 3.11 or higher
+- npm 9.5.1 or higher (older versions may work, but are not tested)
+
 Install from PyPI
 -----------------
 
@@ -23,28 +29,35 @@ If you want to contribute to Grapycal itself, you can install it in editable mod
 
     git clone git@github.com:eri24816/Grapycal.git
     cd Grapycal
+    git submodule update --init --recursive
+    git checkout dev
 
-2. Install grapycal 
-
-.. code-block:: bash
-
-    cd backend
-    pip install -e .
-
-3. Install grapycal-builtin
+2. Install grapycal backend and grapycal-builtin
 
 .. code-block:: bash
 
-    cd grapycal_builtin
-    pip install -e .
+    pip install -e backend -e grapycal_builtin
 
-4. Install frontend dependencies
-
-This step is optional. If you do not intend to modify the frontend, you can skip this step
-and use the pre-built frontend content include in the grapycal python package.
+3. Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
+``backend/src/grapycal/webpage``. Grapycal backend will serve the frontend resources from there.
 
 .. code-block:: bash
 
-    cd ../frontend
-    rm package-lock.json # I don't know why but it doesn't work with it
+    cd frontend
     npm install
+    npm run build
+
+The development setup is now done. you can make changes to the backend and frontend code.
+
+4. When you pull the latest code in the future, you may need to update the submodules and rebuild the frontend.
+Otherwise, Grapycal may fail to run.
+
+.. code-block:: bash
+
+    git pull
+
+    git submodule update --init --recursive
+
+    cd frontend
+    npm install
+    npm run build

@@ -6,14 +6,17 @@ from .math import *
 
 class LambdaNode(Node):
     '''
-    LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function, which is
+    LambdaNode is one of the most flexible nodes in Grapycal. It allows you to define any function, which is
     similar to Python's lambda function.
     
     It can be freely configured to be any function of any number of inputs and outputs. For each output, the node
     provides an input box for you to define the function with an expression.
 
     :inputs:
-        - x: input 1
+        You can add any number of inputs to the node.
+
+    :outputs:
+        You can add any number of outputs to the node.
         
     '''
     category = 'function'
