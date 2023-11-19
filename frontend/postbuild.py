@@ -2,7 +2,7 @@ import shutil
 
 try:
     # remove old files in backend/src/grapycal/webpage
-    shutil.rmtree('../backend/src/grapycal/webpage')
+    shutil.rmtree('../backend/src/grapycal/webpage',ignore_errors=True)
 
     #cp -r frontend/dist/* backend/src/grapycal/webpage
     # but ignore .git
