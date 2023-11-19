@@ -35,7 +35,6 @@ class GrapycalApp:
                            /_/    /____/
                                            ''','red') + termcolor.colored('v'+version, 'white'))
         print()
-        print('Starting Grapycal server...')
 
         #TODO: Support multiple workspaces
         #TODO: Websocket multiplexing

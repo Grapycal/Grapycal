@@ -70,7 +70,7 @@ export class WebcamStream extends CompSObject{
     sourceClient: IntTopic
     stream: MediaStream = null
     interval:number = 200
-    timer: NodeJS.Timer
+    timer: NodeJS.Timeout
     
     protected onStart(): void {
         // (navigator.mediaDevices as any).getUserMedia = (navigator.mediaDevices as any).getUserMedia || (navigator.mediaDevices as any).webkitGetUserMedia || (navigator.mediaDevices as any).mozGetUserMedia || (navigator.mediaDevices as any).msGetUserMedia

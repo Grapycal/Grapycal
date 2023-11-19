@@ -9,8 +9,11 @@ from ..sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
+
 from grapycal.utils.logging import setup_logging
-logger = setup_logging()
+setup_logging()
+import logging
+logger = logging.getLogger('workspace')
 
 from typing import Any, Dict
 
@@ -76,7 +79,6 @@ class Workspace:
         await asyncio.gather(self._objectsync.serve(),self.clock.run())
 
     def run(self) -> None:
-        print('Workspace running')
         event_loop_set_event = threading.Event()
         t = threading.Thread(target=self._communication_thread,daemon=True,args=[event_loop_set_event]) # daemon=True until we have a proper exit strategy
 
@@ -110,10 +112,10 @@ class Workspace:
         signal.signal(signal.SIGTERM, lambda sig, frame: self.exit())
 
         if file_exists(self.path):
-            print(f'Found existing workspace file {self.path}. Loading')
+            logger.info(f'Found existing workspace file {self.path}. Loading.')
             self.load_workspace(self.path)
         else:
-            print(f'No workspace file found at {self.path}. Creating new workspace')
+            logger.info(f'No workspace file found at {self.path}. Creating a new workspace to start with.')
             self.initialize_workspace()
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
@@ -121,7 +123,7 @@ class Workspace:
         self.background_runner.run()
 
     def exit(self):
-        print('exit')
+        logger.info('exit')
         self.background_runner.exit()
 
     def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
