@@ -292,3 +292,9 @@ export class FetchWithCache{
         return this.cache.get(url)
     }
 }
+
+export function stringToElement(html:string){
+    const div = document.createElement('div')
+    div.innerHTML = html
+    return div.firstElementChild
+}

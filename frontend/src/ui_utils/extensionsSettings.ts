@@ -2,6 +2,7 @@ import { DictTopic, ObjectSyncClient } from "objectsync-client"
 import { Linker } from "../component/linker"
 import { Componentable } from "../component/componentable"
 import { SimplePopupMenu } from "./simplePopupMenu"
+import { stringToElement } from "../utils"
 
 export class ExtensionsSetting extends Componentable{
     objectsync: ObjectSyncClient
@@ -12,9 +13,19 @@ export class ExtensionsSetting extends Componentable{
     cardTemplate = `
     <div class="card">
         <div class="card-image"></div>
-        <div class="card-title"></div>
+        <div class="card-content">
+            <div class="card-title"></div>
+            
+        </div>
     </div>
     `
+
+    removeButtonTemplate = '<button class="card-button" style="color:#ff5555;" title="remove">—</button>'
+    importButtonTemplate = '<button class="card-button" style="color:#55ff55;" title="import">+</button>'
+    installButtonTemplate = '<button class="card-button" style="color:#55ff55;" title="install">⇩</button>'
+    reloadButtonTemplate = '<button class="card-button" style="color:#5599ff;" title="reload">↻</button>'
+
+
     cards: {imported:{[name:string]:HTMLElement},avaliable:{[name:string]:HTMLElement}} = {'imported':{},'avaliable':{}}
     constructor(objectsync:ObjectSyncClient){
         super()
@@ -45,6 +56,28 @@ export class ExtensionsSetting extends Componentable{
         card.querySelector<HTMLDivElement>('.card-title').innerText = newExtension.name
         //card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(${newExtension.icon})`
         card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(https://imgur.com/xwG2FSr.jpg)`
+
+        const cardContent = card.querySelector<HTMLDivElement>('.card-content')
+        if(status == 'imported'){
+            const removeButton = stringToElement(this.removeButtonTemplate)
+            removeButton.addEventListener('click',()=>{
+                this.objectsync.emit('unimport_extension',{extension_name:newExtension.name})
+            })
+            cardContent.appendChild(removeButton)
+            const reloadButton = stringToElement(this.reloadButtonTemplate)
+            reloadButton.addEventListener('click',()=>{
+                this.objectsync.emit('update_extension',{extension_name:newExtension.name})
+            })
+            cardContent.appendChild(reloadButton)
+        }
+
+        if(status == 'avaliable'){
+            const importButton = stringToElement(this.importButtonTemplate)
+            importButton.addEventListener('click',()=>{
+                this.objectsync.emit('import_extension',{extension_name:newExtension.name})
+            })
+            cardContent.appendChild(importButton)
+        }
 
         card.addEventListener('contextmenu',(e)=>{
             e.preventDefault()
@@ -86,6 +119,4 @@ export class ExtensionsSetting extends Componentable{
         })
         cards.forEach(card=>div.appendChild(card))
     }
-
-
 }

@@ -29,7 +29,7 @@ class ListDict(Generic[T]):
         return self.d[key]
 
 class FuncDefManager:
-    calls: ListDict = ListDict()
+    calls: ListDict['FuncCallNode'] = ListDict()
     ins: Dict[str,'FuncInNode'] = {}
     outs: Dict[str,'FuncOutNode'] = {}
 
@@ -50,6 +50,8 @@ class FuncCallNode(Node):
     def init_node(self):
         FuncDefManager.calls.append(self.func_name.get(),self)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
+        self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
+        self.update_ports()
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
@@ -59,6 +61,11 @@ class FuncCallNode(Node):
         self.label.set(f' {new}')
         FuncDefManager.calls.remove(old,self)
         FuncDefManager.calls.append(new,self)
+
+    def on_func_name_changed_auto(self,new):
+        self.update_ports()
+
+    def update_ports(self):
         self.update_input_ports()
         self.update_output_ports()
 
@@ -143,11 +150,14 @@ class FuncInNode(Node):
 
         self.func_name.add_validator(lambda x,_: x not in FuncDefManager.ins)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
+        self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
         self.update_label()
         
         if self.func_name.get() != '':
             assert self.func_name.get() not in FuncDefManager.ins
             FuncDefManager.ins[self.func_name.get()] = self
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_ports()
         
 
     def on_func_name_changed(self, old, new):
@@ -156,6 +166,11 @@ class FuncInNode(Node):
         if old != '':
             FuncDefManager.ins.pop(old)
         self.update_label()
+
+    def on_func_name_changed_auto(self,new):
+        if new != '':
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_ports()
 
     def update_label(self):
         self.label.set(f'{self.func_name.get()}')
