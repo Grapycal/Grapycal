@@ -1,21 +1,17 @@
 import logging
 import pkgutil
 
-from grapycal.extension.utils import NodeInfo
+import subprocess
+from grapycal.extension.extensionSearch import get_not_installed_extensions
 logger = logging.getLogger(__name__)
 
-from importlib import util as importlib_util
-import random
 from typing import TYPE_CHECKING, Dict, List, Tuple
 import sys
 from os.path import join, dirname
 import shutil
 from grapycal.extension.extension import Extension
-from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
-from grapycal.sobjects.port import InputPort, OutputPort, Port
-from grapycal.utils.file import get_direct_sub_folders
-from grapycal.utils.misc import as_type
+from grapycal.sobjects.port import Port
 import objectsync
 
 if TYPE_CHECKING:  
@@ -33,11 +29,13 @@ class ExtensionManager:
         # Use this topic to inform the client about the extensions
         self._imported_extensions_topic = self._objectsync.create_topic('imported_extensions',objectsync.DictTopic,is_stateful=False)
         self._avaliable_extensions_topic = self._objectsync.create_topic('avaliable_extensions',objectsync.DictTopic,is_stateful=False)
+        self._not_installed_extensions_topic = self._objectsync.create_topic('not_installed_extensions',objectsync.DictTopic,is_stateful=False)
         self._node_types_topic = self._objectsync.create_topic('node_types',objectsync.DictTopic,is_stateful=False)
         self._objectsync.on('import_extension',self.import_extension,is_stateful=False)
         self._objectsync.on('unimport_extension',self.unimport_extension,is_stateful=False)
         self._objectsync.on('update_extension',self.update_extension,is_stateful=False)
         self._objectsync.on('refresh_extensions',self._update_available_extensions_topic,is_stateful=False)
+        self._objectsync.on('install_extension',self._install_extension,is_stateful=False)
 
         self._update_available_extensions_topic()
 
@@ -137,18 +135,16 @@ class ExtensionManager:
 
     def _update_available_extensions_topic(self) -> None:
         available_extensions = self._scan_available_extensions()
-        for name in available_extensions:
-            if name not in self._avaliable_extensions_topic.get():
-                self._avaliable_extensions_topic.add(name,{
-                    'name':name
-                })
-        for name in list(self._avaliable_extensions_topic.get().keys()):
-            if name not in available_extensions:
-                self._avaliable_extensions_topic.pop(name)
+        self._avaliable_extensions_topic.set({name:{'name':name} for name in available_extensions})
+        not_installed_extensions = get_not_installed_extensions()
+        not_installed_extensions = [name for name in not_installed_extensions 
+                                    if name not in available_extensions and name not in self._extensions
+                                    ]
+        self._not_installed_extensions_topic.set({name:{'name':name} for name in not_installed_extensions})
 
     def _scan_available_extensions(self) -> list[str]:
         '''
-        Returns a list of available extensions in local folder.
+        Returns a list of available extensions that is importable but not imported yet.
         '''
         available_extensions = []
         for pkg in pkgutil.iter_modules():
@@ -156,6 +152,33 @@ class ExtensionManager:
                 if pkg.name not in self._extensions:
                     available_extensions.append(pkg.name)
         return available_extensions
+    
+    def _check_extension_compatible(self, extension_name: str) -> bool:
+        # dry run the installation and get its output
+        out = subprocess.run(['pip','install',extension_name,'--dry-run'],capture_output=True).stdout.decode('utf-8')
+        # check if the line begin with "Would install" contains "grapycal"
+        package_regex = r'([^\s]*)-(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
+        for line in out.split('\n'):
+            if line.startswith('Would install'):
+                # use regex to get the package name
+                import re
+                for match in re.findall(package_regex,line):
+                    if match[0] == 'grapycal':
+                        # This shows that pip will reinstall grapycal, maybe in a different version.
+                        # This is not allowed when the extension is installed from the UI.
+                        return False 
+        return True
+        
+
+    
+    def _install_extension(self, extension_name: str) -> None:
+        # check if the extension is compatible
+        if not self._check_extension_compatible(extension_name):
+            raise Exception(f'Cannot install extension {extension_name} because it is not compatible with the current version of grapycal.')
+        # run pip install
+        subprocess.run(['pip','install',extension_name])
+        # update available extensions
+        self._update_available_extensions_topic()
 
     def _load_extension(self, name: str) -> Extension:
         self._extensions[name] = Extension(name,set(self._objectsync.get_all_node_types().values()))

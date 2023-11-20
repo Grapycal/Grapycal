@@ -9,7 +9,7 @@ packages = [{include = "grapycal_builtin"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-grapycal = "0.7.0"
+grapycal = ">=0.7.0"
 matplotlib = "^3.8.0"
 numpy = "^1.26.0"
 Pillow = "^10.0.1"
