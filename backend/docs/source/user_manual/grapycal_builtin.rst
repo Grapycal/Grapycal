@@ -91,6 +91,16 @@ ImageDisplay
 
 
 
+LinePlot
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/lineplot.jpg
+    :width: 10em
+    :align: right
+    :alt: [LinePlot image]
+
+
+
 Label
 ~~~~~~~~~~~~~~~~~~~
 
@@ -98,6 +108,26 @@ Label
     :width: 10em
     :align: right
     :alt: [Label image]
+
+
+
+Webcam
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/webcam.jpg
+    :width: 10em
+    :align: right
+    :alt: [Webcam image]
+
+
+
+None
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: ./node_imgs/none.jpg
+    :width: 10em
+    :align: right
+    :alt: [None image]
 
 
 Function/math
@@ -201,16 +231,6 @@ Double click to interrupt the iteration.
 |
 
 
-Event
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: ./node_imgs/event.jpg
-    :width: 10em
-    :align: right
-    :alt: [Event image]
-
-
-
 Procedure
 ~~~~~~~~~~~~~~~~~~~
 
@@ -262,14 +282,17 @@ Lambda
     :align: right
     :alt: [Lambda image]
 
-LambdaNode is one of the most powerful nodes in Grapycal. It allows you to define any function, which is
+LambdaNode is one of the most flexible nodes in Grapycal. It allows you to define any function, which is
 similar to Python's lambda function.
 
 It can be freely configured to be any function of any number of inputs and outputs. For each output, the node
 provides an input box for you to define the function with an expression.
 
 :Inputs:
-    - **x**: input 1
+    You can add any number of inputs to the node.
+
+:Outputs:
+    You can add any number of outputs to the node.
     
 
 |
@@ -283,6 +306,12 @@ FuncCall
     :align: right
     :alt: [FuncCall image]
 
+A FuncCallNode represents a call to a specific function.
+Once you assign a function name to the FuncCallNode, Grapycal will search for a FuncInNode and a FuncOutNode existing
+in the workspace with the same function name. Then, its ports will be updated accroding to the function
+definition.
+
+|
 
 
 FuncIn

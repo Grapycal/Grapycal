@@ -22,10 +22,11 @@ class NameTranslator(logging.Filter):
     dictionary = {
         'objectsync.server': 'OS',
         'objectsync.sobject': 'SOBJECT',
-        'chatroom.server.server': 'CHAT',
-        'chatroom.topic': 'TOPIC',
-        'chatroom.server.client_manager': 'CLIENT',
-        
+        'topicsync.server.server': 'TOPICSYNC',
+        'topicsync.topic': 'TOPIC',
+        'topicsync.server.client_manager': 'CLIENT',
+        'workspace': 'WORKSPACE',
+        'grapycal.extension.extensionManager': 'EXTENSION',
     }
     def filter(self, record):
         if record.name.startswith('websockets'):

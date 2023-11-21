@@ -32,4 +32,4 @@ For the builtin nodes, run:
 
 .. code-block::
 
-    python extension_docgen/gen.py -e grapycal.grapycal_builtin -o source/user_manual/grapycal_builtin.rst
+    python extension_docgen/gen.py -e grapycal_builtin -o source/user_manual/grapycal_builtin.rst

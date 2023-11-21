@@ -6,12 +6,14 @@ This guide provides a comprehensive explanation of how to define a node type dir
 Specify the Category
 -------------------------
 
-The category is used to group nodes in the node list. For example:
+Each node type must has a category. For example:
 
 .. code-block:: python
 
     class CounterNode(Node):
         category = 'demo'
+
+Categories are used to group nodes in the node list UI. 
 
 .. _build_node:
 
@@ -44,8 +46,8 @@ Things you can do in ``build_node()``:
 -  ``self.add_in_port`` : Add an :ref:`developer_guide/port:port` to the node.
 -  ``self.add_out_port`` : Add an :ref:`developer_guide/port:port` to the node.
 -  ``self.add_attribute`` : Add an :ref:`developer_guide/attribute:attribute` to the node.
--  ``self.expose_attribute`` : Expose an attribute to the inspector panel.
--  Set values of the node's attributes to customize the node's appearance.
+-  ``self.expose_attribute`` : Expose an attribute to the inspector panel, so it can be edited by the user when the node is selected.
+-  Set values of the node's inherent attributes to customize the node's appearance.
     *   ``self.shape``: can be ``'normal'``, ``'simple'``, or ``'round'``.
     *   ``self.label``: the node's label.
     *   ``self.label_offset``: the offset of the label from the node's center.
@@ -103,18 +105,18 @@ Example usage:
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
         self.restore_controls('control_a', 'control_b')
-        self.restore_attributes('attr_a', 'attr_b')
+        self.restore_attributes('attr_a', 'attr_b', 'attr_c')
 
 Things you can do in ``restore_from_version()``:
 
-- ``self.restore_controls()``: Transfer the state from the old controls to the new controls.
-- ``self.restore_attributes()``: Transfer the value from the old attributes to the new attributes.
+- ``self.restore_controls()``: Transfer the state from the old controls to the new controls. You can pass multiple arguments to restore multiple controls at once.
+- ``self.restore_attributes()``: Transfer the value from the old attributes to the new attributes. You can pass multiple arguments to restore multiple attributes at once.
 
 .. note::
     The ``version`` argument is intended to let the node switch between different restoring strategies based on the version of the old node. However, this feature is not implemented yet. Currently, the ``version`` argument is always ``''``.
 
 .. note::
-    Most restoration tasks can be done with ``restore_controls`` and ``restore_attributes``. For finer-grained control, use the data stored in ``old``. 
+    Most restoration tasks can be done with ``restore_controls`` and ``restore_attributes``. If they don't meet your need, use the data stored in ``old``. 
 
 ``destroy()``
 -------------------------

@@ -40,7 +40,7 @@ class ImagePasteNode(SourceNode):
         super().build_node()
         self.label.set('Paste Image')
         self.img = self.add_image_control(name='img')
-        self.format = self.add_attribute('format',StringTopic,'torch',editor_type='options',options=['torch','numpy'])
+        self.format = self.add_attribute('format',StringTopic,'numpy',editor_type='options',options=['numpy','torch'])
         self.out_port = self.add_out_port('img')
         self.icon_path.set('image')
         

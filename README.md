@@ -37,28 +37,18 @@ In this back-and-forth process between humans and machines, using traditional Py
 
 The full documentaition can be found [here](https://eri24816.github.io/Grapycal/).
 
-## Installation (for Development)
-
-backend:
+## Get Started
 
 ```
-cd backend
-pip install -e .
+pip install grapycal grapycal-builtin
+python -m grapycal # Grapycal avaliable at localhost:9001
 ```
 
-or
+## Contribute
 
-```
-cd backend
-poetry install
-```
+Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-frontend:
-
-```
-cd frontend
-npm install
-```
+To discuss, feel free to open an issue or join the [Discord server](https://discord.gg/baHWyr6Q).
 
 ## Dependencies
 
@@ -68,29 +58,6 @@ Grapycal and its dependences consist of the following 6 packages:
 
 - [Grapycal/frontend](https://github.com/eri24816/Grapycal): Included in this repo, including the frontend code of the Grapycal main application
 
+- [Topicsync](https://github.com/eri24816/Topicsync) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
 
-- [Chatroom](https://github.com/eri24816/ChatRoom) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
-
-- [ChatroomClient_ts](https://github.com/eri24816/ChatRoomClient_ts) and [ObjectSyncClient_ts](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.
-
-## Run App (for Development)
-
-1. run Grapycal server
-```
-python -m grapycal
-```
-
-2. run web server
-```
-cd frontend
-npm run app
-```
-
-3. Go to `localhost:9001` with a web browser.
-
-## Scan dependencies license
-
-```
-cd frontend
-license-checker --summary > licenses.txt
-```
+- [topicsync-client](https://github.com/eri24816/topicsync-client) and [objectsync-client](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.

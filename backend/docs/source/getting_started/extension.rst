@@ -13,7 +13,7 @@ Create an Extension
 
 Let's create an extension named `grapycal_myext` that defines a node named `IsEvenNode`.
 
-1. In your working directory (the one where you run ``python -m grapycal``), create a directory named ``grapycal_myext``.
+1. In the working directory (the one where you run ``python -m grapycal``), create a directory named ``grapycal_myext``.
 
 .. note:: The extension folder must be placed in the working directory and must start with ``grapycal_`` to 
     be discovered by Grapycal.
