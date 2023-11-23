@@ -68,14 +68,15 @@ export class Node extends CompSObject {
     normal: 
         `<div class="node normal-node" id="slot_default">
             
-            <div class="node-border-container">
-                <div class="node-border" id="node-border">
-                </div>
-            </div>
             
             <div class="node-selection"></div>
             <div class="node-label full-width">
                 <div id="label"></div>
+            </div>
+
+            <div class="node-border-container">
+                <div class="node-border" id="node-border">
+                </div>
             </div>
             <div class=" flex-vert space-between main-section">
                 <div class="flex-horiz space-between full-width port-section align-start">
@@ -248,6 +249,7 @@ export class Node extends CompSObject {
 
             this.eventDispatcher.onDragStart.add((e: MouseEvent,pos: Vector2) => {
                 this.draggingTargetPos = this.transform.translation
+                this.htmlItem.baseElement.classList.add('dragging')
             })
 
             this.eventDispatcher.onDrag.add((e: MouseEvent,newPos: Vector2,oldPos: Vector2) => {
@@ -292,6 +294,7 @@ export class Node extends CompSObject {
                         }
                     }
                 })
+                this.htmlItem.baseElement.classList.remove('dragging')
             })
         }
 

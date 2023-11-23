@@ -9,42 +9,50 @@ Define styles for different node categories
     /* text-shadow:  0 0px 5px var(--cate-color); */
     /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
     background-color: var(--cate-color);
-    box-shadow: 2px 2px 2px black;
+    
+}
+
+.node.dragging{
+    box-shadow: 0px 0px 5px 2px #00000074;
 }
 
 .node-label{
-    color: black;
+    color: whitesmoke;
+    text-shadow: 0 0px 1px rgba(0, 0, 0, 0.526);
+    
     font-weight: 600;
+    backdrop-filter: brightness(0.9) saturate(1.1);
+}
+
+.node-border{
+    border-color: var(--cate-color);
+    filter: saturate(1.5) brightness(0.8);
+    border-width: 10px;
 }
 
 .node-icon{
-    fill: #222222;
+    fill: #e7e7e7;
 }
 
-
-.node-border{
-    border-color: black;
-}
 
 .node.running .node-label{
     background-color: var(--t1);
 }
 
 .hierarchy-node{
-    border-color: var(--cate-color);
-    color: var(--cate-color);
+    border-color: black;
 }
 
 .cate-interaction{
-    --cate-color: #daab45;
+    --cate-color: #FFBF00;
 }
 
 .cate-function{
-    --cate-color: #06c206;
+    --cate-color: #59C059;
 }
 
 .cate-data{
-    --cate-color: #fe9000;
+    --cate-color: #ffab19;
 }
 
 .cate-test{

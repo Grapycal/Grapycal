@@ -23,8 +23,8 @@ export class ExtensionsSetting extends Componentable{
     `
 
     removeButtonTemplate = '<button class="card-button" style="color:#ff5555;" title="remove">—</button>'
-    importButtonTemplate = '<button class="card-button" style="color:#55ff55;" title="import">+</button>'
-    installButtonTemplate = '<button class="card-button" style="color:#55ff55;" title="install">⇩</button>'
+    importButtonTemplate = '<button class="card-button" style="color:#44dd44;" title="import">+</button>'
+    installButtonTemplate = '<button class="card-button" style="color:#44dd44;" title="install">⇩</button>'
     reloadButtonTemplate = '<button class="card-button" style="color:#5599ff;" title="reload">↻</button>'
 
 
@@ -59,7 +59,7 @@ export class ExtensionsSetting extends Componentable{
             this.addCard(newExtension,'not_installed')
         })
         this.linker.link(this.notInstalledExtensionsTopic.onPop,(name,oldExtension)=>{
-            this.cards.avaliable[name].remove()
+            this.cards.not_installed[name].remove()
         })
 
         document.getElementById('refresh-extensions').addEventListener('click',()=>{

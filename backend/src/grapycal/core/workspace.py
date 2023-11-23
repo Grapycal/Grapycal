@@ -136,13 +136,15 @@ class Workspace:
 
     def initialize_workspace(self) -> None:
         self._objectsync.create_object(WorkspaceObject, parent_id='root')
-        self._extention_manager.import_extension('grapycal_builtin')
+        try:
+            self._extention_manager.import_extension('grapycal_builtin')
+        except ModuleNotFoundError:
+            pass
 
     def save_workspace(self, path: str) -> None:
         workspace_serialized = self.get_workspace_object().serialize()
         data = {
             'extensions': self._extention_manager.get_extention_names(), 
-            # Note: The extension field is intended to be on top so it can be easily retrieved by the extension management program.
             'client_id_count': self._objectsync.get_client_id_count(),
             'id_count': self._objectsync.get_id_count(),
             'workspace_serialized': workspace_serialized.to_dict(),

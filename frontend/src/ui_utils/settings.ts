@@ -1,6 +1,7 @@
 import { CompSObject } from "../sobjects/compSObject"
 import { Inspector } from "../inspector/inspector"
 import { OptionsEditor } from "../inspector/OptionEditor"
+import { bindTopicCookie } from "../utils"
 
 export class Settings extends CompSObject{
     inspector: Inspector = new Inspector()
@@ -9,7 +10,7 @@ export class Settings extends CompSObject{
         this.inspector.htmlItem.setParentElement(document.getElementById('tab-settings'))
         let editor = new OptionsEditor('theme',{'options':['light','simple','purple','fire']})
         this.inspector.addEditor(editor,'Appearance')
-        editor.topic.set('simple')
+        bindTopicCookie(editor.topic,'theme','light')
         editor.topic.onSet.add((value)=>{
             // Seamless theme change
             let old = document.getElementById('custom-css')

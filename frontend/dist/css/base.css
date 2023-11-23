@@ -73,6 +73,10 @@ button:hover{
     background-color: #333333;
 }
 
+button:active{
+    background-color: #4d4d4d;
+}
+
 img{
     display: block;
 }
@@ -122,6 +126,7 @@ footer{
     -webkit-user-select: none;
     z-index: 5;
     background-color: #000000;
+    --cate-color: #8d97a0;
 }
 
 .node-preview{
@@ -147,6 +152,9 @@ footer{
 
 .node-label{
     height: 20.5px;
+    
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 .simple-node .node-label{
@@ -185,7 +193,7 @@ footer{
 
 .node-icon{
     width: 18px;
-    height: 16px;   
+    height: 14px;   
     flex-shrink: 0;
     object-fit: contain;
     opacity: 1;
@@ -367,13 +375,13 @@ footer{
 
 :is(.simple-node,.round-node){
     .port-label{
-        color: transparent;
+        opacity: 0;
     }
     .port-near-mouse-1 .port-label{
-        color: #b5b5b593;
+        opacity: 1;
     }
     .port-near-mouse-2 .port-label{
-        color: #4f4f4f93;
+        opacity: 0.7;
     }
 }
 
@@ -402,6 +410,7 @@ footer{
     position: relative;
     padding-left: 10px;
     padding-right: 10px;
+    overflow: visible;
 }
 
 .slot-control:empty{
@@ -723,7 +732,7 @@ input:enabled, textarea:enabled{
 }
 
 .error{
-    color: #ff4949;
+    color: var(--error);
 }
 
 

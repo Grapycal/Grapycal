@@ -21,8 +21,6 @@ Define styles for different node categories
     text-wrap: nowrap;
     /* background: linear-gradient(180deg, rgb(58, 58, 58) 90%, var(--cate-color) 90%); */
     background-color: var(--z2);
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
 }
 
 

@@ -20,9 +20,10 @@
   },
   "dependencies": {
     "@types/three": "^0.157.0",
-    "three": "^0.157.0",
     "buffer": "^6.0.3",
-    "objectsync-client": "github:eri24816/ObjectSyncClient_ts#master"
+    "objectsync-client": "github:eri24816/ObjectSyncClient_ts#master",
+    "three": "^0.157.0",
+    "typescript-cookie": "^1.0.6"
   },
   "include": [
     "src/css.d.ts"

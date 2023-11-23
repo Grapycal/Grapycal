@@ -3,6 +3,10 @@ import { print } from "./devUtils"
 
 export { Action } from "objectsync-client"
 
+// from 'typescript-cookie' doesn't work. Maybe a bug of the library?
+import { getCookie, removeCookie, setCookie } from '../node_modules/typescript-cookie'
+import { Topic } from "objectsync-client"
+
 export function defined<T>(value: T | undefined| null): T {
     if (value === undefined) {
         throw new Error("Value is undefined");
@@ -230,6 +234,11 @@ export class TextBox{
     }
     constructor(parent:HTMLElement=document.body){
         this.textarea.classList.add('grow')
+        // set textwrap to no-wrap
+        this.textarea.style.whiteSpace = 'pre';
+        // overflow hidden to prevent scrollbars
+        this.textarea.style.overflow = 'hidden';
+
         this.sizeSimulator.style.width = 0 + 'px';
         this.sizeSimulator.style.position = 'absolute';
         this.sizeSimulator.style.visibility = 'hidden';
@@ -251,7 +260,7 @@ export class TextBox{
             //sync padding
             this.sizeSimulator.style.padding = window.getComputedStyle(this.textarea).padding;
             this.sizeSimulator.innerHTML = textToHtml(this.textarea.value);
-            let calculatedWidth =this.sizeSimulator.scrollWidth+ 10 // I don't know why it needs more 10px
+            let calculatedWidth =this.sizeSimulator.scrollWidth+ 0 // I don't know why it needs more 10px
             this.textarea.style.width = calculatedWidth+ 'px';
             
             this.textarea.style.height = '0';
@@ -297,4 +306,18 @@ export function stringToElement(html:string){
     const div = document.createElement('div')
     div.innerHTML = html
     return div.firstElementChild
+}
+
+export function bindTopicCookie(topic:Topic<string>,cookieName:string,defaultValue:string|undefined=undefined){
+    if(getCookie(cookieName)==undefined && defaultValue!=undefined){
+        topic.set(defaultValue)
+    }
+
+    if(getCookie(cookieName)!=undefined){
+        topic.set(getCookie(cookieName))
+    }
+    
+    topic.onSet.add((value)=>{
+        setCookie(cookieName,value)
+    })
 }

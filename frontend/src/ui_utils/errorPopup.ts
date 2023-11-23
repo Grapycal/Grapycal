@@ -17,7 +17,7 @@ export class ErrorPopup extends Componentable{
     protected get style():string{
         return `
             .error-popup{
-                color: #CF6679;
+                color: var(--error);
                 font-size: 10px;
                 font-family: 'consolas';
                 position: absolute;
@@ -27,7 +27,7 @@ export class ErrorPopup extends Componentable{
                 border-radius: 2px;
                 border: 1px solid black;
                 padding: 2px;
-                stroke:#CF6679;
+                stroke: var(--error);
                 stroke-width:2;
             }
             .message{

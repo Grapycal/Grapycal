@@ -153,7 +153,7 @@ class ExtensionManager:
                     available_extensions.append(pkg.name)
         return available_extensions
     
-    def _check_extension_compatible(self, extension_name: str) -> bool:
+    def _check_extension_compatible(self, extension_name: str):
         # dry run the installation and get its output
         out = subprocess.run(['pip','install',extension_name,'--dry-run'],capture_output=True).stdout.decode('utf-8')
         # check if the line begin with "Would install" contains "grapycal"
@@ -166,15 +166,18 @@ class ExtensionManager:
                     if match[0] == 'grapycal':
                         # This shows that pip will reinstall grapycal, maybe in a different version.
                         # This is not allowed when the extension is installed from the UI.
-                        return False 
-        return True
+                        from importlib.metadata import version
+                        cur = version('grapycal')
+
+                        raise Exception(f'Cannot install extension {extension_name}.\
+                                        Current grapycal version: {cur}. \
+                                        Required grapycal version: {match[1]}.{match[2]}.{match[3]}')
         
 
     
     def _install_extension(self, extension_name: str) -> None:
         # check if the extension is compatible
-        if not self._check_extension_compatible(extension_name):
-            raise Exception(f'Cannot install extension {extension_name} because it is not compatible with the current version of grapycal.')
+        self._check_extension_compatible(extension_name)
         # run pip install
         subprocess.run(['pip','install',extension_name])
         # update available extensions

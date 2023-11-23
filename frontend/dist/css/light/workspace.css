@@ -3,11 +3,14 @@ body{
     color: var(--text-high);
 }
 
-.sidebar{
-    background-color: var(--t0);
-    border: var(--z1) 1px solid;
+input:enabled, textarea:enabled{
+    background-color: #7676762e
 }
 
+.sidebar{
+    background-color: var(--z0);
+    border: var(--z1) 1px solid;
+}
 header{
     font-size: 16px;
     color: var(--text-low);
@@ -21,10 +24,34 @@ footer{
     color: var(--text-high);
 }
 
+.control-button{
+
+    border: none;
+}
+
 button{
     background-color: var(--z2);
     border: none;
     color: var(--text-high);
+}
+
+button:hover{
+    background-color: #c7c7c7;
+}
+
+button:active{
+    background-color: #bebebe;
+}
+
+
+.sidebar-tab-btn{
+    border-left: var(--z1) 2px solid;
+}
+
+
+.sidebar-tab-btn.active{
+    background-color: var(--z2);
+    border-left: var(--z4) 2px solid;
 }
 
 .option{
