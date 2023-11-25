@@ -4,10 +4,11 @@ import signal
 import sys
 from typing import Any, Callable, Dict
 import subprocess
+
+import grapycal
 from .utils.file import get_direct_sub_folders
 import termcolor
 import time
-from importlib.metadata import version as get_version
 
 class GrapycalApp:
     """
@@ -24,7 +25,7 @@ class GrapycalApp:
         """
         Server main loop
         """
-        version = get_version('grapycal')
+        version = grapycal.__version__
         print(
             termcolor.colored(r'''
                ______                                  __

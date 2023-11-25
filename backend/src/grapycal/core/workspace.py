@@ -5,7 +5,7 @@ from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
 from grapycal.sobjects.settings import Settings
-from ..sobjects.controls import *
+from grapycal.sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
 from grapycal.utils.io import file_exists, json_read, json_write
@@ -25,17 +25,17 @@ import signal
 from dacite import from_dict
 
 
-from . import stdout_helper
+from grapycal.core import stdout_helper
 
 
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.port import InputPort, OutputPort 
 from grapycal.sobjects.sidebar import Sidebar
 
 from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
 
-from . import running_module
+from grapycal.core import running_module
 
 def deserialize_sort_key(x: SObjectSerialized) -> int:
     if x.type == 'Edge':
