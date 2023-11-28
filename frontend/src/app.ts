@@ -19,16 +19,32 @@ import { ThreeControl } from './sobjects/controls/threeControl'
 import { LinePlotControl } from './sobjects/controls/linePlotControl'
 import { Settings } from './ui_utils/settings'
 import { FetchWithCache } from './utils'
+import { FileView } from './sobjects/fileView'
 
 export const soundManager = new SoundManager();
 
+function tryReconnect(): void{
+    // test websocket availability every 1 second
+    const ws = new WebSocket(`ws://${location.hostname}:8765`);
+    const to = setTimeout(() => {
+        ws.close();
+        tryReconnect();
+    }, 1000);
+    ws.onopen = () => {
+        ws.close();
+        clearTimeout(to);
+        window.location.reload();
+    };
+}
+
 let host = location.hostname;
-const objectsync = new ObjectSyncClient(`ws://${host}:8765`);
+const objectsync = new ObjectSyncClient(`ws://${host}:8765`,null,tryReconnect);
 
 objectsync.register(Root);
 objectsync.register(Workspace);
 objectsync.register(Editor);
 objectsync.register(Settings)
+objectsync.register(FileView)
 objectsync.register(Node);
 objectsync.register(Port);
 objectsync.register(Edge);

@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
+from grapycal.sobjects.fileView import FileView
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.sidebar import Sidebar
 from grapycal.sobjects.settings import Settings
@@ -15,6 +16,7 @@ class WorkspaceObject(SObject):
             self.webcam = self.add_child(WebcamStream)
             self.sidebar = self.add_child(Sidebar)
             self.main_editor = self.add_child(Editor)
+            self.file_view = self.add_child(FileView)
         else:
             if old.has_child('settings'):
                 self.settings = self.add_child(Settings,old = old.get_child('settings'))
@@ -30,6 +32,10 @@ class WorkspaceObject(SObject):
                 self.main_editor = self.add_child(Editor,old = old.get_child('main_editor'))
             else:
                 self.main_editor = self.add_child(Editor,old = old.children[old.get_attribute('main_editor')])
+            if old.has_child('file_view'):
+                self.file_view = self.add_child(FileView,old = old.get_child('file_view'))
+            else:
+                self.file_view = self.add_child(FileView)
         
         # read by frontend
         self.add_attribute('main_editor',ObjTopic).set(self.main_editor)

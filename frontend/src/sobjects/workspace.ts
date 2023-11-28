@@ -63,6 +63,9 @@ export class Workspace extends CompSObject{
         }
         this.objectsync.emit('delete',{ids:selectedIds})
     }
+    public openWorkspace(path:string){
+        this.objectsync.emit('open_workspace',{path:path})
+    }
 }
 
 export class WebcamStream extends CompSObject{

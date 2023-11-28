@@ -79,20 +79,27 @@ export class HierarchyNode implements IComponentable{
         }
     }
 
-    addLeaf(leaf: HtmlItem,path: string[]|string){
+    addLeaf(leaf: HtmlItem|IComponentable,path: string[]|string=''){
+        let leaf_: HtmlItem;
+        if(leaf instanceof HtmlItem){
+            leaf_ = leaf;
+        }else{
+            leaf_ = leaf.componentManager.getComponent(HtmlItem);
+        }
+
         if(typeof path === 'string'){
             path = path.split('/')
         }
         if(path.length === 0 || path[0] === ''){
-            leaf.setParent(this.htmlItem,'leaf')
-            this.leafs.push(leaf);
+            leaf_.setParent(this.htmlItem,'leaf')
+            this.leafs.push(leaf_);
         }else{
             let child = this.children.get(path[0]);
             if(!child){
                 this.addChild(path[0]);
                 child = this.children.get(path[0]);
             }
-            child!.addLeaf(leaf,path.slice(1));
+            child!.addLeaf(leaf_,path.slice(1));
         }
     }
 

@@ -1,9 +1,11 @@
 
+import os
 import time
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
+from grapycal.sobjects.fileView import FileView
 from grapycal.sobjects.settings import Settings
 from grapycal.sobjects.controls import *
 from grapycal.sobjects.editor import Editor
@@ -93,6 +95,7 @@ class Workspace:
         self._objectsync.register(Editor)
         self._objectsync.register(Sidebar)
         self._objectsync.register(Settings)
+        self._objectsync.register(FileView)
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
@@ -119,6 +122,7 @@ class Workspace:
             self.initialize_workspace()
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
+        self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)
     
         self.background_runner.run()
 
@@ -183,6 +187,17 @@ class Workspace:
     
     def vars(self)->Dict[str,Any]:
         return self.running_module.__dict__
+    
+    def _open_workspace_callback(self,path):
+        if not os.path.exists(path):
+            raise Exception(f'File {path} does not exist')
+        if not path.endswith('.grapycal'):
+            raise Exception(f'File {path} does not end with .grapycal')
+        pid = os.getpid()
+        exit_message_file = f'grapycal_exit_message_{pid}'
+        with open(exit_message_file,'w') as f:
+            f.write(f'open {path}')
+        self.exit()
 
 if __name__ == '__main__':
     import argparse

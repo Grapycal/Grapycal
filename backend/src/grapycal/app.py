@@ -9,6 +9,7 @@ import grapycal
 from .utils.file import get_direct_sub_folders
 import termcolor
 import time
+import usersettings
 
 class GrapycalApp:
     """
@@ -16,7 +17,7 @@ class GrapycalApp:
 
     :param usersettings.Settings config: the configuration for server
     """
-    def __init__(self, config) -> None:
+    def __init__(self, config:usersettings.Settings) -> None:
         self._config = config
         if not config['path'].endswith('.grapycal'):
             config['path'] += '.grapycal'
@@ -60,10 +61,12 @@ class GrapycalApp:
 
                     # Start workspace
                     print(f'Starting workspace {self._config["path"]} at {self._config["host"]}:{self._config["port"]}...')
+
                     workspace = subprocess.Popen([sys.executable,'-m', 'grapycal.core.workspace',
                         '--port', str(self._config['port']),
                         '--host', self._config['host'],
-                        '--path', self._config['path']],start_new_session=True)
+                        '--path', self._config['path'],
+                        ],start_new_session=True)
                     
                     while True:
                         time.sleep(1)
@@ -71,7 +74,24 @@ class GrapycalApp:
                             print('Workspace exited with code',workspace.poll())
                             break
 
-                    if not self._config['restart']:
+                    restart = self._config['restart'] and workspace.poll() == 0
+
+                    exit_message_file = f'grapycal_exit_message_{workspace.pid}'
+                    if os.path.exists(exit_message_file):
+                        with open(exit_message_file,'r') as f:
+                            exit_message = f.read()
+                        os.remove(exit_message_file)
+                    
+                        for line in exit_message.split('\n'):
+                            if line == '':
+                                continue
+                            op, msg = line.split(' ',1)
+                            if op == 'open':
+                                self._config['path'] = msg
+                                self._config.save_settings()
+                                restart = True
+
+                    if not restart:
                         break
 
             except KeyboardInterrupt:
