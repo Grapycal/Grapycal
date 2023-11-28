@@ -27,8 +27,8 @@ If you want to contribute to Grapycal itself, you can install it in editable mod
 
 .. code-block:: bash
 
-    git clone git@github.com:eri24816/Grapycal.git
-    cd Grapycal
+    git clone git@github.com:eri24816/Grapycal_private.git
+    cd Grapycal_private
     git submodule update --init --recursive
     git checkout dev
 
