@@ -18,11 +18,11 @@ class OptimizerNode(Node):
         self.modules = self.add_attribute('modules',ObjSetTopic,editor_type='objSet')
         self.lr = self.add_attribute('lr',FloatTopic,0.001,editor_type='float')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
-        self.init_modules_port = self.add_in_port('init modules')
-        self.zero_grad_port = self.add_in_port('zero_grad()')
-        self.step_port = self.add_in_port('step()')
-        self.eval_port = self.add_in_port('eval()')
-        self.train_port = self.add_in_port('train()')
+        self.init_modules_port = self.add_in_port('initialize parameters')
+        self.zero_grad_port = self.add_in_port('clear gradient')
+        self.step_port = self.add_in_port('update parameters')
+        self.train_port = self.add_in_port('train mode')
+        self.eval_port = self.add_in_port('eval mode')
 
     def init_node(self):
         self.optimizer : torch.optim.Optimizer | None = None
@@ -57,6 +57,7 @@ class OptimizerNode(Node):
             self.run(self.eval)
         elif port == self.train_port:
             self.run(self.train)
+        port.get_data() # deactivates the edge
 
     def init_modules(self):
         for mn in self.modules.get():

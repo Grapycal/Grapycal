@@ -1,1 +1,3 @@
 Copyright (C) 2023 Grapycal Team - All Rights Reserved
+
+Without permission from Grapycal Team, you may not copy, modify, distribute, use, reproduce or transfer this software or any part thereof.

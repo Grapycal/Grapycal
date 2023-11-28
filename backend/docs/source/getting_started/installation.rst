@@ -36,7 +36,7 @@ If you want to contribute to Grapycal itself, you can install it in editable mod
 
 .. code-block:: bash
 
-    pip install -e backend -e grapycal_builtin
+    pip install -e backend -e extensions/grapycal_builtin
 
 3. Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
 ``backend/src/grapycal/webpage``. Grapycal backend will serve the frontend resources from there.

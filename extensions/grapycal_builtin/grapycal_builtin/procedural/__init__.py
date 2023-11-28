@@ -3,7 +3,7 @@ from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
-from .forNode import ForNode
+from .forNode import *
 from .procedureNode import ProcedureNode
 from .limiterNode import LimiterNode
 from .funcDef import *
