@@ -155,6 +155,7 @@ footer{
     
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
+    z-index: -1;
 }
 
 .simple-node .node-label{

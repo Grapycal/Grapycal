@@ -18,6 +18,13 @@ enum EdgeState {
     DraggingHead,
 }
 
+interface PathResult {
+    tangent: Vector2;
+    normal: Vector2;
+    length: number;
+    points: Vector2[];
+}
+
 export class Edge extends CompSObject {
     tail: ObjectTopic<Port> = this.getAttribute('tail', ObjectTopic<Port>)
     head: ObjectTopic<Port> = this.getAttribute('head', ObjectTopic<Port>)
@@ -34,7 +41,7 @@ export class Edge extends CompSObject {
     path_hit_box: SVGPathElement
     svg: SVGSVGElement
     label: HTMLDivElement
-
+    dotAnimation: DotAnimation
     state: EdgeState = EdgeState.Idle
 
     template = `
@@ -44,6 +51,7 @@ export class Edge extends CompSObject {
             <g>
                 <path class="edge-path" id="path" d=""  fill="none"></path>
                 <path class="edge-path-hit-box" id="path_hit_box" d=""  fill="none"></path>
+                <circle class="edge-dot" id="dot" cx="0" cy="0" r="3" fill="white"></circle>
             </g>
         </svg>
     </div>
@@ -82,6 +90,8 @@ export class Edge extends CompSObject {
         this.svg.style.position = 'absolute'
 
         this.label = this.htmlItem.getEl('label',HTMLDivElement)
+        const dot = this.htmlItem.getEl('dot',SVGCircleElement)
+        this.dotAnimation = new DotAnimation(dot)
 
         this.link2(this.htmlItem.baseElement,'mousedown', () => {
             soundManager.playClick() // why not working?
@@ -150,15 +160,19 @@ export class Edge extends CompSObject {
         })
 
         this.link(this.data_ready.onSet2, (_:number,data_ready: number) => {
-            if(data_ready == 0)
+            if(data_ready == 0){
                 this.svg.classList.add('data-ready')
+                this.dotAnimation.start(this.pathResult)
+            }
             else{
                 this.svg.classList.add('data-ready')
+                this.dotAnimation.start(this.pathResult)
                 let tmp =  data_ready
                 setTimeout(() => {
                     try{
                     if(tmp == this.data_ready.getValue())
                         this.svg.classList.remove('data-ready')
+                        this.dotAnimation.stop()
                     }catch{}
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
@@ -186,6 +200,7 @@ export class Edge extends CompSObject {
         }
         this.head.getValue()?.edges.splice(this.head.getValue()?.edges.indexOf(this),1)
         this.tail.getValue()?.edges.splice(this.tail.getValue()?.edges.indexOf(this),1)
+        this.dotAnimation.stopImmediately()
         super.onDestroy()
     }
     
@@ -325,10 +340,11 @@ export class Edge extends CompSObject {
         head_orientation:-1
     }
 
-    pathResult = {
+    pathResult: PathResult = {
         tangent:new Vector2(NaN,NaN),
         normal:new Vector2(NaN,NaN),
-        length:NaN
+        length:NaN,
+        points:[new Vector2(NaN,NaN),new Vector2(NaN,NaN),new Vector2(NaN,NaN),new Vector2(NaN,NaN)]
     }
 
     private getSVGPath(): string {
@@ -384,7 +400,8 @@ export class Edge extends CompSObject {
         this.pathResult = {
             tangent:mp2.add(head).sub(mp1.add(tail)).normalized(),
             normal:mp2.add(head).sub(mp1.add(tail)).normalized().rotate(Math.PI/2),
-            length:d
+            length:d,
+            points:[tail,mp1,mp2,head]
         }
 
         // let dx = head.x - tail.x
@@ -447,5 +464,71 @@ export class Edge extends CompSObject {
         // }
         
         return path
+    }
+}
+
+class DotAnimation{
+    dot: SVGCircleElement
+    stopDelay: number = 300
+    stopDelayTimer: NodeJS.Timeout
+    stopTime = 0
+    animating: boolean = false
+    pathResult: PathResult
+    lastFrameTime: number = 0
+    private progress: number = 0 // 0~1
+    constructor(dot: SVGCircleElement){
+        this.dot = dot
+        this.dot.setAttribute('opacity','0')
+    }
+
+    start(path: PathResult){
+        this.pathResult = path
+        this.dot.setAttribute('opacity','1')
+        if(!this.animating){
+            requestAnimationFrame(this.animate.bind(this))
+            clearTimeout(this.stopDelayTimer)
+            this.animating = true
+            this.lastFrameTime = performance.now()
+        }
+        this.stopTime = 0
+    }
+
+    stop(){
+        clearTimeout(this.stopDelayTimer)
+        this.stopDelayTimer = setTimeout(() => {
+            this.animating = false
+            this.progress = 0
+        }, this.stopDelay);
+        this.stopTime = performance.now() + this.stopDelay
+    }
+
+    stopImmediately(){
+        clearTimeout(this.stopDelayTimer)
+        this.animating = false
+    }
+
+    animate(){
+        if(!this.animating) return;
+        let now = performance.now()
+        let dt = now - this.lastFrameTime
+
+        if(this.stopTime != 0){
+            // set opacity to (this.stopTime - now)/this.stopDelay
+            let opacity = (this.stopTime - now)/this.stopDelay
+            this.dot.setAttribute('opacity',opacity.toString())
+        }
+
+        this.progress += dt/1000*2
+        if(this.progress > 1) this.progress = 0
+        let [tail,mp1,mp2,head] = this.pathResult.points // A bezier curve of 4 points
+
+        let t = this.progress
+        let x = (1-t)**3*tail.x + 3*(1-t)**2*t*mp1.x + 3*(1-t)*t**2*mp2.x + t**3*head.x
+        let y = (1-t)**3*tail.y + 3*(1-t)**2*t*mp1.y + 3*(1-t)*t**2*mp2.y + t**3*head.y
+        this.dot.setAttribute('cx',x.toString())
+        this.dot.setAttribute('cy',y.toString())
+
+        requestAnimationFrame(this.animate.bind(this))
+        this.lastFrameTime = now
     }
 }

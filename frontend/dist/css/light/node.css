@@ -36,7 +36,12 @@ Define styles for different node categories
 
 
 .node.running .node-label{
-    background-color: var(--t1);
+    background-color: rgba(129, 203, 65, 0.45);
+}
+
+.node:not(.running) .node-label{
+
+    transition: background-color 0.2s ease-out;
 }
 
 .hierarchy-node{
