@@ -159,6 +159,7 @@ export class Edge extends CompSObject {
             this.label.innerText = this.labelTopic.getValue()
         })
 
+        this.updateSVG()
         this.link(this.data_ready.onSet2, (_:number,data_ready: number) => {
             if(data_ready == 0){
                 this.svg.classList.add('data-ready')
@@ -188,7 +189,6 @@ export class Edge extends CompSObject {
         })
         
 
-        this.updateSVG()
     }
 
     onDestroy(): void {

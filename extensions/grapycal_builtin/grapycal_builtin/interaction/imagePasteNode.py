@@ -93,7 +93,7 @@ class ImageDisplayNode(Node):
         self.vmin = self.add_attribute('vmin',FloatTopic,0,editor_type='float')
         self.vmax = self.add_attribute('vmax',FloatTopic,1,editor_type='float')
         self.slice = self.add_text_control(label='slice: ',name='slice',text=':')
-        self.in_port = self.add_in_port('data', 1)
+        self.in_port = self.add_in_port('data', 1,'')
         self.icon_path.set('image')
 
     def restore_from_version(self, version: str, old: NodeInfo):

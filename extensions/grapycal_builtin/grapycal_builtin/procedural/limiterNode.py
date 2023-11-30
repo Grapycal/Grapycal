@@ -13,8 +13,8 @@ class LimiterNode(Node):
         super().build_node()
         self.label.set('Limiter')
         self.shape.set('simple')
-        self.in_port = self.add_in_port('in')
-        self.out_port = self.add_out_port('out')
+        self.in_port = self.add_in_port('in',display_name='')
+        self.out_port = self.add_out_port('out',display_name='')
         self.reduce_factor = self.add_attribute('reduce_factor', IntTopic, 10, editor_type='int')
         self.time_span = self.add_attribute('time_span', FloatTopic, 0.2, editor_type='float')
 

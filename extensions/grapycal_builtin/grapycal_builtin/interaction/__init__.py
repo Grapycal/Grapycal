@@ -94,14 +94,14 @@ class WebcamNode(Node):
             self.webcam.image.on_set.remove(self._on_image_set)
             self.webcam.source_client.on_set.remove(self._source_client_changed)
         return super().destroy()
-    
-class NoneNode(Node):
+
+class TriggerNode(Node):
     category = 'interaction'
     def build_node(self):
         self.shape.set('simple')
-        self.label.set('None')
+        self.label.set('Trigger')
         self.css_classes.append('fit-content')
-        self.add_out_port('None')
+        self.add_out_port('Trigger')
 
     def double_click(self):
         self.out_ports[0].push_data(None)
