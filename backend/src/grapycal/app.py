@@ -74,6 +74,7 @@ class GrapycalApp:
                         continue
                     op, msg = line.split(' ',1)
                     if op == 'open':
+                        # User wants to open a specific workspace
                         self._config['path'] = msg
                         self._config.save_settings()
                         restart = True

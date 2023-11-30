@@ -180,6 +180,8 @@ class Workspace:
         for extension_name in data['extensions']:
             self._extention_manager.create_preview_nodes(extension_name)
 
+        self._objectsync.clear_history_inclusive()
+
 
     def get_workspace_object(self) -> WorkspaceObject:
         # In case this called in self._objectsync.create_object(WorkspaceObject), 

@@ -41,9 +41,14 @@ class ExtensionManager:
 
     def import_extension(self, extension_name: str, create_preview_nodes = True) -> Extension:
         extension = self._load_extension(extension_name)
-        if create_preview_nodes:
-            self.create_preview_nodes(extension_name)
+        try:
+            if create_preview_nodes:
+                self.create_preview_nodes(extension_name)
+        except Exception:
+            self._unload_extension(extension_name)
+            raise
         self._update_available_extensions_topic()
+        self._objectsync.clear_history_inclusive()
         return extension
 
     def update_extension(self, extension_name: str) -> None:
@@ -124,6 +129,7 @@ class ExtensionManager:
         self._update_available_extensions_topic()
 
         logger.info(f'Updated extension {extension_name}')
+        self._objectsync.clear_history_inclusive()
 
         #TODO: cut history
 
@@ -132,6 +138,7 @@ class ExtensionManager:
         self._check_extension_not_used(extension_name)
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
+        self._objectsync.clear_history_inclusive() 
 
     def _update_available_extensions_topic(self) -> None:
         available_extensions = self._scan_available_extensions()
@@ -176,6 +183,7 @@ class ExtensionManager:
 
     
     def _install_extension(self, extension_name: str) -> None:
+        # TODO: async
         # check if the extension is compatible
         self._check_extension_compatible(extension_name)
         # run pip install
