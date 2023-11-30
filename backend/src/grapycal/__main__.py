@@ -8,7 +8,6 @@ def main(s: usersettings.Settings):
     """
     Entry function of backend server
     """
-    s.load_settings()
     app = GrapycalApp(s)
     app.run()
 
