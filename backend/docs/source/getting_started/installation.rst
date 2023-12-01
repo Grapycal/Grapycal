@@ -15,13 +15,15 @@ Prerequisites:
 
     pip install grapycal grapycal-builtin
 
-You can also install existing extensions from PyPI. For example:
+    
+Once it's installed, we can go ahead to :doc:`run_grapycal`.
+
+Optionally you can also install existing extensions from PyPI. For example:
 
 .. code-block:: bash
 
     pip install grapycal-torch
 
-Once it's installed, we can go ahead to :doc:`run_grapycal`.
 
 Install from source
 -------------------

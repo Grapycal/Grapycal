@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "grapycal-torch"
+version = "0.1.2"
+description = "A Grapycal extension for PyTorch"
+authors = ["eri24816 <a931eric@gmail.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+packages = [
+    { include = "grapycal_torch", from=".."}
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+torch = "2.*"
+torchvision = "^0.16.1"
+grapycal = ">=0.8.0"
+einops = "^0.7.0"
+
+
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "poetry"
+update_changelog_on_bump = true
+major_version_zero = true
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
