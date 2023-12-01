@@ -22,7 +22,7 @@ jobs:
       - name: Install docs dependencies & Generate
         run: |
           cd backend && poetry install --only docs
-          cd docs && poetry run make html
+          cd docs && poetry run make clean && poetry run make html
         
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
