@@ -2,15 +2,14 @@ Installation
 ============
 
 
-Prerequisites:
-
-- Python 3.11
-- npm 9.5.1 or higher (older versions may work, but are not tested)
-
 Install from PyPI
 -----------------
 
 This approach is recommended for end users and people who want to develop Grapycal extensions.
+
+Prerequisites:
+
+- Python 3.11
 
 .. code-block:: bash
 
@@ -22,6 +21,11 @@ Install from source
 -------------------
 
 If you want to contribute to Grapycal itself, you can install it in editable mode from source.
+
+Prerequisites:
+
+- Python 3.11
+- npm 9.5.1 or higher (older versions may work, but are not tested)
 
 1. Clone the repository
 
