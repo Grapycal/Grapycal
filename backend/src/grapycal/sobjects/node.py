@@ -456,11 +456,11 @@ class Node(SObject,metaclass=NodeMeta):
             self._run_directly(task,redirect_output=False)
 
     def _on_exception(self, e, truncate=0):
-        self.running.set(random.randint(0,10000))
         message = ''.join(traceback.format_exception(e)[truncate:])
         if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
+            self.running.set(random.randint(0,10000))
             if len(self.output) > 100:
                 self.output.set([])
                 self.output.insert(['error','Too many output lines. Cleared.'])

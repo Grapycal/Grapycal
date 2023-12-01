@@ -11,7 +11,7 @@
             "module": "grapycal",
             "args": ["--no-serve-webpage"],
             "justMyCode": true,
-            "cwd": "${workspaceFolder}/test_working_dirs/working_dir_2"
+            "cwd": "${workspaceFolder}/extensions"
         }
     ]
 }
