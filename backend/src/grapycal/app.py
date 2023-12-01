@@ -10,7 +10,7 @@ import grapycal
 from .utils.file import get_direct_sub_folders
 import termcolor
 import time
-import usersettings
+from .utils import usersettings
 
 class GrapycalApp:
     """

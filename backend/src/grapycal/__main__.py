@@ -1,8 +1,9 @@
 # python -m grapycal
 
 from grapycal import GrapycalApp
-import usersettings
+from .utils import usersettings
 import argparse
+
 
 def main(s: usersettings.Settings):
     """
