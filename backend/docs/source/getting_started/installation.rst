@@ -4,7 +4,7 @@ Installation
 
 Prerequisites:
 
-- Python 3.11 or higher
+- Python 3.11
 - npm 9.5.1 or higher (older versions may work, but are not tested)
 
 Install from PyPI
