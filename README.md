@@ -1,5 +1,14 @@
 
-![Image](https://i.imgur.com/z4fRALC.png)
+![Image](https://i.imgur.com/hEnU3MI.png)
+
+[![PyPI - Version](https://img.shields.io/pypi/v/grapycal)](https://pypi.org/project/grapycal/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dw/grapycal)](https://pypi.org/project/grapycal/)
+[![License](https://img.shields.io/github/license/eri24816/Grapycal)](./LICENSE)
+
+
+[![Discord](https://img.shields.io/discord/1094532480721236041?logo=discord&labelColor=white&color=5865F2)](https://discord.gg/jm3UttQf)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/eri24816/Grapycal/pulls)
+[![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/eri24816/Grapycal/graphs/contributors)
 
 Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and runnig programs as a graph.
 
@@ -61,3 +70,14 @@ Grapycal and its dependences consist of the following 6 packages:
 - [Topicsync](https://github.com/eri24816/Topicsync) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
 
 - [topicsync-client](https://github.com/eri24816/topicsync-client) and [objectsync-client](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.
+
+
+## Star History
+
+<a href="https://star-history.com/#eri24816/Grapycal&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
+  </picture>
+</a>
