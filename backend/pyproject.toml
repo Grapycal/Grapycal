@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal"
-version = "0.7.0"
+version = "0.8.0"
 description = "A highly interactive visual programming language"
 authors = [
     "eri24816 <a931eric@gmail.com>",
@@ -46,7 +46,7 @@ update_changelog_on_bump = true
 major_version_zero = true
 version_files = [
     "docs/source/conf.py:release",
-    "__init__.py:__version__",
+    "src/grapycal/__init__.py:__version__",
     "../frontend/package.json:version",
     "../extensions/grapycal_builtin/pyproject.toml:version",
     "../extensions/grapycal_builtin/pyproject.toml:grapycal",

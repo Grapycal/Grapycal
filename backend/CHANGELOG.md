@@ -1,3 +1,37 @@
+## v0.8.0 (2023-12-01)
+
+### Feat
+
+- allow opening another workspace
+- improve UI
+- list extensions on PyPI on the UI
+
+### Fix
+
+- small bug
+- config bug
+- update package lock
+- add dependency
+- disallow undoing when big things happen
+- fix ctrl c recreating workspace bug
+- improve UI
+- improve UI
+- improve some nodes
+- split out grapycal_torch
+- update package-lock
+- minor fix
+- improve development build process
+- improve ui
+- bypass mime check by removing type=module
+- update dependency
+- update dependency
+- fix bugs
+
+### Refactor
+
+- rearrange project structure to enable production
+- place extensions in extensions folder
+
 ## v0.7.0 (2023-11-15)
 
 ### Feat
