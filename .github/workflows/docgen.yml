@@ -1,5 +1,8 @@
 name: Generate document
 on: push
+  branches:
+    - main
+    
 permissions:
   contents: write
 
