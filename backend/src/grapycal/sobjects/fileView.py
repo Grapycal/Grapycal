@@ -18,8 +18,13 @@ class FileView(SObject):
         result = []
         for f in os.listdir(path):
             if os.path.isdir(os.path.join(path,f)):
+                if f.startswith('.'):
+                    continue
+                if f == '__pycache__':
+                    continue
                 result.append({'name':f,'is_dir':True})
             else:
-                result.append({'name':f,'is_dir':False})
+                if f.endswith('.grapycal'):
+                    result.append({'name':f,'is_dir':False})
 
         return result

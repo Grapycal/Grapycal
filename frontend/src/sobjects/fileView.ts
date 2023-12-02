@@ -12,15 +12,16 @@ export class FileViewItem extends Componentable{
         </div>
         `;
     }
-    protected get style(): string {return `
+    protected get style(): string {return ` 
         .file-item{
             display: flex;
             flex-direction: row;
             align-items: center;
             padding: 4px;
+            cursor: pointer;
         }
         .file-item:hover{
-            background-color: var(--hover-color);
+            background-color: var(--z3);
         }
         .file-item .file-name{
             margin-left: 8px;

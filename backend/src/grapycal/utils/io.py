@@ -1,3 +1,4 @@
+import gzip
 import logging
 logger = logging.getLogger(__name__)
 
@@ -78,13 +79,21 @@ class OutputStream:
         self._exit_flag = True
         self._enable_flush_event.set()
 
-def json_write(path:str,data:Any):
-    with open(path,'w') as f:
-        json.dump(data,f)
+def json_write(path:str,data:Any,compress=False):
+    if not compress:
+        with open(path,'w') as f:
+            json.dump(data,f)
+    else:
+        with gzip.open(path,'wb') as f:
+            f.write(json.dumps(data).encode('utf-8'))
 
 def json_read(path):
-    with open(path,'r') as f:
-        return json.load(f)
+    try:
+        with open(path,'r') as f:
+            return json.load(f)
+    except UnicodeDecodeError: # compressed
+        with gzip.open(path,'rb') as f:
+            return json.loads(f.read().decode('utf-8'))
     
 def file_exists(path):
     try:
