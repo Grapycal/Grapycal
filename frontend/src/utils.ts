@@ -202,6 +202,11 @@ export class TextBox{
     private sizeSimulator = document.createElement("div")
     public onResize = new Action<[number,number]>()
     set value(value:string){
+        if(this.hideTrailingNewline){
+            if(value.endsWith("\n")){
+                value = value.slice(0,-1)
+            }
+        }
         this.textarea.value = value
         this.resize()
     }
@@ -232,10 +237,10 @@ export class TextBox{
     set disabled(value:boolean){
         this.textarea.disabled = value
     }
-    constructor(parent:HTMLElement=document.body){
+    constructor(parent:HTMLElement=document.body, private hideTrailingNewline:boolean=false){
         this.textarea.classList.add('grow')
         // set textwrap to no-wrap
-        this.textarea.style.whiteSpace = 'pre';
+        //this.textarea.style.whiteSpace = 'pre';
         // overflow hidden to prevent scrollbars
         this.textarea.style.overflow = 'hidden';
 
@@ -250,17 +255,32 @@ export class TextBox{
         })
         parent.appendChild(this.textarea)
         parent.appendChild(this.sizeSimulator)
+
+        
+        this.textarea.style.height='0px'
+        this.textarea.style.width='0px'
+        this.sizeSimulator.style.height='0px'
+        this.sizeSimulator.style.width='0px'
     }
 
     private prevHeight = 0
     private prevWidth = 0
     resize (){
         setTimeout(() => {
+
+            
+            if(this.textarea.value=='' && this.textarea.disabled){
+                this.textarea.style.height='0px'
+                this.textarea.style.width='0px'
+                this.sizeSimulator.style.height='0px'
+                this.sizeSimulator.style.width='0px'
+                return
+            }
             this.sizeSimulator.style.font = window.getComputedStyle(this.textarea).font;
             //sync padding
             this.sizeSimulator.style.padding = window.getComputedStyle(this.textarea).padding;
             this.sizeSimulator.innerHTML = textToHtml(this.textarea.value);
-            let calculatedWidth =this.sizeSimulator.scrollWidth+ 0 // I don't know why it needs more 10px
+            let calculatedWidth =this.sizeSimulator.scrollWidth+ 4 // I don't know why it needs more 10px
             this.textarea.style.width = calculatedWidth+ 'px';
             
             this.textarea.style.height = '0';

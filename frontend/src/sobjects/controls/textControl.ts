@@ -27,7 +27,10 @@ export class TextControl extends Control {
 
     protected onStart(): void {
         super.onStart()
-        this.textBox = new TextBox(this.htmlItem.getElByClass("control"))
+        this.textBox = new TextBox(this.htmlItem.getElByClass("control"),this.editable.getValue()==0)
+        if(this.editable.getValue()==0){
+            (this.htmlItem.baseElement as HTMLDivElement).style.minHeight = "0px"
+        }
         this.textBox.textarea.classList.add("control-text","text-field")
         this.textBox.value = this.text.getValue()
         this.textBox.onResize.add(()=>{this.node.moved.invoke()})

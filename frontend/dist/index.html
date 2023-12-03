@@ -25,7 +25,9 @@
         </div>
         <div class = "sidebar-container" id="left-sidebar-container">
           <div class="sidebar-tab" id="tab-1" style="display: none;">
-            <h1>About</h1>
+            <div class="sidebar-tab-title">
+              <h1>About</h1>
+            </div>
             <hr>
             Grapycal is an open source project <a href="https://github.com/eri24816/Grapycal">[Github]</a>.
             Welcome to join and contribute!
@@ -42,22 +44,30 @@
           </div>
 
           <div class="sidebar-tab" id="tab-file-view" style="display: none;">
-            <h1>Files</h1>
-            <hr>
+            <div class="sidebar-tab-title">
+              <h1>Files</h1>
+
+              <hr>
+            </div>
+            double click a file to open it
+            <br></br>
           </div>
 
           <div class="sidebar-tab" id="tab-node-list" style="display: none;">
-            <h1>Node List</h1>
-            <hr>
-            <div id="node-list-container"></div>
-
-            <hr>
+            <div class="sidebar-tab-title">
+              <h1>Node List</h1>
+              <hr>
+            </div>
             Want more nodes? Extend the list at 🚀Extensions tab.
+            <br></br> 
+            <div id="node-list-container"></div>
 
           </div>
           <div class="sidebar-tab" id="tab-3" style="display: none;">
-            <h1>Extensions</h1>
-            <hr>
+            <div class="sidebar-tab-title">
+              <h1>Extensions</h1>
+              <hr>
+            </div>
             <h2>In Use</h2>
             <div class="card-gallery" id="imported-extensions"></div>
             <h2>Avaliable</h2>
@@ -67,12 +77,16 @@
             <button id="refresh-extensions">Refresh</button>
           </div>
           <div class="sidebar-tab" id="tab-settings" style="display: none;">
-            <h1>Settings</h1>
-            <hr>
+            <div class="sidebar-tab-title">
+              <h1>Settings</h1>
+              <hr>
+            </div>
           </div>
           <div class="sidebar-tab" id="tab-examples" style="display: none;">
-            <h1>Examples</h1>
-            <hr>
+            <div class="sidebar-tab-title">
+              <h1>Examples</h1>
+              <hr>
+            </div>
             <div class="card-gallery" id="example-gallery"></div>
           </div>
         </div>
