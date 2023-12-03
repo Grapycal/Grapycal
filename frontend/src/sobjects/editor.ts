@@ -88,8 +88,12 @@ export class Editor extends CompSObject{
         new AddNodeMenu(this)
     }
 
+    private lastUpdatePortNearMouse = 0
     private mouseMove(e: MouseEvent){
         // If there's performance issues, maybe optimize this
+        let now = Date.now()
+        if(now - this.lastUpdatePortNearMouse <500) return;
+        this.lastUpdatePortNearMouse = now;
         for(let port of this.TopDownSearch(Port)){
             let dist = port.htmlItem.position.distanceTo(this.eventDispatcher.mousePos)
             if(dist < 200){

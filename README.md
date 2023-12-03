@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/eri24816/Grapycal)](./LICENSE)
 
 
-[![Discord](https://img.shields.io/discord/1094532480721236041?logo=discord&labelColor=white&color=5865F2)](https://discord.gg/jm3UttQf)
+[![Discord](https://img.shields.io/discord/1094532480721236041?logo=discord&labelColor=white&color=5865F2)](https://discord.gg/adNQcS42CT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/eri24816/Grapycal/pulls)
 [![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/eri24816/Grapycal/graphs/contributors)
 </div>
@@ -55,13 +55,13 @@ pip install grapycal grapycal-builtin
 python -m grapycal # Grapycal is now avaliable at localhost:9001
 ```
 
-If you have any questions or ideas to share, feel free to join the [Discord server](https://discord.gg/baHWyr6Q).
+If you have any questions or ideas to share, feel free to join the [Discord server](https://discord.gg/adNQcS42CT).
 
 ## Contribute
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To discuss, feel free to open an issue or join the [Discord server](https://discord.gg/baHWyr6Q).
+To discuss, feel free to open an issue or join the [Discord server](https://discord.gg/adNQcS42CT).
 
 ## Dependencies
 

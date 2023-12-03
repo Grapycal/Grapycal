@@ -153,7 +153,7 @@ class Workspace:
             'id_count': self._objectsync.get_id_count(),
             'workspace_serialized': workspace_serialized.to_dict(),
         }
-        json_write(path, data)
+        json_write(path, data, compress=True)
         time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         logger.info(f'Workspace saved to {path} at {time_str}')
 

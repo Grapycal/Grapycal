@@ -12,15 +12,16 @@ export class FileViewItem extends Componentable{
         </div>
         `;
     }
-    protected get style(): string {return `
+    protected get style(): string {return ` 
         .file-item{
             display: flex;
             flex-direction: row;
             align-items: center;
             padding: 4px;
+            cursor: pointer;
         }
         .file-item:hover{
-            background-color: var(--hover-color);
+            background-color: var(--z3);
         }
         .file-item .file-name{
             margin-left: 8px;
@@ -56,7 +57,7 @@ export class FileView extends CompSObject{
         this.makeRequest('ls',{path:''},(response)=>{
             // format: [{name,is_dir}]
             for(let file of response){
-                let item = new FileViewItem(file.name,file.is_dir,()=>{this.openWorkspace(`${file.name}`)})
+                let item = new FileViewItem(file.name,file.is_dir,()=>{this.openWorkspace(`${file.path}`)})
                 this.hierarchy.addLeaf(item)
             }
         })

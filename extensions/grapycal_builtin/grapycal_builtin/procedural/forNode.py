@@ -1,5 +1,6 @@
 from typing import Iterable
 from grapycal import Node
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from grapycal.sobjects.sourceNode import SourceNode
@@ -62,6 +63,10 @@ class RepeatNode(SourceNode):
         super().init_node()
         self.iterator:Iterable|None = None
         self.times.on_set += lambda times: self.label.set(f'Repeat {times} times')
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('times')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task)
