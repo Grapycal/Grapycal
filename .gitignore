@@ -2,6 +2,7 @@
 2_frontend_run.bat
 
 *.grapycal
+!backend/src/grapycal/Welcome.grapycal
 *.pyc
 
 # For early development, the grapycal_torch extension is included in this repo.
