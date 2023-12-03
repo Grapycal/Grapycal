@@ -3,7 +3,7 @@
 
 <div align="center">
 
-[![PyPI - Version](https://img.shields.io/pypi/v/grapycal)](https://pypi.org/project/grapycal/)
+[![pip install grapycal grapycal-builtin](https://img.shields.io/badge/pip_install-grapycal_grapycal--builtin-purple)](https://pypi.org/project/grapycal/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/grapycal)](https://pypi.org/project/grapycal/)
 [![License](https://img.shields.io/github/license/eri24816/Grapycal)](./LICENSE)
 
