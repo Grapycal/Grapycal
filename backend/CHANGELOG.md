@@ -1,3 +1,17 @@
+## v0.9.0 (2023-12-03)
+
+### Feat
+
+- show Welcome.grapycal for new user
+- compress .grapycal files with gzip
+
+### Fix
+
+- list Welcome.grapycal in file view
+- improve UI
+- python 3.12 compatibility
+- remove unused files
+
 ## v0.8.0 (2023-12-01)
 
 ### Feat

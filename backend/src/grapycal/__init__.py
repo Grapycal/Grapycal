@@ -1,4 +1,4 @@
-__version__ = '0.8.0'
+__version__ = '0.9.0'
 from grapycal.app import GrapycalApp
 from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.utils.config import load_config
