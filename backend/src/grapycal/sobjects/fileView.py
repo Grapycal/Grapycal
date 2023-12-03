@@ -25,6 +25,9 @@ class FileView(SObject):
                 result.append({'name':f,'is_dir':True})
             else:
                 if f.endswith('.grapycal'):
-                    result.append({'name':f,'is_dir':False})
+                    result.append({'name':f,'path':f,'is_dir':False})
+
+        from grapycal import app
+        result += [{'name':'Welcome.grapycal','path':os.path.join(os.path.dirname(os.path.abspath(app.__file__)),"Welcome.grapycal"),'is_dir':False}]
 
         return result

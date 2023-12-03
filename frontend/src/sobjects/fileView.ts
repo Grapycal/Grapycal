@@ -57,7 +57,7 @@ export class FileView extends CompSObject{
         this.makeRequest('ls',{path:''},(response)=>{
             // format: [{name,is_dir}]
             for(let file of response){
-                let item = new FileViewItem(file.name,file.is_dir,()=>{this.openWorkspace(`${file.name}`)})
+                let item = new FileViewItem(file.name,file.is_dir,()=>{this.openWorkspace(`${file.path}`)})
                 this.hierarchy.addLeaf(item)
             }
         })
