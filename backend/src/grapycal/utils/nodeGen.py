@@ -79,6 +79,7 @@ class MoudleNodeGenerator():
                 super().build_node()
                 self.label.set(func.__name__)
                 self.shape.set(shape)
+                self.__doc__ = func.__doc__ or 'Sorry, no docstring for this function.'
                 for css_class in css_classes:
                     self.css_classes.append(css_class)
 
