@@ -209,7 +209,7 @@ export class AddNodeMenu extends PopupMenu{
         super()
         this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
         this.search = this.htmlItem.getHtmlEl('search') as HTMLInputElement
-        this.nodeTypesTopic = Workspace.instance.objectsync.getTopic('node_types',DictTopic<string,any>)
+        this.nodeTypesTopic = Workspace.instance.nodeTypesTopic
         this.link(this.nodeTypesTopic.onSet,()=>{this.nodeTypesIsDirty = true})
     }
     public addOption(text:string,onclick:()=>void){

@@ -200,7 +200,8 @@ class ExtensionManager:
         for node_type_name, node_type in self._extensions[name].node_types.items():
             self._node_types_topic.add(node_type_name,{
                 'name':node_type_name,
-                'category':node_type.category
+                'category':node_type.category,
+                'description':node_type.__doc__,
             })
         return self._extensions[name]
     

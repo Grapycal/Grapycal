@@ -1,4 +1,4 @@
-import { ObjectSyncClient, ObjectTopic, StringTopic, GenericTopic, IntTopic} from "objectsync-client"
+import { ObjectSyncClient, ObjectTopic, StringTopic, GenericTopic, IntTopic, DictTopic} from "objectsync-client"
 import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
@@ -20,6 +20,8 @@ export class Workspace extends CompSObject{
     readonly functionalSelection = new SelectionManager(this) 
     readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
+    readonly nodeTypesTopic = this.objectsync.getTopic('node_types',DictTopic<string,any>)
+    
     get clientId(){
         return this.objectsync.clientId
     }

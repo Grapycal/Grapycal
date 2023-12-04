@@ -41,6 +41,14 @@ export class NodeInspector extends Componentable{
         `;
     }
 
+    protected get style(): string {return `
+        #extension_name{
+
+            color: var(--text-low);
+        }
+        
+    `}
+
     nodeTypeDiv: HTMLElement;
     extensionNameDiv: HTMLElement;
     nodeDescriptionDiv: HTMLElement;
@@ -119,16 +127,32 @@ export class NodeInspector extends Componentable{
             this.linker.link(outputAttribute.onInsert,this.addOutput);
             this.linker.link(outputAttribute.onSet,this.onOutputSet);
             
-            return;
         }
-    
-        let nodeTypeString = '';
+        else{//multiple nodes
+            let nodeTypeString = '';
+            for(let node of this.nodes){
+                nodeTypeString += node.type_topic.getValue().split('.')[1] + ', ';
+            }
+            nodeTypeString = nodeTypeString.slice(0,-2);
+            this.nodeTypeDiv.innerText = nodeTypeString;
+            this.extensionNameDiv.innerText = '';
+        }
+        // if all nodes have the same description, display it
+        const node_types_topic = Workspace.instance.nodeTypesTopic
+        let description = ''
         for(let node of this.nodes){
-            nodeTypeString += node.type_topic.getValue().split('.')[1] + ', ';
+            let nodeType = node.type_topic.getValue()
+            let nodeTypeDescription = node_types_topic.getValue().get(nodeType).description
+            if(description === ''){
+                description = nodeTypeDescription
+            }else{
+                if(description !== nodeTypeDescription){
+                    description = ''
+                    break
+                }
+            }
         }
-        nodeTypeString = nodeTypeString.slice(0,-2);
-        this.nodeTypeDiv.innerText = nodeTypeString;
-        this.extensionNameDiv.innerText = '';
+        this.nodeDescriptionDiv.innerText = description
     }
     
     private addOutput(item:[string,string]){
