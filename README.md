@@ -22,13 +22,13 @@ Features:
 
 - Dynamic: Grapycal allows users to modify the running graph for instant changes in its behavior. That includes adjusting parameters, adding or removing nodes from a workflow, and terminating a loop.
 
-- Extendable: Grapycal provides a set of API for creating custom nodes for any domain, such as deep learning, robotics, or music synthesis.
+- Extendable: Grapycal provides a set of API for creating custom nodes for arbitary domain, such as deep learning, robotics, or music synthesis.
 
 - Collaborative: Custom nodes definitions can be shared as Python packages. Thus, nodes for various domains can be mixed in a graph to form a powerful tool or a creative artwork (I’ll create some examples when I have time). What’s more, Grapycal supports real-time collaboration, allowing a group of people to work on the same graph over the Internet.
 
 Grapycal is not (yet):
 
-- Fast: Grapycal is yet another layer of abstraction on top of Python. Some overhead is introduced for its interactivity and dynamics. However, the overhead would be relatively small if the graph doesn’t run at a high frequency ( less than ~1000 node runs per second ). For example, if your program mainly computes with C extensions (such as NumPy) or uses GPU heavily (such as deep learning tasks), you shouldn’t feel an impact on performance.
+- Fast: Grapycal is yet another layer of abstraction on top of Python. Some overhead is introduced for its interactivity and dynamics. However, the overhead would be relatively small if the graph doesn’t run at a high frequency ( less than ~1000 node runs per second ). For example, if your program mainly computes with C extensions (such as NumPy) or uses GPU heavily (such as deep learning tasks), there will be little impact on performance.
 
 - Stable: Grapycal is not heavily tested to ensure the graph always runs as expected.
 
@@ -75,6 +75,32 @@ Grapycal and its dependences consist of the following 6 packages:
 
 - [topicsync-client](https://github.com/eri24816/topicsync-client) and [objectsync-client](https://github.com/eri24816/ObjectSyncClient_ts): Frontend dependencies. npm packages.
 
+## Acknowledgement
+
+Grapycal is inspired by these amazing projects. Also take a look at them
+
+- [Ryven](https://github.com/leon-thomm/Ryven)
+
+- Unity shader graph
+
+- Blender node editor
+
+- [Scratch](https://scratch.mit.edu/)
+
+- [Jupyter Notebook](https://github.com/jupyter/notebook)
+
+
+These tools or libraries help Grapycal a lot:
+
+- [Python](https://python.org/)
+
+- [TypeScript](https://typescriptlang.org/)
+
+- [Poetry](https://python-poetry.org/)
+
+- [Commitizen](https://github.com/commitizen-tools/commitizen)
+
+- [Three.js](https://threejs.org/)
 
 ## Star History
 
@@ -85,3 +111,4 @@ Grapycal and its dependences consist of the following 6 packages:
     <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
   </picture>
 </a>
+
