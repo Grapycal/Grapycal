@@ -6,7 +6,13 @@ def get_not_installed_extensions() -> list[str]:
     '''
     Returns a list of available extensions that is not installed yet.
     '''
-    data = yaml.safe_load(requests.get('https://github.com/eri24816/grapycal_data/raw/main/data.yaml').text)
+    try:
+        data = yaml.safe_load(requests.get('https://github.com/eri24816/grapycal_data/raw/main/data.yaml').text)
+    except Exception as e :
+        print('Error while fetching data.yaml from github. Maybe no internet connection?')
+        return []
+
+
     not_installed_extensions = []
     for name,extension_data in data['extensions'].items():
         not_installed_extensions.append(name)

@@ -15,7 +15,12 @@ export class DictEditor extends Editor<DictTopic<string,string>> {
             <div class="container">
                 <div class="container" id="slot_container"></div>
                 <div class="container horiz">
-                    <input id="key" type="text" class="grow">
+                    <input id="key" type="text" class="grow" list="ab">
+                    <datalist id="ab">
+                        <option value="aht4w">
+                        <option value="ahqg">
+                        <option value="aqg">
+                    </datalist>
                     :
                     <input id="value" type="text" class="grow">
                     <button id="add-button" class="button center-align">+</button>
