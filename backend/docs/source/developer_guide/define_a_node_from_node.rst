@@ -194,7 +194,7 @@ Here we clearify the node creation process in Grapycal.
 
 ``build_node()``, ``init_node()`` and ``restore_from_version()`` are the three methods related to node creation. In different cases, different methods will be called.
 
-.. figure:: https://i.imgur.com/u0wGw9r.png
+.. figure:: https://i.imgur.com/edbXiKB.png
    :alt: Creation process of a node
    :align: center
 
@@ -206,10 +206,10 @@ Here we clearify the node creation process in Grapycal.
 -   **The user deletes a node, then undo the deletion**. In this case, ``build_node()`` is not called, instead, Grapycal automatically restores the node's attributes,
     controls and ports. Then ``init_node()`` is called.
 
--   **A graph being load from disk**. Same as the second case.
+-   **The workspace is being load from disk**. When workapce loads, Grapycal recreates all the nodes that were saved in the workspace. In this case, ``build_node()``, then ``init_node()``, ``restore_from_version()`` are called.
 
 -   **An extension being upgraded**. To upgrade an extension, Grapycal deletes the old node and creates a new one using the newly-defined node type.
-    For the new node, ``build_node()``, ``restore_from_version()``, then ``init_node()`` are called.
+    For the new node, ``restore_from_version()``, then ``init_node()``, ``build_node()`` are called.
 
 Let's see an example. Suppose we have a node type called ``CounterNode`` with a text control and a button control.
 When the user clicks the button, the text control will show the number of times the button is clicked.

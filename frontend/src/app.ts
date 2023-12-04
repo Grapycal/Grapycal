@@ -17,7 +17,7 @@ import { Footer } from './ui_utils/footer'
 import { Header } from './ui_utils/header'
 import { ThreeControl } from './sobjects/controls/threeControl'
 import { LinePlotControl } from './sobjects/controls/linePlotControl'
-import { Settings } from './ui_utils/settings'
+import { Settings } from './sobjects/settings'
 import { FetchWithCache } from './utils'
 import { FileView } from './sobjects/fileView'
 

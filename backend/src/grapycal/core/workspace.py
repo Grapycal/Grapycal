@@ -49,6 +49,8 @@ def deserialize_sort_key(x: SObjectSerialized) -> int:
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
+        self.port = port
+        self.host = host
         self.running_module = running_module
         ''''''
 
@@ -81,6 +83,14 @@ class Workspace:
         await asyncio.gather(self._objectsync.serve(),self.clock.run())
 
     def run(self) -> None:
+
+        # check port not in use
+        import socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex((self.host, self.port))
+        if result == 0:
+            raise Exception(f'Port {self.port} is already in use. Maybe another instance of grapycal is running?')
+
         event_loop_set_event = threading.Event()
         t = threading.Thread(target=self._communication_thread,daemon=True,args=[event_loop_set_event]) # daemon=True until we have a proper exit strategy
 

@@ -21,7 +21,7 @@ To specify the port of http server, use the ``--http-port`` option:
 
     python -m grapycal --http-port 9002 # the default port is 9001
 
-Next, go ahead to :doc:`basic_usage`.
+Next, head over to :doc:`basic_usage`.
 
 Further details
 ---------------

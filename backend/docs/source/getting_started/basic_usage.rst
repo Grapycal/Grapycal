@@ -9,18 +9,17 @@
 Basic Usage
 =============
 
-In Grapycal's UI layout, the left-side-bar contains the node library and the settings button.
-The rest of the window is the editor, where you can construct your graph.
+In Grapycal's UI layout, there are 3 main parts: the function tabs (node list by default), the graph editor and the inspector.
 
-.. figure:: https://i.imgur.com/gwDaxN0.png
+.. figure:: https://i.imgur.com/5iC9bIs.png
     :align: center
-    :width: 80%
+    :width: 100%
 
-    |ss| Yes, it's basically Scratch |se|
 
-The node library contains all the nodes that are available to use. 
-Drag them into the editor to create new instances of them.
-Or, you can also type the name of the node directly into the editor to create it.
+The node list contains all the nodes to use. To create a node, you can either:
+
+1. drag them into the editor.
+2. type the nodes' names directly and select the one you want from the auto-complete list.
 
 Construct a Graph
 -------------------
@@ -41,7 +40,62 @@ You can make the graph as complex as you want. Note that even the expression has
     :align: center
     :width: 80%
 
-Undo/Redo
----------
+Operations and Hotkeys 
+--------
 
-You can undo/redo changes to the graph by pressing ``Ctrl+Z`` and ``Ctrl+Y`` respectively.
+* ``wheel on editor``: Zoom in/out.
+* ``drag on editor``: Pan.
+* ``Ctrl + S``: Save the workspace.
+* ``Ctrl + Z``: Undo.
+* ``Ctrl + Y``: Redo.
+* ``Ctrl + Q``: Quit the application.
+* ``Shift + click node or edge``: Select multiple nodes or edges (additive).
+* ``Ctrl + click node or edge``: Select multiple nodes or edges (toggle).
+* ``Ctrl + drag editor``: Rectangular select.
+* ``Alt + drag node``: Disables the auto-layout and allows you to move the node freely.
+* ``Tab``: Toggle the inspector.
+
+Function Tabs
+--------------
+
+Function tabs are located on the left side of the window. They are used to manage the workspace.
+
+File 📁
+^^^^
+
+The file tab lists all the files in the current working directory (cwd). You can open a Grapcal workspace file (\*.grapycal) by double clicking on it.
+
+Node List 📜
+^^^^
+
+The node list tab contains all the nodes that can be used in the graph. You can view them, pick one you like and drag it into the editor.
+
+Extensions 🚀
+^^^^
+
+The extensions tab comprises with three sections, In Use, Available and Not Installed.
+
+* In Use: Lists all the extensions that are imported in the current workspace.
+* Available: Lists all the extensions that are installed but not imported in the current workspace.
+* Not Installed: Provides some recommended extensions on PyPI. You can install them by clicking the install button.
+
+Settings 🛠️
+^^^^
+
+The settings tab allows you to change the settings of the current workspace or preferences.
+
+Examples💡
+^^^^
+
+This tab has not been implemented yet. It will contain some example files that can be downloaded and opened.
+
+About
+^^^^
+
+About is about.
+
+Inspector
+------------
+
+The inspector is used to view and edit the attributes of the selected nodes. It is located on the right side of the window.
+

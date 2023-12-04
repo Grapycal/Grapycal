@@ -1,4 +1,4 @@
-import { CompSObject } from "../sobjects/compSObject"
+import { CompSObject } from "./compSObject"
 import { Inspector } from "../inspector/inspector"
 import { OptionsEditor } from "../inspector/OptionEditor"
 import { bindTopicCookie } from "../utils"

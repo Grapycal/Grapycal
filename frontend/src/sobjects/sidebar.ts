@@ -1,18 +1,24 @@
 import { CompSObject } from './compSObject'
 import { HtmlItem } from '../component/htmlItem'
 import { HierarchyNode } from '../ui_utils/hierarchyNode'
-import { Workspace } from './workspace'
 import { as } from '../utils'
 import { print } from '../devUtils'
-import { Settings } from '../ui_utils/settings'
 
 export class Sidebar extends CompSObject {
+    /**
+    * The left sidebar is a tabbed interface with the following tabs:
+    * - File View
+    * - Node List
+    * - Extensions
+    * - Settings
+    * - Examples
+    * - About
+    */
     private items: HtmlItem[] = []
     nodeLibrary: HierarchyNode = new HierarchyNode('', '',true);
     tabs = new Map<HTMLButtonElement, HTMLDivElement>();
     sidebarContainer: HTMLDivElement;
     onStart() {
-        let workspace = as(this.parent,Workspace)
         this.nodeLibrary.htmlItem.setParentElement(document.getElementById('node-list-container'))
         this.sidebarContainer = document.getElementById('left-sidebar-container') as HTMLDivElement;
         let root = document;

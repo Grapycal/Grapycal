@@ -3,12 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Grapycal Documentation!
+.. figure:: https://i.imgur.com/aU1ZUZ7.png
+    :align: center
+    :width: 100%
+
+Welcome to Grapycal
 ====================================
 
 Grapycal is a graphical and interactive programming language. It allows users to manipulate and assemble programs by dragging and clicking blocks or graphs representing various built-in and custom Python functions.
 
 `GitHub Repository <https://github.com/eri24816/Grapycal>`_
+
+`PyPI <https://pypi.org/project/grapycal/>`_
+
+`Discord <https://discord.gg/adNQcS42CT>`_
+
+
+
+   In our daily lives, countless ideas emerge in our minds, only to be dismissed because the perceived cost of realizing them is too high. Over time, sadly, we tend to forget our inherent creativity.
+
+   The mission of Grapycal is to push more ideas over the line to be worthy of trying out.
 
 .. `Grapycal v0.2.0 whats new <https://github.com/eri24816/Grapycal/blob/main/docs/v0.2.0.md>`_
 
@@ -25,10 +39,12 @@ Grapycal is a graphical and interactive programming language. It allows users to
    :caption:  User Manual
    :hidden:
 
-   user_manual/overview
+   .. user_manual/overview
+
    user_manual/node
    user_manual/grapycal_builtin
-   user_manual/execution_of_graph
+
+   .. user_manual/execution_of_graph
 
 .. toctree::
    :caption: Developer Guide
@@ -36,9 +52,11 @@ Grapycal is a graphical and interactive programming language. It allows users to
 
    developer_guide/developer_guide_overview
    developer_guide/define_a_node
-   developer_guide/attribute
-   developer_guide/port
-   developer_guide/controls
+   
+   .. developer_guide/attribute
+   .. developer_guide/port
+   .. developer_guide/controls
+
    developer_guide/writing_docs
 
 .. This is a caption separating guide and API

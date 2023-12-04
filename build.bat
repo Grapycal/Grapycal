@@ -2,6 +2,6 @@ cd backend
 cz bump 
 poetry build
 cd ..
-cd grapycal_builtin
+cd extensions/grapycal_builtin
 poetry build
-cd ..
+cd ../..

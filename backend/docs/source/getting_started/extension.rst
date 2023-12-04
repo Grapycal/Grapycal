@@ -1,12 +1,12 @@
 Extension
 ================
 
-All nodes in Grapycal are defined in extensions. An extension is a Python package that
+Nodes in Grapycal are provided by extensions. An extension is a Python package that
 defines a set of nodes for a specific domain. For example, there would be an extension for image processing, another one for
 deep learning, etc.
 The extension `grapycal_builtin` is automatically included in every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes doing arbitrary tasks. 
 
-Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see :doc:`../developer_guide/define_a_node`.
+Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see Developer Guide: :doc:`../developer_guide/define_a_node`.
 
 Create an Extension
 -------------------
@@ -33,20 +33,20 @@ Let's create an extension named `grapycal_myext` that defines a node named `IsEv
 
 The extension is now ready to be imported in a workspace. 
 
-3. Go to the web interface and click on the `File` button.
-You should see the extension in the list of available extensions. Right click on it and select `Import to workspace`.
+3. Go to the GUI and click on the `Extensions 🚀` button in the right.
+You should see the extension in the list of available extensions. Click on the `+` button to import it.
 
-.. image:: https://i.imgur.com/pQu7ZSQ.png
+.. image:: https://i.imgur.com/sT18b7h.png
     :align: center
     :width: 80%
 
-4. Yaay! The `IsEvenNode` is now available in your workspace. 
+4. Yay! The `IsEvenNode` is now available in your workspace. 
 
 .. image:: https://i.imgur.com/foOsZY7.png
     :align: center
     :width: 80%
 
-It doesn't actually do anything, but it's a start. Let's add some logic to it.
+The node is just a layout now. Let's add some logic to it.
 
 Edit the Extension
 ------------------
@@ -75,7 +75,7 @@ Grapycal supports hot reloading of extensions i.e. you can edit the extension co
             for e in self.out_port.edges:
                 e.push_data(result)
 
-2. Go back to the web interface, right click on the extension card, and select `Reload`.
+2. Go back to the GUI, right click on the extension card, and select `Reload ↻`
 
 The node should now work as expected.
 
@@ -85,4 +85,4 @@ The node should now work as expected.
 
 .. note:: Don't forget to double click on EvalNodes to update their output value.
 
-For more details about defining nodes and the related API, see :doc:`../developer_guide/define_a_node`.
+For more details about the API for defining nodes, see Developer Guide: :doc:`../developer_guide/define_a_node`.
