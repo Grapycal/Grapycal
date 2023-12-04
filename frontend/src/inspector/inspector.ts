@@ -34,6 +34,8 @@ export class Inspector extends Componentable{
         'objSet':ObjSetEditor,
         'button':ButtonEditor,
         'options':OptionsEditor,
+        // 'checkbox': CheckBoxEditor,
+
     }
 
     protected get template(): string {return `
