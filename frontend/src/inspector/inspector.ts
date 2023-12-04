@@ -16,6 +16,7 @@ import { ButtonEditor } from "./ButtonEditor"
 import { OptionsEditor as OptionsEditor } from "./OptionEditor"
 import { Componentable } from "../component/componentable"
 import { Editor } from "./Editor"
+import { DictEditor } from "./DictEditor"
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -34,7 +35,7 @@ export class Inspector extends Componentable{
         'objSet':ObjSetEditor,
         'button':ButtonEditor,
         'options':OptionsEditor,
-        // 'checkbox': CheckBoxEditor,
+        'dict':DictEditor
 
     }
 
