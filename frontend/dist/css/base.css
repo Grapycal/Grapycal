@@ -560,6 +560,7 @@ input:enabled, textarea:enabled{
 .sidebar-right{
     right: 0px;
     width: 300px;
+    overflow-y: scroll;
 }
 
 .collapsed.sidebar-container{
