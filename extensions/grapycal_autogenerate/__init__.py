@@ -1,4 +1,4 @@
-from grapycal.utils.nodeGen import MoudleNodeGenerator, FunctionNodeGenerator
+from grapycal.utils.nodeGen import MoudleNodeGenerator, FunctionNodeGenerator, ClassNodeGenerator
 import requests
 
 # requests_moudle = MoudleNodeGenerator(requests)
@@ -27,3 +27,9 @@ globals().update(time_sleep_node.node_types)
 print_node = FunctionNodeGenerator(print)
 print_node.generate()
 globals().update(print_node.node_types)
+
+import datetime
+
+datetime_datetime_node = ClassNodeGenerator(datetime.datetime)
+datetime_datetime_node.generate()
+globals().update(datetime_datetime_node.node_types)
