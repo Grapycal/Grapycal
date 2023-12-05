@@ -563,6 +563,18 @@ input:enabled, textarea:enabled{
     overflow-y: scroll;
 }
 
+.sidebar-resize-handle {
+    width: 10px; /* Define the width of the handle */
+    cursor: ew-resize; /* Set cursor to indicate resize functionality */
+    background-color: #ccc; /* Handle color */
+    height: 100%; /* Match sidebar height */
+    position: absolute;
+    top: 0;
+    left: -5px; /* Adjust the position to align with the left border */
+    z-index: 1; /* Ensure it's above sidebar content */
+}
+  
+
 .collapsed.sidebar-container{
     display: none;
 }

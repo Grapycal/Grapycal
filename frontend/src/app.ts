@@ -112,6 +112,42 @@ function documentReady(callback: Function): void {
 
   }
 
+let m_pos: number | undefined;
+let sidebarRight = document.getElementById('sidebar-right');
+
+const MIN_WIDTH = 300; // 最小寬度
+const MAX_WIDTH = 500; // 最大寬度  
+function resizeSidebar(event: MouseEvent): void {
+    if (m_pos !== undefined) {
+      const dx = m_pos - event.x;
+      m_pos = event.x;
+      if (sidebarRight) {
+        let newWidth = sidebarRight.offsetWidth + dx;
+        // 檢查是否超出最小寬度和最大寬度的範圍
+        if (newWidth < MIN_WIDTH) {
+          newWidth = MIN_WIDTH;
+        } else if (newWidth > MAX_WIDTH) {
+          newWidth = MAX_WIDTH;
+        }
+        sidebarRight.style.width = newWidth + 'px';
+      }
+    }
+  }
+
+if (sidebarRight){
+    sidebarRight.addEventListener('mousedown', function(event: MouseEvent) {
+        if (event.offsetX < 10) {
+            m_pos = event.x;
+            document.addEventListener('mousemove', resizeSidebar, false);
+        }
+    }, false)
+
+    document.addEventListener('mouseup', function(event: MouseEvent) {
+        m_pos = undefined;
+        document.removeEventListener('mousemove', resizeSidebar, false);
+    }, false);
+}
+
 documentReady(function(event: Event) {
     document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
         let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
