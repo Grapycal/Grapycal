@@ -9,6 +9,7 @@ import { Footer } from "../ui_utils/footer"
 import { Buffer } from "buffer";
 import { print } from "../devUtils"
 import { NodeInspector } from "../ui_utils/nodeInspector"
+import { PopupMenu } from "../ui_utils/popupMenu/popupMenu"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -21,6 +22,7 @@ export class Workspace extends CompSObject{
     readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
     readonly nodeTypesTopic = this.objectsync.getTopic('node_types',DictTopic<string,any>)
+    readonly popupMenu = new PopupMenu()
     
     get clientId(){
         return this.objectsync.clientId
@@ -29,6 +31,7 @@ export class Workspace extends CompSObject{
         super(objectsync, id);
         (this.selection as any).name = 'selection';
         (this.functionalSelection as any).name = 'functionalSelection'
+        this.popupMenu.hideWhenClosed = true
         
         Workspace.instance = this
         this.selection.onSelect.add((selectable)=>{

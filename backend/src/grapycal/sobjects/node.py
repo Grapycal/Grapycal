@@ -331,6 +331,7 @@ class Node(SObject,metaclass=NodeMeta):
         ) -> T1: 
         '''
         If order_strict is None, it will be set to the ame as is_stateful.
+        The usage of editor_type and editor_args is the same as the expose_attribute method.
         '''
 
         if order_strict is None:
@@ -348,6 +349,30 @@ class Node(SObject,metaclass=NodeMeta):
             - attribute: The attribute to expose.
 
             - editor_type: The type of the editor to use. Can be ``text`` or ``list``.
+
+        List of editor types:
+            - ``dict``: A dictionary editor. Goes with a DictTopic. editor_args: {
+                'key_options':list[str]|None,
+                'value_options':list[str]|None,
+                'key_strict':bool|None,
+                'value_strict':bool|None,
+            }
+
+            - ``list``: A list editor. Goes with a ListTopic. editor_args: {}
+
+            - ``options``: A dropdown editor. Goes with a StringTopic. editor_args: {
+                'options':list[str],
+            }
+
+            - ``text``: A text editor. Goes with a StringTopic. 
+
+            - ``int``: An integer editor. Goes with an IntTopic. editor_args: {}
+
+            - ``float``: A float editor. Goes with a FloatTopic. editor_args: {}
+            
+            
+
+            
 
         '''
         if editor_args is None:

@@ -1,9 +1,9 @@
 import { DictTopic, ListTopic } from "objectsync-client"
-import { GlobalEventDispatcher } from "../component/eventDispatcher"
-import { MouseOverDetector } from "../component/mouseOverDetector"
-import { print } from "../devUtils"
-import { Editor } from "../sobjects/editor"
-import { Workspace } from "../sobjects/workspace"
+import { GlobalEventDispatcher } from "../../component/eventDispatcher"
+import { MouseOverDetector } from "../../component/mouseOverDetector"
+import { print } from "../../devUtils"
+import { Editor } from "../../sobjects/editor"
+import { Workspace } from "../../sobjects/workspace"
 import { PopupMenu } from "./popupMenu"
 
 type ListNode = {
@@ -113,6 +113,7 @@ class SubstringSearchIndex{
         this.charMatched = new Array(keys.length)
     }
     public search(query:string):string[]{
+        if(this.strings.length==0)return[];
         //print('searching for',query)
         this.currentPos.fill(0)
         let candidates = new List()
@@ -175,7 +176,7 @@ class SubstringSearchIndex{
     }
 }
 
-export class AddNodeMenu extends PopupMenu{
+export class AutoCompMenu extends PopupMenu{
     get template():string{
         return `
         <div class="base">
@@ -201,78 +202,67 @@ export class AddNodeMenu extends PopupMenu{
         }
         `
     }
-    private search:HTMLInputElement
-    private nodeTypesTopic:DictTopic<string,any>
-    private nodeTypesIsDirty:boolean = true
+    protected search:HTMLInputElement
     private substringSearchIndex:SubstringSearchIndex = new SubstringSearchIndex()
-    constructor(private editor:Editor){
+    private valueToCallback:Map<string,()=>void> = new Map()
+    private valueToDisplayName:Map<string,string> = new Map()
+    get value():string{
+        return this.search.value
+    }
+    set value(val:string){
+        this.search.value = val
+    }
+    constructor(){
         super()
-        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
         this.search = this.htmlItem.getHtmlEl('search') as HTMLInputElement
-        this.nodeTypesTopic = Workspace.instance.nodeTypesTopic
-        this.link(this.nodeTypesTopic.onSet,()=>{this.nodeTypesIsDirty = true})
+
+        this.link2(this.search,'input',this.onInputOrFocus)
+        this.link2(this.search,'focus',this.onInputOrFocus)
     }
-    public addOption(text:string,onclick:()=>void){
-        let option = this.generateOptionElement()
-        option.innerText = text
-        this.addOptionElement(option,onclick)
-        return option
-    }
-    private onKeyDown(e:KeyboardEvent){
-        if(!MouseOverDetector.objectsUnderMouse.includes(this.editor)){
-            return
+    public setOptions(options:{key:string,value:string,callback:()=>void,displayName?:string}[]){
+        let keys = []
+        let values = []
+        this.valueToCallback.clear()
+        this.valueToDisplayName.clear()
+        for(let i = 0;i<options.length;i++){
+            keys.push(options[i].key)
+            values.push(options[i].value)
+            this.valueToCallback.set(options[i].value,options[i].callback)
+            this.valueToDisplayName.set(options[i].value,options[i].displayName||options[i].key)
         }
-        if(document.activeElement==document.body && !this.opened && e.key.length == 1 && e.key.match(/[a-zA-Z0-9_]/) &&!e.ctrlKey && !e.altKey && !e.metaKey
-        ){
-            this.open(GlobalEventDispatcher.instance.mousePos.x,GlobalEventDispatcher.instance.mousePos.y)
-            this.onSearch()
-        }
-        if(e.key == 'Escape' && this.opened){
-            this.close()
-        }
-        if(e.key == 'Backspace' && this.search.value.length == 0 && this.opened){
-            this.close()
-        }
-    }
-    private indexNodeTypes(){
-        let nodeTypes = this.nodeTypesTopic.getValue()
-        let keys:string[] = []
-        let values:string[] = []
-        nodeTypes.forEach((nodeType,nodeTypeName)=>{
-            nodeTypeName = nodeTypeName as string
-            keys.push(nodeTypeName.toLowerCase().split('.')[1].slice(0,-4)) // remove Node suffix
-            values.push(nodeTypeName)
-        })
         this.substringSearchIndex.setStrings(keys,values)
     }
 
     private onSearch(){
-        if(this.nodeTypesIsDirty){
-            this.indexNodeTypes()
-            this.nodeTypesIsDirty = false
-        }
         let query = this.search.value.toLowerCase()
         let results = this.substringSearchIndex.search(query)
         this.clearOptions()
-        let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos).toString()
-        for(let i = 0;i<results.length;i++){
-            let result = results[i]
-            let displayName = result.split('.')[1].slice(0,-4)
-            this.addOption(displayName,()=>{
-                
-                this.editor.createNode(result,{translation:translation})
-            })
+        for(let result of results){
+            const callback = ()=>{
+                this.value = this.valueToDisplayName.get(result)
+                this.valueToCallback.get(result)()
+            }
+            this.addOption(this.valueToDisplayName.get(result),callback)
         }
     }
-    open(x:number,y:number){
-        super.open(x,y)
+    private onInputOrFocus(){
+        if(!this.opened)
+            this.open()
+        this.onSearch()
+    }
+    openAt(x:number,y:number){
+        super.openAt(x,y)
         this.search.focus()
-        this.link2(this.search,'input',this.onSearch)
+        this.onSearch()
+    }
+    open(){
+        super.open()
+        this.search.focus()
+        this.onSearch()
     }
     close(): void {
         super.close()
-        this.search.blur()
-        this.search.value = ''
-        this.unlink2(this.search,'input')
+        if(this.hideWhenClosed)
+            this.search.blur()
     }
 }

@@ -1,8 +1,9 @@
 import { DictTopic, ObjectSyncClient } from "objectsync-client"
 import { Linker } from "../component/linker"
 import { Componentable } from "../component/componentable"
-import { SimplePopupMenu } from "./simplePopupMenu"
 import { stringToElement } from "../utils"
+import { PopupMenu } from "./popupMenu/popupMenu"
+import { Workspace } from "../sobjects/workspace"
 
 export class ExtensionsSetting extends Componentable{
     objectsync: ObjectSyncClient
@@ -100,8 +101,8 @@ export class ExtensionsSetting extends Componentable{
         card.addEventListener('contextmenu',(e)=>{
             e.preventDefault()
             e.stopPropagation()
-            let popup = SimplePopupMenu.instance
-            popup.open(e.clientX,e.clientY)
+            let popup = Workspace.instance.popupMenu
+            popup.openAt(e.clientX,e.clientY)
             if(status == 'imported'){
                 popup.addOption('Reload',()=>{
                     this.objectsync.emit('update_extension',{extension_name:newExtension.name})

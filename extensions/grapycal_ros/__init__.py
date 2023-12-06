@@ -28,7 +28,7 @@ class RosbridgeNode(Node):
         self.connect_btn = self.add_button_control('Connect',name='connect')
         self.send_port = self.add_in_port('send')
         self.recv_port = self.add_out_port('recv')
-        self.subs_info = self.add_attribute('subs_info', DictTopic, {}, editor_type='dict') # internal use only. data: {'name':str,'type':str}
+        self.subs_info = self.add_attribute('subs_info', DictTopic, {}, editor_type='dict',key_options=['aaa0','aab'],value_options=['vads,asde'],key_strict=True) # internal use only. data: {'name':str,'type':str}
         self.subsciptions = self.add_attribute('subsciptions', ListTopic, [], editor_type='list') # for user to manipulate
         self.subscription_type = self.add_attribute('subscription type', StringTopic, 'std_msgs/String',editor_type='options',
             options=['std_msgs/String','std_msgs/Int32','std_msgs/Float32','std_msgs/Bool','sensor_msgs/Image',

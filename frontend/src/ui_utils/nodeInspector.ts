@@ -142,7 +142,7 @@ export class NodeInspector extends Componentable{
         let description = ''
         for(let node of this.nodes){
             let nodeType = node.type_topic.getValue()
-            let nodeTypeDescription = node_types_topic.getValue().get(nodeType).description
+            let nodeTypeDescription = node_types_topic.get(nodeType).description
             if(description === ''){
                 description = nodeTypeDescription
             }else{

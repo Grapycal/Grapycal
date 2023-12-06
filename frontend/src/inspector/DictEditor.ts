@@ -5,6 +5,14 @@ import { Workspace } from "../sobjects/workspace"
 import { print } from "../devUtils"
 import { object_equal } from "./inspector"
 import { Editor } from "./Editor"
+import { AutoCompMenu } from "../ui_utils/popupMenu/autoCompMenu"
+
+type DictEditorArgs = {
+    key_options?: string[]
+    key_strict?: boolean
+    value_options?: string[]
+    value_strict?: boolean
+}
 
 export class DictEditor extends Editor<DictTopic<string,string>> {
 
@@ -14,15 +22,10 @@ export class DictEditor extends Editor<DictTopic<string,string>> {
             <div id="attribute-name" class="attribute-name"></div>
             <div class="container">
                 <div class="container" id="slot_container"></div>
-                <div class="container horiz">
-                    <input id="key" type="text" class="grow" list="ab">
-                    <datalist id="ab">
-                        <option value="aht4w">
-                        <option value="ahqg">
-                        <option value="aqg">
-                    </datalist>
-                    :
-                    <input id="value" type="text" class="grow">
+                <div class="container container2">
+                    <div id="slot_key" class="grow"></div>
+                    <span id="colon">:</span>
+                    <div id="slot_value" class="grow"></div>
                     <button id="add-button" class="button center-align">+</button>
                 </div>
             </div>
@@ -40,41 +43,61 @@ export class DictEditor extends Editor<DictTopic<string,string>> {
             margin: 4px 10px;
             min-width: 0px;
         }
-        .horiz{
+        .container2{
+            height: 20px;
+            align-items: baseline;
             flex-direction: row;
+            display: flex;
+        }
+        .horiz{
         }
         
         .button{
             height: 20px;
             line-height: 0px;
         }
+        #colon{
+            margin: 0px 5px;
+        }
     `
     }
 
     private readonly container: HTMLDivElement
     private readonly addButton: HTMLButtonElement
-    private readonly keyInput: HTMLInputElement
-    private readonly valueInput: HTMLInputElement
+    private readonly keyInput: AutoCompMenu
+    private readonly valueInput: AutoCompMenu
     private readonly items: Set<DictEditorItem> = new Set();
     private locked = false;
     private readonly allowedKeys: string[]|null = null
 
-    constructor(displayName: string, editorArgs: any, connectedAttributes:DictTopic<string,string>[]) {
+    constructor(displayName: string, private editorArgs: DictEditorArgs, connectedAttributes:DictTopic<string,string>[]) {
         super()
         this.connectedAttributes = connectedAttributes
 
         this.container = as(this.htmlItem.getHtmlEl('slot_container'), HTMLDivElement)
-        this.keyInput = as(this.htmlItem.getHtmlEl('key'), HTMLInputElement)
-        this.valueInput = as(this.htmlItem.getHtmlEl('value'), HTMLInputElement)
+        this.keyInput = new AutoCompMenu()
+        this.valueInput = new AutoCompMenu()
+        this.keyInput.htmlItem.setParent(this.htmlItem, 'key')
+        this.keyInput.open()
+        if(editorArgs.key_options){
+            this.keyInput.setOptions(editorArgs.key_options.map((key)=>{
+                return {key:key,value:key,callback:()=>{}}
+            }))
+        }
+        this.valueInput.htmlItem.setParent(this.htmlItem, 'value')
+        this.valueInput.open()
+        if(editorArgs.value_options){
+            this.valueInput.setOptions(editorArgs.value_options.map((value)=>{
+                return {key:value,value:value,callback:()=>{}}
+            }))
+        }
         this.addButton = as(this.htmlItem.getHtmlEl('add-button'), HTMLButtonElement)
 
-        for(let input of [this.keyInput, this.valueInput]){
-            this.linker.link2(input, 'keydown', (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.addHandler()
-                }
-            })
-        }
+        this.link2(this.htmlItem.baseElement, 'keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                this.addHandler()
+            }
+        })
 
         this.linker.link2(this.addButton, 'click', this.addHandler)
 
@@ -128,7 +151,6 @@ export class DictEditor extends Editor<DictTopic<string,string>> {
         }
         this.items.clear()
         
-
         this.container.innerText = ''
         for (let [key,value] of commonKeys) {
             let itemComponent = new DictEditorItem(key, value)
@@ -138,14 +160,33 @@ export class DictEditor extends Editor<DictTopic<string,string>> {
             itemComponent.htmlItem.setParent(this.htmlItem, 'container')
         }
         
+        // Take away existing keys from key options
+        let keyOptions = this.editorArgs.key_options.slice() // copy
+        for(let [key,value] of commonKeys){
+            let index = keyOptions.indexOf(key)
+            if(index !== -1){
+                keyOptions.splice(index,1)
+            }
+        }
+        this.keyInput.setOptions(keyOptions.map((key)=>{
+            return {key:key,value:key,callback:()=>{}}
+        }))
+
     }
+        
 
     private addHandler() {
         let key = this.keyInput.value
         let value = this.valueInput.value
+        if(this.editorArgs.key_strict && !this.editorArgs.key_options!.includes(key))
+            return
+        if(this.editorArgs.value_strict && !this.editorArgs.value_options!.includes(value))
+            return
+
         this.keyInput.value = ''
         this.valueInput.value = ''
         this.locked = true
+            
         try{
             Workspace.instance.record(() => {
                 for (let attr of this.connectedAttributes) {
