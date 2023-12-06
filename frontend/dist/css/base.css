@@ -964,3 +964,27 @@ hr{
     width: 24px;    
     min-width: 0;
 }
+
+.node_description{
+    border: 20px solid black;
+    overflow: visible;
+}
+
+.code-wrapper {
+    word-wrap: break-word;
+  }
+
+code {
+    font-family: Consolas,"courier new";
+    color: var(--text-high);
+    /* background-color: #f1f1f1; */
+    padding: 2px;
+    font-size: 105%;
+}
+
+/* div[title]:hover::after{
+    content: attr(title);
+    position: absolute;
+    top: -100%;
+    right: -600px;
+} */

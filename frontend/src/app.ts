@@ -115,7 +115,7 @@ function documentReady(callback: Function): void {
 let m_pos: number | undefined;
 let sidebarRight = document.getElementById('sidebar-right');
 
-const MIN_WIDTH = 300; // 最小寬度
+const MIN_WIDTH = 10; // 最小寬度
 const MAX_WIDTH = 500; // 最大寬度  
 function resizeSidebar(event: MouseEvent): void {
     if (m_pos !== undefined) {

@@ -427,6 +427,10 @@ export class Node extends CompSObject {
 
         if(this._isPreview){
             this.htmlItem.baseElement.classList.add('node-preview')
+            const node_types_topic = Workspace.instance.nodeTypesTopic
+            let nodeTypeDescription = node_types_topic.getValue().get(this.type_topic.getValue()).description
+            this.htmlItem.baseElement.setAttribute('title', nodeTypeDescription)
+
         }
     }
 
