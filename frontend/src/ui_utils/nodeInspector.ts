@@ -17,6 +17,8 @@ import { ButtonEditor } from "../inspector/ButtonEditor"
 import { OptionsEditor as OptionsEditor } from "../inspector/OptionEditor"
 import { Inspector } from "../inspector/inspector"
 import { Componentable } from "../component/componentable"
+import { Marked } from '@ts-stack/markdown';
+
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -152,7 +154,16 @@ export class NodeInspector extends Componentable{
                 }
             }
         }
-        this.nodeDescriptionDiv.innerText = description
+        // const markdownDescription = marked(description);
+        // const descriptionString = String(description).replace("\n", "<br/>")
+        // const descriptionString = String(description)
+        if (description === null) {
+            description = '**This node has no description.**'
+        }
+        console.log(description)
+        const markdownDescription = Marked.parse(description);
+        // this.nodeDescriptionDiv.innerText = description
+        this.nodeDescriptionDiv.innerHTML = markdownDescription
     }
     
     private addOutput(item:[string,string]){
