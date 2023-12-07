@@ -28,6 +28,7 @@ Run Grapycal for Development
 For development, it is recommended to run Grapycal in this way:
 
 .. code-block:: bash
+    
     cd extensions/
     python -m grapycal --no-serve-webpage
 
