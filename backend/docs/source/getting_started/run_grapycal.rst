@@ -23,8 +23,20 @@ To specify the port of http server, use the ``--http-port`` option:
 
 Next, head over to :doc:`basic_usage`.
 
-Further details
+Run Grapycal for Development
 ---------------
+For development, it is recommended to run Grapycal in this way:
+
+.. code-block:: bash
+    cd extensions/
+    python -m grapycal --no-serve-webpage
+
+.. code-block:: bash
+
+    cd frontend
+    npm run app
+
+Explanation:
 
 By default, the Grapycal server includes a HTTP server at http://localhost:9001/ that serves the webpage and a WebSocket server at ws://localhost:8765/ that
 handles the interaction between the webpage and the Grapycal server. Once you make changes to the frontend code,
@@ -33,11 +45,4 @@ you need to run ``npm run build`` to rebuild the frontend code and refresh the w
 Alternatively, you can run the Grapycal server without the HTTP server by passing the ``--no-serve-webpage`` option,
 and instead serve the webpage using the webpack dev server. This is useful if you want to develop the frontend code.
 
-.. code-block:: bash
-
-    python -m grapycal --no-serve-webpage
-
-.. code-block:: bash
-
-    cd frontend
-    npm run app
+Also, by running grapycal in ``extensions/`` directory, you can import every extensions without installing them.
