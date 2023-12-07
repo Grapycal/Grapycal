@@ -102,6 +102,8 @@ These tools or libraries help Grapycal a lot:
 
 - [Three.js](https://threejs.org/)
 
+- [Sphinx](https://www.sphinx-doc.org/)
+
 ## Star History
 
 <a href="https://star-history.com/#eri24816/Grapycal&Date">
