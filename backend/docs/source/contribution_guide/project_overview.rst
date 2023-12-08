@@ -102,7 +102,7 @@ The Grapycal application consists of the backend (written in Python) and the fro
 The backend folder is the python package of Grapycal. When you run `python -m grapycal`, a GrapycalApp (``src/grapycal/app.py``) starts and creates two processes, the workspace (``src/grapycal/core/workspace.py``) and the HTTP server. The folder ``src/grapycal/sobjects`` contains the definition of all SObjects. The folder ``src/grapycal/extension`` contains management code of extensions (but not the code of extensions themselves).
 
 /frontend
-------------------
+^^^^^^^^^^^^^^^^^
 
 The frontend use no framework. It's just a bunch of Typescript classes. The UI is implemented with HTML and CSS (welcome to re-structure them if you know frontend!). 
 
