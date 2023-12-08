@@ -52,6 +52,7 @@ Grapycal is a graphical and interactive programming language. It allows users to
 
    developer_guide/developer_guide_overview
    developer_guide/define_a_node
+   developer_guide/examples_of_node_definition
    
    .. developer_guide/attribute
    .. developer_guide/port

@@ -3,7 +3,8 @@ Developer Guide: Overview
 
 Grapycal is still in its early stage. Any contribution is welcome. Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To discuss, feel free to open an issue or join the `Discord server <https://discord.gg/adNQcS42CT>`_.
+In the `GitHub discussion <https://github.com/eri24816/Grapycal/discussions>`_ you can find features we are / about to working on. You can join the discussion and share your ideas. If you want to contribute, feel free to open a pull request. If you have any question, feel free to open an issue or join the `Discord server <https://discord.gg/adNQcS42CT>`_.
+
 
 
 
