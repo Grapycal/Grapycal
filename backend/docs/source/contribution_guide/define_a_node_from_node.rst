@@ -40,12 +40,12 @@ The above code results in a node with a text field and a button, as shown below:
 
 Things you can do in ``build_node()``:
 
--  ``self.add_text_control``: Add a :ref:`developer_guide/controls:text control` to the node.
--  ``self.add_button_control`` : Add a :ref:`developer_guide/controls:button control` to the node.
--  ``self.add_image_control`` : Add an :ref:`developer_guide/controls:image control` to the node.
--  ``self.add_in_port`` : Add an :ref:`developer_guide/port:port` to the node.
--  ``self.add_out_port`` : Add an :ref:`developer_guide/port:port` to the node.
--  ``self.add_attribute`` : Add an :ref:`developer_guide/attribute:attribute` to the node.
+-  ``self.add_text_control``: Add a :ref:`contribution_guide/controls:text control` to the node.
+-  ``self.add_button_control`` : Add a :ref:`contribution_guide/controls:button control` to the node.
+-  ``self.add_image_control`` : Add an :ref:`contribution_guide/controls:image control` to the node.
+-  ``self.add_in_port`` : Add an :ref:`contribution_guide/port:port` to the node.
+-  ``self.add_out_port`` : Add an :ref:`contribution_guide/port:port` to the node.
+-  ``self.add_attribute`` : Add an :ref:`contribution_guide/attribute:attribute` to the node.
 -  ``self.expose_attribute`` : Expose an attribute to the inspector panel, so it can be edited by the user when the node is selected.
 -  Set values of the node's inherent attributes to customize the node's appearance.
     *   ``self.shape``: can be ``'normal'``, ``'simple'``, or ``'round'``.
