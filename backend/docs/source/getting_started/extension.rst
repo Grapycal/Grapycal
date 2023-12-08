@@ -6,7 +6,7 @@ defines a set of nodes for a specific domain. For example, there would be an ext
 deep learning, etc.
 The extension `grapycal_builtin` is automatically included in every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes doing arbitrary tasks. 
 
-Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see Developer Guide: :doc:`../developer_guide/define_a_node`.
+Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see Developer Guide: :doc:`../contribution_guide/define_a_node`.
 
 Create an Extension
 -------------------
@@ -85,4 +85,4 @@ The node should now work as expected.
 
 .. note:: Don't forget to double click on EvalNodes to update their output value.
 
-For more details about the API for defining nodes, see Developer Guide: :doc:`../developer_guide/define_a_node`.
+For more details about the API for defining nodes, see Developer Guide: :doc:`../contribution_guide/define_a_node`.
