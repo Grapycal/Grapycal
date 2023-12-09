@@ -96,7 +96,7 @@ try:
         rst = re.sub(r'\.\. \[generator please start from below\].*','.. [generator please start from below]\n',rst,flags=re.DOTALL)
 except:
     rst = f'''
-{ext.extension_name}
+{ext.name}
 ==================
 '''
 

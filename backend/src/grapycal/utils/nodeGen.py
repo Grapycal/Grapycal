@@ -4,9 +4,6 @@ import re
 from typing import Any, Callable
 from types import ModuleType
 
-import requests
-requests.get
-
 
 def doc_prettify(doc: str) -> str:
     if doc is None:

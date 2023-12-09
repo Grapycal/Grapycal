@@ -1,6 +1,6 @@
-
 import os
 import time
+import grapycal
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
@@ -10,7 +10,7 @@ from grapycal.sobjects.settings import Settings
 from grapycal.sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
-from grapycal.utils.io import file_exists, json_read, json_write
+from grapycal.utils.io import file_exists, read_workspace, write_workspace
 
 from grapycal.utils.logging import setup_logging
 setup_logging()
@@ -25,6 +25,7 @@ from objectsync.sobject import SObjectSerialized
 import asyncio
 import signal
 from dacite import from_dict
+import importlib.metadata
 
 
 from grapycal.core import stdout_helper
@@ -80,22 +81,26 @@ class Workspace:
     async def _async_communication_thread(self,event_loop_set_event: threading.Event):
         self._communication_event_loop = asyncio.get_event_loop()
         event_loop_set_event.set()
-        await asyncio.gather(self._objectsync.serve(),self.clock.run())
+        try:
+            await asyncio.gather(self._objectsync.serve(),self.clock.run())
+        except OSError as e:
+            if e.errno == 10048:
+                logger.error(f'Port {self.port} is already in use. Maybe another instance of grapycal is running?')
+                self.get_communication_event_loop().stop()
+                # send signal to the main thread to exit
+                os.kill(os.getpid(), signal.SIGTERM)
+            else:
+                raise e
 
     def run(self) -> None:
-
-        # check port not in use
-        import socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex((self.host, self.port))
-        if result == 0:
-            raise Exception(f'Port {self.port} is already in use. Maybe another instance of grapycal is running?')
 
         event_loop_set_event = threading.Event()
         t = threading.Thread(target=self._communication_thread,daemon=True,args=[event_loop_set_event]) # daemon=True until we have a proper exit strategy
 
         t.start()
         event_loop_set_event.wait()
+
+        self._extention_manager.start()
 
         self._objectsync.globals.workspace = self
 
@@ -157,18 +162,29 @@ class Workspace:
 
     def save_workspace(self, path: str) -> None:
         workspace_serialized = self.get_workspace_object().serialize()
+
+        metadata = {
+            'name': os.path.basename(path),
+            'version': grapycal.__version__,
+            'extensions': self._extention_manager.get_extensions_info(), 
+        }
         data = {
             'extensions': self._extention_manager.get_extention_names(), 
             'client_id_count': self._objectsync.get_client_id_count(),
             'id_count': self._objectsync.get_id_count(),
             'workspace_serialized': workspace_serialized.to_dict(),
         }
-        json_write(path, data, compress=True)
+        write_workspace(path, metadata, data, compress=True)
         time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         logger.info(f'Workspace saved to {path} at {time_str}')
 
     def load_workspace(self, path: str) -> None:
-        data = json_read(path)
+        version,metadata,data = read_workspace(path)
+        
+        self._check_grapycal_version(version)
+        if 'extensions' in metadata: # DEPRECATED: v0.9.0 and before has no extensions in metadata
+            self._check_extensions_version(metadata['extensions'])
+
         self._objectsync.set_client_id_count(data['client_id_count'])
         self._objectsync.set_id_count(data['id_count'])
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
@@ -192,6 +208,24 @@ class Workspace:
 
         self._objectsync.clear_history_inclusive()
 
+    def _check_grapycal_version(self,version:str):
+        # check if the workspace version is compatible with the current version
+        workspace_version_tuple = tuple(map(int, version.split('.')))
+        current_version_tuple = tuple(map(int, grapycal.__version__.split('.')))
+        if current_version_tuple < workspace_version_tuple:
+            logger.warning(f'Attempting to downgrade workspace from version {version} to {grapycal.__version__}. This may cause errors.')
+
+    def _check_extensions_version(self,extensions_info):
+        # check if all extensions version are compatible with the current version
+        for extension_info in extensions_info:
+            extension_version_tuple = tuple(map(int, extension_info['version'].split('.')))
+            try:
+                current_version_tuple = tuple(map(int, importlib.metadata.version(extension_info['name']).split('.')))
+            except importlib.metadata.PackageNotFoundError:
+                continue # ignore extensions that are not installed
+            if current_version_tuple < extension_version_tuple:
+                logger.warning(f'Attempting to downgrade extension {extension_info["name"]} from version {extension_info["version"]} to {importlib.metadata.version(extension_info["name"])}. This may cause errors.')
+
 
     def get_workspace_object(self) -> WorkspaceObject:
         # In case this called in self._objectsync.create_object(WorkspaceObject), 
@@ -210,6 +244,9 @@ class Workspace:
         with open(exit_message_file,'w') as f:
             f.write(f'open {path}')
         self.exit()
+
+    def add_task_to_event_loop(self,task):
+        self._communication_event_loop.create_task(task)
 
 if __name__ == '__main__':
     import argparse
