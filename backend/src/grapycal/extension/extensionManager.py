@@ -3,7 +3,7 @@ import logging
 import pkgutil
 
 import subprocess
-from grapycal.extension.extensionSearch import get_not_installed_extensions
+from grapycal.extension.extensionSearch import get_remote_extensions
 from grapycal.extension.utils import get_extension_info, get_package_version, list_to_dict
 logger = logging.getLogger(__name__)
 
@@ -155,7 +155,7 @@ class ExtensionManager:
         '''
         available_extensions = self._scan_available_extensions()
         self._avaliable_extensions_topic.set(list_to_dict(available_extensions,'name'))
-        not_installed_extensions = await get_not_installed_extensions()
+        not_installed_extensions = await get_remote_extensions()
         not_installed_extensions = [info for info in not_installed_extensions 
                                         if (info['name'] not in self._avaliable_extensions_topic and 
                                             info['name'] not in self._imported_extensions_topic)
@@ -193,9 +193,12 @@ class ExtensionManager:
                         from importlib.metadata import version
                         cur = version('grapycal')
 
-                        raise Exception(f'Cannot install extension {extension_name}.\
-                                        Current grapycal version: {cur}. \
-                                        Required grapycal version: {match[1]}.{match[2]}.{match[3]}')
+                        raise Exception(f'Cannot install extension {extension_name}.\n\
+                            Current grapycal version:\t{cur}. \n\
+                            Required grapycal version:\t{match[1]}.{match[2]}.{match[3]}.\n\
+                            Please update grapycal first with "pip install --upgrade grapycal".\n\
+                            If grapycal is installed in editable mode, please reinstall grapycal with "pip install -e backend"\
+                            ')
         
     def _install_extension(self, extension_name: str) -> None:
         self._workspace.add_task_to_event_loop(self._install_extension_async(extension_name))
@@ -204,11 +207,19 @@ class ExtensionManager:
         # TODO: async this slow stuff
         # check if the extension is compatible
         logger.info(f'Checking compatibility of extension {extension_name} to current Grapycal version...')
-        await self._check_extension_compatible(extension_name)
+        try:
+            await self._check_extension_compatible(extension_name)
+        except Exception as e:
+            logger.error(f'{e}')
+            return
         # run pip install
         logger.info(f'Installing extension {extension_name}. This may take a while...')
-        await asyncio.create_subprocess_exec('pip','install',extension_name)
-        logger.info(f'Installed extension {extension_name}')
+        pip = await asyncio.create_subprocess_exec('pip','install',extension_name)
+        await pip.wait()
+
+        logger.info(f'Installed extension {extension_name}. Now importing...')
+        # import extension
+        self.import_extension(extension_name)
         # update available extensions
         await self._update_available_extensions_topic_async()
 

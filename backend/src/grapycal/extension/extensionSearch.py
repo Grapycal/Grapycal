@@ -1,8 +1,9 @@
+import asyncio
 import aiohttp
 import yaml
 import json
 
-async def get_not_installed_extensions() -> list[dict]:
+async def get_remote_extensions() -> list[dict]:
     '''
     Returns a list of available extensions that is not installed yet.
     '''
@@ -15,13 +16,15 @@ async def get_not_installed_extensions() -> list[dict]:
 
 
     not_installed_extensions = []
-    for name,extension_data in data['extensions'].items():
+    async def task(name):
         metadata = await get_package_metadata(name)
         version = metadata['info']['version'] if 'version' in metadata['info'] else '0.0.0'
         not_installed_extensions.append({
             'name': name,
             'version': version,
         })
+    coros = [task(name) for name,extension_data in data['extensions'].items()]
+    await asyncio.gather(*coros)
 
     return not_installed_extensions
 
