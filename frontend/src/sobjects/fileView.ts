@@ -1,4 +1,4 @@
-import { DictTopic, StringTopic } from "objectsync-client"
+import { DictTopic, IntTopic, StringTopic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { HierarchyNode } from "../ui_utils/hierarchyNode"
 import { InfoPopup } from "../ui_utils/infoPopup"
@@ -11,7 +11,7 @@ import { print } from "../devUtils"
 
 export class FileViewItem extends Componentable{
     protected get template(): string {return `
-        <div class="file-item">
+        <div class="file-item" tabindex="0">
             <span class="file-name"></span>
             
         </div>
@@ -22,14 +22,20 @@ export class FileViewItem extends Componentable{
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 4px;
+            padding: 3px;
+            margin: 1px;
             cursor: pointer;
+            border-radius: 4px;
+        }
+        .file-item:focus{
+            background-color: var(--z3);
         }
         .file-item:hover{
             background-color: var(--z3);
         }
         .file-item .file-name{
             margin-left: 8px;
+            flex-grow: 1;
         }
         .file-item .file-name.file-dir::before{
             content: '📁';
@@ -37,6 +43,7 @@ export class FileViewItem extends Componentable{
         .file-item .file-name.file-workspace::before{
             content: '📄';
         }`
+        
     }
 
     get baseElement(): HTMLElement {return this.htmlItem.baseElement as HTMLElement}
@@ -66,17 +73,53 @@ export class FileView extends CompSObject{
     // used to check if installed extensions are sufficent to open the selected workspace
     importedExtensionsTopic: DictTopic<string, any>
     avaliableExtensionsTopic: DictTopic<string, any>
+    
+    editable: IntTopic = this.getAttribute('editable',IntTopic)
 
     get template(): string {return `
-        <div>
-            <h2 class="">
+        <div class="base">
+            <h2 class="title">
                 <span class="tab-title">File View Name</span>
             </h2>
-            folder: <span id="dir-path"></span>
-            <div id="slot_default"></div>
+            📁<span id="dir-path"></span>
+            <div id="slot_default" class="files-container"></div>
+            <div class="flex-horiz add">
+                <input id="add-file-input" class="input">
+                <button id="add-file-button" class="grow btn">+📄</button>
+                <button id="add-dir-button" class="grow btn">+📁</button>
+            </div>
+                    
         </div>
         `;
     }
+
+    get style(): string {return `
+        .base{
+            margin-bottom: 16px;
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+        .title{
+            margin: 6px 0px;
+        }
+        .files-container{
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+        .input{
+            height: 20px;
+            border-radius: 4px;
+        }
+        .add{
+            margin-top: 8px;
+            gap: 4px;
+        }
+        .btn{
+            padding: 2px;
+            border-radius: 4px;
+            background-color: var(--z3);
+        }
+    `}
 
     get installedExtensions (){return new Map([
             ...this.importedExtensionsTopic.getValue().entries(), 
@@ -88,7 +131,8 @@ export class FileView extends CompSObject{
         this.importedExtensionsTopic = this.objectsync.getTopic('imported_extensions',DictTopic<string,any>)
         this.avaliableExtensionsTopic = this.objectsync.getTopic('avaliable_extensions',DictTopic<string,any>)
 
-        this.htmlItem = new HtmlItem(this,document.getElementById('tab-file-view'))
+
+        this.htmlItem = new HtmlItem(this,document.getElementById('tab-file-view'),null,this.style)
         this.htmlItem.applyTemplate(this.template,"append")
         this.getAttribute('name').onSet.add((value)=>{this.htmlItem.getHtmlElByClass('tab-title').innerText = value})
         this.hierarchy = new HierarchyNode('','',true)
@@ -100,6 +144,21 @@ export class FileView extends CompSObject{
                 this.hideIfNotMouseOver(this.lastMouseOver)
             }, 100);
         })
+        if(this.editable.getValue()){
+            this.htmlItem.getEl('add-file-input',HTMLInputElement).placeholder = 'add file or folder'
+            this.htmlItem.getHtmlEl('add-file-button').onclick = ()=>{
+                this.makeRequest('add_file',{path:this.currentPath+'/'+this.htmlItem.getEl('add-file-input',HTMLInputElement).value})
+                this.ls(this.currentPath)
+            }
+            this.htmlItem.getHtmlEl('add-dir-button').onclick = ()=>{
+                this.makeRequest('add_dir',{path:this.currentPath+'/'+this.htmlItem.getEl('add-file-input',HTMLInputElement).value})
+                this.ls(this.currentPath)
+            }
+        }else{
+            this.htmlItem.getHtmlElByClass('add').style.display = 'none'
+        }
+
+        
     }
 
     private itemDoubleClicked(info:any){
@@ -142,6 +201,12 @@ export class FileView extends CompSObject{
             path = this.currentPath + '/' + path
         }
 
+        this.ls(path)
+        this.currentPath = path
+        this.htmlItem.getHtmlEl('dir-path').innerHTML = (path=='.'? '[ root ]': textToHtml(path))
+    }
+
+    private ls(path: string){
         this.makeRequest('ls',{path:path},(response)=>{
             this.hierarchy.clear()
             if(path != '.')
@@ -150,8 +215,6 @@ export class FileView extends CompSObject{
                 this.addItem(file)
             }
         })
-        this.currentPath = path
-        this.htmlItem.getHtmlEl('dir-path').innerHTML = (path=='.'? '[ root ]': textToHtml(path))
     }
 
     private addItem(info:any){
@@ -159,10 +222,12 @@ export class FileView extends CompSObject{
         //omit .grapycal extension
         if(info.type == 'workspace' && info.name.endsWith('.grapycal')){
             displayName = info.name.slice(0,-9)
-            if(displayName.length > 27){
-                displayName = displayName.slice(0,27)+'...'
-            }
         }
+
+        if(displayName.length > 27){
+            displayName = displayName.slice(0,27)+'...'
+        }
+        
         let item = new FileViewItem(displayName,info.type,()=>{this.itemDoubleClicked(info)})
         this.link2(item.htmlItem.baseElement,'mouseenter',()=>{
             if(info.type == 'workspace' ) {
@@ -177,6 +242,29 @@ export class FileView extends CompSObject{
                 }
             }
         })
+
+        // use delete or backspace to delete selected file or folder
+
+        this.link2(item.htmlItem.baseElement,'keydown',(e)=>{
+            if(e.key == 'Delete' || e.key == 'Backspace'){
+                print(info)
+                if(info.type == 'dir')
+                    this.makeRequest('is_empty',{path:this.currentPath+'/'+info.name},(response)=>{
+                        if(response == false){
+                            alert(`Grapycal does not support deleting non-empty folders to prevent accidental data loss. Please delete the files inside the folder first.`)
+                        }else{
+                                this.makeRequest('delete',{path:this.currentPath+'/'+info.name})
+                                this.ls(this.currentPath)
+                            }
+                    })
+                else
+                    if(confirm(`Are you sure you want to delete ${info.name}?`)){
+                        this.makeRequest('delete',{path:this.currentPath+'/'+info.name})
+                        this.ls(this.currentPath)
+                    }
+            }
+        })
+
         this.hierarchy.addLeaf(item)
     }
 

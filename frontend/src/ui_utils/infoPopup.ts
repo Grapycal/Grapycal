@@ -23,8 +23,7 @@ export class InfoPopup extends Componentable{
                 justify-content: center;
                 z-index: 1000;
                 border: 1px solid var(--z3);
-                border-radius: 2px;
-                box-shadow: 0px 0px 5px 0px black;
+                border-radius: 4px;
                 padding: 10px;
                 width: 300px;
                 height: 200px;

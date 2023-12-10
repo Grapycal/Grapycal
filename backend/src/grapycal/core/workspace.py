@@ -139,6 +139,8 @@ class Workspace:
         else:
             logger.info(f'No workspace file found at {self.path}. Creating a new workspace to start with.')
             self.initialize_workspace()
+
+        self.save_workspace(self.path)
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
         self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)
@@ -237,11 +239,13 @@ class Workspace:
     def vars(self)->Dict[str,Any]:
         return self.running_module.__dict__
     
-    def _open_workspace_callback(self,path):
-        if not os.path.exists(path):
-            raise Exception(f'File {path} does not exist')
+    def _open_workspace_callback(self,path,no_exist_ok=False):
+        if not no_exist_ok:
+            if not os.path.exists(path):
+                raise Exception(f'File {path} does not exist')
         if not path.endswith('.grapycal'):
             raise Exception(f'File {path} does not end with .grapycal')
+            
         pid = os.getpid()
         exit_message_file = f'grapycal_exit_message_{pid}'
         with open(exit_message_file,'w') as f:

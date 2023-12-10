@@ -36,7 +36,7 @@ class WorkspaceObject(SObject):
                 self.main_editor = self.add_child(Editor,old = old.children[old.get_attribute('main_editor')])
 
         # Add local file view and remote file view
-        self.file_view = self.add_child(LocalFileView,name='Local Files💻')
+        self.file_view = self.add_child(LocalFileView,name='Local Files 💻')
         async def add_examples_file_view():
             data_yaml = await self._workspace.data_yaml.get()
             if data_yaml is None:

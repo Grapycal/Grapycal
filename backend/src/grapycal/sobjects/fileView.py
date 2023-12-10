@@ -1,9 +1,8 @@
 import os
 from pathlib import Path
-from urllib.parse import ParseResult, urlparse
 from grapycal.extension.utils import list_to_dict
 from grapycal.utils.httpResource import HttpResource
-from objectsync import SObject, StringTopic
+from objectsync import IntTopic, SObject, StringTopic
 from grapycal.utils.io import read_workspace
 import logging
 logger = logging.getLogger(__name__)
@@ -13,15 +12,20 @@ class FileView(SObject):
     def build(self, name,**kwargs):
         super().build(**kwargs)
         self.name = self.add_attribute('name',StringTopic,name)
+        self.editable = self.add_attribute('editable',IntTopic,False)
         
     def init(self):
         self.register_service('ls',self.ls)
         self.register_service('get_workspace_metadata',self.get_workspace_metadata)
         self.register_service('open_workspace',self.open_workspace)
+        self.register_service('is_empty',self.is_empty)
         self.metadata_cache = {}
 
     def ls(self,path):
         raise NotImplementedError()
+    
+    def is_empty(self,path):
+        return len(self.ls(path)) == 0
 
     def get_workspace_metadata(self,path):
         raise NotImplementedError()
@@ -30,6 +34,13 @@ class FileView(SObject):
         self._server.globals.workspace._open_workspace_callback(path)
 
 class LocalFileView(FileView):
+    def build(self, **kwargs):
+        super().build(**kwargs)
+        self.editable.set(True)
+        self.register_service('add_file',self.add_file)
+        self.register_service('add_dir',self.add_dir)
+        self.register_service('delete',self.delete)
+        
     def ls(self,path):
         # root is cwd
         root = os.getcwd()
@@ -58,6 +69,41 @@ class LocalFileView(FileView):
         version, metadata, _ = read_workspace(path,metadata_only=True)
         self.metadata_cache[path] = metadata
         return metadata
+    
+    def add_file(self,path):
+        if not path.endswith('.grapycal'):
+            path += '.grapycal'
+        root = os.getcwd()
+        path = path.replace('./','')
+        path = os.path.join(root,path)
+        if os.path.exists(path):
+            return False
+        self._server.globals.workspace._open_workspace_callback(path,no_exist_ok=True)
+    
+    def add_dir(self,path):
+        root = os.getcwd()
+        path = path.replace('./','')
+        path = os.path.join(root,path)
+        if os.path.exists(path):
+            return False
+        os.mkdir(path)
+        return True
+    
+    def delete(self,path):
+        '''
+        Delete file or dir
+        '''
+        root = os.getcwd()
+        path = path.replace('./','')
+        path = os.path.join(root,path)
+        if not os.path.exists(path):
+            return False
+        if os.path.isfile(path):
+            os.remove(path)
+        else:
+            os.rmdir(path)
+        return True
+
 def path2str(path):
     return str(path).replace('\\','/')
 class RemoteFileView(FileView):
