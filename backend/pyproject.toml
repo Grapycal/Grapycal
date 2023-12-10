@@ -21,11 +21,10 @@ include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here becaus
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = "^0.8.0"
+objectsync = "^0.8.1"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
-bson = "^0.5.10"
 aiohttp = "^3.9.1"
 toml = "^0.10.2"
 

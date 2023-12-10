@@ -1,7 +1,8 @@
 from typing import Any, Dict
+from venv import logger
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
-from grapycal.sobjects.fileView import FileView
+from grapycal.sobjects.fileView import FileView, LocalFileView, RemoteFileView
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.sidebar import Sidebar
 from grapycal.sobjects.settings import Settings
@@ -11,6 +12,8 @@ class WorkspaceObject(SObject):
     frontend_type = 'Workspace'
 
     def build(self,old:SObjectSerialized|None=None):
+        from grapycal.core.workspace import Workspace
+        self._workspace: Workspace = self._server.globals.workspace
         if old is None:
             self.settings = self.add_child(Settings)
             self.webcam = self.add_child(WebcamStream)
@@ -32,10 +35,15 @@ class WorkspaceObject(SObject):
                 self.main_editor = self.add_child(Editor,old = old.get_child('main_editor'))
             else:
                 self.main_editor = self.add_child(Editor,old = old.children[old.get_attribute('main_editor')])
-            if old.has_child('file_view'):
-                self.file_view = self.add_child(FileView,old = old.get_child('file_view'))
-            else:
-                self.file_view = self.add_child(FileView)
+
+            self.file_view = self.add_child(LocalFileView,name='Local Files💻')
+            async def add_examples_file_view():
+                data_yaml = await self._workspace.data_yaml.get()
+                if data_yaml is None:
+                    logger.warning(self._workspace.data_yaml.failed_exception)
+                    return # no internet connection
+                self.add_child(RemoteFileView,url = data_yaml['examples_url'],name = 'Examples💡')
+            self._workspace.add_task_to_event_loop(add_examples_file_view())
         
         # read by frontend
         self.add_attribute('main_editor',ObjTopic).set(self.main_editor)

@@ -5,11 +5,12 @@ from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
-from grapycal.sobjects.fileView import FileView
+from grapycal.sobjects.fileView import LocalFileView, RemoteFileView
 from grapycal.sobjects.settings import Settings
 from grapycal.sobjects.controls import *
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.workspaceObject import WebcamStream, WorkspaceObject
+from grapycal.utils.httpResource import HttpResource
 from grapycal.utils.io import file_exists, read_workspace, write_workspace
 
 from grapycal.utils.logging import setup_logging
@@ -75,6 +76,8 @@ class Workspace:
 
         self.webcam: WebcamStream|None = None
 
+        self.data_yaml = HttpResource('https://github.com/eri24816/grapycal_data/raw/main/data.yaml')
+
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
 
@@ -110,7 +113,8 @@ class Workspace:
         self._objectsync.register(Editor)
         self._objectsync.register(Sidebar)
         self._objectsync.register(Settings)
-        self._objectsync.register(FileView)
+        self._objectsync.register(LocalFileView)
+        self._objectsync.register(RemoteFileView)
         self._objectsync.register(InputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
@@ -164,7 +168,6 @@ class Workspace:
         workspace_serialized = self.get_workspace_object().serialize()
 
         metadata = {
-            'name': os.path.basename(path),
             'version': grapycal.__version__,
             'extensions': self._extention_manager.get_extensions_info(), 
         }

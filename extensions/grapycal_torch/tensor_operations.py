@@ -45,6 +45,10 @@ class StackNode(FunctionNode):
         if self.is_new:
             self.dim.set(0)
 
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
+
     def dim_changed(self,dim):
         self.label.set('☰'+str(dim))
     
@@ -64,6 +68,10 @@ class UnsqueezeNode(FunctionNode):
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('U'+str(dim))

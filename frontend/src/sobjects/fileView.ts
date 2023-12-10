@@ -1,4 +1,4 @@
-import { DictTopic } from "objectsync-client"
+import { DictTopic, StringTopic } from "objectsync-client"
 import { Componentable } from "../component/componentable"
 import { HierarchyNode } from "../ui_utils/hierarchyNode"
 import { InfoPopup } from "../ui_utils/infoPopup"
@@ -6,6 +6,8 @@ import { Vector2, stringToElement, textToHtml } from "../utils"
 import { CompSObject } from "./compSObject"
 import { Workspace } from "./workspace"
 import { LIB_VERSION } from "../version"
+import { HtmlItem } from "../component/htmlItem"
+import { print } from "../devUtils"
 
 export class FileViewItem extends Componentable{
     protected get template(): string {return `
@@ -58,10 +60,23 @@ export class FileView extends CompSObject{
     metadataCache: Map<string,any> = new Map()
     infoPopup: InfoPopup
     lastMouseOver: FileViewItem
+    htmlItem: HtmlItem
+    currentPath: string = '.'
 
     // used to check if installed extensions are sufficent to open the selected workspace
     importedExtensionsTopic: DictTopic<string, any>
     avaliableExtensionsTopic: DictTopic<string, any>
+
+    get template(): string {return `
+        <div>
+            <h2 class="">
+                <span class="tab-title">File View Name</span>
+            </h2>
+            folder: <span id="dir-path"></span>
+            <div id="slot_default"></div>
+        </div>
+        `;
+    }
 
     get installedExtensions (){return new Map([
             ...this.importedExtensionsTopic.getValue().entries(), 
@@ -73,24 +88,31 @@ export class FileView extends CompSObject{
         this.importedExtensionsTopic = this.objectsync.getTopic('imported_extensions',DictTopic<string,any>)
         this.avaliableExtensionsTopic = this.objectsync.getTopic('avaliable_extensions',DictTopic<string,any>)
 
+        this.htmlItem = new HtmlItem(this,document.getElementById('tab-file-view'))
+        this.htmlItem.applyTemplate(this.template,"append")
+        this.getAttribute('name').onSet.add((value)=>{this.htmlItem.getHtmlElByClass('tab-title').innerText = value})
         this.hierarchy = new HierarchyNode('','',true)
-        this.hierarchy.htmlItem.setParentElement(document.getElementById('tab-file-view'))
-        this.makeRequest('ls',{path:''},(response)=>{
-            // format: [{name,is_dir}]
-            for(let file of response){
-                this.addFile(file)
-            }
-        })
+        this.hierarchy.htmlItem.setParent(this.htmlItem,"default","append")
+        this.changeDir('.')
         this.infoPopup = new InfoPopup()
         this.link2(this.infoPopup.baseDiv,'mouseleave',()=>{
             setTimeout(() => {
                 this.hideIfNotMouseOver(this.lastMouseOver)
-            }, 500);
+            }, 100);
         })
+    }
+
+    private itemDoubleClicked(info:any){
+        if(info.type == 'workspace'){
+            this.openWorkspace(info.path)
+        }else if(info.type == 'dir'){
+            this.changeDir(info.name)
+        }
     }
 
     private openWorkspace(path: string){
         // check if installed extensions are sufficent to open the selected workspace
+        path = this.currentPath+'/'+path
         const meta = this.metadataCache.get(path)
         const incompatibleExtensions = []
         if(meta.extensions && meta.extensions.length > 0)
@@ -108,20 +130,49 @@ export class FileView extends CompSObject{
             if(!confirm(message)) return
         }
 
-        Workspace.instance.openWorkspace(path)
+        this.makeRequest('open_workspace',{path:path})
     }
 
-    private addFile(file:any){
-        let item = new FileViewItem(file.name,file.type,()=>{this.openWorkspace(`${file.path}`)})
+    private changeDir(path: string){
+        if(path == '.'){
+            path = path
+        }else if(path == '..'){
+            path = this.currentPath.split('/').slice(0,-1).join('/')
+        }else{
+            path = this.currentPath + '/' + path
+        }
+
+        this.makeRequest('ls',{path:path},(response)=>{
+            this.hierarchy.clear()
+            if(path != '.')
+                this.addItem({name:'..',type:'dir'})
+            for(let file of response){
+                this.addItem(file)
+            }
+        })
+        this.currentPath = path
+        this.htmlItem.getHtmlEl('dir-path').innerHTML = (path=='.'? '[ root ]': textToHtml(path))
+    }
+
+    private addItem(info:any){
+        let displayName = info.name
+        //omit .grapycal extension
+        if(info.type == 'workspace' && info.name.endsWith('.grapycal')){
+            displayName = info.name.slice(0,-9)
+            if(displayName.length > 27){
+                displayName = displayName.slice(0,27)+'...'
+            }
+        }
+        let item = new FileViewItem(displayName,info.type,()=>{this.itemDoubleClicked(info)})
         this.link2(item.htmlItem.baseElement,'mouseenter',()=>{
-            if(file.type == 'workspace' ) {
-                if(this.metadataCache.has(file.path)){
-                    this.showInfoPopup(item,file.path)
+            if(info.type == 'workspace' ) {
+                if(this.metadataCache.has(this.currentPath+'/'+info.path)){
+                    this.showInfoPopup(item,this.currentPath+'/'+info.path)
                 }else{
-                    this.makeRequest('get_workspace_metadata',{path:file.path},(response)=>{
-                        this.metadataCache.set(file.path,response)
+                    this.makeRequest('get_workspace_metadata',{path:this.currentPath+'/'+info.path},(response)=>{
+                        this.metadataCache.set(this.currentPath+'/'+info.path,response)
                         if(item.mouseOver)
-                            this.showInfoPopup(item,file.path)
+                            this.showInfoPopup(item,this.currentPath+'/'+info.path)
                     })
                 }
             }
@@ -133,19 +184,21 @@ export class FileView extends CompSObject{
         
 
         const meta = this.metadataCache.get(path)
-
+        const name = path.split('/').pop()
 
         this.lastMouseOver = item
         this.link2(item.htmlItem.baseElement,'mouseleave',()=>{
             setTimeout(() => {
                 this.hideIfNotMouseOver(item)
-            }, 500);
+            }, 100);
         })
 
         this.infoPopup.show()
         this.infoPopup.transform.translation = new Vector2(item.baseElement.getBoundingClientRect().right-80,item.baseElement.getBoundingClientRect().top)
+        this.infoPopup.transform.updateUI()
+        this.infoPopup.transform.backToScreen()
 
-        if (meta.name==undefined) {
+        if (meta.version==undefined) {
             this.infoPopup.baseDiv.innerHTML = 'The workspace was saved before v0.9.0<br>and does not contain metadata.'
             return
         }
@@ -153,7 +206,7 @@ export class FileView extends CompSObject{
         // this.infoPopup.baseDiv.innerHTML = textToHtml(JSON.stringify(meta, null, 4))
         this.infoPopup.baseDiv.innerHTML = ''
         //title
-        const title = stringToElement(`<h2>${meta.name}</h2>`)
+        const title = stringToElement(`<h3>${name}</h3>`)
         this.infoPopup.baseDiv.appendChild(title)
         this.infoPopup.baseDiv.appendChild(stringToElement(`<div>Requires:</div>`))
         //version
