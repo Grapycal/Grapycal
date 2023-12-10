@@ -19,7 +19,6 @@ class WorkspaceObject(SObject):
             self.webcam = self.add_child(WebcamStream)
             self.sidebar = self.add_child(Sidebar)
             self.main_editor = self.add_child(Editor)
-            self.file_view = self.add_child(FileView)
         else:
             if old.has_child('settings'):
                 self.settings = self.add_child(Settings,old = old.get_child('settings'))
@@ -36,14 +35,15 @@ class WorkspaceObject(SObject):
             else:
                 self.main_editor = self.add_child(Editor,old = old.children[old.get_attribute('main_editor')])
 
-            self.file_view = self.add_child(LocalFileView,name='Local Files💻')
-            async def add_examples_file_view():
-                data_yaml = await self._workspace.data_yaml.get()
-                if data_yaml is None:
-                    logger.warning(self._workspace.data_yaml.failed_exception)
-                    return # no internet connection
-                self.add_child(RemoteFileView,url = data_yaml['examples_url'],name = 'Examples💡')
-            self._workspace.add_task_to_event_loop(add_examples_file_view())
+        # Add local file view and remote file view
+        self.file_view = self.add_child(LocalFileView,name='Local Files💻')
+        async def add_examples_file_view():
+            data_yaml = await self._workspace.data_yaml.get()
+            if data_yaml is None:
+                logger.warning(self._workspace.data_yaml.failed_exception)
+                return # no internet connection
+            self.add_child(RemoteFileView,url = data_yaml['examples_url'],name = 'Examples💡')
+        self._workspace.add_task_to_event_loop(add_examples_file_view())
         
         # read by frontend
         self.add_attribute('main_editor',ObjTopic).set(self.main_editor)
