@@ -57,10 +57,10 @@ class WebcamNode(Node):
         self.button.on_click.add_manual(self._btn)
 
     def _btn(self):
-        if self.webcam.source_client.get() == self._server.get_context().action_source:
+        if self.webcam.source_client.get() == self._server.get_action_source():
             self.webcam.source_client.set(-1)
         else:
-            self.webcam.source_client.set(self._server.get_context().action_source)
+            self.webcam.source_client.set(self._server.get_action_source())
 
     def _source_client_changed(self,source_client:int):
         if source_client == -1:

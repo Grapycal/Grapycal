@@ -144,6 +144,11 @@ class Workspace:
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
         self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)
+
+        # creates the status message topic so client can subscribe to it
+        self._objectsync.create_topic(f'status_message',objectsync.EventTopic)
+        self._objectsync.on_client_connect += lambda client_id: self._objectsync.create_topic(f'status_message_{client_id}',objectsync.EventTopic)
+        self._objectsync.on_client_disconnect += lambda client_id: self._objectsync.remove_topic(f'status_message_{client_id}')
     
         self.background_runner.run()
 
@@ -254,6 +259,14 @@ class Workspace:
 
     def add_task_to_event_loop(self,task):
         self._communication_event_loop.create_task(task)
+
+    def send_status_message_to_all(self,message):
+        self._objectsync.emit('status_message',message=message)
+
+    def send_status_message(self,message,client_id=None):
+        if client_id is None:
+            client_id = self._objectsync.get_action_source()
+        self._objectsync.emit(f'status_message_{client_id}',message=message)
 
 if __name__ == '__main__':
     import argparse

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from grapycal.extension.utils import list_to_dict
 from grapycal.utils.httpResource import HttpResource
+from matplotlib.style import available
 from objectsync import IntTopic, SObject, StringTopic
 from grapycal.utils.io import read_workspace
 import logging
@@ -87,6 +88,7 @@ class LocalFileView(FileView):
         if os.path.exists(path):
             return False
         os.mkdir(path)
+        self._server.globals.workspace.send_status_message(f'Created directory {path}')
         return True
     
     def delete(self,path):
@@ -197,10 +199,14 @@ class RemoteFileView(FileView):
         # download workspace
         path = path.replace('./','')
         logger.info(f'Downloading workspace {path}')
-        remote_file = await HttpResource(path2str(os.path.join(self.url,'files',path)),bytes).get()
-        if remote_file is None:
+
+        resource = HttpResource(path2str(os.path.join(self.url,'files',path)),bytes)
+        
+        if not await resource.is_avaliable():
             logger.error(f'Cannot get workspace from {self.url}')
             return
+        
+        remote_file = await resource.get()
         
         local_path = os.getcwd().replace('\\','/')+'/'+path.replace('/','_')
         for i in range(100):

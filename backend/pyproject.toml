@@ -14,14 +14,14 @@ maintainers = [
 ]
 
 license = "BSD-3-Clause"
-readme = "README.md"
+readme = "../README.md"
 documentation = "https://eri24816.github.io/Grapycal/"
 
 include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = "^0.8.1"
+objectsync = ">=0.8.2"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
