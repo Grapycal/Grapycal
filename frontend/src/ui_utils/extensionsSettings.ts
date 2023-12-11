@@ -17,7 +17,7 @@ export class ExtensionsSetting extends Componentable{
     <div class="card">
         <div class="card-image"></div>
         <div class="card-content">
-            <div class="card-title"></div>
+            <span class="card-title"></span> <span class="card-version"></span>
             
         </div>
     </div>
@@ -40,27 +40,48 @@ export class ExtensionsSetting extends Componentable{
         this.objectsync = objectsync
 
         this.importedExtensionsTopic = this.objectsync.getTopic('imported_extensions',DictTopic<string,any>)
+        for(let [name,extension] of this.importedExtensionsTopic.getValue()){
+            this.addCard(extension,'imported')
+        }
         this.linker.link(this.importedExtensionsTopic.onAdd,(name,newExtension)=>{
             this.addCard(newExtension,'imported')
         })
         this.linker.link(this.importedExtensionsTopic.onPop,(name,oldExtension)=>{
             this.cards.imported[name].remove()
         })
+        this.linker.link(this.importedExtensionsTopic.onChangeValue,(name,newExtension)=>{
+            this.cards.imported[name].remove()
+            this.addCard(newExtension,'imported')
+        })
         
         this.avaliableExtensionsTopic = this.objectsync.getTopic('avaliable_extensions',DictTopic<string,any>)
+        for(let [name,extension] of this.avaliableExtensionsTopic.getValue()){
+            this.addCard(extension,'avaliable')
+        }
         this.linker.link(this.avaliableExtensionsTopic.onAdd,(name,newExtension)=>{
             this.addCard(newExtension,'avaliable')
         })
         this.linker.link(this.avaliableExtensionsTopic.onPop,(name,oldExtension)=>{
             this.cards.avaliable[name].remove()
         })
+        this.linker.link(this.avaliableExtensionsTopic.onChangeValue,(name,newExtension)=>{
+            this.cards.avaliable[name].remove()
+            this.addCard(newExtension,'avaliable')
+        })
 
         this.notInstalledExtensionsTopic = this.objectsync.getTopic('not_installed_extensions',DictTopic<string,any>)
+        for(let [name,extension] of this.notInstalledExtensionsTopic.getValue()){
+            this.addCard(extension,'not_installed')
+        }
         this.linker.link(this.notInstalledExtensionsTopic.onAdd,(name,newExtension)=>{
             this.addCard(newExtension,'not_installed')
         })
         this.linker.link(this.notInstalledExtensionsTopic.onPop,(name,oldExtension)=>{
             this.cards.not_installed[name].remove()
+        })
+        this.linker.link(this.notInstalledExtensionsTopic.onChangeValue,(name,newExtension)=>{
+            this.cards.not_installed[name].remove()
+            this.addCard(newExtension,'not_installed')
         })
 
         document.getElementById('refresh-extensions').addEventListener('click',()=>{
@@ -72,7 +93,8 @@ export class ExtensionsSetting extends Componentable{
         let card: HTMLElement = document.createElement('div')
         card.innerHTML = this.cardTemplate
         card = card.firstElementChild as HTMLElement
-        card.querySelector<HTMLDivElement>('.card-title').innerText = newExtension.name
+        card.querySelector<HTMLSpanElement>('.card-title').innerText = newExtension.name
+        card.querySelector<HTMLSpanElement>('.card-version').innerText = newExtension.version
         //card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(${newExtension.icon})`
         card.querySelector<HTMLDivElement>('.card-image').style.backgroundImage = `url(https://imgur.com/xwG2FSr.jpg)`
 

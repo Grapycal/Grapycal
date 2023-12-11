@@ -759,6 +759,10 @@ input:enabled, textarea:enabled{
     color: var(--error);
 }
 
+.success{
+    color: var(--success);
+}
+
 
 .output-item{
     margin: 5px 0px;
@@ -925,7 +929,7 @@ hr{
     display: flex;
     flex-direction: column;
     margin: 10px;
-    width: 160px;
+    width: 220px;
     height: 100px;
     border-radius: 4px;
     background-color: var(--z2);
@@ -953,9 +957,9 @@ hr{
 .card-title{
     flex-grow: 1;
     flex-shrink: 10;
-    text-align: center;
     padding: 4px 10px;
     min-width: 0;
+    white-space: nowrap;
 }
 
 .card-button{

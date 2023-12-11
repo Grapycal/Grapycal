@@ -56,9 +56,14 @@ export class Workspace extends CompSObject{
             this.selection.clearSelection()
         })
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
+        GlobalEventDispatcher.instance.onKeyDown.add('Backspace',this.deletePressed.bind(this))
+
         Footer.setStatus('Workspace loaded.')
     }
     private deletePressed(){
+        // check if nothing in document is focused
+        if(document.activeElement != document.body) return;
+        
         let selectedIds = []
         for(let s of this.selection.selected){
             let o = s.object

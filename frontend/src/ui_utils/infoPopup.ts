@@ -3,10 +3,10 @@ import { Transform } from "../component/transform"
 import { Node } from "../sobjects/node"
 import { Vector2 } from "../utils"
 
-export class ErrorPopup extends Componentable{
+export class InfoPopup extends Componentable{
     protected get template(): string {
         return `
-            <div class="error-popup">
+            <div class="base">
                 <div class="message"></div>
                 <svg width="20px" height="20px" style="position: absolute; bottom: -20px; left: -20px;">
                     <line x1="20" y1="0" x2="0" y2="20" />
@@ -16,20 +16,18 @@ export class ErrorPopup extends Componentable{
     }
     protected get style():string{
         return `
-            .error-popup{
-                color: var(--error);
-                font-size: 10px;
-                font-family: 'consolas';
+            .base{
+                background-color: var(--z2);
                 position: absolute;
                 flex-direction: column;
                 justify-content: center;
                 z-index: 1000;
-                border: 1px solid var(--text-low);
-                border-radius: 2px;
-                box-shadow: 0px 0px 5px 0px black;
-                padding: 2px;
-                stroke: var(--error);
-                stroke-width:2;
+                border: 1px solid var(--z3);
+                border-radius: 4px;
+                padding: 10px;
+                width: 300px;
+                height: 200px;
+                overflow: auto;
             }
             .message{
                 max-width: 400px;
@@ -40,56 +38,35 @@ export class ErrorPopup extends Componentable{
             }
         `
     }
-    node: Node
     baseDiv: HTMLDivElement
-    messageDiv: HTMLDivElement
     transform: Transform
+    private _mouseOver: boolean = false
+    get mouseOver(): boolean {return this._mouseOver}
 
-    constructor(node:Node,title:string='',message: string='') {
+    constructor() {
         super()
-        this.node = node
         this.baseDiv = this.htmlItem.baseElement as HTMLDivElement
-        this.messageDiv = this.htmlItem.getElByClass("message")
+        this.htmlItem.setParentElement(document.body)
         this.transform = new Transform(this)
 
-        this.set(title,message)
         this.hide()
-
-        this.link(this.node.moved,this.onMoved)
-
-
-        this.baseDiv.addEventListener("mousedown",(e)=>{
-            this.hide()
-            e.stopPropagation()
-        })
 
         this.transform.pivot = new Vector2(0.,1)
         this.baseDiv.addEventListener("wheel",(e)=>{
             //if scrollable, stop propagation
-            if(this.messageDiv.scrollHeight > this.messageDiv.clientHeight){
+            if(this.baseDiv.scrollHeight > this.baseDiv.clientHeight){
                 e.stopPropagation()
             }
         })
-    }
-
-    set(title:string,message: string){
-        message = message.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;")
-        this.messageDiv.innerHTML = message
+        this.link2(this.baseDiv,'mouseenter',()=>{this._mouseOver = true})
+        this.link2(this.baseDiv,'mouseleave',()=>{this._mouseOver = false})
     }
 
     show(){
         this.baseDiv.style.display = "block"
-        this.onMoved()
     }
 
     hide(){
         this.baseDiv.style.display = "none"
-    }
-
-    onMoved(){
-        if(this.baseDiv.style.display == "none") return
-        this.transform.translation = this.node.transform.translation.add(
-            new Vector2(this.node.transform.localSize.x+20,-20)
-            )
     }
 }

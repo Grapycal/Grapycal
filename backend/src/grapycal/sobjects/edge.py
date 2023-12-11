@@ -67,7 +67,7 @@ class Edge(SObject):
         return super().destroy()
 
     def get_data(self)->Any:
-
+        
         if not self._data_ready:
             raise Exception('Data not available')
         self._activated = False

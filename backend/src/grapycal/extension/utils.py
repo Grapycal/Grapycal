@@ -1,8 +1,13 @@
-
+import logging
+logger = logging.getLogger(__name__)
+import importlib.util
 from typing import Any, Callable, Dict, Generic, List, TypeVar
 from grapycal.utils.misc import Action
 from objectsync.sobject import SObjectSerialized
 import asyncio
+
+from pathlib import Path
+import pkg_resources
 
 I=TypeVar('I')
 O=TypeVar('O')
@@ -72,3 +77,60 @@ class Clock:
         while True:
             await asyncio.sleep(self.interval)
             self.on_tick.invoke()
+
+def get_package_version(package_name:str)->str:
+    '''
+    Find the version of a package. Considering editable installs, the developer may have changed the version but not installed it.
+    In this case, the new version will not be reflected in pkg_resources. So we first try to find the version in pyproject.toml.
+    '''
+
+    version = get_package_version_from_pyproject(package_name)
+    if version is not None:
+        return version
+    
+    try:
+        return pkg_resources.get_distribution(package_name).version
+    except pkg_resources.DistributionNotFound:
+        # the package is not installed
+        return '0.0.0'
+
+def get_package_version_from_pyproject(package_name:str)->str|None:
+    init_location = importlib.util.find_spec(package_name).origin
+    if init_location is None:
+        return None
+    package_location = Path(init_location).parent
+    pyproject = Path(package_location) / 'pyproject.toml'
+    
+    if not pyproject.exists():
+        return None
+    
+    with open(pyproject,'r') as f:
+        pyproject_toml = f.read()
+
+    import toml
+    pyproject_toml = toml.loads(pyproject_toml)
+    # try poetry
+    try:
+        return pyproject_toml['tool']['poetry']['version']
+    except KeyError:
+        pass
+    # try pep 621
+    try:
+        return pyproject_toml['project']['version']
+    except KeyError:
+        pass
+    logger.warning(f'Package {package_name} has a pyproject.toml but no version is found in it')
+    return None
+    
+def list_to_dict(l:List[dict],key:str)->Dict[Any,dict]:
+    '''
+    Convert a list of dicts to a dict of dicts
+    '''
+    return {d[key]:d for d in l}
+
+def get_extension_info(name) -> dict:
+    # returns the same as Extension.get_info(), but no need to load the extension
+    return {
+        'name':name,
+        'version':get_package_version(name),
+    }

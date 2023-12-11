@@ -52,6 +52,7 @@ class ImagePasteNode(SourceNode):
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
         self.restore_controls('img')
+        self.restore_attributes('format')
 
     def format_validator(self,format,_):
         if 'torch' in format:

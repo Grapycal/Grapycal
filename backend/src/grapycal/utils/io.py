@@ -1,12 +1,14 @@
 import gzip
 import logging
+
+import grapycal
 logger = logging.getLogger(__name__)
 
 import json
 import asyncio
 import io
 import threading
-from typing import Any, Callable
+from typing import Any, Callable, Tuple
 
 class OutputStream:
     def __init__(self, on_flush:Callable[[str],None], hz=20):
@@ -79,21 +81,47 @@ class OutputStream:
         self._exit_flag = True
         self._enable_flush_event.set()
 
-def json_write(path:str,data:Any,compress=False):
+from functools import partial
+def write_workspace(path:str,metadata,data:Any,compress=False):
     if not compress:
-        with open(path,'w') as f:
-            json.dump(data,f)
+        open_func = partial(open,path,'w',encoding='utf-8')
     else:
-        with gzip.open(path,'wb') as f:
-            f.write(json.dumps(data).encode('utf-8'))
+        open_func = partial(gzip.open,path,'wt')
 
-def json_read(path):
-    try:
-        with open(path,'r') as f:
-            return json.load(f)
-    except UnicodeDecodeError: # compressed
-        with gzip.open(path,'rb') as f:
-            return json.loads(f.read().decode('utf-8'))
+    with open_func() as f:
+        f.write(grapycal.__version__+'\n')
+        json.dump(metadata,f)
+        f.write('\n')
+        json.dump(data,f)
+
+def read_workspace(path,metadata_only=False) -> Tuple[str,Any,Any]:
+    # see if first two bytes are 1f 8b
+    with open(path,'rb') as f:
+        magic_number = f.read(2)
+    if magic_number == b'\x1f\x8b':
+        open_func = partial(gzip.open,path,'rt')
+    else:
+        open_func = partial(open,path,'r',encoding='utf-8')
+
+    with open_func() as f:
+
+        # DEPRECATED: v0.9.0 and before has no version number and metadata
+        try:
+            version = f.readline().strip()
+            metadata = json.loads(f.readline())
+        except json.decoder.JSONDecodeError:
+            f.seek(0)
+            version = '0.9.0'
+            metadata = {}
+            data = json.loads(f.read()) if not metadata_only else None
+            return version, metadata, data
+        
+        f.seek(0)
+        version = f.readline().strip()
+        metadata = json.loads(f.readline())
+        data = json.loads(f.readline()) if not metadata_only else None
+    return version, metadata, data
+
     
 def file_exists(path):
     try:

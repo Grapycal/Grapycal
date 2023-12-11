@@ -59,9 +59,14 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 ## Contribute
 
+Contribution
+================================
+
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To discuss, feel free to open an issue or join the [Discord server](https://discord.gg/adNQcS42CT).
+To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/eri24816/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a g ood place to start.
+
+To discuss, feel free to go to [Discussion](https://github.com/eri24816/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
 
 ## Dependencies
 
@@ -101,6 +106,8 @@ These tools or libraries help Grapycal a lot:
 - [Commitizen](https://github.com/commitizen-tools/commitizen)
 
 - [Three.js](https://threejs.org/)
+
+- [Sphinx](https://www.sphinx-doc.org/)
 
 ## Star History
 

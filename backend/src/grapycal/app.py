@@ -86,7 +86,7 @@ class GrapycalApp:
         if http_server:
             http_server.send_signal(signal.SIGTERM)
             http_server.wait()
-        print('Grapycal server terminated')
+        print('Grapycal app terminated')
         return
     
 
@@ -107,7 +107,6 @@ class GrapycalApp:
         finally:
             workspace.send_signal(signal.SIGTERM)
             workspace.wait()
-            print('Workspace terminated')
 
     def _waitForWorkspace(self,workspace:subprocess.Popen):
         while True:

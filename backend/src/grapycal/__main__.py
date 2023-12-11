@@ -14,7 +14,6 @@ def main(s: usersettings.Settings):
     app.run()
 
 if __name__ == '__main__':
-    here = os.path.dirname(os.path.abspath(__file__))
 
     #parse arguments
     parser = argparse.ArgumentParser(description='Grapycal backend server')
@@ -29,7 +28,7 @@ if __name__ == '__main__':
     s.add_setting("port", int, default=8765) #type: ignore
     s.add_setting("http_port", int, default=9001) #type: ignore
     s.add_setting("host", str, default="localhost") #type: ignore
-    s.add_setting("path", str, default=os.path.join(here,"Welcome.grapycal")) #type: ignore
+    s.add_setting("path", str, default='workspace.grapycal') #type: ignore
     s.load_settings()
     if args.port:
         s['port'] = args.port
