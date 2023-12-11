@@ -147,8 +147,10 @@ class Workspace:
 
         # creates the status message topic so client can subscribe to it
         self._objectsync.create_topic(f'status_message',objectsync.EventTopic)
-        self._objectsync.on_client_connect += lambda client_id: self._objectsync.create_topic(f'status_message_{client_id}',objectsync.EventTopic)
-        self._objectsync.on_client_disconnect += lambda client_id: self._objectsync.remove_topic(f'status_message_{client_id}')
+        self._objectsync.on_client_connect += self.client_connected
+        self._objectsync.on_client_disconnect += self.client_disconnected
+        
+
     
         self.background_runner.run()
 
@@ -267,6 +269,15 @@ class Workspace:
         if client_id is None:
             client_id = self._objectsync.get_action_source()
         self._objectsync.emit(f'status_message_{client_id}',message=message)
+
+    def client_connected(self,client_id):
+        self._objectsync.create_topic(f'status_message_{client_id}',objectsync.EventTopic)
+
+    def client_disconnected(self,client_id):
+        try:
+            self._objectsync.remove_topic(f'status_message_{client_id}')
+        except:
+            pass # topic may have not been created successfully.
 
 if __name__ == '__main__':
     import argparse
