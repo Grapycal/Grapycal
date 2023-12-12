@@ -60,3 +60,6 @@ pre_bump_hooks = [
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+grapycal = "grapycal.__main__:main"

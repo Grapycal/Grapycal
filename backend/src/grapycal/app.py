@@ -48,7 +48,7 @@ class GrapycalApp:
         # Here simply start one workspace in background
             
         # Start webpage server
-        if not self._config['no_serve_webpage']:
+        if not self._config['no_http']:
             webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
             print(f'Strating webpage server at localhost:{self._config["http_port"]} from {webpage_path}...')
             http_server = subprocess.Popen([sys.executable,'-m', 'http.server',str(self._config["http_port"])],
