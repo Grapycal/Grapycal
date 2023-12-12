@@ -1,6 +1,7 @@
 import { print } from "../devUtils"
 import { Action,ActionDict, Vector2 } from "../utils"
 import { Component, IComponentable } from "./component"
+import { HtmlItem } from "./htmlItem"
 
 export interface ICanReceiveMouseEvent{
     addEventListener(type: 'mousedown', listener: (event: MouseEvent) => void, options?: boolean | AddEventListenerOptions): void;
@@ -111,6 +112,11 @@ export class EventDispatcher extends Component{
         this._onMouseUp = this._onMouseUp.bind(this);
         this._onDoubleClick = this._onDoubleClick.bind(this);
 
+        if(eventElement == null){
+            if(this.componentManager.hasComponent(HtmlItem)){
+                eventElement = this.componentManager.getComponent(HtmlItem).baseElement;
+            }
+        }
         this.eventElement = eventElement;
         if(this.eventElement){
             this.setEventElement(this.eventElement)

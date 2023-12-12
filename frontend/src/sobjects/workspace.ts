@@ -58,7 +58,8 @@ export class Workspace extends CompSObject{
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
         GlobalEventDispatcher.instance.onKeyDown.add('Backspace',this.deletePressed.bind(this))
 
-        Footer.setStatus('Workspace loaded.')
+        new Footer()
+        Footer.setStatus('Workspace loaded. Have fun!')
     }
     private deletePressed(){
         // check if nothing in document is focused

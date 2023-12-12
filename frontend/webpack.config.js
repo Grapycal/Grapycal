@@ -20,6 +20,11 @@ module.exports = {
             },
         ]
     },
+    watchOptions: {
+        ignored: [
+            '**/.git/**', // not working. to be fixed
+        ]
+    },
     devServer: {
         static: {
             directory: path.join(__dirname, 'dist'),

@@ -1,5 +1,6 @@
 import gzip
 import logging
+import os
 
 import grapycal
 logger = logging.getLogger(__name__)
@@ -93,6 +94,9 @@ def write_workspace(path:str,metadata,data:Any,compress=False):
         json.dump(metadata,f)
         f.write('\n')
         json.dump(data,f)
+        
+    # retun compressed file size
+    return os.path.getsize(path)
 
 def read_workspace(path,metadata_only=False) -> Tuple[str,Any,Any]:
     # see if first two bytes are 1f 8b

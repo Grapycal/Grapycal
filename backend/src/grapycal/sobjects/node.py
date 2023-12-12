@@ -158,6 +158,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         new_node = self.workspace.get_workspace_object().main_editor.create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
+        logger.info(f'Created a new {type(self).__name__}')
 
     def destroy(self) -> SObjectSerialized:
         '''

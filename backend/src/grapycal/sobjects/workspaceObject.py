@@ -1,5 +1,6 @@
+import logging 
+logger = logging.getLogger('WORKSPACE')
 from typing import Any, Dict
-from venv import logger
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.fileView import FileView, LocalFileView, RemoteFileView
@@ -77,6 +78,8 @@ class WorkspaceObject(SObject):
             edge.remove()
         for node in nodes:
             node.remove()
+
+        logger.info(f'Deleted {len(nodes)} nodes and {len(edges)} edges')
 
 class WebcamStream(SObject):
     frontend_type = 'WebcamStream'

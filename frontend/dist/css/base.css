@@ -16,8 +16,7 @@ header{
     z-index: 50;
 }
 
-footer{
-    height: 23px;
+.footer{
 }
 
 .main{
@@ -84,12 +83,13 @@ img{
 input[disabled],textarea[disabled] {pointer-events:none}
 
 footer{
+    position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    height: 50px;
     background-color: #000000;
     z-index: 10;
+    border-top: var(--z1) 1px solid;
 }
 
 .box-selection{

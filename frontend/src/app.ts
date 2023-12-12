@@ -161,7 +161,6 @@ documentReady(function(event: Event) {
     });  
     
     // new Header()
-    new Footer()
 })
 
 

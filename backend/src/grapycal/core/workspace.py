@@ -146,16 +146,16 @@ class Workspace:
         self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)
 
         # creates the status message topic so client can subscribe to it
-        self._objectsync.create_topic(f'status_message',objectsync.EventTopic)
         self._objectsync.on_client_connect += self.client_connected
         self._objectsync.on_client_disconnect += self.client_disconnected
-        
+        import grapycal.utils.logging
+        grapycal.utils.logging.frontend_message_topic = self._objectsync.create_topic(f'status_message',objectsync.EventTopic)
 
+        self._objectsync.create_topic('meta',objectsync.DictTopic,{'workspace name': self.path})
     
         self.background_runner.run()
 
     def exit(self):
-        logger.info('exit')
         self.background_runner.exit()
 
     def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
@@ -186,9 +186,11 @@ class Workspace:
             'id_count': self._objectsync.get_id_count(),
             'workspace_serialized': workspace_serialized.to_dict(),
         }
-        write_workspace(path, metadata, data, compress=True)
+        file_size = write_workspace(path, metadata, data, compress=True)
         time_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        logger.info(f'Workspace saved to {path} at {time_str}')
+        node_count = len(self.get_workspace_object().main_editor.top_down_search(type=Node))
+        edge_count = len(self.get_workspace_object().main_editor.top_down_search(type=Edge))
+        logger.info(f'Workspace saved to {path}. Node count: {node_count}. Edge count: {edge_count}. File size: {file_size//1024} KB.')
 
     def load_workspace(self, path: str) -> None:
         version,metadata,data = read_workspace(path)
@@ -253,6 +255,8 @@ class Workspace:
         if not path.endswith('.grapycal'):
             raise Exception(f'File {path} does not end with .grapycal')
             
+        logger.info(f'Opening workspace {path}...')
+
         pid = os.getpid()
         exit_message_file = f'grapycal_exit_message_{pid}'
         with open(exit_message_file,'w') as f:
