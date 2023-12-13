@@ -59,8 +59,6 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 ## Contribute
 
-Contribution
-================================
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
