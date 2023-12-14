@@ -53,46 +53,46 @@ Project Structure
 
 .. code-block:: text
 
-    Grapycal
-        backend
-            docs
-            src/grapycal
-                core
-                    workspace.py
-                    ... (other core classes)
-                sobjects
-                    ...
-                extension
-                    ...
-                utils 
-                    ...
-                webpage
-                    ...
-                __init__.py
-                __main__.py
-                app.py
-            pyproject.toml
-    
-        frontend
-            dist ... (frontend resources)
-            src
-                components 
-                    ...
-                sobjects 
-                    ...
-                inspector 
-                    ...
-                ui_utils 
-                    ...
-                app.ts
-                ...
-            package.json
-    
-        extensions
-            grapycal_builtin
-            grapycal_torch
-            grapycal_ros
-            ...
+    Grapycal/
+    ├── backend/
+    │   ├── docs
+    │   ├── src/grapycal/
+    │   │   ├── core/
+    │   │   │   ├── workspace.py
+    │   │   │   └── ... (other core classes)
+    │   │   ├── sobjects/
+    │   │   │   └── ...
+    │   │   ├── extension/
+    │   │   │   └── ...
+    │   │   ├── utils/
+    │   │   │   └── ...
+    │   │   ├── webpage/
+    │   │   │   └── ...
+    │   │   ├── __init__.py
+    │   │   ├── __main__.py
+    │   │   └── app.py
+    │   └── pyproject.toml
+    |
+    ├── frontend/
+    │   ├── dist ... (frontend resources)
+    │   ├── src/
+    │   │   ├── components/
+    │   │   │   └── ...
+    │   │   ├── sobjects/
+    │   │   │   └── ...
+    │   │   ├── inspector/
+    │   │   │   └── ...
+    │   │   ├── ui_utils/
+    │   │   │   └── ...
+    │   │   ├── app.ts
+    │   │   └── ...
+    │   └── package.json
+    |
+    └── extensions/
+        ├── grapycal_builtin
+        ├── grapycal_torch
+        ├── grapycal_ros
+        └── ...
 
 The Grapycal application consists of the backend (written in Python) and the frontend (written in Typescript).
 
