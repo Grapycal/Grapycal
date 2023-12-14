@@ -7,6 +7,10 @@ import aiohttp
 from grapycal.utils.misc import as_type
 import yaml
 import logging
+import certifi
+import ssl
+from aiohttp import TCPConnector
+
 logger = logging.getLogger(__name__)
 
 T = TypeVar('T')
@@ -35,7 +39,9 @@ class HttpResource(Generic[T]):
         if self.data is not None:
             return self.data
         try:
-            async with aiohttp.request('GET',self.url) as response:
+            ssl_context = ssl.create_default_context(cafile=certifi.where())
+            connector = TCPConnector(ssl=ssl_context)
+            async with aiohttp.request('GET',self.url, connector=connector) as response:
                 if self.format == 'yaml':
                     self.data = yaml.safe_load(await response.text())
                 elif self.format == 'json':
@@ -44,6 +50,7 @@ class HttpResource(Generic[T]):
                     self.data = as_type(await response.read(),self.data_type)
                 else:
                     raise Exception(f'Unknown format {self.format}')
+                connector.close()
         except Exception as e :
             self.failed = True
             self.failed_exception = e
