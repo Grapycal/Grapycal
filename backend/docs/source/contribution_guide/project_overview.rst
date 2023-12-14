@@ -53,42 +53,42 @@ Project Structure
 
 .. code-block:: text
 
-    Grapycal/
-    ├── backend/
-    │   ├── docs/
-    │   ├── src/grapycal/
-    │   │   ├── core/
+    Grapycal
+    ├── backend
+    │   ├── docs
+    │   ├── src/grapycal
+    │   │   ├── core
     │   │   │   ├── workspace.py
     │   │   │   └── ... (other core classes)
-    │   │   ├── sobjects/
+    │   │   ├── sobjects
     │   │   │   └── ...
-    │   │   ├── extension/
+    │   │   ├── extension
     │   │   │   └── ...
-    │   │   ├── utils/
+    │   │   ├── utils
     │   │   │   └── ...
-    │   │   ├── webpage/
+    │   │   ├── webpage
     │   │   │   └── ...
     │   │   ├── __init__.py
     │   │   ├── __main__.py
     │   │   └── app.py
     │   └── pyproject.toml
     |
-    ├── frontend/
-    │   ├── dist/ ... (frontend resources)
-    │   ├── src/
-    │   │   ├── components/
+    ├── frontend
+    │   ├── dist ... (frontend resources)
+    │   ├── src
+    │   │   ├── components
     │   │   │   └── ...
-    │   │   ├── sobjects/
+    │   │   ├── sobjects
     │   │   │   └── ...
-    │   │   ├── inspector/
+    │   │   ├── inspector
     │   │   │   └── ...
-    │   │   ├── ui_utils/
+    │   │   ├── ui_utils
     │   │   │   └── ...
     │   │   ├── app.ts
     │   │   └── ...
     │   └── package.json
     |
-    └── extensions/
+    └── extensions
         ├── grapycal_builtin
         ├── grapycal_torch
         ├── grapycal_ros
