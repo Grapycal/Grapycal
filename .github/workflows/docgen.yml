@@ -34,4 +34,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: backend/docs/build/html
           force_orphan: true
+          cname: docs.grapycal.org
       
