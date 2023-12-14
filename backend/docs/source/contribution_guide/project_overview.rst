@@ -54,45 +54,45 @@ Project Structure
 .. code-block:: text
 
     Grapycal
-        backend
-            docs
-            src/grapycal
-                core
-                    workspace.py
-                    ... (other core classes)
-                sobjects
-                    ...
-                extension
-                    ...
-                utils 
-                    ...
-                webpage
-                    ...
-                __init__.py
-                __main__.py
-                app.py
-            pyproject.toml
-    
-        frontend
-            dist ... (frontend resources)
-            src
-                components 
-                    ...
-                sobjects 
-                    ...
-                inspector 
-                    ...
-                ui_utils 
-                    ...
-                app.ts
-                ...
-            package.json
-    
-        extensions
-            grapycal_builtin
-            grapycal_torch
-            grapycal_ros
-            ...
+    ├── backend
+    │   ├── docs
+    │   ├── src/grapycal
+    │   │   ├── core
+    │   │   │   ├── workspace.py
+    │   │   │   └── ... (other core classes)
+    │   │   ├── sobjects
+    │   │   │   └── ...
+    │   │   ├── extension
+    │   │   │   └── ...
+    │   │   ├── utils
+    │   │   │   └── ...
+    │   │   ├── webpage
+    │   │   │   └── ...
+    │   │   ├── __init__.py
+    │   │   ├── __main__.py
+    │   │   └── app.py
+    │   └── pyproject.toml
+    |
+    ├── frontend
+    │   ├── dist ... (frontend resources)
+    │   ├── src
+    │   │   ├── components
+    │   │   │   └── ...
+    │   │   ├── sobjects
+    │   │   │   └── ...
+    │   │   ├── inspector
+    │   │   │   └── ...
+    │   │   ├── ui_utils
+    │   │   │   └── ...
+    │   │   ├── app.ts
+    │   │   └── ...
+    │   └── package.json
+    |
+    └── extensions
+        ├── grapycal_builtin
+        ├── grapycal_torch
+        ├── grapycal_ros
+        └── ...
 
 The Grapycal application consists of the backend (written in Python) and the frontend (written in Typescript).
 
@@ -137,25 +137,25 @@ Many class in Grapycal inherits from SObject, such as `Node`, `Edge`, `Port`, et
 .. code-block:: text
 
     root
-    └───Workspace
-        ├───Sidebar
-        │   ├───AdditionNode
+    └── Workspace
+        ├── Sidebar
+        │   ├── AdditionNode
         │   │   └──...     
-        │   ├───EvalNode
+        │   ├── EvalNode
         │   │   └──... 
-        │   └───PrintNode
+        │   └── PrintNode
         │   │   └──... 
-        └───Editor
-            ├───AdditionNode
+        └── Editor
+            ├── AdditionNode
             │   └──... 
-            ├───EvalNode
+            ├── EvalNode
             │   └──... 
-            ├───PrintNode
+            ├── PrintNode
             │   └──... 
-            ├───EvalNode
+            ├── EvalNode
             │   └──... 
-            ├───Edge
-            └───Edge
+            ├── Edge
+            └── Edge
 
 The `Sidebar` contains preview of all the nodes that can be added to the editor. The `Editor` contains all the nodes and edges been added to it.
 
@@ -164,10 +164,10 @@ In each node, there can be `ports` and `controls`. For example:
 .. code-block:: text
 
     SomeTypeOfNode
-    ├───Port
-    ├───Port
-    ├───TextControl
-    └───ButtonControl
+    ├── Port
+    ├── Port
+    ├── TextControl
+    └── ButtonControl
 
 A `port` is a connection point for edges. A `control` is a UI element that allows user to interact with the node. `Ports` and `controls` can be added to a node in the building process of the node, or be added (or removed) dynamically as the node's runtime behavior. For example, the lambda node creates a port each time user adds a new input variable.
 
