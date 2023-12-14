@@ -12,7 +12,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/eri24816/Grapycal/pulls)
 [![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/eri24816/Grapycal/graphs/contributors)
 </div>
-Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and runnig programs as a graph.
+Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and runnimg programs as a graph.
 
 The goal of this project is to make a programming language align with human perception at best, while being powerful with the help of Python, its backend.
 
@@ -62,7 +62,7 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/eri24816/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a g ood place to start.
+To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/eri24816/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
 
 To discuss, feel free to go to [Discussion](https://github.com/eri24816/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
 
