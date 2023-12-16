@@ -5,12 +5,12 @@
 
 [![pip install grapycal grapycal-builtin](https://img.shields.io/badge/pip_install-grapycal_grapycal--builtin-purple)](https://pypi.org/project/grapycal/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/grapycal)](https://pypi.org/project/grapycal/)
-[![License](https://img.shields.io/github/license/eri24816/Grapycal)](./LICENSE)
+[![License](https://img.shields.io/github/license/Grapycal/Grapycal)](./LICENSE)
 
 
 [![Discord](https://img.shields.io/discord/1094532480721236041?logo=discord&labelColor=white&color=5865F2)](https://discord.gg/adNQcS42CT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/Grapycal/Grapycal/pulls)
-[![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/Grapycal/Grapycal/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/Grapycal/grapycal)](https://github.com/Grapycal/Grapycal/graphs/contributors)
 </div>
 Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and running programs as a graph.
 
@@ -111,9 +111,9 @@ These tools or libraries help Grapycal a lot:
 
 <a href="https://star-history.com/#Grapycal/Grapycal&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Grapycal/Grapycal&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Grapycal/Grapycal&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Grapycal/Grapycal&type=Date" />
   </picture>
 </a>
 
