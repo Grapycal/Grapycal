@@ -76,7 +76,7 @@ class Workspace:
 
         self.webcam: WebcamStream|None = None
 
-        self.data_yaml = HttpResource('https://github.com/eri24816/grapycal_data/raw/main/data.yaml')
+        self.data_yaml = HttpResource('https://github.com/Grapycal/grapycal_data/raw/main/data.yaml')
 
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))

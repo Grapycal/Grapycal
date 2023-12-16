@@ -8,7 +8,7 @@ async def get_remote_extensions() -> list[dict]:
     Returns a list of available extensions that is not installed yet.
     '''
     try:
-        async with aiohttp.request('GET','https://github.com/eri24816/grapycal_data/raw/main/data.yaml') as response:
+        async with aiohttp.request('GET','https://github.com/Grapycal/grapycal_data/raw/main/data.yaml') as response:
             data = yaml.safe_load(await response.text())
     except Exception as e :
         print('Error while fetching data.yaml from github. Maybe no internet connection?')
