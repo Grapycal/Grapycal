@@ -9,8 +9,8 @@
 
 
 [![Discord](https://img.shields.io/discord/1094532480721236041?logo=discord&labelColor=white&color=5865F2)](https://discord.gg/adNQcS42CT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/eri24816/Grapycal/pulls)
-[![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/eri24816/Grapycal/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/Grapycal/Grapycal/pulls)
+[![GitHub contributors](https://img.shields.io/github/contributors/eri24816/grapycal)](https://github.com/Grapycal/Grapycal/graphs/contributors)
 </div>
 Grapycal is a general-purpose visual programming language based on Python. It provides a web-based editor for writing and running programs as a graph.
 
@@ -62,17 +62,17 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/eri24816/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
+To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/Grapycal/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
 
-To discuss, feel free to go to [Discussion](https://github.com/eri24816/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
+To discuss, feel free to go to [Discussion](https://github.com/Grapycal/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
 
 ## Dependencies
 
 Grapycal and its dependences consist of the following 6 packages:
 
-- [Grapycal/backend](https://github.com/eri24816/Grapycal): Included in this repo, including the backend code of the Grapycal main application
+- [Grapycal/backend](https://github.com/Grapycal/Grapycal): Included in this repo, including the backend code of the Grapycal main application
 
-- [Grapycal/frontend](https://github.com/eri24816/Grapycal): Included in this repo, including the frontend code of the Grapycal main application
+- [Grapycal/frontend](https://github.com/Grapycal/Grapycal): Included in this repo, including the frontend code of the Grapycal main application
 
 - [Topicsync](https://github.com/eri24816/Topicsync) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
 
@@ -109,7 +109,7 @@ These tools or libraries help Grapycal a lot:
 
 ## Star History
 
-<a href="https://star-history.com/#eri24816/Grapycal&Date">
+<a href="https://star-history.com/#Grapycal/Grapycal&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date&theme=dark" />
     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=eri24816/Grapycal&type=Date" />
