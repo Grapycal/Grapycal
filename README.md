@@ -46,7 +46,7 @@ In this back-and-forth process between humans and machines, using traditional Py
 
 ## Documentation
 
-The full documentaition can be found [here](https://eri24816.github.io/Grapycal/).
+The full documentaition can be found [here](https://docs.grapycal.org/).
 
 ## Get Started
 
