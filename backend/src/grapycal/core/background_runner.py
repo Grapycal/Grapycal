@@ -78,7 +78,10 @@ class BackgroundRunner:
                 else:
                     task_to_run = self._stack.pop()
 
-                task_to_run()
+                ret = task_to_run()
+                # if ret is a generator, push it to stack
+                if ret is not None:
+                    self._stack.append(ret)
 
             except KeyboardInterrupt:
                 logger.info("runner catch keyboardinterrupt")

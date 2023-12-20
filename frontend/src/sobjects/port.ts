@@ -67,6 +67,8 @@ export class Port extends CompSObject {
         
         this.link(this.display_name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
+            if(this.node)
+                this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18) 
         })
     }
 
@@ -96,6 +98,7 @@ export class Port extends CompSObject {
         this.node = as(newValue, Node);
         if(this.node.hasComponent(Transform))
             this.node.moved.add(this.moved.invoke)
+        this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18)
         this.moved.invoke()
     }
 

@@ -432,6 +432,22 @@ export class Node extends CompSObject {
             this.htmlItem.baseElement.setAttribute('title', nodeTypeDescription)
 
         }
+
+        if(shape == 'round'){
+            this.htmlItem.baseElement.classList.add('round-node');
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = 'unset'
+        }else{
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = this.minWidth + 'px'
+        }
+    }
+
+    private minWidth: number = 0;
+
+    public setMinWidth(width: number): void {
+        if(width < this.minWidth) return
+        this.minWidth = width;
+        if(this.shape.getValue() != 'round')
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = width + 'px'
     }
 
     public onDestroy(): void {
