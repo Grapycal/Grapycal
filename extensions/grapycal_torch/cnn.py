@@ -4,7 +4,7 @@ from .moduleNode import ModuleNode
 from torch import nn
 
 class Conv2dNode(ModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     def build_node(self):
         super().build_node()
         self.label.set('Conv2d')
@@ -44,7 +44,7 @@ class Conv2dNode(ModuleNode):
         self.get_out_port('out').push_data(out)
 
 class ConvTranspose2dNode(ModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     def build_node(self):
         super().build_node()
         self.label.set('ConvTr2d')

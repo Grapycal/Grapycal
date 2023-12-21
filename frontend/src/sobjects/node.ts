@@ -15,16 +15,15 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
-
+ 
 export class Node extends CompSObject {
     errorPopup: ErrorPopup;
-
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
         let str = 'cate'
         for(let subCat of category.split('/')){
             if(subCat == '') continue
-            str += '-'+subCat
+            str += '-'+subCat.replace(/[^a-zA-Z0-9]/g,'-')
             classes.push(str)
         }
         return classes

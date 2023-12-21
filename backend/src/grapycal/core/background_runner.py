@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from queue import Queue
 import queue
 import traceback
-from typing import Callable
+from typing import Callable, Iterator
 import signal
 from .stdout_helper import orig_print
 
@@ -70,7 +70,6 @@ class BackgroundRunner:
                     else:
                         self._stack.append(task)
 
-                logger.debug('got a task OAO')
 
                 # queue is prioritized
                 if len(self._queue) > 0:
@@ -78,10 +77,17 @@ class BackgroundRunner:
                 else:
                     task_to_run = self._stack.pop()
 
-                ret = task_to_run()
-                # if ret is a generator, push it to stack
-                if ret is not None:
-                    self._stack.append(ret)
+                if isinstance(task_to_run, Iterator):
+                    try:
+                        self._stack.append(task_to_run)
+                        next(task_to_run)
+                    except StopIteration:
+                        self._stack.pop()
+                else:
+                    ret = task_to_run()
+                    # if ret is a generator, push it to stack
+                    if ret is not None:
+                        self._stack.append(iter(ret))
 
             except KeyboardInterrupt:
                 logger.info("runner catch keyboardinterrupt")

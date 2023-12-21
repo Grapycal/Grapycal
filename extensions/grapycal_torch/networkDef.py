@@ -68,11 +68,12 @@ class NetworkCallNode(Node):
     definition.
     '''
 
-    category = 'torch/network'
+    category = 'torch/neural network'
     def build_node(self):
         self.label.set('')
         self.shape.set('normal')
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
+        self.icon_path.set('nn')
 
     def init_node(self):
         if self.is_preview:
@@ -81,13 +82,14 @@ class NetworkCallNode(Node):
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
         self.update_ports()
+        self.label.set(f'{self.network_name.get()}')
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
         self.restore_attributes('network name')
 
     def on_network_name_changed(self, old, new):
-        self.label.set(f' {new}')
+        self.label.set(f'{new}')
         NetworkDefManager.calls.remove(old,self)
         NetworkDefManager.calls.append(new,self)
 
@@ -154,7 +156,7 @@ class NetworkCallNode(Node):
         return super().destroy()
 
 class NetworkInNode(Node):
-    category = 'torch/network'
+    category = 'torch/neural network'
 
     # def spawn(self, client_id):
     #     new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
@@ -167,6 +169,7 @@ class NetworkInNode(Node):
 
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
         self.outs = self.add_attribute('outs',ListTopic,editor_type='list')
+        self.icon_path.set('nn')
 
     def init_node(self):
         self.outs.add_validator(ListTopic.unique_validator)
@@ -206,7 +209,7 @@ class NetworkInNode(Node):
                 call.update_ports()
 
     def update_label(self):
-        self.label.set(f'{self.network_name.get()}')
+        self.label.set(f'{self.network_name.get()}\'s input')
 
 
     def restore_from_version(self, version, old: NodeInfo):
@@ -235,12 +238,13 @@ class NetworkInNode(Node):
         return super().destroy()
 
 class NetworkOutNode(Node):
-    category = 'torch/network'
+    category = 'torch/neural network'
     def build_node(self):
         self.shape.set('normal')
 
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
         self.ins = self.add_attribute('ins',ListTopic,editor_type='list')
+        self.icon_path.set('nn')
 
     def init_node(self):
         self.ins.add_validator(ListTopic.unique_validator)
@@ -284,7 +288,7 @@ class NetworkOutNode(Node):
                 call.update_ports()
 
     def update_label(self):
-        self.label.set(f'{self.network_name.get()}')
+        self.label.set(f'{self.network_name.get()}\'s output')
 
     def on_input_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)

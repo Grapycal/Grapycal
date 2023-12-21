@@ -35,33 +35,10 @@ class DataLoaderNode(Node):
         shuffle = self.shuffle.get() == 1
         num_workers = self.num_workers.get()
         self.dl = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
-        self.dl_iterator = iter(self.dl)
-        self.epoch_counter = 0
-        self.run(self.next_epoch, to_queue=False)
-
-    def next_epoch(self):
-        self.epoch_counter += 1
-        if self.epoch_counter >= self.num_epochs.get():
-            # release memory
-            self.dl = None
-            self.dl_iterator = None
-            return
-        assert self.dl is not None
-        self.dl_iterator = iter(self.dl)
-        
-        self.run(self.next_epoch, to_queue=False)
-        self.next_batch()
-
-    def next_batch(self):
-        assert self.dl_iterator is not None
-        try:
-            item = next(self.dl_iterator)
-        except StopIteration:
-            return
-        self.run(self.next_batch, to_queue=False)
-        for edge in self.out.edges:
-            edge.push_data(item)
-
+        for i in range(self.num_epochs.get()):
+            for batch in self.dl:
+                self.out.push_data(batch)
+                yield
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task)

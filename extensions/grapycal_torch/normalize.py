@@ -4,7 +4,7 @@ from torch import nn
 from grapycal import IntTopic, Node, FloatTopic
 
 class BatchNorm2dNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
@@ -30,7 +30,7 @@ class BatchNorm2dNode(SimpleModuleNode):
         return self.module(inp)
 
 class Dropout2dNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
@@ -55,7 +55,7 @@ class Dropout2dNode(SimpleModuleNode):
         return self.module(inp)
 
 class DropoutNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
