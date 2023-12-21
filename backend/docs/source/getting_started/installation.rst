@@ -52,7 +52,7 @@ Prerequisites:
 
 3. Install pre-commit
 
-.. code-block::bash
+.. code-block:: bash
 
     pip install pre-commit
     pre-commit install --install-hooks
@@ -68,7 +68,7 @@ Prerequisites:
 
 The development setup is now done. you can make changes to the backend and frontend code.
 
-4. When you pull the latest code in the future, you may need to update the submodules and rebuild the frontend.
+5. When you pull the latest code in the future, you may need to update the submodules and rebuild the frontend.
 Otherwise, Grapycal may fail to run.
 
 .. code-block:: bash
