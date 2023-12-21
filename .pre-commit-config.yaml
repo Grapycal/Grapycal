@@ -14,17 +14,20 @@ repos:
     hooks:
     -   id: black
         name: black
+        files: .py$
 -   repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
     -   id: isort
         name: isort
         exclude: migrations/
+        files: .py$
 -   repo: https://github.com/PyCQA/flake8
     rev: 6.1.0
     hooks:
     -   id: flake8
         name: flake8
+        files: .py$
         args:
         -   --max-line-length=100
         -   --ignore=E402
