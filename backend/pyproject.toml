@@ -27,6 +27,7 @@ dacite = "^1.8.1"
 usersettings = "^1.1.5"
 aiohttp = "^3.9.1"
 toml = "^0.10.2"
+certifi = "^2023.11.17"
 
 [tool.poetry.group.docs]
 optional = true
