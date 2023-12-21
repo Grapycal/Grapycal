@@ -8,3 +8,10 @@ jobs:
     runs-on: arc-runner-set
     steps:
     - run: echo "🎉 This job uses runner scale set runners!"
+  Running-Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chartboost/ruff-action@v1
+        with:
+          src: ./backend
