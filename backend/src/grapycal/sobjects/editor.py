@@ -232,9 +232,12 @@ class Editor(SObject):
         dx = mouse_pos['x'] - (x1 + x2)/2
         dy = mouse_pos['y'] - (y1 + y2)/2
 
+        snap = 17
         for node in nodes:
             new_x = float(get_x(node)) + dx
             new_y = float(get_y(node)) + dy
+            new_x = round(new_x/snap)*snap
+            new_y = round(new_y/snap)*snap
             new_translation = f'{new_x},{new_y}'
             for attr in node.attributes:
                 name, type, value, is_stateful, order_strict = attr

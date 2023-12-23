@@ -4,6 +4,7 @@ import { Editor } from "../../sobjects/editor"
 import { Workspace } from "../../sobjects/workspace"
 import { MouseOverDetector } from "../../component/mouseOverDetector"
 import { GlobalEventDispatcher } from "../../component/eventDispatcher"
+import { Vector2 } from "../../utils"
 
 export class AddNodeMenu extends AutoCompMenu{
     private nodeTypesTopic:DictTopic<string,any>
@@ -43,9 +44,13 @@ export class AddNodeMenu extends AutoCompMenu{
                 key:(nodeTypeName.toLowerCase().split('.')[1].slice(0,-4)), // remove Node suffix
                 value:nodeTypeName,
                 callback:()=>{
-                    let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos).toString()
-                    
-                    this.editor.createNode(nodeTypeName,{translation:translation})
+                    let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos)
+                    let snap = 17
+                    let snapped = new Vector2(
+                        Math.round(translation.x/snap)*snap,
+                        Math.round(translation.y/snap)*snap
+                    )
+                    this.editor.createNode(nodeTypeName,{translation:snapped.toString()})
                 },
                 displayName:nodeTypeName.split('.')[1].slice(0,-4)
             })
