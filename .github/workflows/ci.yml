@@ -10,7 +10,8 @@ jobs:
     docker:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx
@@ -28,7 +29,6 @@ jobs:
                 context: .
                 file: ./Dockerfile
                 platforms: linux/amd64,linux/arm64
-                push: true
                 tags: docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-workspace:latest
                 outputs: type=oci,dest=/tmp/image.tar
             - name: Import image in containerd
