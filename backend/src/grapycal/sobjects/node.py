@@ -39,7 +39,7 @@ class Node(SObject,metaclass=NodeMeta):
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
 
-    def build(self,is_preview=False,translation='0,0',**build_node_args):
+    def build(self,is_preview=False,translation='0,0',restore_info=None,**build_node_args):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
@@ -64,6 +64,10 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
         '''
+        print(f'aaa{restore_info}')
+        if restore_info is not None:
+            self.old_version, self.old_node_info = restore_info
+
         self.build_node(**build_node_args)
 
     def build_node(self):
@@ -78,7 +82,6 @@ class Node(SObject,metaclass=NodeMeta):
     def init(self):
 
         self.workspace:Workspace = self._server.globals.workspace
-        self.old_node_info :NodeInfo|None = None
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
         parent = self.get_parent()
@@ -96,6 +99,9 @@ class Node(SObject,metaclass=NodeMeta):
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
 
         self.init_node()
+
+        if hasattr(self,'old_version'):
+            self.restore_from_version(self.old_version,self.old_node_info)
 
     def init_node(self):
         '''
