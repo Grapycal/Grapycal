@@ -1,4 +1,5 @@
 from grapycal import Node, StringTopic
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.sourceNode import SourceNode
 import numpy as np
 
@@ -112,3 +113,25 @@ class ConvolutionKernelNode(SourceNode):
                 res+=f'{val:2d} '
             res+='\n'
         return res[:-1]
+    
+class ArangeNode(SourceNode):
+    category = 'torch/generative'
+
+    def build_node(self):
+        super().build_node()
+        self.label.set('Arange')
+        self.shape.set('simple')
+        self.out_port = self.add_out_port('arange',display_name='')
+        self.start = self.add_attribute('start',StringTopic, '0',editor_type='text')
+        self.stop = self.add_attribute('stop',StringTopic, '10',editor_type='text')
+        self.step = self.add_attribute('step',StringTopic, '1',editor_type='text')
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('start','stop','step')
+
+    def task(self):
+        start = float(self.start.get())
+        stop = float(self.stop.get())
+        step = float(self.step.get())
+        self.out_port.push_data(torch.arange(start,stop,step))

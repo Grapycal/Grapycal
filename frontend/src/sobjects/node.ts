@@ -15,16 +15,15 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
-
+ 
 export class Node extends CompSObject {
     errorPopup: ErrorPopup;
-
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
         let str = 'cate'
         for(let subCat of category.split('/')){
             if(subCat == '') continue
-            str += '-'+subCat
+            str += '-'+subCat.replace(/[^a-zA-Z0-9]/g,'-')
             classes.push(str)
         }
         return classes
@@ -432,6 +431,22 @@ export class Node extends CompSObject {
             this.htmlItem.baseElement.setAttribute('title', nodeTypeDescription)
 
         }
+
+        if(shape == 'round'){
+            this.htmlItem.baseElement.classList.add('round-node');
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = 'unset'
+        }else{
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = this.minWidth + 'px'
+        }
+    }
+
+    private minWidth: number = 0;
+
+    public setMinWidth(width: number): void {
+        if(width < this.minWidth) return
+        this.minWidth = width;
+        if(this.shape.getValue() != 'round')
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = width + 'px'
     }
 
     public onDestroy(): void {

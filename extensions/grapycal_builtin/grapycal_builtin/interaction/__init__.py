@@ -101,7 +101,7 @@ class TriggerNode(Node):
         self.shape.set('simple')
         self.label.set('Trigger')
         self.css_classes.append('fit-content')
-        self.add_out_port('Trigger')
+        self.add_out_port('Trigger',display_name='')
 
     def double_click(self):
         self.out_ports[0].push_data(None)

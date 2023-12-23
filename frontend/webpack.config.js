@@ -22,7 +22,7 @@ module.exports = {
     },
     watchOptions: {
         ignored: [
-            '**/.git/**', // not working. to be fixed
+            '**/svg/',
         ]
     },
     devServer: {

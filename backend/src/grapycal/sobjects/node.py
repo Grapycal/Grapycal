@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
 import traceback
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
@@ -436,17 +436,19 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Run a task in the background thread.
         '''
-        def task_wrapper():
+
+        def wrapped():
             self.running.set(0)
             self.workspace.background_runner.set_exception_callback(lambda e:self._on_exception(e,truncate=3))
             if redirect_output:
                 with self._redirect_output():
-                    task()
+                    ret = task()
             else:
-                task()
+                ret = task()
             self.running.set(random.randint(0,10000))
-
-        self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
+            return ret
+        
+        self.workspace.background_runner.push(wrapped,to_queue=to_queue)
         
     def _run_directly(self,task:Callable[[],None],redirect_output=False):
         '''

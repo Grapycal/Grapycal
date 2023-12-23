@@ -8,7 +8,7 @@ from grapycal import EventTopic
 import torch
 
 class ModuleNode(Node):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     def build_node(self):
         #TODO: save and load
         self.shape.set('simple')
@@ -54,6 +54,10 @@ class ModuleNode(Node):
         if self.module is None:
             self.create_module_and_update_name()
         self.forward()
+
+    def get_module(self)->nn.Module:
+        assert self.module is not None
+        return self.module 
         
 class SimpleModuleNode(ModuleNode):
     inputs = []

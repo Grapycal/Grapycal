@@ -194,15 +194,16 @@ class LinePlotNode(Node):
         self.css_classes.append('fit-content')
         self.clear_port = self.add_in_port('clear', 1)
         self.x_coord_port = self.add_in_port('x coord', 1)
+        self.x_gen_mode = self.add_attribute('x coord mode',StringTopic,'from 0',editor_type='options',options=['from 0','continue'])
 
     def init_node(self):
         super().init_node()
         self.x_coord = [0]
-        self.generate_x_coord = True
         self.line_plot.lines.on_insert.add_auto(self.add_line)
         self.line_plot.lines.on_pop.add_auto(self.remove_line)
         if self.is_new:
             self.line_plot.lines.insert('line',0)
+            
 
     def add_line(self,name,_):
         self.add_in_port(name,1)
@@ -212,6 +213,7 @@ class LinePlotNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
+        self.restore_attributes('x coord mode')
         self.restore_controls('lineplot')
     
     def edge_activated(self, edge: Edge, port: InputPort):
@@ -221,13 +223,20 @@ class LinePlotNode(Node):
                 self.line_plot.clear_all()
             case self.x_coord_port:
                 self.x_coord = to_list(port.get_one_data())
-                self.generate_x_coord = False
             case _:
                 self.run(self.update_plot,ys = port.get_one_data(),name = port.name.get())
 
+    def gen_x_coord(self,ys):
+        if self.x_gen_mode.get() == 'from 0':
+            return list(range(len(ys)))
+        elif self.x_gen_mode.get() == 'continue':
+            return list(range(self.x_coord[-1]+1,self.x_coord[-1]+len(ys)+1))
+
     def update_plot(self,ys,name):
         ys = to_list(ys)
-        if self.generate_x_coord:
-            self.x_coord = list(range(self.x_coord[-1]+1,self.x_coord[-1]+len(ys)+1))
+        if len(self.x_coord_port.edges) == 0 or len(ys) != len(self.x_coord):
+            self.x_coord = self.gen_x_coord(ys)
+            if self.x_gen_mode.get() == 'from 0':
+                self.line_plot.clear(name)
         xs = self.x_coord
         self.line_plot.add_points(name,xs,ys)

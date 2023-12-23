@@ -93,6 +93,10 @@ class SqueezeNode(FunctionNode):
         if self.is_new:
             self.dim.set(0)
 
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
+
     def dim_changed(self,dim):
         self.label.set('S'+str(dim))
     
@@ -185,3 +189,31 @@ class FConv2DNode(FunctionNode):
         if len(orig_x.shape) == 2:
             y = y.squeeze(0)
         return y
+    
+class SinNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('sin')
+        self.shape.set('round')
+
+    def calculate(self, inp):
+        return torch.sin(inp)
+    
+class CosNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('cos')
+        self.shape.set('round')
+
+    def calculate(self, inp):
+        return torch.cos(inp)

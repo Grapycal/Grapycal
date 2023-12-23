@@ -4,7 +4,7 @@ from torch import nn
 from grapycal import IntTopic, Node
 
 class LinearNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
@@ -32,7 +32,7 @@ class LinearNode(SimpleModuleNode):
 
 
 class CustomModuleNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
