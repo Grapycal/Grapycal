@@ -7,8 +7,10 @@ from grapycal.sobjects.controls import TextControl
 from grapycal import ListTopic
 
 import ast
+
+from objectsync import StringTopic
 # exec that prints correctly
-def exec_(script,globals=None, locals=None,print_=print):
+def exec_(script,globals=None, locals=None,print_=None):
     stmts = list(ast.iter_child_nodes(ast.parse(script)))
     if stmts == []:
         return
@@ -18,7 +20,7 @@ def exec_(script,globals=None, locals=None,print_=print):
             ast_module.body=stmts[:-1]
             exec(compile(ast_module, filename="<ast>", mode="exec"), globals, locals)
         last = eval(compile(ast.Expression(body=stmts[-1].value), filename="<ast>", mode="eval"), globals, locals)
-        if last is not None:
+        if last is not None and print_ is not None:
             print_(last)
         return last
     else:    
@@ -49,6 +51,7 @@ class ExecNode(SourceNode):
         self.output_control = self.add_text_control('',readonly=True,name='output_control')
         self.inputs = self.add_attribute('inputs',ListTopic,[],editor_type='list')
         self.outputs = self.add_attribute('outputs',ListTopic,[],editor_type='list')
+        self.print_last_expr = self.add_attribute('print last expr',StringTopic,editor_type='options',options=['yes','no'],init_value='yes')
         self.icon_path.set('python')
 
     def init_node(self):
@@ -93,7 +96,7 @@ class ExecNode(SourceNode):
             if port.is_all_edge_ready():
                 self.workspace.vars().update({name:port.get_one_data()})
         self.workspace.vars().update({'print':self.print,'self':self})
-        result = exec_(stmt,self.workspace.vars(),print_=self.print)
+        result = exec_(stmt,self.workspace.vars(),print_=self.print if self.print_last_expr.get()=='yes' else None)
         self.out_port.push_data(result)
         for name in self.outputs:
             self.get_out_port(name).push_data(self.workspace.vars()[name])

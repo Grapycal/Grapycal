@@ -62,9 +62,9 @@ class NetworkDefManager:
 
 class NetworkCallNode(Node):
     '''
-    A NetworkCallNode represents a call to a specific function.
-    Once you assign a function name to the NetworkCallNode, Grapycal will search for a NetworkInNode and a NetworkOutNode existing
-    in the workspace with the same function name. Then, its ports will be updated accroding to the function
+    A NetworkCallNode represents a call to a network, specified by name.
+    Once you set the network name to the NetworkCallNode, Grapycal will search for a NetworkInNode and a NetworkOutNode existing
+    in the workspace with the same name. Then, its ports will be updated accroding to the network
     definition.
     '''
 
