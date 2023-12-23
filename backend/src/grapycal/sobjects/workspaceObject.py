@@ -43,7 +43,10 @@ class WorkspaceObject(SObject):
             if data_yaml is None:
                 logger.warning(self._workspace.data_yaml.failed_exception)
                 return # no internet connection
+            
             self.add_child(RemoteFileView,url = data_yaml['examples_url'],name = 'Examples💡')
+            self._server.clear_history()
+            
         self._workspace.add_task_to_event_loop(add_examples_file_view())
         
         # read by frontend

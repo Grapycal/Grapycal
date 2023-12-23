@@ -76,10 +76,6 @@ class Node(SObject,metaclass=NodeMeta):
         '''
 
     def init(self):
-        '''
-        This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
-        the node is built.
-        '''
 
         self.workspace:Workspace = self._server.globals.workspace
         self.old_node_info :NodeInfo|None = None
@@ -102,6 +98,10 @@ class Node(SObject,metaclass=NodeMeta):
         self.init_node()
 
     def init_node(self):
+        '''
+        This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+        the node is built.
+        '''
         pass
 
     def restore_from_version(self,version:str,old:NodeInfo):

@@ -65,13 +65,41 @@ export class GlobalEventDispatcher{
     }
 
     private _onKeyDown(event: KeyboardEvent){
-        this.onKeyDown.invoke(event.key,event);
+        // to lower case if [A-Z]
+        let key = event.key;
+        if(key.length == 1 && key.match(/[A-Z]/)){
+            key = key.toLowerCase();
+        }
+        // key
+        this.onKeyDown.invoke(key,event);
+        // ctrl key
+        if(event.ctrlKey){
+            this.onKeyDown.invoke(`ctrl ${key}`,event);
+        }
+        // alt key
+        if(event.altKey){
+            this.onKeyDown.invoke(`alt ${key}`,event);
+        }
+        // shift key
+        if(event.shiftKey){
+            this.onKeyDown.invoke(`shift ${key}`,event);
+        }
+        // ctrl shift key
+        if(event.ctrlKey && event.shiftKey){
+            this.onKeyDown.invoke(`ctrl shift ${key}`,event);
+        }
         this.onAnyKeyDown.invoke(event);
-        this.keyState[event.key] = true;
+        this.keyState[key] = true;
     }
 
     private _onKeyUp(event: KeyboardEvent){
-        this.keyState[event.key] = false;
+        // to lower case if [A-Z]
+        let key = event.key;
+        if(key.length == 1 && key.match(/[A-Z]/)){
+            key = key.toLowerCase();
+        }
+
+        this.keyState[key] = false;
     }
 
     private _onBlur(event: FocusEvent){

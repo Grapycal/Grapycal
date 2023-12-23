@@ -1,6 +1,6 @@
 import { ObjectSyncClient, SObject } from "objectsync-client"
 import { ComponentManager } from "../component/component"
-import { EventDispatcher as EventDispatcher } from "../component/eventDispatcher"
+import { EventDispatcher as EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
 import { MouseOverDetector } from "../component/mouseOverDetector"
 import { Transform } from "../component/transform"
@@ -84,9 +84,12 @@ export class Editor extends CompSObject{
     }
 
     protected onStart(): void {
-        
         new AddNodeMenu(this)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl c'),this.copy)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl v'),this.paste)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
     }
+    
 
     private lastUpdatePortNearMouse = 0
     private mouseMove(e: MouseEvent){
@@ -185,4 +188,49 @@ export class Editor extends CompSObject{
         this.boxSelectionStart = null;
     }
 
+    private copy(){
+        let selectedIds = []
+        for(let s of Workspace.instance.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.makeRequest('copy',{ids:selectedIds},(data)=>{
+            // save to clipboard
+            let text = JSON.stringify(data)
+            navigator.clipboard.writeText(text)
+        })
+    }
+
+    private paste(){
+        navigator.clipboard.readText().then(text=>{
+            let data = null
+            try{
+                data = JSON.parse(text)
+            }catch(e){
+                print('clipboard data is not valid')
+                return;
+            }
+            let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
+            this.makeRequest('paste',{data,mouse_pos:mousePos})
+        })
+    }
+
+    private cut(){
+        // cut is copy + delete
+        let selectedIds:string[] = []
+        for(let s of Workspace.instance.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.makeRequest('copy',{ids:selectedIds},(data)=>{
+            // save to clipboard
+            let text = JSON.stringify(data)
+            navigator.clipboard.writeText(text)
+            this.objectsync.emit('delete',{ids:selectedIds})
+        })
+    }
 }
