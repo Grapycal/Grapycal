@@ -1,6 +1,3 @@
-from grapycal import Node
+from .ImageLoader import ImageLoader
 
-
-class opencv(Node):
-    def build_node(self):
-        return super().build_node()
+__all__ = ["ImageLoader"]
