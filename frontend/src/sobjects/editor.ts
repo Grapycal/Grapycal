@@ -157,20 +157,20 @@ export class Editor extends CompSObject{
         const match = (node:SObject)=>{
             if(!(node instanceof Node)) return false;
             let nodebox = node.htmlItem.baseElement.getBoundingClientRect()
-            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < nodebox.right &&
-            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > nodebox.left &&
-            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < nodebox.bottom &&
-            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > nodebox.top
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < nodebox.left &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > nodebox.right &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < nodebox.top &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > nodebox.bottom
         }
         const nodes = this.TopDownSearch(Node,match,match)
 
         const matchEdge = (edge:SObject)=>{
             if(!(edge instanceof Edge)) return false;
             let edgebox = edge.path.getBoundingClientRect()
-            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.right &&
-            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.left &&
-            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.bottom &&
-            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > edgebox.top
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.left &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.right &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.top &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > edgebox.bottom
         }
         const edges = this.TopDownSearch(Edge,matchEdge,matchEdge)
 
@@ -189,6 +189,7 @@ export class Editor extends CompSObject{
     }
 
     private copy(){
+        if(document.activeElement != document.body) return;
         let selectedIds = []
         for(let s of Workspace.instance.selection.selected){
             let o = s.object
@@ -204,6 +205,7 @@ export class Editor extends CompSObject{
     }
 
     private paste(){
+        if(document.activeElement != document.body) return;
         navigator.clipboard.readText().then(text=>{
             let data = null
             try{
@@ -214,10 +216,12 @@ export class Editor extends CompSObject{
             }
             let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             this.makeRequest('paste',{data,mouse_pos:mousePos})
+            Workspace.instance.selection.clearSelection()
         })
     }
 
     private cut(){
+        if(document.activeElement != document.body) return;
         // cut is copy + delete
         let selectedIds:string[] = []
         for(let s of Workspace.instance.selection.selected){

@@ -133,6 +133,7 @@ export class Node extends CompSObject {
         this.link(this.eventDispatcher.onDoubleClick, () => {
             this.emit('double_click')
         })
+        this.errorPopup = new ErrorPopup(this)
 
     }
 
@@ -207,7 +208,6 @@ export class Node extends CompSObject {
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
-        this.errorPopup = new ErrorPopup(this)
 
         // Before setting up the transform, we need to add classes to the element then call updateUI so the shape is correct
         
@@ -327,6 +327,12 @@ export class Node extends CompSObject {
             let pivot = this.transform.pivot
             this.transform.globalPosition = this.eventDispatcher.mousePos.add(pivot.mul(this.transform.size)).add(this.transform.size.mulScalar(-0.5))
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
+        }
+
+        if(this.hasTag(`pasted_by_${this.objectsync.clientId}`))
+        {
+            this.removeTag(`pasted_by_${this.objectsync.clientId}`)
+            this.selectable.click()
         }
 
         if(this.isPreview){

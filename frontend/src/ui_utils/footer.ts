@@ -94,6 +94,9 @@ export class Footer extends Componentable{
         });
         Workspace.instance.objectsync.getTopic('meta',DictTopic<string,any>).onSet.add((value)=>{
             this.workspaceName.innerHTML = value.get('workspace name');
+            // title
+            let fileName = value.get('workspace name').split('/').pop().split('.')[0];
+            document.title = `${fileName} - Grapycal`;
         })
         
     }

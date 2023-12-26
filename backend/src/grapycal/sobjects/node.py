@@ -64,7 +64,6 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
         '''
-        print(f'aaa{restore_info}')
         if restore_info is not None:
             self.old_version, self.old_node_info = restore_info
 

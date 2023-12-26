@@ -24,7 +24,6 @@ class Editor(SObject):
         # this makes topicsync save the args of paste_wrapper in the history instead of the result of paste
         self.on('paste_wrapper',self._paste_wrapper_emitted,self._paste_wrapper_inversed,auto=False)
 
-        self.on('restore_wrapper',self._restore_wrapper_emitted,lambda *args,**kwargs:None,auto=False)
         
         if old is not None:
             # If the editor is loaded from a save, we need to recreate the nodes and edges.
@@ -97,11 +96,21 @@ class Editor(SObject):
             # Here we don't pass serialized = obj because we don't want to use the SObject._deserialize.
             # Instead we want a clean build of the node then calling restore_from_version explicitly.
             # By doing this, the node can resolve any backward compatibility issues manually.
-            node = self.add_child_s(obj.type,id=id_map[obj.id])
-            assert isinstance(node,Node), f'Expected node, got {node}'
-            node.old_node_info = NodeInfo(obj)
-            self.emit('restore_wrapper',node_id=node.get_id(),version=obj.get_attribute('version'),info=node.old_node_info)
-            new_nodes[obj.id] = (obj,node)
+            new_node_id = id_map[obj.id]
+
+            # The node may fail to create when the restore() method is called when pasting, and it should not be treated as an error.
+            # For example, copy and paste a node that should be unique.
+            try:
+                node = self.add_child_s(obj.type,id=new_node_id)
+                assert isinstance(node,Node), f'Expected node, got {node}'
+                node.old_node_info = NodeInfo(obj)
+                node.restore_from_version('',node.old_node_info)
+            except Exception:
+                logger.warning(f'Failed to restore node {obj.id}')
+                if self._server.has_object(new_node_id):
+                    self._server.destroy_object(new_node_id)
+            else:
+                new_nodes[obj.id] = (obj,node)
 
         # After the nodes are created and before the edges are created, we must map the port ids so edges can find the ports on new nodes
         port_map_2 = {}
@@ -152,7 +161,7 @@ class Editor(SObject):
             new_tail_id = port_id_map(obj.get_attribute('tail'))
             new_head_id = port_id_map(obj.get_attribute('head'))
             if new_tail_id is None or new_head_id is None:
-                print(f'Warning: edge {obj.id} was not restored. head: {new_head_id} tail: {new_tail_id}')
+                logger.warning(f'edge {obj.id} was not restored. head: {new_head_id} tail: {new_tail_id}')
                 continue # skip edges that reference ports that don't exist in the new version of nodes
 
             # check the ports accept the edge
@@ -160,7 +169,7 @@ class Editor(SObject):
             head = self._server.get_object(new_head_id)
             assert isinstance(tail,OutputPort) and isinstance(head,InputPort)
             if tail.is_full() or head.is_full():
-                print(f'Warning: aa edge {obj.id} was not restored. head: {new_head_id} tail: {new_tail_id}')
+                logger.warning(f'edge {obj.id} was not restored. head: {new_head_id} tail: {new_tail_id}')
                 continue # skip edges that reference ports that are full
             new_edge_id = self.create_edge_from_port_id(new_tail_id,new_head_id)
             new_edge_ids.append(new_edge_id)
@@ -171,13 +180,6 @@ class Editor(SObject):
             new_node_ids.append(node.get_id())
 
         return new_node_ids,new_edge_ids
-    
-    def _restore_wrapper_emitted(self, node_id:str,version,info):
-        # called when the restore_wrapper event is emitted
-        node = self._server.get_object(node_id)
-        assert isinstance(node,Node)
-        node.old_node_info = info
-        node.restore_from_version(version,info)
 
     def create_node(self, node_type: type, **kwargs) -> Node:
         return self.add_child(node_type, is_preview=False, **kwargs)
@@ -257,26 +259,28 @@ class Editor(SObject):
         
         with self._server.record():
             self.emit('paste_wrapper',nodes=nodes,edges=edges)
-            # for node_id in self._new_node_ids:
-            #     node = self._server.get_object(node_id)
-            #     node.add_tag(f'spawned_by_{sender}')
+            for node_id in self._new_node_ids:
+                node = self._server.get_object(node_id)
+                node.add_tag(f'pasted_by_{sender}')
 
     def _paste_wrapper_emitted(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],is_new:bool=True,**kwargs):
 
         if is_new:
             # restore the nodes and edges
             new_node_ids,new_edge_ids = self.restore(nodes,edges)
-            self._new_node_ids = new_node_ids # the _paste() method needs to know the ids of the new nodes
 
             node_serialized = [self._server.get_object(id).serialize() for id in new_node_ids]
             edge_serialized = [self._server.get_object(id).serialize() for id in new_edge_ids]
 
+            self._new_node_ids = new_node_ids # the _paste() method will use this
             return {'nodes':node_serialized,'edges':edge_serialized,'is_new':False}
         else:
             for node in nodes:
                 self.add_child_s(node.type,id=node.id,serialized=node)
             for edge in edges:
                 self.add_child_s(edge.type,id=edge.id,serialized=edge)
+
+        self._new_node_ids =  [node.id for node in nodes] # the _paste() method will use this
 
     def _paste_wrapper_inversed(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],**kwargs):
         # the opposite of _paste_wrapper_emitted
