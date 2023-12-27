@@ -17,7 +17,7 @@ class DataLoaderNode(Node):
         self.batch_size = self.add_attribute('batch_size', IntTopic, 1, editor_type='int')
         self.shuffle = self.add_attribute('shuffle', IntTopic, 0, editor_type='int')
         self.num_workers = self.add_attribute('num_workers', IntTopic, 0, editor_type='int')
-        self.out = self.add_out_port('dataloader')
+        self.out = self.add_out_port('batch')
 
     def init_node(self):
         super().init_node()

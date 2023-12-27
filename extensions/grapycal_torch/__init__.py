@@ -1,3 +1,6 @@
+import asyncio
+from pathlib import Path
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 from .basic import *
@@ -18,6 +21,7 @@ from .networkDef import *
 import torch
 from torch import nn
 import torchvision
+from torchvision import transforms
 
 from grapycal import ImageControl, Node, TextControl, ButtonControl, Edge, InputPort
 
@@ -38,57 +42,107 @@ class MnistDatasetNode(SourceNode):
         ds = torchvision.datasets.mnist.MNIST('data', download=True)
         self.out.push_data(ds)
 
-class CIFAR10DatasetNode(SourceNode):
-    category = 'torch/dataset'
-    def build_node(self):
-        super().build_node()
-        self.label.set('CIFAR10 Dataset')
-        self.out = self.add_out_port('CIFAR10 Dataset')
+import aiofiles
+class ImageDataset(torch.utils.data.Dataset):
+    '''
+    Loads all images from a directory into memory
+    '''
+    def __init__(self, directory:str, transform=None,max_size=None):
+        super().__init__()
+        self.directory = directory
+        self.transform = transform
+        if self.transform is None:
+            # to tensor and minus 0.5 and crop to 208*176
+            self.transform = transforms.Compose([transforms.ToTensor(),
+                                                    transforms.Lambda(lambda x: x-0.5),
+                                                    transforms.Lambda(lambda x: x[:,5:-5,1:-1])])
+        self.max_size = max_size
+        self.images = asyncio.run(self.load_images())
 
-    def task(self):
-        ds = torchvision.datasets.cifar.CIFAR10('data', download=True)
-        self.out.push_data(ds)
+    async def load_images(self):
+        # concurrent loading from disk using aiofiles
+        async def load_image(path):
+            async with aiofiles.open(path, 'rb') as f:
+                return plt.imread(io.BytesIO(await f.read()),format='jpg')
+        tasks = []
+        n=0
+        for path in Path(self.directory).iterdir():
+            if path.is_file():
+                tasks.append(load_image(path))
+                n+=1
+                if self.max_size is not None and n >= self.max_size:
+                    print('Loaded',n,'images')
+                    break
+        return await asyncio.gather(*tasks)
 
-class CelebADatasetNode(SourceNode):
-    category = 'torch/dataset'
-    def build_node(self):
-        super().build_node()
-        self.label.set('CelebA Dataset')
-        self.out = self.add_out_port('CelebA Dataset')
-
-    def task(self):
-        ds = torchvision.datasets.celeba.CelebA('data', download=True)
-        self.out.push_data(ds)
-
-class ImageFolderWithoutLabel(torchvision.datasets.ImageFolder):
-    def __getitem__(self, index: int):
-        """
-        Args:
-            index (int): Index
+    def __len__(self):
+        return len(self.images)
     
-        Returns:
-            tuple: (sample, target) where target is class_index of the target class.
-        """
-        path, target = self.samples[index]
-        sample = self.loader(path)
-        if self.transform is not None:
-            sample = self.transform(sample)
-        return sample
+    def __getitem__(self, idx):
+        img = self.images[idx]
+        if self.transform:
+            img = self.transform(img)
+        return img
+        
     
 
 class ImageDatasetNode(SourceNode):
+    '''
+    Loads images from a directory
+    '''
     category = 'torch/dataset'
     def build_node(self):
         super().build_node()
         self.label.set('Image Dataset')
-        self.path = self.add_text_control('path',name='path')
         self.out = self.add_out_port('Image Dataset')
+        self.dir = self.add_text_control('', 'folder',name='folder')
+        self.max_size = self.add_text_control('', 'max_size',name='max_size')
+    
+    def init_node(self):
+        super().init_node()
+        self.ds = None
 
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_controls('folder', 'max_size')
+    
     def task(self):
-        tr = torchvision.transforms.ToTensor()
-        ds = ImageFolderWithoutLabel(self.path.text.get(),tr)
-        self.out.push_data(ds)
+        if self.ds is None or self.ds.directory != self.dir.get():
+            self.ds = ImageDataset(self.dir.get(),max_size=int(self.max_size.get()))
 
+        self.out.push_data(self.ds)
+
+class EmaNode(Node):
+    '''
+    Exponential moving average
+    '''
+    category = 'torch/transform'
+    def build_node(self):
+        super().build_node()
+        self.label.set('EMA')
+        self.reset_port = self.add_in_port('reset')
+        self.in_port = self.add_in_port('input')
+        self.out_port = self.add_out_port('output')
+        self.alpha = self.add_attribute('alpha',FloatTopic,0.9,editor_type='float')
+
+    def init_node(self):
+        super().init_node()
+        self.ema = None
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.reset_port:
+            self.ema = None
+            return
+        if port == self.in_port:
+            self.run(self.task,data=edge.get_data())
+
+    def task(self, data):
+        if self.ema is None:
+            self.ema = data
+        else:
+            self.ema = self.alpha.get()*data + (1-self.alpha.get())*self.ema
+        self.out_port.push_data(self.ema)
+        
 
 
 del ModuleNode, SimpleModuleNode, Node, SourceNode, FunctionNode

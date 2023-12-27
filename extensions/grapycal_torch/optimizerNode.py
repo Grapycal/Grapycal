@@ -38,7 +38,7 @@ class TrainerNode(Node):
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
-        self.restore_attributes('modules','lr','device')
+        self.restore_attributes('lr','device')
         self.restore_controls('network name')
 
     def get_module_nodes(self)->List[ModuleNode]:
@@ -92,7 +92,9 @@ class TrainerNode(Node):
     def eval_mode(self):
         for m in self.tracked_modules:
             m.eval()
+            m.requires_grad_(False)
 
     def train_mode(self):
         for m in self.tracked_modules:
             m.train()
+            m.requires_grad_(True)

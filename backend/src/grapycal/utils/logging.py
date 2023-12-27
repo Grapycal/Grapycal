@@ -4,6 +4,7 @@ import os
 from objectsync import EventTopic
 
 def setup_logging():
+    logging.getLogger("matplotlib").setLevel(logging.ERROR)
     logger = logging.getLogger()
     level = logging.INFO
     #level = logging.DEBUG

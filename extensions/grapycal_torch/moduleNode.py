@@ -13,7 +13,7 @@ class ModuleNode(Node):
         #TODO: save and load
         self.shape.set('simple')
         self.label.set('Module')
-        self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button')
+        self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button',is_stateful=False)
         self.icon_path.set('nn')
 
     def init_node(self):
@@ -24,7 +24,14 @@ class ModuleNode(Node):
         self.module = self.create_module()
         self.module.to(device)
         self.label.set(self.generate_label())
-        self.print('created module',self.module,'on device',device)
+        num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
+        if num_params > 1000000:
+            param_str = f'{num_params/1000000:.1f}M'
+        elif num_params > 1000:
+            param_str = f'{num_params/1000:.1f}K'
+        else:
+            param_str = f'{num_params}'
+        self.print('created module',self.module,'on device',device,'\nparameters:',param_str)
 
     @abstractmethod
     def create_module(self)->nn.Module:

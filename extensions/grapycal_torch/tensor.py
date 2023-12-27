@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.sourceNode import SourceNode
 import torch
 from grapycal import Node, TextControl, StringTopic, FloatTopic, IntTopic
@@ -141,3 +142,18 @@ class GridNode(SourceNode):
         yy, xx = torch.meshgrid(y_axis,x_axis)
         self.out_x.push_data(xx)
         self.out_y.push_data(yy)
+
+class RandnLikeNode(FunctionNode):
+    category = 'torch/generative'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('Randn Like')
+        self.shape.set('simple')
+        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
+
+    def calculate(self, inp) -> Any:
+        return torch.randn_like(inp,device=self.device.get())
