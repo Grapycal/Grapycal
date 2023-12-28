@@ -125,13 +125,43 @@ class ArangeNode(SourceNode):
         self.start = self.add_attribute('start',StringTopic, '0',editor_type='text')
         self.stop = self.add_attribute('stop',StringTopic, '10',editor_type='text')
         self.step = self.add_attribute('step',StringTopic, '1',editor_type='text')
+        self.update_label()
+
+    def init_node(self):
+        super().init_node()
+        self.start.on_set.add_manual(self.update_label)
+        self.stop.on_set.add_manual(self.update_label)
+        self.step.on_set.add_manual(self.update_label)
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
         self.restore_attributes('start','stop','step')
+
+    def update_label(self):
+        self.label.set(f'Arange [{self.start.get()},{self.stop.get()},{self.step.get()}]')
 
     def task(self):
         start = float(self.start.get())
         stop = float(self.stop.get())
         step = float(self.step.get())
         self.out_port.push_data(torch.arange(start,stop,step))
+
+    
+from grapycal import FunctionNode
+class Arange2Node(FunctionNode):
+    category = 'torch/generative'
+    inputs = ['start','stop','step']
+    outputs = ['arange']
+    max_in_degree = [1,1,1]
+
+    def build_node(self):
+        super().build_node()
+        self.label.set('Arange')
+        self.shape.set('normal')
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('start','stop','step')
+
+    def calculate(self,start,stop,step):
+        return torch.arange(start,stop,step)
