@@ -39,8 +39,8 @@ jobs:
                 platforms: linux/amd64,linux/arm64
                 tags: docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-frontend:latest
                 outputs: type=oci,dest=/tmp/image.tar
-              build-args: |
-                NODE_VERSION=20
+                build-args: |
+                  NODE_VERSION=20
             - name: Import image in containerd
               run: |
                 sudo ctr i import --base-name docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-frontend:latest --digests --all-platforms /tmp/image.tar
