@@ -39,7 +39,7 @@ Prerequisites:
 
 .. code-block:: bash
 
-    git clone git@github.com:eri24816/Grapycal.git
+    git clone git@github.com:Grapycal/Grapycal.git
     cd Grapycal
     git submodule update --init --recursive
     git checkout dev

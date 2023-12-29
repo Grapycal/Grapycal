@@ -19,15 +19,13 @@ Grapycal is a graphical and interactive programming language. It allows users to
 `Contribution Guide <contribution_guide/contribution.html>`_
 
 
-`Website <https://www.grapycal.org>`_ | `GitHub Repository <https://github.com/eri24816/Grapycal>`_ | `PyPI <https://pypi.org/project/grapycal/>`_ | `Discord <https://discord.gg/adNQcS42CT>`_
+`Website <https://www.grapycal.org>`_ | `GitHub Repository <https://github.com/Grapycal/Grapycal>`_ | `PyPI <https://pypi.org/project/grapycal/>`_ | `Discord <https://discord.gg/adNQcS42CT>`_
 
 
 
    In our daily lives, countless ideas emerge in our minds, only to be dismissed because the perceived cost of realizing them is too high. Over time, sadly, we tend to forget our inherent creativity.
 
    The mission of Grapycal is to push more ideas over the line to be worthy of trying out.
-
-.. `Grapycal v0.2.0 whats new <https://github.com/eri24816/Grapycal/blob/main/docs/v0.2.0.md>`_
 
 .. toctree::
    :caption: Getting Started
@@ -57,7 +55,7 @@ Grapycal is a graphical and interactive programming language. It allows users to
    contribution_guide/project_overview
    contribution_guide/define_a_node
    contribution_guide/examples_of_node_definition
-   
+
    .. developer_guide/attribute
    .. developer_guide/port
    .. developer_guide/controls

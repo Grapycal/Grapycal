@@ -11,7 +11,7 @@ To contribute:
 
 3. Refer to the :doc:`project_overview` to understand the project structure.
 
-4. If you don't know where to start, visit the `Discussion:Plans <https://github.com/eri24816/Grapycal/discussions/categories/plans>`_ forum. Find a topic that interests you and assign yourself to it. If you have a new idea, you can also create a new topic.
+4. If you don't know where to start, visit the `Discussion:Plans <https://github.com/Grapycal/Grapycal/discussions/categories/plans>`_ forum. Find a topic that interests you and assign yourself to it. If you have a new idea, you can also create a new topic.
 
 .. figure:: https://i.imgur.com/azSy00h.jpg
     :width: 80%
