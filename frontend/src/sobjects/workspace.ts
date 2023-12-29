@@ -1,4 +1,4 @@
-import { ObjectSyncClient, ObjectTopic, StringTopic, GenericTopic, IntTopic} from "objectsync-client"
+import { ObjectSyncClient, ObjectTopic, StringTopic, GenericTopic, IntTopic, DictTopic} from "objectsync-client"
 import { CompSObject } from "./compSObject";
 import { EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { Editor } from "./editor"
@@ -9,6 +9,7 @@ import { Footer } from "../ui_utils/footer"
 import { Buffer } from "buffer";
 import { print } from "../devUtils"
 import { NodeInspector } from "../ui_utils/nodeInspector"
+import { PopupMenu } from "../ui_utils/popupMenu/popupMenu"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -20,6 +21,9 @@ export class Workspace extends CompSObject{
     readonly functionalSelection = new SelectionManager(this) 
     readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
+    readonly nodeTypesTopic = this.objectsync.getTopic('node_types',DictTopic<string,any>)
+    readonly popupMenu = new PopupMenu()
+    
     get clientId(){
         return this.objectsync.clientId
     }
@@ -27,6 +31,7 @@ export class Workspace extends CompSObject{
         super(objectsync, id);
         (this.selection as any).name = 'selection';
         (this.functionalSelection as any).name = 'functionalSelection'
+        this.popupMenu.hideWhenClosed = true
         
         Workspace.instance = this
         this.selection.onSelect.add((selectable)=>{
@@ -51,9 +56,15 @@ export class Workspace extends CompSObject{
             this.selection.clearSelection()
         })
         GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
-        Footer.setStatus('Workspace loaded.')
+        GlobalEventDispatcher.instance.onKeyDown.add('Backspace',this.deletePressed.bind(this))
+
+        new Footer()
+        Footer.setStatus('Workspace loaded. Have fun!')
     }
     private deletePressed(){
+        // check if nothing in document is focused
+        if(document.activeElement != document.body) return;
+        
         let selectedIds = []
         for(let s of this.selection.selected){
             let o = s.object

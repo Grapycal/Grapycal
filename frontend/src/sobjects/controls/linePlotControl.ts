@@ -69,7 +69,9 @@ export class LinePlotControl extends Control{
         this.disc.colorSpace = THREE.SRGBColorSpace;
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color( 0x222222 );
+        // the background is var(--z0)
+        const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--z0');
+        this.scene.background = new THREE.Color(bgColor);
         this.camera = new THREE.OrthographicCamera( this.size.x / - 2, this.size.x / 2, this.size.y / 2, this.size.y / - 2, 1, 1000 );
         this.camera.position.z = 800;
 
@@ -212,7 +214,7 @@ export class LinePlotControl extends Control{
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,0)
         
-        const material = new THREE.LineBasicMaterial( { color: 0x444444 } );
+        const material = new THREE.LineBasicMaterial( { color: 0xcccccc } );
         const grid = new THREE.LineSegments( geometry, material );
         this.grid = grid;
         this.scene.add(grid);
@@ -232,7 +234,9 @@ export class LinePlotControl extends Control{
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,4)
 
-        const material = new THREE.LineBasicMaterial( { color: 0x888888, linewidth:3 } );
+        // if 
+
+        const material = new THREE.LineBasicMaterial( { color: 0xcccccc, linewidth:3 } );
         const axis = new THREE.LineSegments( geometry, material );
         this.baseObject.add(axis);
     }
@@ -329,12 +333,13 @@ export class LinePlotControl extends Control{
         geometry.setDrawRange(0,0)
         
         const color = [ // yellow, purple, cyan, green, red, blue,gray
+        
+        0xbb3333,
+        0x3333bb,
+        0x33bb33,
             0xbbbb33,
             0xbb33bb,
             0x33bbbb,
-            0x33bb33,
-            0xbb3333,
-            0x3333bb,
             0x888888,
         ] [this.lines.size % 7]
         const material = new THREE.LineBasicMaterial( { color: color , linewidth:5 } );

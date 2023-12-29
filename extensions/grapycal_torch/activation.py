@@ -3,7 +3,7 @@ from .moduleNode import SimpleModuleNode
 from torch import nn
 
 class ReLUNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
@@ -21,7 +21,7 @@ class ReLUNode(SimpleModuleNode):
         return self.module(inp)
     
 class LeakyReLUNode(SimpleModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     inputs = ['inp']
     max_in_degree = [None]
     outputs = ['out']
@@ -38,6 +38,23 @@ class LeakyReLUNode(SimpleModuleNode):
 
     def create_module(self) -> nn.Module:
         return nn.LeakyReLU(negative_slope=self.negative_slope.get())
+
+    def forward(self, inp):
+        return self.module(inp)
+    
+class SigmoidNode(SimpleModuleNode):
+    category = 'torch/neural network'
+    inputs = ['inp']
+    max_in_degree = [None]
+    outputs = ['out']
+    display_port_names = False
+
+    def build_node(self):
+        super().build_node()
+        self.label.set('Sigmoid')
+
+    def create_module(self) -> nn.Module:
+        return nn.Sigmoid()
 
     def forward(self, inp):
         return self.module(inp)

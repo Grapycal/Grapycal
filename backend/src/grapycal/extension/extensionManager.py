@@ -1,8 +1,10 @@
+import asyncio
 import logging
 import pkgutil
 
 import subprocess
-from grapycal.extension.extensionSearch import get_not_installed_extensions
+from grapycal.extension.extensionSearch import get_remote_extensions
+from grapycal.extension.utils import get_extension_info, get_package_version, list_to_dict
 logger = logging.getLogger(__name__)
 
 from typing import TYPE_CHECKING, Dict, List, Tuple
@@ -37,6 +39,10 @@ class ExtensionManager:
         self._objectsync.on('refresh_extensions',self._update_available_extensions_topic,is_stateful=False)
         self._objectsync.on('install_extension',self._install_extension,is_stateful=False)
 
+    def start(self) -> None:
+        '''
+        Called after the event loop is started.
+        '''
         self._update_available_extensions_topic()
 
     def import_extension(self, extension_name: str, create_preview_nodes = True) -> Extension:
@@ -119,13 +125,13 @@ class ExtensionManager:
         '''
 
         # Unimport old version
-        self._destroy_preview_nodes(old_version.extension_name)
-        self.unimport_extension(old_version.extension_name)
-        self.import_extension(new_version.extension_name,create_preview_nodes=False)
+        self._destroy_preview_nodes(old_version.name)
+        self.unimport_extension(old_version.name)
+        self.import_extension(new_version.name,create_preview_nodes=False)
 
         self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
 
-        self.create_preview_nodes(new_version.extension_name)
+        self.create_preview_nodes(new_version.name)
         self._update_available_extensions_topic()
 
         logger.info(f'Updated extension {extension_name}')
@@ -141,15 +147,23 @@ class ExtensionManager:
         self._objectsync.clear_history_inclusive() 
 
     def _update_available_extensions_topic(self) -> None:
-        available_extensions = self._scan_available_extensions()
-        self._avaliable_extensions_topic.set({name:{'name':name} for name in available_extensions})
-        not_installed_extensions = get_not_installed_extensions()
-        not_installed_extensions = [name for name in not_installed_extensions 
-                                    if name not in available_extensions and name not in self._extensions
-                                    ]
-        self._not_installed_extensions_topic.set({name:{'name':name} for name in not_installed_extensions})
+        self._workspace.add_task_to_event_loop(self._update_available_extensions_topic_async())
 
-    def _scan_available_extensions(self) -> list[str]:
+    async def _update_available_extensions_topic_async(self) -> None:
+        '''
+        This function is async because it sends requests to get package metadata.
+        '''
+        available_extensions = self._scan_available_extensions()
+        self._avaliable_extensions_topic.set(list_to_dict(available_extensions,'name'))
+        not_installed_extensions = await get_remote_extensions()
+        not_installed_extensions = [info for info in not_installed_extensions 
+                                        if (info['name'] not in self._avaliable_extensions_topic and 
+                                            info['name'] not in self._imported_extensions_topic)
+                                    ]
+        self._not_installed_extensions_topic.set(list_to_dict(not_installed_extensions,'name'))
+        
+
+    def _scan_available_extensions(self) -> list[dict]:
         '''
         Returns a list of available extensions that is importable but not imported yet.
         '''
@@ -157,12 +171,15 @@ class ExtensionManager:
         for pkg in pkgutil.iter_modules():
             if  pkg.name.startswith('grapycal_') and pkg.name != 'grapycal':
                 if pkg.name not in self._extensions:
-                    available_extensions.append(pkg.name)
+                    # find pyproject.toml and get package version
+                    available_extensions.append(get_extension_info(pkg.name))
         return available_extensions
     
-    def _check_extension_compatible(self, extension_name: str):
+    async def _check_extension_compatible(self, extension_name: str):
         # dry run the installation and get its output
-        out = subprocess.run(['pip','install',extension_name,'--dry-run'],capture_output=True).stdout.decode('utf-8')
+        out = await asyncio.create_subprocess_exec('pip','install',extension_name,'--dry-run',stdout=subprocess.PIPE)
+        out = await out.stdout.read()
+        out = out.decode('utf-8')
         # check if the line begin with "Would install" contains "grapycal"
         package_regex = r'([^\s]*)-(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
         for line in out.split('\n'):
@@ -176,33 +193,47 @@ class ExtensionManager:
                         from importlib.metadata import version
                         cur = version('grapycal')
 
-                        raise Exception(f'Cannot install extension {extension_name}.\
-                                        Current grapycal version: {cur}. \
-                                        Required grapycal version: {match[1]}.{match[2]}.{match[3]}')
+                        raise Exception(f'Cannot install extension {extension_name}.\n\
+                            Current grapycal version:\t{cur}. \n\
+                            Required grapycal version:\t{match[1]}.{match[2]}.{match[3]}.\n\
+                            Please update grapycal first with "pip install --upgrade grapycal".\n\
+                            If grapycal is installed in editable mode, please reinstall grapycal with "pip install -e backend"\
+                            ')
         
-
-    
     def _install_extension(self, extension_name: str) -> None:
-        # TODO: async
+        self._workspace.add_task_to_event_loop(self._install_extension_async(extension_name))
+    
+    async def _install_extension_async(self, extension_name: str) -> None:
+        # TODO: async this slow stuff
         # check if the extension is compatible
-        self._check_extension_compatible(extension_name)
+        logger.info(f'Checking compatibility of extension {extension_name} to current Grapycal version...')
+        try:
+            await self._check_extension_compatible(extension_name)
+        except Exception as e:
+            logger.error(f'{e}')
+            return
         # run pip install
-        subprocess.run(['pip','install',extension_name])
+        logger.info(f'Installing extension {extension_name}. This may take a while...')
+        pip = await asyncio.create_subprocess_exec('pip','install',extension_name)
+        await pip.wait()
+
+        logger.info(f'Installed extension {extension_name}. Now importing...')
+        # import extension
+        self.import_extension(extension_name)
         # update available extensions
-        self._update_available_extensions_topic()
+        await self._update_available_extensions_topic_async()
 
     def _load_extension(self, name: str) -> Extension:
-        self._extensions[name] = Extension(name,set(self._objectsync.get_all_node_types().values()))
+        extension = self._extensions[name] = Extension(name,set(self._objectsync.get_all_node_types().values()))
         self._register_extension(name)
-        self._imported_extensions_topic.add(name,{
-            'name':name
-        })
-        for node_type_name, node_type in self._extensions[name].node_types.items():
+        self._imported_extensions_topic.add(name,extension.get_info())
+        for node_type_name, node_type in extension.node_types.items():
             self._node_types_topic.add(node_type_name,{
                 'name':node_type_name,
-                'category':node_type.category
+                'category':node_type.category,
+                'description':node_type.__doc__,
             })
-        return self._extensions[name]
+        return extension
     
     def _register_extension(self, name: str) -> None:
         for node_type_name, node_type in self._extensions[name].node_types.items():
@@ -241,3 +272,6 @@ class ExtensionManager:
     
     def get_extention_names(self) -> list[str]:
         return list(self._extensions.keys())
+    
+    def get_extensions_info(self) -> List[dict]:
+        return [extension.get_info() for extension in self._extensions.values()]

@@ -10,6 +10,12 @@ try:
 except:
     HAS_TORCH = False
 
+try :
+    import numpy as np
+    HAS_NUMPY = True
+except:
+    HAS_NUMPY = False
+
 class Edge(SObject):
     frontend_type = 'Edge'
 
@@ -61,7 +67,7 @@ class Edge(SObject):
         return super().destroy()
 
     def get_data(self)->Any:
-
+        
         if not self._data_ready:
             raise Exception('Data not available')
         self._activated = False
@@ -79,9 +85,11 @@ class Edge(SObject):
             self.label.set(label)
         else:
             label = ''
-            if HAS_TORCH:
-                if isinstance(data, torch.Tensor):
-                    label = str(list(data.shape)) if list(data.shape)!=[] else 'scalar'
+            if HAS_TORCH and isinstance(data, torch.Tensor):
+                label = str(list(data.shape)) if list(data.shape)!=[] else 'scalar'
+            elif HAS_NUMPY and isinstance(data, np.ndarray):
+                label = str(list(data.shape)) if list(data.shape)!=[] else 'scalar'
+
             self.label.set(label)
 
         head = self.head.get()

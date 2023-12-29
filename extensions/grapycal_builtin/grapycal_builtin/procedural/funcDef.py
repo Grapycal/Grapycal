@@ -220,6 +220,7 @@ class FuncOutNode(Node):
 
         self.func_name.add_validator(lambda x,_: x not in FuncDefManager.outs)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
+        self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
         self.update_label()
         
         if self.func_name.get() != '':
@@ -236,6 +237,12 @@ class FuncOutNode(Node):
         if old != '':
             FuncDefManager.outs.pop(old)
         self.update_label()
+
+
+    def on_func_name_changed_auto(self,new):
+        if new != '':
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_ports()
 
     def update_label(self):
         self.label.set(f'{self.func_name.get()}')

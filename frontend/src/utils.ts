@@ -163,10 +163,13 @@ export class ActionDict<K,ARGS extends any[], OUT=void> {
     slice(key:K):ActionDictSlice<K,ARGS,OUT>{
         return new ActionDictSlice(this,key)
     }
+
 }
 
-class ActionDictSlice<K,ARGS extends any[], OUT=void> {
-    constructor(private actionDict:ActionDict<K,ARGS,OUT>,private key:K){}
+// extend action as a workaround for enabling ActionDictSlice to be passed as first argument to link
+// maybe it's better to change link's signature to accept an interface instead of Action
+class ActionDictSlice<K,ARGS extends any[], OUT=void> extends Action<ARGS,OUT>{
+    constructor(private actionDict:ActionDict<K,ARGS,OUT>,private key:K){super()}
     add(callback: Callback<ARGS, OUT>) {
         this.actionDict.add(this.key,callback)
     }
@@ -178,8 +181,9 @@ class ActionDictSlice<K,ARGS extends any[], OUT=void> {
     invoke(...args: ARGS): OUT[] {
         return this.actionDict.invoke(this.key,...args)
     }
-
 }
+
+export type ActionLike<ARGS extends any[], OUT=void> = Action<ARGS,OUT>|ActionDictSlice<any,ARGS,OUT>
 
 export function eatEvents(el:HTMLTextAreaElement|HTMLInputElement){
     let f = (e:Event)=>{

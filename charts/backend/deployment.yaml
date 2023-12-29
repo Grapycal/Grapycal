@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grapycal-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grapycal
+  template:
+    metadata:
+      labels:
+        app: grapycal
+    spec:
+      containers:
+        - name: grapycal-container
+          image: docker.io/patrickuuuu/grapycal-backend:latest
+          ports:
+            - containerPort: 8765

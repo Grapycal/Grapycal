@@ -24,8 +24,9 @@ export class ErrorPopup extends Componentable{
                 flex-direction: column;
                 justify-content: center;
                 z-index: 1000;
+                border: 1px solid var(--text-low);
                 border-radius: 2px;
-                border: 1px solid black;
+                box-shadow: 0px 0px 5px 0px black;
                 padding: 2px;
                 stroke: var(--error);
                 stroke-width:2;
@@ -88,7 +89,7 @@ export class ErrorPopup extends Componentable{
     onMoved(){
         if(this.baseDiv.style.display == "none") return
         this.transform.translation = this.node.transform.translation.add(
-            new Vector2(this.node.transform.localSize.x/2+20,-20)
+            new Vector2(this.node.transform.localSize.x+20,-20)
             )
     }
 }

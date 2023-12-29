@@ -5,7 +5,7 @@ description = "A highly interactive visual programming language"
 authors = [
     "eri24816 <a931eric@gmail.com>",
     "secminhr <secminhrian@gmail.com>",
-    "peterxcli <peterxcli@gmail.com>", 
+    "peterxcli <peterxcli@gmail.com>",
     "greenslime1024 <greenslime1024@gmail.com>",
 ]
 
@@ -14,19 +14,20 @@ maintainers = [
 ]
 
 license = "BSD-3-Clause"
-readme = "README.md"
+readme = "../README.md"
 documentation = "https://docs.grapycal.org/"
 
 include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = "^0.8.0"
+objectsync = ">=0.8.3"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
-bson = "^0.5.10"
-requests = "^2.31.0"
+aiohttp = "^3.9.1"
+toml = "^0.10.2"
+certifi = "^2023.11.17"
 
 [tool.poetry.group.docs]
 optional = true
@@ -60,3 +61,6 @@ pre_bump_hooks = [
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+grapycal = "grapycal.__main__:main"

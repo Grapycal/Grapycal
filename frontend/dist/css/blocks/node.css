@@ -1,0 +1,129 @@
+/*
+Define styles for different node categories
+*/
+
+.node{
+    --cate-color: #8d97a0;
+
+    color: var(--text-high);
+    /* text-shadow:  0 0px 5px var(--cate-color); */
+    /* box-shadow: 0 -2px 3px -2px var(--cate-color); */
+    background-color: var(--z1);
+}
+
+.node-label{
+    color: var(--cate-color);
+}
+
+:is(.normal-node,.simple-node) .node-label{
+    font-size: 12px;
+    line-height: 14px;
+    text-wrap: nowrap;
+    /* background: linear-gradient(180deg, rgb(58, 58, 58) 90%, var(--cate-color) 90%); */
+    background-color: var(--z2);
+}
+
+
+.node-border{
+    border-color: var(--cate-color);
+    border-width: 10px;
+
+    filter: saturate(1.5) brightness(0.6);
+}
+
+
+.hover .node-border{
+    border-width: 10px;
+    filter: saturate(2) brightness(0.7);
+}
+
+.selected .node-border{
+    filter: saturate(2) brightness(1);
+    border-width: 10px;
+}
+
+.running .node-border{
+    filter: saturate(2) brightness(1);
+    border-width: 10px;
+}
+
+
+
+.node.running .node-label{
+    background-color: var(--t1);
+}
+
+
+
+.node:not(.running) .node-label{
+
+    transition: background-color 0.2s ease-out;
+}
+
+.hierarchy-node{
+    border-color: var(--cate-color);
+    color: var(--cate-color);
+}
+.cate-interaction{
+    --cate-color: #DCDCA8;
+}
+
+.cate-function{
+    --cate-color: #7bc361;
+}
+
+.cate-data{
+    --cate-color: #ce9177;
+}
+
+.cate-test{
+    --cate-color: #569BD1;
+}
+
+.cate-procedural{
+    --cate-color: #569BD1;
+}
+
+.cate-torch{
+    --cate-color: #9cdafe;
+}
+
+.cate-torch-neural-network{
+    --cate-color: #5699ff;
+}
+
+
+/* use more saturated color on label */
+.cate-interaction .node-label{
+    --cate-color: #FFBF00;
+}
+
+.cate-function .node-label{
+    --cate-color: #59C059;
+}
+
+.cate-data .node-label{
+    --cate-color: #ffab19;
+}
+
+.cate-test .node-label{
+    --cate-color: #36cdd2;
+}
+
+.cate-procedural .node-label{
+    --cate-color: #1199fb;
+}
+
+.cate-torch .node-label{
+    --cate-color: #2ae3f8;
+}
+
+.cate-torch-neural-network .node-label{
+    --cate-color: #61abff;
+}
+
+
+/* 
+.cate-function-math{
+    --cate-color: #59C059;
+} */

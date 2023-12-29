@@ -25,4 +25,3 @@ To contribute:
     :width: 80%
     :align: center
     :alt: Discord server
-

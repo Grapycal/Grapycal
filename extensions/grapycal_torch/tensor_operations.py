@@ -45,6 +45,10 @@ class StackNode(FunctionNode):
         if self.is_new:
             self.dim.set(0)
 
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
+
     def dim_changed(self,dim):
         self.label.set('☰'+str(dim))
     
@@ -53,17 +57,24 @@ class StackNode(FunctionNode):
     
 class UnsqueezeNode(FunctionNode):
     category = 'torch/operations'
+    inputs = ['inputs']
+    outputs = ['out']
+    display_port_names = False
     def build_node(self):
+        super().build_node()
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('U0')
         self.shape.set('round')
-        self.add_in_port('inputs')
-        self.add_out_port('out')
     
     def init_node(self):
+        super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('U'+str(dim))
@@ -73,17 +84,24 @@ class UnsqueezeNode(FunctionNode):
     
 class SqueezeNode(FunctionNode):
     category = 'torch/operations'
+    inputs = ['inputs']
+    outputs = ['out']
+    display_port_names = False
     def build_node(self):
+        super().build_node()
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('S0')
         self.shape.set('round')
-        self.add_in_port('inputs')
-        self.add_out_port('out')
     
     def init_node(self):
+        super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('S'+str(dim))
@@ -177,3 +195,86 @@ class FConv2DNode(FunctionNode):
         if len(orig_x.shape) == 2:
             y = y.squeeze(0)
         return y
+    
+class SinNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('sin')
+        self.shape.set('round')
+
+    def calculate(self, inp):
+        return torch.sin(inp)
+    
+class CosNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('cos')
+        self.shape.set('round')
+
+    def calculate(self, inp):
+        return torch.cos(inp)
+    
+class CumprodNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp']
+    outputs = ['result']
+    max_in_degree = [1]
+    display_port_names = False
+    def build_node(self):
+        super().build_node()
+        self.label.set('cumprod 0')
+        self.shape.set('simple')
+        self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
+
+    def init_node(self):
+        super().init_node()
+        self.dim.on_set.add_manual(self.dim_changed)
+        if self.is_new:
+            self.dim.set(0)
+
+    def dim_changed(self,dim):
+        self.label.set('cumprod '+str(dim))
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
+
+    def calculate(self, inp):
+        return torch.cumprod(inp,dim=self.dim.get())
+    
+class GatherNode(FunctionNode):
+    category = 'torch/operations'
+    inputs = ['inp','index']
+    outputs = ['result']
+    max_in_degree = [1,1]
+    def build_node(self):
+        super().build_node()
+        self.label.set('gather 0')
+        self.shape.set('simple')
+        self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
+
+    def init_node(self):
+        super().init_node()
+        self.dim.on_set.add_manual(self.dim_changed)
+        if self.is_new:
+            self.dim.set(0)
+
+    def dim_changed(self,dim):
+        self.label.set('gather '+str(dim))
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('dim')
+
+    def calculate(self, inp,index):
+        return torch.gather(inp,dim=self.dim.get(),index=index)

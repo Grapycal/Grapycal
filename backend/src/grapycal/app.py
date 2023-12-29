@@ -48,7 +48,7 @@ class GrapycalApp:
         # Here simply start one workspace in background
             
         # Start webpage server
-        if not self._config['no_serve_webpage']:
+        if not self._config['no_http']:
             webpage_path = os.path.join(os.path.dirname(__file__),'webpage')
             print(f'Strating webpage server at localhost:{self._config["http_port"]} from {webpage_path}...')
             http_server = subprocess.Popen([sys.executable,'-m', 'http.server',str(self._config["http_port"])],
@@ -86,7 +86,7 @@ class GrapycalApp:
         if http_server:
             http_server.send_signal(signal.SIGTERM)
             http_server.wait()
-        print('Grapycal server terminated')
+        print('Grapycal app terminated')
         return
     
 
@@ -107,7 +107,6 @@ class GrapycalApp:
         finally:
             workspace.send_signal(signal.SIGTERM)
             workspace.wait()
-            print('Workspace terminated')
 
     def _waitForWorkspace(self,workspace:subprocess.Popen):
         while True:

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
 import traceback
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control
 from grapycal.sobjects.edge import Edge
@@ -39,7 +39,7 @@ class Node(SObject,metaclass=NodeMeta):
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
 
-    def build(self,is_preview=False,translation='0,0',**build_node_args):
+    def build(self,is_preview=False,translation='0,0',restore_info=None,**build_node_args):
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
@@ -64,6 +64,9 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
         '''
+        if restore_info is not None:
+            self.old_version, self.old_node_info = restore_info
+
         self.build_node(**build_node_args)
 
     def build_node(self):
@@ -76,13 +79,8 @@ class Node(SObject,metaclass=NodeMeta):
         '''
 
     def init(self):
-        '''
-        This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
-        the node is built.
-        '''
 
         self.workspace:Workspace = self._server.globals.workspace
-        self.old_node_info :NodeInfo|None = None
         
         from grapycal.sobjects.editor import Editor # import here to avoid circular import
         parent = self.get_parent()
@@ -101,7 +99,14 @@ class Node(SObject,metaclass=NodeMeta):
 
         self.init_node()
 
+        if hasattr(self,'old_version'):
+            self.restore_from_version(self.old_version,self.old_node_info)
+
     def init_node(self):
+        '''
+        This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+        the node is built.
+        '''
         pass
 
     def restore_from_version(self,version:str,old:NodeInfo):
@@ -158,6 +163,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         new_node = self.workspace.get_workspace_object().main_editor.create_node(type(self))
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
+        logger.info(f'Created a new {type(self).__name__}')
 
     def destroy(self) -> SObjectSerialized:
         '''
@@ -331,6 +337,7 @@ class Node(SObject,metaclass=NodeMeta):
         ) -> T1: 
         '''
         If order_strict is None, it will be set to the ame as is_stateful.
+        The usage of editor_type and editor_args is the same as the expose_attribute method.
         '''
 
         if order_strict is None:
@@ -348,6 +355,30 @@ class Node(SObject,metaclass=NodeMeta):
             - attribute: The attribute to expose.
 
             - editor_type: The type of the editor to use. Can be ``text`` or ``list``.
+
+        List of editor types:
+            - ``dict``: A dictionary editor. Goes with a DictTopic. editor_args: {
+                'key_options':list[str]|None,
+                'value_options':list[str]|None,
+                'key_strict':bool|None,
+                'value_strict':bool|None,
+            }
+
+            - ``list``: A list editor. Goes with a ListTopic. editor_args: {}
+
+            - ``options``: A dropdown editor. Goes with a StringTopic. editor_args: {
+                'options':list[str],
+            }
+
+            - ``text``: A text editor. Goes with a StringTopic. 
+
+            - ``int``: An integer editor. Goes with an IntTopic. editor_args: {}
+
+            - ``float``: A float editor. Goes with a FloatTopic. editor_args: {}
+            
+            
+
+            
 
         '''
         if editor_args is None:
@@ -410,17 +441,19 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Run a task in the background thread.
         '''
-        def task_wrapper():
+
+        def wrapped():
             self.running.set(0)
             self.workspace.background_runner.set_exception_callback(lambda e:self._on_exception(e,truncate=3))
             if redirect_output:
                 with self._redirect_output():
-                    task()
+                    ret = task()
             else:
-                task()
+                ret = task()
             self.running.set(random.randint(0,10000))
-
-        self.workspace.background_runner.push(task_wrapper,to_queue=to_queue)
+            return ret
+        
+        self.workspace.background_runner.push(wrapped,to_queue=to_queue)
         
     def _run_directly(self,task:Callable[[],None],redirect_output=False):
         '''

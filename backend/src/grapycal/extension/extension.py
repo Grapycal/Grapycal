@@ -2,6 +2,7 @@ import importlib
 import inspect
 import sys
 from typing import Dict
+from grapycal.extension.utils import get_extension_info
 
 from grapycal.sobjects.node import Node
 from objectsync import SObject
@@ -33,15 +34,16 @@ class Extension:
             else:
                 self.module = importlib.import_module(extension_name)
         except ModuleNotFoundError:
-            logger.error(f'Extension {extension_name} does not exist')
-            raise ModuleNotFoundError(f'Extension {extension_name} does not exist')
-        self.extension_name = extension_name
+            logger.error(f'Error loading extension {extension_name}. Make sure it is installed.')
+            raise
+        self.name = extension_name
+        self.version = self.module.__version__ if hasattr(self.module,'__version__') else get_extension_info(extension_name)['version']
         
         self.node_types:Dict[str,type[Node]] = {}
         self.node_types_without_extension_name:Dict[str,type[Node]] = {}
         for name, obj in inspect.getmembers(self.module):
             if inspect.isclass(obj) and issubclass(obj, Node):
-                type_name = f'{self.extension_name}.{obj.__name__}'
+                type_name = f'{self.name}.{obj.__name__}'
 
                 '''
                 It may happen that the same node type is defined in multiple extensions. It is possible caused
@@ -59,4 +61,10 @@ class Extension:
                 self.node_types_without_extension_name[obj.__name__] = obj
 
     def add_extension_name_to_node_type(self,node_type:str)->str:
-        return f'{self.extension_name}.{node_type}'
+        return f'{self.name}.{node_type}'
+    
+    def get_info(self)->Dict[str,str]:
+        return {
+            'name': self.name,
+            'version': self.version,
+        }
