@@ -15,7 +15,7 @@ Prerequisites:
 
     pip install grapycal grapycal-builtin
 
-    
+
 Once it's installed, we can go ahead to :doc:`run_grapycal`.
 
 Optionally you can also install existing extensions from PyPI. For example:
@@ -50,7 +50,14 @@ Prerequisites:
 
     pip install -e backend -e extensions/grapycal_builtin
 
-3. Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
+3. Install pre-commit
+
+.. code-block::bash
+
+    pip install pre-commit
+    pre-commit install --install-hooks
+
+4. Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
 ``backend/src/grapycal/webpage``. Grapycal backend will serve the frontend resources from there.
 
 .. code-block:: bash
