@@ -1,4 +1,4 @@
-name: CI
+name: Frontend CI
 
 on:
     push:
@@ -12,6 +12,14 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20
+                cache: 'npm'
+            - name: Build the app
+              run: |
+                cd frontend && npm ci && npm run build
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx
@@ -27,13 +35,15 @@ jobs:
               uses: docker/build-push-action@v4
               with:
                 context: .
-                file: ./Dockerfile
+                file: ./Dockerfile.fontend
                 platforms: linux/amd64,linux/arm64
-                tags: docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-workspace:latest
+                tags: docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-frontend:latest
                 outputs: type=oci,dest=/tmp/image.tar
+              build-args: |
+                NODE_VERSION=20
             - name: Import image in containerd
               run: |
-                sudo ctr i import --base-name docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-workspace:latest --digests --all-platforms /tmp/image.tar
+                sudo ctr i import --base-name docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-frontend:latest --digests --all-platforms /tmp/image.tar
             - name: Push image to containerd
               run: |
-                sudo ctr i push --user "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_PASSWORD }}" docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-workspace:latest
+                sudo ctr i push --user "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_PASSWORD }}" docker.io/${{ secrets.DOCKER_USERNAME }}/grapycal-frontend:latest

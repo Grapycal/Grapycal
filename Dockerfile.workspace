@@ -1,0 +1,20 @@
+FROM python:3.11-rc-buster as builder
+
+WORKDIR /Grapycal
+COPY backend ./backend
+COPY extensions ./extensions
+
+RUN touch README.md
+RUN pip install -e backend
+RUN pip install -e extensions/grapycal_builtin
+
+
+FROM python:3.11-rc-slim-buster as runtime
+
+WORKDIR /Grapycal
+
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /Grapycal /Grapycal
+
+CMD ["python", "-m", "grapycal.core.workspace", "--host", "0.0.0.0"]
+
