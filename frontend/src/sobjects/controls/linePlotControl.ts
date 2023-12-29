@@ -9,7 +9,7 @@ enum YAxisType {
     Linear,
     Log
 }
-    
+
 export class LinePlotControl extends Control{
     protected template = `
         <div class="control">
@@ -69,9 +69,7 @@ export class LinePlotControl extends Control{
         this.disc.colorSpace = THREE.SRGBColorSpace;
 
         this.scene = new THREE.Scene();
-        // the background is var(--z0)
-        const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--z0');
-        this.scene.background = new THREE.Color(bgColor);
+        this.scene.background = new THREE.Color( 0x222222 );
         this.camera = new THREE.OrthographicCamera( this.size.x / - 2, this.size.x / 2, this.size.y / 2, this.size.y / - 2, 1, 1000 );
         this.camera.position.z = 800;
 
@@ -112,7 +110,7 @@ export class LinePlotControl extends Control{
             if(orig_length+xs.length > positionAttribute.count){
                 line.geometry.setDrawRange(0,0) // clear the line if it is too long
                 this.boundary.set(name,new THREE.Box3());
-                
+
             }
 
 
@@ -198,7 +196,7 @@ export class LinePlotControl extends Control{
         this.boundary.set(name,new THREE.Box3());
         this.fitBoundary();
         this.setRenderDirty();
-    }   
+    }
 
     getMousePos(e:MouseEvent): THREE.Vector3 {
         let tmp = this.node.transform.WroldToEl(this.eventDispatcher.mousePos,this.renderer.domElement)
@@ -213,8 +211,8 @@ export class LinePlotControl extends Control{
         const positions = new Float32Array(500*3);
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,0)
-        
-        const material = new THREE.LineBasicMaterial( { color: 0xcccccc } );
+
+        const material = new THREE.LineBasicMaterial( { color: 0x444444 } );
         const grid = new THREE.LineSegments( geometry, material );
         this.grid = grid;
         this.scene.add(grid);
@@ -234,9 +232,7 @@ export class LinePlotControl extends Control{
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,4)
 
-        // if 
-
-        const material = new THREE.LineBasicMaterial( { color: 0xcccccc, linewidth:3 } );
+        const material = new THREE.LineBasicMaterial( { color: 0x888888, linewidth:3 } );
         const axis = new THREE.LineSegments( geometry, material );
         this.baseObject.add(axis);
     }
@@ -249,7 +245,7 @@ export class LinePlotControl extends Control{
         let i = 0;
         i = this.updateGridOneAxis('y',positionAttribute,i);
         i = this.updateGridOneAxis('x',positionAttribute,i);
-        
+
         this.grid.geometry.computeBoundingSphere();
         this.grid.geometry.attributes.position.needsUpdate = true;
     }
@@ -271,11 +267,11 @@ export class LinePlotControl extends Control{
 
 
         if(Math.abs(exponent) < 3) return this.removeTrailingZeros(x.toFixed(2));
-        
+
         let mantissaStr = mantissa.toFixed(2);
         mantissaStr = this.removeTrailingZeros(mantissaStr);
 
-        
+
         return mantissaStr + 'e' + exponent;
     }
 
@@ -291,7 +287,7 @@ export class LinePlotControl extends Control{
         const log5 = Math.log10(5)
         if(logGap-logGapQuantized > log5){
             logGapQuantized = logGapQuantized + log5
-        } 
+        }
         else if(logGap-logGapQuantized > log2){
             logGapQuantized = logGapQuantized + log2
         }
@@ -331,15 +327,14 @@ export class LinePlotControl extends Control{
         const positions = new Float32Array(5000*3);
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.setDrawRange(0,0)
-        
+
         const color = [ // yellow, purple, cyan, green, red, blue,gray
-        
-        0xbb3333,
-        0x3333bb,
-        0x33bb33,
             0xbbbb33,
             0xbb33bb,
             0x33bbbb,
+            0x33bb33,
+            0xbb3333,
+            0x3333bb,
             0x888888,
         ] [this.lines.size % 7]
         const material = new THREE.LineBasicMaterial( { color: color , linewidth:5 } );
