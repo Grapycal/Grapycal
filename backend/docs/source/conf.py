@@ -25,7 +25,7 @@ copyright = '2023, Grapycal Team'
 author = 'Grapycal Team'
 
 # The full version, including alpha/beta/rc tags
-release = '0.9.0'
+release = '0.10.0'
 
 
 # -- General configuration ---------------------------------------------------

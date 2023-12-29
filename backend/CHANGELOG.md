@@ -1,3 +1,47 @@
+## v0.10.0 (2023-12-30)
+
+### Feat
+
+- copy, paste and cut
+- add linter to actions
+- test arc runner
+- add dev chart
+- deploy front using helm chart
+- add frontend helm template
+- build frontend docker image
+- add k8s infra
+- shorten the command to only `grapycal`
+- push log messages to frontend
+- enable add/delete dir or file from file view
+- show examples in files tab
+- show metadata on UI
+- preview node title, markdown description
+- DictEditor
+- add DictEditor
+- display docstring of node on inspector
+- add linter ruff.toml
+
+### Fix
+
+- revert linplotcontrol change on b6cf0c8
+- improve grapycal_torch
+- add things to grapycal_torch
+- change box selection to contain mode
+- fix paste history structure
+- snap nodes when creating
+- improve torch extension
+- change trainer logic
+- ruff.toml
+- update data url for repo transfer
+- mac ssl cert verified failed
+- fix bug caused by last commit
+- fix bug
+- improve get_remote_extensions
+- update unchange code
+- add scroll to right side-bar
+- use http for submodule url
+- add default message for node docstring in nodegen
+
 ## v0.9.0 (2023-12-03)
 
 ### Feat
