@@ -2,6 +2,17 @@ Contribution
 ================================
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
+What you can do:
+
+- add features or fix bugs to the `backend <project_overview.html#backend>`_.
+- add features or fix bugs to the `frontend <project_overview.html#frontend>`_.
+- create a new extension for any domain you like (such as image processing or music synthesis) by following `tutorial <../getting_started/extension.html>`_.
+- improve current extenxsions by adding new nodes or fixing bugs. Existing extensions are in the extensions folder of the `Grapycal repository <https://github.com/Grapycal/Grapycal>`_.
+- improve the documentation.
+- improve the `Website <https://www.grapycal.org>`_ by modifing the source code: https://github.com/Grapycal/Main-Page.
+- create issues to report bugs or request features.
+
+
 To contribute:
 -----------------
 
@@ -19,6 +30,7 @@ To contribute:
     :alt: Discussion:Plans
 
 5. To discuss with us, feel free to go to `Discussion <https://github.com/Grapycal/Grapycal/discussions>`_ or join the `Discord server <https://discord.gg/adNQcS42CT>`_.
+
 
 
 .. figure:: https://i.imgur.com/qZmegjO.jpg
