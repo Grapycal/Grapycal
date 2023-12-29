@@ -15,7 +15,7 @@ maintainers = [
 
 license = "BSD-3-Clause"
 readme = "README.md"
-documentation = "https://eri24816.github.io/Grapycal/"
+documentation = "https://docs.grapycal.org/"
 
 include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
 

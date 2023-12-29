@@ -16,7 +16,7 @@ To build the documentation locally, run the following command from the `backend/
 Open `backend/docs/build/html/index.html` in a browser to view the documentation.
 
 Local builds of the documentation are ignored by git. To publish changes to the documentation, push the sources to 
-``git@github.com:eri24816/Grapycal.git`` and the documentation will be automatically built and published to https://eri24816.github.io/Grapycal/.
+``git@github.com:eri24816/Grapycal.git`` and the documentation will be automatically built and published to https://docs.grapycal.org.
 
 .. note::
     
