@@ -12,11 +12,14 @@ Welcome to Grapycal
 
 Grapycal is a graphical and interactive programming language. It allows users to manipulate and assemble programs by dragging and clicking blocks or graphs representing various built-in and custom Python functions.
 
-`GitHub Repository <https://github.com/eri24816/Grapycal>`_
+`Installation <getting_started/installation.html>`_
 
-`PyPI <https://pypi.org/project/grapycal/>`_
+`Run Grapycal <getting_started/run_grapycal.html>`_
 
-`Discord <https://discord.gg/adNQcS42CT>`_
+`Contribution Guide <contribution_guide/contribution.html>`_
+
+
+`Website <https://www.grapycal.org>`_ | `GitHub Repository <https://github.com/eri24816/Grapycal>`_ | `PyPI <https://pypi.org/project/grapycal/>`_ | `Discord <https://discord.gg/adNQcS42CT>`_
 
 
 
