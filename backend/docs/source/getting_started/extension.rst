@@ -4,7 +4,7 @@ Extension
 Nodes in Grapycal are provided by extensions. An extension is a Python package that
 defines a set of nodes for a specific domain. For example, there would be an extension for image processing, another one for
 deep learning, etc.
-The extension `grapycal_builtin` is automatically included in every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes doing arbitrary tasks. 
+The extension `grapycal_builtin` is automatically included in every workspace, providing a set of basic nodes. You can create your own extensions to define custom nodes doing arbitrary tasks.
 
 Here is a brief walkthrough of how to create an extension. For more details about defining nodes, see Contribution Guide: :doc:`../contribution_guide/define_a_node`.
 
@@ -13,9 +13,9 @@ Create an Extension
 
 Let's create an extension named `grapycal_myext` that defines a node named `IsEvenNode`.
 
-1. In the working directory (the one where you run ``python -m grapycal``), create a directory named ``grapycal_myext``.
+1. In the working directory (the one where you run ``grapycal``), create a directory named ``grapycal_myext``.
 
-.. note:: The extension folder must be placed in the working directory and must start with ``grapycal_`` to 
+.. note:: The extension folder must be placed in the working directory and must start with ``grapycal_`` to
     be discovered by Grapycal.
 
 2. In ``grapycal_myext``, create ``__init__.py`` with the following content:
@@ -31,7 +31,7 @@ Let's create an extension named `grapycal_myext` that defines a node named `IsEv
             self.add_in_port('number')
             self.add_out_port('isEven')
 
-The extension is now ready to be imported in a workspace. 
+The extension is now ready to be imported in a workspace.
 
 3. Go to the GUI and click on the `Extensions 🚀` button in the right.
 You should see the extension in the list of available extensions. Click on the `+` button to import it.
@@ -40,7 +40,7 @@ You should see the extension in the list of available extensions. Click on the `
     :align: center
     :width: 80%
 
-4. Yay! The `IsEvenNode` is now available in your workspace. 
+4. Yay! The `IsEvenNode` is now available in your workspace.
 
 .. image:: https://i.imgur.com/foOsZY7.png
     :align: center

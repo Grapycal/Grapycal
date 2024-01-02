@@ -16,7 +16,31 @@ Grapycal is a general-purpose visual programming language based on Python. It pr
 
 The goal of this project is to make a programming language align with human perception at best, while being powerful with the help of Python, its backend.
 
-Features:
+
+## Documentation
+
+The full documentaition can be found [here](https://docs.grapycal.org/).
+
+## Get Started
+
+```bash
+pip install grapycal grapycal-builtin
+grapycal # Grapycal is now avaliable at localhost:9001
+```
+
+If you have any questions or ideas to share, feel free to join the [Discord server](https://discord.gg/adNQcS42CT).
+
+## Contribute
+
+
+Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
+
+To contribute, please refer to the [Contribution guide](https://docs.grapycal.org/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/Grapycal/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
+
+To discuss, feel free to go to [Discussion](https://github.com/Grapycal/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
+
+
+## Features:
 
 - Interactive: On the GUI, users can run different parts of the graph in arbitrary order, watch variables in real-time, and easily track the active node while the program runs.
 
@@ -43,28 +67,6 @@ Grapycal is helpful for conducting experiments, including training AI, physical 
 In this back-and-forth process between humans and machines, using traditional Python execution methods or Jupyter notebooks can be cumbersome. Therefore, we need the higher interactivity provided by Grapycal.
 
 
-
-## Documentation
-
-The full documentaition can be found [here](https://docs.grapycal.org/).
-
-## Get Started
-
-```bash
-pip install grapycal grapycal-builtin
-python -m grapycal # Grapycal is now avaliable at localhost:9001
-```
-
-If you have any questions or ideas to share, feel free to join the [Discord server](https://discord.gg/adNQcS42CT).
-
-## Contribute
-
-
-Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
-
-To contribute, please refer to the [Contribution guide](https://eri24816.github.io/Grapycal/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/Grapycal/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
-
-To discuss, feel free to go to [Discussion](https://github.com/Grapycal/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
 
 ## Dependencies
 
@@ -116,4 +118,3 @@ These tools or libraries help Grapycal a lot:
     <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Grapycal/Grapycal&type=Date" />
   </picture>
 </a>
-

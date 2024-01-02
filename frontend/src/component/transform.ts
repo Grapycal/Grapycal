@@ -453,4 +453,32 @@ export class Transform extends Component{
     public othersToLocal(others: Transform){
         return this.worldToLocal(others.worldPosition);
     }
+
+    public backToScreen(){
+        // if some part of the rect is outside of the screen, move it back
+        let rect = this.targetElement.getBoundingClientRect();
+        let x = rect.x;
+        let y = rect.y;
+        let w = rect.width;
+        let h = rect.height;
+        let x2 = x+w;
+        let y2 = y+h;
+        let screenW = window.innerWidth;
+        let screenH = window.innerHeight;
+        let dx = 0;
+        let dy = 0;
+        if(x < 0){
+            dx = -x;
+        }
+        if(y < 0){
+            dy = -y;
+        }
+        if(x2 > screenW){
+            dx = screenW - x2;
+        }
+        if(y2 > screenH){
+            dy = screenH - y2;
+        }
+        this.translate(new Vector2(dx,dy),Space.World);
+    }
 }

@@ -17,6 +17,8 @@ import { ButtonEditor } from "../inspector/ButtonEditor"
 import { OptionsEditor as OptionsEditor } from "../inspector/OptionEditor"
 import { Inspector } from "../inspector/inspector"
 import { Componentable } from "../component/componentable"
+import { Marked } from '@ts-stack/markdown';
+
 
 export function object_equal(a:any,b:any){
     return JSON.stringify(a) === JSON.stringify(b);
@@ -40,6 +42,14 @@ export class NodeInspector extends Componentable{
         </div>
         `;
     }
+
+    protected get style(): string {return `
+        #extension_name{
+
+            color: var(--text-low);
+        }
+        
+    `}
 
     nodeTypeDiv: HTMLElement;
     extensionNameDiv: HTMLElement;
@@ -119,16 +129,41 @@ export class NodeInspector extends Componentable{
             this.linker.link(outputAttribute.onInsert,this.addOutput);
             this.linker.link(outputAttribute.onSet,this.onOutputSet);
             
-            return;
         }
-    
-        let nodeTypeString = '';
+        else{//multiple nodes
+            let nodeTypeString = '';
+            for(let node of this.nodes){
+                nodeTypeString += node.type_topic.getValue().split('.')[1] + ', ';
+            }
+            nodeTypeString = nodeTypeString.slice(0,-2);
+            this.nodeTypeDiv.innerText = nodeTypeString;
+            this.extensionNameDiv.innerText = '';
+        }
+        // if all nodes have the same description, display it
+        const node_types_topic = Workspace.instance.nodeTypesTopic
+        let description = ''
         for(let node of this.nodes){
-            nodeTypeString += node.type_topic.getValue().split('.')[1] + ', ';
+            let nodeType = node.type_topic.getValue()
+            let nodeTypeDescription = node_types_topic.get(nodeType).description
+            if(description === ''){
+                description = nodeTypeDescription
+            }else{
+                if(description !== nodeTypeDescription){
+                    description = ''
+                    break
+                }
+            }
         }
-        nodeTypeString = nodeTypeString.slice(0,-2);
-        this.nodeTypeDiv.innerText = nodeTypeString;
-        this.extensionNameDiv.innerText = '';
+        // const markdownDescription = marked(description);
+        // const descriptionString = String(description).replace("\n", "<br/>")
+        // const descriptionString = String(description)
+        if (description === null) {
+            description = '**This node has no description.**'
+        }
+        console.log(description)
+        const markdownDescription = Marked.parse(description);
+        // this.nodeDescriptionDiv.innerText = description
+        this.nodeDescriptionDiv.innerHTML = markdownDescription
     }
     
     private addOutput(item:[string,string]){

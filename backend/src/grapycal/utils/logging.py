@@ -1,7 +1,10 @@
 import logging
 import os
 
+from objectsync import EventTopic
+
 def setup_logging():
+    logging.getLogger("matplotlib").setLevel(logging.ERROR)
     logger = logging.getLogger()
     level = logging.INFO
     #level = logging.DEBUG
@@ -15,6 +18,12 @@ def setup_logging():
     logger.handlers.clear()
     logger.addHandler(ch)
     ch.addFilter(NameTranslator())
+
+    to_frontend_handler = LogToFrontendHandler()
+    to_frontend_handler.setLevel(logging.INFO)
+    to_frontend_handler.addFilter(NameTranslator())
+    to_frontend_handler.setFormatter(FrontendFormatter())
+    logger.addHandler(to_frontend_handler)
 
     return logger
 
@@ -65,8 +74,25 @@ class ConsoleLogFormatter(logging.Formatter):
         },
     }
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord):
         log_fmt = self.FORMATS.get(record.name.split('.')[0],self.FORMATS['default']).get(record.levelno)
         formatter = logging.Formatter(log_fmt)
 
         return formatter.format(record)
+    
+class FrontendFormatter(logging.Formatter):
+    time_format = "%H:%M:%S"
+    format_ = fmt='%(asctime)s\t%(message)s'
+
+    def format(self, record: logging.LogRecord):
+        formatter = logging.Formatter(self.format_, datefmt=self.time_format)
+        return formatter.format(record)
+
+frontend_message_topic:None|EventTopic = None
+
+class LogToFrontendHandler(logging.Handler):
+    def emit(self, record: logging.LogRecord):
+        global frontend_message_topic
+        if frontend_message_topic is None:
+            return
+        frontend_message_topic.emit(message=self.format(record))

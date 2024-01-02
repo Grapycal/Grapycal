@@ -16,8 +16,7 @@ header{
     z-index: 50;
 }
 
-footer{
-    height: 23px;
+.footer{
 }
 
 .main{
@@ -84,12 +83,13 @@ img{
 input[disabled],textarea[disabled] {pointer-events:none}
 
 footer{
+    position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    height: 50px;
     background-color: #000000;
     z-index: 10;
+    border-top: var(--z1) 1px solid;
 }
 
 .box-selection{
@@ -560,7 +560,20 @@ input:enabled, textarea:enabled{
 .sidebar-right{
     right: 0px;
     width: 300px;
+    overflow-y: scroll;
 }
+
+.sidebar-resize-handle {
+    width: 10px; /* Define the width of the handle */
+    cursor: ew-resize; /* Set cursor to indicate resize functionality */
+    background-color: #ccc; /* Handle color */
+    height: 100%; /* Match sidebar height */
+    position: absolute;
+    top: 0;
+    left: -5px; /* Adjust the position to align with the left border */
+    z-index: 1; /* Ensure it's above sidebar content */
+}
+  
 
 .collapsed.sidebar-container{
     display: none;
@@ -746,6 +759,10 @@ input:enabled, textarea:enabled{
     color: var(--error);
 }
 
+.success{
+    color: var(--success);
+}
+
 
 .output-item{
     margin: 5px 0px;
@@ -912,7 +929,7 @@ hr{
     display: flex;
     flex-direction: column;
     margin: 10px;
-    width: 160px;
+    width: 220px;
     height: 100px;
     border-radius: 4px;
     background-color: var(--z2);
@@ -940,9 +957,9 @@ hr{
 .card-title{
     flex-grow: 1;
     flex-shrink: 10;
-    text-align: center;
     padding: 4px 10px;
     min-width: 0;
+    white-space: nowrap;
 }
 
 .card-button{
@@ -951,3 +968,27 @@ hr{
     width: 24px;    
     min-width: 0;
 }
+
+.node_description{
+    border: 20px solid black;
+    overflow: visible;
+}
+
+.code-wrapper {
+    word-wrap: break-word;
+  }
+
+code {
+    font-family: Consolas,"courier new";
+    color: var(--text-high);
+    /* background-color: #f1f1f1; */
+    padding: 2px;
+    font-size: 105%;
+}
+
+/* div[title]:hover::after{
+    content: attr(title);
+    position: absolute;
+    top: -100%;
+    right: -600px;
+} */

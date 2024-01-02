@@ -15,16 +15,15 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
-
+ 
 export class Node extends CompSObject {
     errorPopup: ErrorPopup;
-
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
         let str = 'cate'
         for(let subCat of category.split('/')){
             if(subCat == '') continue
-            str += '-'+subCat
+            str += '-'+subCat.replace(/[^a-zA-Z0-9]/g,'-')
             classes.push(str)
         }
         return classes
@@ -134,6 +133,7 @@ export class Node extends CompSObject {
         this.link(this.eventDispatcher.onDoubleClick, () => {
             this.emit('double_click')
         })
+        this.errorPopup = new ErrorPopup(this)
 
     }
 
@@ -208,7 +208,6 @@ export class Node extends CompSObject {
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))
-        this.errorPopup = new ErrorPopup(this)
 
         // Before setting up the transform, we need to add classes to the element then call updateUI so the shape is correct
         
@@ -330,6 +329,12 @@ export class Node extends CompSObject {
             this.eventDispatcher.fakeOnMouseDown() //fake a mouse down to start dragging
         }
 
+        if(this.hasTag(`pasted_by_${this.objectsync.clientId}`))
+        {
+            this.removeTag(`pasted_by_${this.objectsync.clientId}`)
+            this.selectable.click()
+        }
+
         if(this.isPreview){
             this.selectable.enabled = false
             this.functionalSelectable.enabled = false
@@ -427,7 +432,27 @@ export class Node extends CompSObject {
 
         if(this._isPreview){
             this.htmlItem.baseElement.classList.add('node-preview')
+            const node_types_topic = Workspace.instance.nodeTypesTopic
+            let nodeTypeDescription = node_types_topic.getValue().get(this.type_topic.getValue()).description
+            this.htmlItem.baseElement.setAttribute('title', nodeTypeDescription)
+
         }
+
+        if(shape == 'round'){
+            this.htmlItem.baseElement.classList.add('round-node');
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = 'unset'
+        }else{
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = this.minWidth + 'px'
+        }
+    }
+
+    private minWidth: number = 0;
+
+    public setMinWidth(width: number): void {
+        if(width < this.minWidth) return
+        this.minWidth = width;
+        if(this.shape.getValue() != 'round')
+            (this.htmlItem.baseElement as HTMLElement).style.minWidth = width + 'px'
     }
 
     public onDestroy(): void {

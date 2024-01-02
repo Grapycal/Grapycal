@@ -39,7 +39,7 @@ Prerequisites:
 
 .. code-block:: bash
 
-    git clone git@github.com:eri24816/Grapycal.git
+    git clone git@github.com:Grapycal/Grapycal.git
     cd Grapycal
     git submodule update --init --recursive
     git checkout dev
@@ -50,25 +50,10 @@ Prerequisites:
 
     pip install -e backend -e extensions/grapycal_builtin
 
-3. Install pre-commit
-
-.. code-block:: bash
-
-    pip install pre-commit
-    pre-commit install --install-hooks
-
-4. Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
-``backend/src/grapycal/webpage``. Grapycal backend will serve the frontend resources from there.
-
-.. code-block:: bash
-
-    cd frontend
-    npm install
-    npm run build
 
 The development setup is now done. you can make changes to the backend and frontend code.
 
-5. When you pull the latest code in the future, you may need to update the submodules and rebuild the frontend.
+3. When you pull the latest code in the future, you may need to update the submodules and reinstall the dependencies.
 Otherwise, Grapycal may fail to run.
 
 .. code-block:: bash
@@ -76,6 +61,27 @@ Otherwise, Grapycal may fail to run.
     git pull
 
     git submodule update --init --recursive
+
+    pip install -e backend
+
+    cd frontend
+    npm install
+    npm run build
+
+Optional steps
+--------------
+
+- Install pre-commit so that the code is automatically formatted before committing.
+
+.. code-block:: bash
+
+    pip install pre-commit
+    pre-commit install --install-hooks
+
+- Install and build grapycal frontend. The dist folder will be created at ``frontend/dist`` then be copied to
+``backend/src/grapycal/webpage``. Unless the argument `--no-http` is passed, Grapycal backend will serve the frontend resources from there.
+
+.. code-block:: bash
 
     cd frontend
     npm install

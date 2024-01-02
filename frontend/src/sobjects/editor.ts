@@ -1,6 +1,6 @@
 import { ObjectSyncClient, SObject } from "objectsync-client"
 import { ComponentManager } from "../component/component"
-import { EventDispatcher as EventDispatcher } from "../component/eventDispatcher"
+import { EventDispatcher as EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
 import { MouseOverDetector } from "../component/mouseOverDetector"
 import { Transform } from "../component/transform"
@@ -8,7 +8,7 @@ import { CompSObject } from "./compSObject"
 import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
-import { AddNodeMenu } from "../ui_utils/addNodeMenu"
+import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
 import { Vector2 } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
@@ -84,9 +84,12 @@ export class Editor extends CompSObject{
     }
 
     protected onStart(): void {
-        
         new AddNodeMenu(this)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl c'),this.copy)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl v'),this.paste)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
     }
+    
 
     private lastUpdatePortNearMouse = 0
     private mouseMove(e: MouseEvent){
@@ -154,20 +157,20 @@ export class Editor extends CompSObject{
         const match = (node:SObject)=>{
             if(!(node instanceof Node)) return false;
             let nodebox = node.htmlItem.baseElement.getBoundingClientRect()
-            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < nodebox.right &&
-            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > nodebox.left &&
-            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < nodebox.bottom &&
-            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > nodebox.top
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < nodebox.left &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > nodebox.right &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < nodebox.top &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > nodebox.bottom
         }
         const nodes = this.TopDownSearch(Node,match,match)
 
         const matchEdge = (edge:SObject)=>{
             if(!(edge instanceof Edge)) return false;
             let edgebox = edge.path.getBoundingClientRect()
-            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.right &&
-            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.left &&
-            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.bottom &&
-            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > edgebox.top
+            return Math.min(boxSelectionStart.x,boxSelectionEnd.x) < edgebox.left &&
+            Math.max(boxSelectionStart.x,boxSelectionEnd.x) > edgebox.right &&
+            Math.min(boxSelectionStart.y,boxSelectionEnd.y) < edgebox.top &&
+            Math.max(boxSelectionStart.y,boxSelectionEnd.y) > edgebox.bottom
         }
         const edges = this.TopDownSearch(Edge,matchEdge,matchEdge)
 
@@ -185,4 +188,53 @@ export class Editor extends CompSObject{
         this.boxSelectionStart = null;
     }
 
+    private copy(){
+        if(document.activeElement != document.body) return;
+        let selectedIds = []
+        for(let s of Workspace.instance.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.makeRequest('copy',{ids:selectedIds},(data)=>{
+            // save to clipboard
+            let text = JSON.stringify(data)
+            navigator.clipboard.writeText(text)
+        })
+    }
+
+    private paste(){
+        if(document.activeElement != document.body) return;
+        navigator.clipboard.readText().then(text=>{
+            let data = null
+            try{
+                data = JSON.parse(text)
+            }catch(e){
+                print('clipboard data is not valid')
+                return;
+            }
+            let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
+            this.makeRequest('paste',{data,mouse_pos:mousePos})
+            Workspace.instance.selection.clearSelection()
+        })
+    }
+
+    private cut(){
+        if(document.activeElement != document.body) return;
+        // cut is copy + delete
+        let selectedIds:string[] = []
+        for(let s of Workspace.instance.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.makeRequest('copy',{ids:selectedIds},(data)=>{
+            // save to clipboard
+            let text = JSON.stringify(data)
+            navigator.clipboard.writeText(text)
+            this.objectsync.emit('delete',{ids:selectedIds})
+        })
+    }
 }

@@ -1,6 +1,6 @@
 {
   "name": "grapycal-client",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "main": "app.ts",
   "license": "BSD-3-Clause",
   "devDependencies": {
@@ -19,8 +19,11 @@
     "postbuild": "python ./postbuild.py"
   },
   "dependencies": {
+    "@sentry/node": "^7.85.0",
+    "@ts-stack/markdown": "^1.5.0",
     "@types/three": "^0.157.0",
     "buffer": "^6.0.3",
+    "marked": "^11.0.0",
     "objectsync-client": "github:eri24816/ObjectSyncClient_ts#master",
     "three": "^0.157.0",
     "typescript-cookie": "^1.0.6"

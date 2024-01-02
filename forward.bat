@@ -1,0 +1,1 @@
+ssh -R 8766:localhost:8765 -R 9001:localhost:9001 root@vultr 

@@ -1,0 +1,20 @@
+appName: grapycal
+
+namespace: default
+
+frontend:
+  name: grapycal-frontend
+  image:
+    repository: docker.io/patrickuuuu/grapycal-frontend:latest    
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+  resources: 
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

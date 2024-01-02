@@ -5,7 +5,7 @@ The basic command to run Grapycal is:
 
 .. code-block:: bash
 
-    python -m grapycal
+    grapycal
 
 . It should then be avaliable at http://localhost:9001/. 
 
@@ -13,13 +13,13 @@ To specify the workspace file to load from and save to, pass a positional argume
 
 .. code-block:: bash
 
-    python -m grapycal my_workspace
+    grapycal my_workspace
 
 To specify the port of http server, use the ``--http-port`` option:
 
 .. code-block:: bash
 
-    python -m grapycal --http-port 9002 # the default port is 9001
+    grapycal --http-port 9002 # the default port is 9001
 
 Next, head over to :doc:`basic_usage`.
 
@@ -30,7 +30,7 @@ For development, it is recommended to run Grapycal in this way:
 .. code-block:: bash
     
     cd extensions/
-    python -m grapycal --no-serve-webpage
+    grapycal --no-http
 
 .. code-block:: bash
 
@@ -43,7 +43,7 @@ By default, the Grapycal server includes a HTTP server at http://localhost:9001/
 handles the interaction between the webpage and the Grapycal server. Once you make changes to the frontend code,
 you need to run ``npm run build`` to rebuild the frontend code and refresh the webpage.
 
-Alternatively, you can run the Grapycal server without the HTTP server by passing the ``--no-serve-webpage`` option,
+Alternatively, you can run the Grapycal server without the HTTP server by passing the ``--no-http`` option,
 and instead serve the webpage using the webpack dev server. This is useful if you want to develop the frontend code.
 
 Also, by running grapycal in ``extensions/`` directory, you can import every extensions without installing them.

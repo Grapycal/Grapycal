@@ -20,6 +20,11 @@ module.exports = {
             },
         ]
     },
+    watchOptions: {
+        ignored: [
+            '**/svg/',
+        ]
+    },
     devServer: {
         static: {
             directory: path.join(__dirname, 'dist'),

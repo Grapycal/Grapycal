@@ -4,7 +4,7 @@ from .moduleNode import ModuleNode
 from torch import nn
 
 class Conv2dNode(ModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     def build_node(self):
         super().build_node()
         self.label.set('Conv2d')
@@ -12,9 +12,9 @@ class Conv2dNode(ModuleNode):
         self.add_out_port('out')
         self.in_channels = self.add_attribute('in_channels',IntTopic , editor_type='int',init_value=1)
         self.out_channels = self.add_attribute('out_channels',IntTopic , editor_type='int',init_value=1)
-        self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3,3')
-        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1,1')
-        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1,1')
+        self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3')
+        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1')
+        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1')
         self.icon_path.set('cnn')
 
     def init_node(self):
@@ -44,7 +44,7 @@ class Conv2dNode(ModuleNode):
         self.get_out_port('out').push_data(out)
 
 class ConvTranspose2dNode(ModuleNode):
-    category = 'torch/nn'
+    category = 'torch/neural network'
     def build_node(self):
         super().build_node()
         self.label.set('ConvTr2d')
@@ -52,9 +52,9 @@ class ConvTranspose2dNode(ModuleNode):
         self.add_out_port('out')
         self.in_channels = self.add_attribute('in_channels',IntTopic , editor_type='int',init_value=1)
         self.out_channels = self.add_attribute('out_channels',IntTopic , editor_type='int',init_value=1)
-        self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3,3')
-        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1,1')
-        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1,1')
+        self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3')
+        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1')
+        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1')
         self.icon_path.set('cnn')
 
     def init_node(self):

@@ -23,8 +23,7 @@ header{
     background-color: var(--z2);
 }
 
-footer{
-    height: 23px;
+.footer{
     background-color: var(--t1);
     color: var(--text-high);
     border-top: #303335 1px solid;

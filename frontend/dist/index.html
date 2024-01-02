@@ -18,29 +18,32 @@
           <button class="sidebar-tab-btn" id="tab-btn-node-list"><div class="sidebar-tab-btn-icon" title="nodes">📜</div></button>
           <button class="sidebar-tab-btn" id="tab-btn-3"><div class="sidebar-tab-btn-icon">🚀</div></button>
           <button class="sidebar-tab-btn" id="tab-btn-settings"><div class="sidebar-tab-btn-icon">🛠️</div></button>
-          <button class="sidebar-tab-btn" id="tab-btn-examples"><div class="sidebar-tab-btn-icon">💡</div></button>
           <button class="sidebar-tab-btn" id="tab-btn-1" title="about">
             <img src="icon.png" alt="icon" width="27" height="27"></img>
           </button>
         </div>
         <div class = "sidebar-container" id="left-sidebar-container">
           <div class="sidebar-tab" id="tab-1" style="display: none;">
+
+            <img src="https://i.imgur.com/hEnU3MI.png" alt="banner" width="100%" style="margin-top: 10px;"></img>
             <div class="sidebar-tab-title">
+
               <h1>About</h1>
             </div>
             <hr>
+
+
             Grapycal is an open source project <a href="https://github.com/eri24816/Grapycal">[Github]</a>.
             Welcome to join and contribute!
             <br></br>
-            Grapycal is designed with the goal to align with human perception at best, while being powerful with the help of Python, its backend. 
+            Grapycal is designed with the goal to align with human perception at best, while being powerful with the help of Python, its backend.
 
             <br><br>
-            
+
             If you're new, you may be unfamiliar with the syntax, but you'll soon find it easy to use! These may help you get started:
             <ul>
-              <li><a href="https://eri24816.github.io/Grapycal/index.html">Documentation</a></li>
-              <!-- link to id=tab-examples -->
-              <li>💡Example tab in the left</li>
+              <li><a href="https://docs.grapycal.org/index.html">docs.grapycal.org</a></li>
+              <li>📁 Files > 💡Example workspaces</li>
           </div>
 
           <div class="sidebar-tab" id="tab-file-view" style="display: none;">
@@ -49,8 +52,6 @@
 
               <hr>
             </div>
-            double click a file to open it
-            <br></br>
           </div>
 
           <div class="sidebar-tab" id="tab-node-list" style="display: none;">
@@ -59,7 +60,7 @@
               <hr>
             </div>
             Want more nodes? Extend the list at 🚀Extensions tab.
-            <br></br> 
+            <br></br>
             <div id="node-list-container"></div>
 
           </div>
@@ -82,25 +83,20 @@
               <hr>
             </div>
           </div>
-          <div class="sidebar-tab" id="tab-examples" style="display: none;">
-            <div class="sidebar-tab-title">
-              <h1>Examples</h1>
-              <hr>
-            </div>
-            <div class="card-gallery" id="example-gallery"></div>
-          </div>
+
         </div>
       </div>
 
       <div class="sidebar sidebar-right" id="sidebar-right">
         <button class="sidebar-collapse-right" id="sidebar-collapse-right">&gt</button>
         <div class = "sidebar-container" id="slot_inspector"></div>
+        <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
       </div>
 
       <div id="settings-page" class="settings-page">
         <div class="settings-page-overlay" id="settings-page-overlay"></div>
         <div class="settings-page-content">
-          
+
         </div>
       </div>
     </div>

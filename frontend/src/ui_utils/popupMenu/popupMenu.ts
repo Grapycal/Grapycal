@@ -1,20 +1,18 @@
-import { Componentable } from "../component/componentable"
-import { GlobalEventDispatcher } from "../component/eventDispatcher"
-import { print } from "../devUtils"
+import { Componentable } from "../../component/componentable"
+import { GlobalEventDispatcher } from "../../component/eventDispatcher"
+import { print } from "../../devUtils"
 
 export class PopupMenu extends Componentable{
-    static _instance:PopupMenu
-    static get instance(){
-        if(!this._instance){
-            this._instance = new PopupMenu()
-        }
-        return this._instance
-    }
+    /**
+     * The base class of simplePopupMenu
+     */
+    
     private base: HTMLElement
     private optionTemplate: HTMLTemplateElement
     protected opened:boolean = false
     private optionElements: HTMLElement[] = []
     private focusedOption: number = 0
+    hideWhenClosed: boolean
 
     get template():string{
         return `
@@ -30,7 +28,6 @@ export class PopupMenu extends Componentable{
     get style():string{
         return `
         .base{
-            position: absolute;
             display: none;
             background-color: var(--z2);
             border: 1px solid var(--text-low);
@@ -66,30 +63,46 @@ export class PopupMenu extends Componentable{
         }
     }
 
-    protected generateOptionElement():HTMLElement{
-        let option = this.optionTemplate.content.firstElementChild.cloneNode(true) as HTMLElement
-        return option
-    }
-
     protected addOptionElement(el:HTMLElement,onclick:()=>void){
         el.classList.add(this.constructor.name+'-option')
-        el.addEventListener('click',()=>{
+        el.addEventListener('click',(e)=>{
             this.close()
             onclick()
+            e.stopPropagation()
         })
-        this.base.appendChild(el)
+        this.optionTemplate.parentNode.appendChild(el)
         this.optionElements.push(el)
         if(this.optionElements.length == 1){
             this.focusOptionChange(0,0)
         }
     }
 
-    open(x:number,y:number){
+    protected generateOptionElement():HTMLElement{
+        let option = this.optionTemplate.content.firstElementChild.cloneNode(true) as HTMLElement
+        return option
+    }
+
+    public addOption(text:string,onclick:()=>void){
+        let option = this.generateOptionElement()
+        option.innerText = text
+        this.addOptionElement(option,onclick)
+        return option
+    }
+
+    openAt(x:number,y:number){
         this.base.style.left = x+'px'
         this.base.style.top = y+'px'
         this.base.style.display = 'block'
+        this.base.style.position = 'absolute'
         this.opened = true
     }
+
+    open(){
+        this.base.style.display = 'block'
+        this.base.style.position = 'relative'
+        this.opened = true
+    }
+
 
     private onArrowDown(e:KeyboardEvent){
         if(!this.opened) return
@@ -113,10 +126,11 @@ export class PopupMenu extends Componentable{
         }
     }
 
-    private onEnter(){
+    private onEnter(e:KeyboardEvent){
         if(!this.opened) return
         if(this.optionElements[this.focusedOption] === undefined) return
         this.optionElements[this.focusedOption].click()
+        e.stopPropagation()
     }
 
     private focusOptionChange(from:number, to:number){
@@ -125,7 +139,9 @@ export class PopupMenu extends Componentable{
     }
 
     close(){
-        this.base.style.display = 'none'
+        if(this.hideWhenClosed){
+            this.base.style.display = 'none'
+        }
         this.opened = false
         this.clearOptions()
     }

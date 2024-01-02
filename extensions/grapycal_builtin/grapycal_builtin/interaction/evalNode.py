@@ -26,6 +26,7 @@ class EvalNode(SourceNode):
         self.shape.set('simple')
         self.css_classes.append('fit-content')
         self.expose_attribute(self.expr_control.text,'text',display_name='expression')
+        self.print('hello world')
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)

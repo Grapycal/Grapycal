@@ -9,9 +9,10 @@
             "type": "python",
             "request": "launch",
             "module": "grapycal",
-            "args": ["--no-serve-webpage"],
-            "justMyCode": true,
+            "args": ["--no-http"],
+            "justMyCode": false,
             "cwd": "${workspaceFolder}/extensions"
         }
-    ]
+    ],
+    
 }
