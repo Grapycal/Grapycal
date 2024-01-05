@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: grapycal
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-1:846960822595:certificate/fb35229f-70b5-45ed-adb7-286358a34167
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  tls:
+  - hosts:
+    - frontend.grapycal.com
+    secretName: grapycal-org-ingress-tls-secret
+  rules:
+  - host: frontend.grapycal.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
