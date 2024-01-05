@@ -18,6 +18,8 @@
     "monitor": "npx webpack serve --port 9000 --entry ./node_modules/chatroom-client/src/testApp.ts",
     "prebuild": "node -p \"'export const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "npx webpack --mode development",
+    "build:standalone": "npx webpack --mode development --config webpack.config.standalone.js",
+    "build:service": "npx webpack --mode development --config webpack.config.service.js",
     "postbuild": "python ./postbuild.py"
   },
   "dependencies": {
