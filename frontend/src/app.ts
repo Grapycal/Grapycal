@@ -187,13 +187,16 @@ declare var __BUILD_CONFIG__: {
 const buildConfig = __BUILD_CONFIG__ 
 
 if (buildConfig.isService){
-    // let loginApi handle login and start ObjectSync
+    // // let loginApi handle login and start ObjectSync
 
-    const loginApi = new LoginApiClient();
-    loginApi.interact().then((wsUrl: string) => {
-        print('got ws url from login api', wsUrl);
-        startObjectSync(wsUrl);
-    });
+    // const loginApi = new LoginApiClient();
+    // loginApi.interact().then((wsUrl: string) => {
+    //     print('got ws url from login api', wsUrl);
+    //     startObjectSync(wsUrl);
+    // });
+
+    // We have not made the api yet, so we will just use the ws url directly
+    startObjectSync(`wss://workspace.grapycal.org`)
     
 }else{
     // every thing else will be handled by ObjectSync.
