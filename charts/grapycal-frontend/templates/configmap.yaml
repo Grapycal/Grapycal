@@ -1,9 +1,0 @@
-kind: ConfigMap 
-apiVersion: v1 
-metadata:
-  name: grapycal-frontend-configmap
-  namespace: {{ .Values.namespace }}
-  meta.helm.sh/release-name: {{ .Release.Name }}
-  meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-data:
-  SESSION_KEY: 'THIS IS TEST CM'
