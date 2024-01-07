@@ -11,6 +11,7 @@ export class TextControl extends Control {
     text = this.getAttribute("text", StringTopic)
     label = this.getAttribute("label", StringTopic)
     editable = this.getAttribute("editable", IntTopic)
+    placeholder = this.getAttribute("placeholder", StringTopic)
 
     protected template = `
     <div class="control flex-horiz">
@@ -51,6 +52,10 @@ export class TextControl extends Control {
 
         this.link(this.editable.onSet, (editable) => {
             this.textBox.disabled = !editable
+        })
+
+        this.link(this.placeholder.onSet, (placeholder) => {
+            this.textBox.placeholder = placeholder
         })
     }
 
