@@ -23,14 +23,8 @@ except ImportError:
     HAS_TORCH = False
     Tensor = None
 
-try:
-    import numpy as np
-
-    HAS_NUMPY = True
-    from numpy import ndarray
-except ImportError:
-    HAS_NUMPY = False
-    ndarray = None
+import numpy as np
+from numpy import ndarray
 
 try:
     from PIL import Image
@@ -73,8 +67,6 @@ class ImagePasteNode(SourceNode):
                 return False
             return True
         if "numpy" in format:
-            if not HAS_NUMPY:
-                return False
             return True
         return False
 
@@ -227,7 +219,7 @@ class ImageDisplayNode(Node):
         if HAS_TORCH and isinstance(data, torch.Tensor):
             data = data.detach().cpu().numpy()
 
-        if HAS_NUMPY and isinstance(data, np.ndarray):
+        if isinstance(data, np.ndarray):
             # Ignore all dimensions with size 1 (except last 2 dimensions)
             while data.ndim > 2 and data.shape[0] == 1:
                 data = data[0]
@@ -284,14 +276,15 @@ class ScatterPlotNode(Node):
         self.shape.set("simple")
         self.img = self.add_image_control(name="img")
         self.slice = self.add_text_control(label="slice: ", name="slice", text=":")
-        self.in_port = self.add_in_port("data", 1, "")
+        self.in_port = self.add_in_port("data", 64, "")
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
         self.restore_controls("img", "slice")
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.run(self.update_image, data=self.in_port.get_one_data())
+        if self.in_port.is_all_edge_ready():
+            self.run(self.update_image, data=self.in_port.get_data())
 
     def find_valid_slice(self, data: np.ndarray) -> str | None:
         if data.ndim == 2:
@@ -304,7 +297,7 @@ class ScatterPlotNode(Node):
         if HAS_TORCH and isinstance(data, torch.Tensor):
             data = data.detach().cpu().numpy()
 
-        if HAS_NUMPY and isinstance(data, np.ndarray):
+        if isinstance(data, np.ndarray):
             # Ignore all dimensions with size 1 (except last 2 dimensions)
             while data.ndim > 2 and data.shape[0] == 1:
                 data = data[0]
@@ -316,7 +309,10 @@ class ScatterPlotNode(Node):
                 data = eval(f"unsliced_data[{slice_string}]", globals(), locals())
             except:
                 self.slice.text.set(":")
+            
+            if data.ndim == 2:
                 pass
+
             else:
                 slice_string = self.find_valid_slice(unsliced_data)
                 if slice_string is None:
@@ -327,7 +323,6 @@ class ScatterPlotNode(Node):
         return data
 
     def update_image(self, data):
-        data = self.preprocess_data(data)
 
         # use plt to convert to jpg
         buf = io.BytesIO()
@@ -338,7 +333,14 @@ class ScatterPlotNode(Node):
             ax = fig.gca()
             ax.set_facecolor("black")
             ax.set_aspect("equal")
-            ax.scatter(data[:, 0], data[:, 1])
+            for d in data:
+                if len(d.shape) == 3:
+                    for slice in d:
+                        slice = self.preprocess_data(slice)
+                        ax.scatter(slice[:, 0], slice[:, 1], alpha=0.5)
+                else:
+                    d = self.preprocess_data(d)
+                    ax.scatter(d[:, 0], d[:, 1], alpha=0.5)
             plt.xlim(x_min, x_max)
             plt.ylim(x_min, x_max)
             plt.axis("off")
