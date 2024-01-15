@@ -246,16 +246,22 @@ export class Node extends CompSObject {
                 }
             })
 
+            this.eventDispatcher.onMouseDown.add((e: MouseEvent) => {
+                // pass the event to the editor
+                if(e.buttons != 1) this.eventDispatcher.forwardEvent()
+            })
+
             this.eventDispatcher.onDragStart.add((e: MouseEvent,pos: Vector2) => {
+                if(e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 this.draggingTargetPos = this.transform.translation
                 this.htmlItem.baseElement.classList.add('dragging')
             })
 
             this.eventDispatcher.onDrag.add((e: MouseEvent,newPos: Vector2,oldPos: Vector2) => {
+                if (e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 // pass the event to the editor to box select
                 if(e.ctrlKey){
-                    this.eventDispatcher.forwardEvent()
-                    return
+                    return this.eventDispatcher.forwardEvent()
                 }
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
@@ -283,7 +289,8 @@ export class Node extends CompSObject {
                     }
                 }
             })
-            this.eventDispatcher.onDragEnd.add((e: Event,pos: Vector2) => {
+            this.eventDispatcher.onDragEnd.add((e: MouseEvent,pos: Vector2) => {
+                if (e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
                         if(selectable.object instanceof Node){

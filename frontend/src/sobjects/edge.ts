@@ -113,7 +113,10 @@ export class Edge extends CompSObject {
             this.link(this.eventDispatcher.onMoveGlobal,this.onDrag)
             this.link(this.eventDispatcher.onMouseUpGlobal,this.onDragEndWhileCreating)
         }else{
-            
+            this.eventDispatcher.onMouseDown.add((e: MouseEvent) => {
+                // pass the event to the editor
+                if(e.buttons != 1) this.eventDispatcher.forwardEvent()
+            })
             this.link(this.eventDispatcher.onDragStart,this.onDragStart)
             this.link(this.eventDispatcher.onDrag,this.onDrag)
             this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
@@ -211,7 +214,7 @@ export class Edge extends CompSObject {
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
-        if(event.ctrlKey) return;
+        if(event.ctrlKey || event.shiftKey || event.buttons != 1) { return }
         let maxR = 200
         let distToTail = this.tail.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)
         let distToHead = this.head.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)

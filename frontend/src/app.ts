@@ -61,6 +61,7 @@ function configureHtml(){
     const MIN_WIDTH = 10; // 最小寬度
     const MAX_WIDTH = 500; // 最大寬度  
     function resizeSidebar(event: MouseEvent): void {
+        event.preventDefault(); // prevents selecting text
         if (desiredWidth != null && sidebarRight) {
             desiredWidth -= event.x - prevX;
             prevX = event.x;
