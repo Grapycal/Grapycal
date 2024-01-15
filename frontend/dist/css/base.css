@@ -566,7 +566,7 @@ input:enabled, textarea:enabled{
 .sidebar-resize-handle {
     width: 10px; /* Define the width of the handle */
     cursor: ew-resize; /* Set cursor to indicate resize functionality */
-    background-color: #ccc; /* Handle color */
+    background-color: var(--z1); /* Handle color */
     height: 100%; /* Match sidebar height */
     position: absolute;
     top: 0;

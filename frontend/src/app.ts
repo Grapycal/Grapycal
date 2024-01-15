@@ -54,17 +54,17 @@ function configureHtml(){
     
       }
     
-    let m_pos: number | undefined;
+    let desiredWidth: number = null;
+    let prevX: number = null;
     let sidebarRight = document.getElementById('sidebar-right');
     
     const MIN_WIDTH = 10; // 最小寬度
     const MAX_WIDTH = 500; // 最大寬度  
     function resizeSidebar(event: MouseEvent): void {
-        if (m_pos !== undefined) {
-          const dx = m_pos - event.x;
-          m_pos = event.x;
-          if (sidebarRight) {
-            let newWidth = sidebarRight.offsetWidth + dx;
+        if (desiredWidth != null && sidebarRight) {
+            desiredWidth -= event.x - prevX;
+            prevX = event.x;
+            let newWidth = desiredWidth;
             // 檢查是否超出最小寬度和最大寬度的範圍
             if (newWidth < MIN_WIDTH) {
               newWidth = MIN_WIDTH;
@@ -72,20 +72,20 @@ function configureHtml(){
               newWidth = MAX_WIDTH;
             }
             sidebarRight.style.width = newWidth + 'px';
-          }
         }
       }
     
     if (sidebarRight){
         sidebarRight.addEventListener('mousedown', function(event: MouseEvent) {
-            if (event.offsetX < 10) {
-                m_pos = event.x;
+            if (event.offsetX < 15) {
+                desiredWidth = sidebarRight.offsetWidth;
+                prevX = event.x;
                 document.addEventListener('mousemove', resizeSidebar, false);
             }
         }, false)
     
         document.addEventListener('mouseup', function(event: MouseEvent) {
-            m_pos = undefined;
+            desiredWidth = undefined;
             document.removeEventListener('mousemove', resizeSidebar, false);
         }, false);
     }
