@@ -6,9 +6,6 @@
     color: #aaaaaa;
 }
 
-.edge.data-ready{
-    stroke: var(--t2);
-}
 
 .edge.hover{
     stroke: var(--z4);
@@ -16,6 +13,14 @@
 
 .edge.selected{
     stroke: var(--t2);
+}
+
+.edge.data-ready{
+    stroke: var(--t2);
+}
+
+.edge.data-ready.selected{
+    stroke: var(--t3);
 }
 
 .edge:not(.data-ready){

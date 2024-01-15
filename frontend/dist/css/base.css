@@ -307,6 +307,10 @@ footer{
     outline-offset: -2px;
 }
 
+.port-knob.accepts-edge:hover{
+    outline: #c4c4c4 solid 2px;
+    outline-offset: -2px;
+}
 
 .slot-input-port .port-knob{
     left: -5px;
