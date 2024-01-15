@@ -131,13 +131,13 @@ export class Edge extends CompSObject {
         const onPortChanged = ((oldPort:Port,newPort:Port) =>{
             if(oldPort){
                 oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+                oldPort.removeEdge(this)
             }
             if(newPort){
                 this.updateSVG()
                 
                 newPort.moved.add(this.updateSVG)
-                newPort.edges.push(this)
+                newPort.addEdge(this)
             }
         }).bind(this)
         onPortChanged(null,this.tail.getValue())
@@ -201,8 +201,8 @@ export class Edge extends CompSObject {
         if(this.head.getValue()) {
             this.head.getValue().moved.remove(this.updateSVG)
         }
-        this.head.getValue()?.edges.splice(this.head.getValue()?.edges.indexOf(this),1)
-        this.tail.getValue()?.edges.splice(this.tail.getValue()?.edges.indexOf(this),1)
+        this.head.getValue()?.removeEdge(this)
+        this.tail.getValue()?.removeEdge(this)
         this.dotAnimation.stopImmediately()
         super.onDestroy()
     }

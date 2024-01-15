@@ -21,6 +21,7 @@ export class Port extends CompSObject {
     element = document.createElement('div')
 
     htmlItem: HtmlItem;
+    eventDispatcher: EventDispatcher;
 
     moved: Action<[]> = new Action();
 
@@ -32,8 +33,16 @@ export class Port extends CompSObject {
         }
     }
 
-    // Managed by Edge class
-    public edges: Edge[] = []
+    // Called by Edge class
+    private edges: Edge[] = []
+    addEdge(edge: Edge): void {
+        this.edges.push(edge)
+        this.updateAcceptsEdgeClass()
+    }
+    removeEdge(edge: Edge): void {
+        this.edges.splice(this.edges.indexOf(edge), 1)
+        this.updateAcceptsEdgeClass()
+    }
 
     readonly template: string = `
     <div class="port">
@@ -56,8 +65,8 @@ export class Port extends CompSObject {
         let transform = new Transform(this,this.htmlItem.getHtmlEl('Knob'))
         transform.pivot = new Vector2(0,0)
 
-        let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Hitbox'))
-        this.link(eventDispatcher.onDragStart,this.generateEdge.bind(this))
+        this.eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Hitbox'))
+        this.link(this.eventDispatcher.onDragStart,this.generateEdge)
 
         new MouseOverDetector(this,this.htmlItem.getHtmlEl('Hitbox'))
 
@@ -82,6 +91,7 @@ export class Port extends CompSObject {
             }
             this.isInputChanged(this.is_input.getValue())
         })
+        this.link(this.max_edges.onSet,this.updateAcceptsEdgeClass)
     }
 
 
@@ -122,11 +132,10 @@ export class Port extends CompSObject {
         this.moved.invoke()
     }
 
-    private generateEdge(): void {
-        if(this.node.isPreview)
-            return;
-        if(!this.acceptsEdge)
-            return;
+    private generateEdge(e:MouseEvent): void {
+        if(this.node.isPreview ||
+            !this.acceptsEdge ||
+            e.buttons !== 1) return this.eventDispatcher.forwardEvent()
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
             let newEdge = as(this.objectsync.createObject('Edge', this.parent.parent.id),Edge)
@@ -141,5 +150,14 @@ export class Port extends CompSObject {
                 newEdge.data_ready.set(123)
             }
         }),true)
+    }
+
+    private updateAcceptsEdgeClass(): void {
+        if(this.acceptsEdge){
+            this.htmlItem.getHtmlEl('Knob').classList.add('accepts-edge')
+        }
+        else{
+            this.htmlItem.getHtmlEl('Knob').classList.remove('accepts-edge')
+        }
     }
 }

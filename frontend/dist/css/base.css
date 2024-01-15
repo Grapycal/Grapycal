@@ -302,6 +302,11 @@ footer{
     background-color : #4d4d4d;
 }
 
+.port-knob.accepts-edge{
+    outline: #919191 solid 2px;
+    outline-offset: -2px;
+}
+
 
 .slot-input-port .port-knob{
     left: -5px;
