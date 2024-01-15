@@ -290,7 +290,6 @@ export class Node extends CompSObject {
                 }
             })
             this.eventDispatcher.onDragEnd.add((e: MouseEvent,pos: Vector2) => {
-                if (e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
                         if(selectable.object instanceof Node){

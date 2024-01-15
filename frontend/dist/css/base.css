@@ -979,6 +979,7 @@ hr{
   }
 
 code {
+    white-space: pre-wrap;
     font-family: Consolas,"courier new";
     color: var(--text-high);
     /* background-color: #f1f1f1; */

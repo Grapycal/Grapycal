@@ -77,12 +77,10 @@ function configureHtml(){
       }
     
     if (sidebarRight){
-        sidebarRight.addEventListener('mousedown', function(event: MouseEvent) {
-            if (event.offsetX < 15) {
-                desiredWidth = sidebarRight.offsetWidth;
-                prevX = event.x;
-                document.addEventListener('mousemove', resizeSidebar, false);
-            }
+        document.getElementById('sidebar-resize-handle').addEventListener('mousedown', function(event: MouseEvent) {
+            desiredWidth = sidebarRight.offsetWidth;
+            prevX = event.x;
+            document.addEventListener('mousemove', resizeSidebar, false);
         }, false)
     
         document.addEventListener('mouseup', function(event: MouseEvent) {
@@ -155,15 +153,6 @@ function startObjectSync(wsUrl:string){
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
-        }
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            let sidebarRight = document.getElementById('sidebar-collapse-right').parentElement;
-            if (sidebarRight.classList.contains('collapsed')) {
-                sidebarRight.classList.remove('collapsed');
-            } else {
-                sidebarRight.classList.add('collapsed');
-            }
         }
     });
     
