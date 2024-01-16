@@ -373,7 +373,6 @@ footer{
 .slot-input-port{
     position: relative;
     gap:2px;
-    align-self: start;
     align-items: center;
 }
 
