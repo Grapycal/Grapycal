@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 import importlib.util
 from typing import Any, Callable, Dict, Generic, List, TypeVar
-from grapycal.utils.misc import Action
+from grapycal.utils.misc import Action, as_type
 from objectsync.sobject import SObjectSerialized
 import asyncio
 
@@ -57,15 +57,31 @@ class SObjectInfo:
 class ControlInfo(SObjectInfo):
     pass
 
+def search_sobjectinfo_by_id(serialized:SObjectSerialized,id:str)->SObjectSerialized:
+    '''
+    Search for an SObjectInfo by id recursively
+    '''
+    if serialized.id == id:
+        return serialized
+    for child in serialized.children.values():
+        child_info = search_sobjectinfo_by_id(child,id)
+        if child_info is not None:
+            return child_info
+    raise ValueError(f'No SObjectInfo with id {id} found')
+
 class NodeInfo(SObjectInfo):
     '''
     An easier-to-use interface to read SObjectSerialized of a node
     '''
     def __init__(self, serialized: SObjectSerialized):
         super().__init__(serialized)
-        children = serialized.children
         controls: Dict[str,str] = self.attributes['controls']
-        self.controls=LazyDict[str,ControlInfo](lambda name: ControlInfo(children[controls[name]]),list(controls.keys()))
+        def get_controlinfo(name:str)->ControlInfo:
+            # The control can be direct child of the node, or a child of a input port
+            control_id = controls[name]
+            return ControlInfo(search_sobjectinfo_by_id(serialized,control_id) )
+            
+        self.controls=LazyDict[str,ControlInfo](get_controlinfo,list(controls.keys()))
 
 class Clock:
     def __init__(self, interval: float):

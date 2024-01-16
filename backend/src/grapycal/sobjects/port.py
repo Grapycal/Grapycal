@@ -12,6 +12,7 @@ class Port(SObject):
     frontend_type = 'Port'
 
     def build(self, name='port', max_edges=64, display_name=None):
+        self.node: Node = self.get_parent() # type: ignore
         self.name = self.add_attribute('name', StringTopic, name)
         self.display_name = self.add_attribute('display_name', StringTopic, name if display_name is None else display_name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
@@ -72,9 +73,23 @@ class InputPort(Port):
 
 
 class ControlDefaultInputPort(InputPort):
-    def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None, **control_kwargs):
+    def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None,control_name='', **control_kwargs):
         super().build(name, max_edges, display_name)
+        print('build')
+        if name is not None:
+            if name in self.node.controls:
+                print('w')
+                raise ValueError(f'Control with name {name} already exists')
+        else:
+            name = 'Control0'
+            i=0
+            while name in self.node.controls:
+                i+=1
+                name = f'Control{i}'
+
         self.default_control = self.add_child(control_type, **control_kwargs)
+        self.node.controls.add(control_name,self.default_control)
+        print(self.node.controls.get())
 
     def init(self):
         super().init()

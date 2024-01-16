@@ -180,18 +180,14 @@ class Node(SObject,metaclass=NodeMeta):
                 edge.remove()
         return super().destroy()
 
-    def add_in_port(self,name:str,max_edges=64,display_name=None):
+    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]|None=None,control_name='',**control_kwargs):
         '''
         Add an input port to the node.
         '''
-        port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
-        self.in_ports.insert(port)
-        return port
-
-    def add_control_default_in_port(self, name: str, control_type: type[ValuedControl], max_edges=64, display_name=None, **control_kwargs):
-        port = self.add_child(ControlDefaultInputPort, control_type=control_type,
-                              name=name, max_edges=max_edges, display_name=display_name,
-                              **control_kwargs)
+        if control_type is None:
+            port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
+        else:
+            port = self.add_child(ControlDefaultInputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
         self.in_ports.insert(port)
         return port
 
