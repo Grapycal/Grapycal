@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Any, List
 from objectsync import SObject, StringTopic, IntTopic
+
+from grapycal.sobjects.controls.control import ValuedControl
 from grapycal.utils.misc import Action
 
 if TYPE_CHECKING:
@@ -14,6 +16,7 @@ class Port(SObject):
         self.display_name = self.add_attribute('display_name', StringTopic, name if display_name is None else display_name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
         self.is_input = self.add_attribute('is_input', IntTopic, 0)
+        self.use_default = self.add_attribute('use_default', IntTopic, init_value=0)
 
     def init(self):
         self.edges: List[Edge] = []
@@ -66,6 +69,33 @@ class InputPort(Port):
     def edge_activated(self, edge:'Edge'):
         self.on_activate.invoke(self, edge)
         self.node.edge_activated(edge, self)
+
+
+class ControlDefaultInputPort(InputPort):
+    def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None, **control_kwargs):
+        super().build(name, max_edges, display_name)
+        self.default_control = self.add_child(control_type, **control_kwargs)
+
+    def init(self):
+        super().init()
+        self.use_default.set(1)
+
+    def add_edge(self, edge: 'Edge'):
+        super().add_edge(edge)
+        self.use_default.set(0)
+
+    def remove_edge(self, edge: 'Edge'):
+        super().remove_edge(edge)
+        self.use_default.set(1 if len(self.edges) == 0 else 0)
+
+    def is_all_edge_ready(self):
+        return self.use_default.get() or super().is_all_edge_ready()
+
+    def get_data(self):
+        return [self.default_control.get_value()] if self.use_default.get() else super().get_data()
+
+    def get_one_data(self, allow_no_data=False):
+        return self.default_control.get_value() if self.use_default.get() else super().get_one_data(allow_no_data)
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):

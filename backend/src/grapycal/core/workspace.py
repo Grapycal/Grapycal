@@ -33,7 +33,7 @@ from grapycal.core import stdout_helper
 
 
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort 
+from grapycal.sobjects.port import InputPort, OutputPort, ControlDefaultInputPort
 from grapycal.sobjects.sidebar import Sidebar
 
 from grapycal.core.background_runner import BackgroundRunner
@@ -116,6 +116,7 @@ class Workspace:
         self._objectsync.register(LocalFileView)
         self._objectsync.register(RemoteFileView)
         self._objectsync.register(InputPort)
+        self._objectsync.register(ControlDefaultInputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 

@@ -289,7 +289,6 @@ export class TextBox{
             
             this.textarea.style.height = '0';
             this.textarea.style.height = this.textarea.scrollHeight + 'px';
-
             // if(this.textarea.value=='' && this.textarea.disabled){
             //     this.textarea.style.height='0px'
             // }

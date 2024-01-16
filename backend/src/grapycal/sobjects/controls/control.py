@@ -1,6 +1,9 @@
 from grapycal.extension.utils import ControlInfo
 from objectsync import SObject
 
+import abc
+from typing import Generic, TypeVar
+
 class Control(SObject):
     '''
     A control enables the user to interact with a node via the GUI. There are different types of controls, such as a text input control
@@ -14,5 +17,10 @@ class Control(SObject):
         for k,v in old.attributes.items():
             if self.has_attribute(k):
                 self.get_attribute(k).set(v)
-        
+
+T = TypeVar('T')
+class ValuedControl(abc.ABC, Control, Generic[T]):
+    @abc.abstractmethod
+    def get_value(self) -> T:
+        pass
          

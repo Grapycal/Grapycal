@@ -15,8 +15,9 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
+import { ControlHost } from './controls/controlHost'
  
-export class Node extends CompSObject {
+export class Node extends CompSObject implements ControlHost {
     errorPopup: ErrorPopup;
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
@@ -50,6 +51,7 @@ export class Node extends CompSObject {
 
 
     editor: Editor;
+    ancestorNode: Node = this;
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = null
@@ -78,11 +80,9 @@ export class Node extends CompSObject {
                 </div>
             </div>
             <div class=" flex-vert space-between main-section">
-                <div class="flex-horiz space-between full-width port-section align-start">
-                    <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-                    <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
-                </div>
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
                 <div id="slot_control" class="slot-control flex-vert space-between"></div>
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
             </div>
         </div>`,
     simple:

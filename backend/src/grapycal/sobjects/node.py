@@ -14,9 +14,9 @@ import functools
 import traceback
 from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
 from grapycal.extension.utils import NodeInfo
-from grapycal.sobjects.controls.control import Control
+from grapycal.sobjects.controls.control import Control, ValuedControl
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal.sobjects.port import InputPort, OutputPort, ControlDefaultInputPort
 from grapycal.utils.io import OutputStream
 from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
@@ -185,6 +185,13 @@ class Node(SObject,metaclass=NodeMeta):
         Add an input port to the node.
         '''
         port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
+        self.in_ports.insert(port)
+        return port
+
+    def add_control_default_in_port(self, name: str, control_type: type[ValuedControl], max_edges=64, display_name=None, **control_kwargs):
+        port = self.add_child(ControlDefaultInputPort, control_type=control_type,
+                              name=name, max_edges=max_edges, display_name=display_name,
+                              **control_kwargs)
         self.in_ports.insert(port)
         return port
 

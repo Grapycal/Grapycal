@@ -293,6 +293,11 @@ footer{
     align-items: center;
 }
 
+:is(.normal-node) .port {
+    width: 100%;
+    height: fit-content;
+}
+
 
 .port-knob{
     position: absolute;
@@ -329,7 +334,7 @@ footer{
 }
 
 .port-label{
-    position: absolute;
+    position: relative;
     white-space: nowrap;
     transition: 0.5s ease-out;
     pointer-events: none;
@@ -353,14 +358,29 @@ footer{
     transform: translate(0px,-6px);
 }
 
+:is(.normal-node) .port .slot-control {
+    padding: 0px;
+}
+
 .slot-input-port{
+    width: 100%;
+    position: relative;
+    gap:2px;
+    align-self: start;
+    align-items: center;
+}
+
+.slot-output-port{
+    width: 100%;
     position: relative;
     gap:2px;
 }
 
-.slot-output-port{
-    position: relative;
-    gap:2px;
+.normal-node .slot-output-port {
+    align-self: end;
+    .port {
+        flex-direction: row-reverse;
+    }
 }
 
 .simple-node .slot-input-port{
@@ -390,11 +410,11 @@ footer{
     margin: 5px 1.4px;
 }
 
-.slot-output-port .port-label{
+.slot-output-port :not(.port-knob) {
     right: 10px;
 }
 
-.slot-input-port .port-label{
+.slot-input-port :not(.port-knob) {
     left: 10px;
 }
 
