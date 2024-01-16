@@ -180,7 +180,7 @@ class Node(SObject,metaclass=NodeMeta):
                 edge.remove()
         return super().destroy()
 
-    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]|None=None,control_name='',**control_kwargs):
+    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]|None=None,control_name=None,**control_kwargs):
         '''
         Add an input port to the node.
         If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
