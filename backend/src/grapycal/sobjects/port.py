@@ -75,10 +75,8 @@ class InputPort(Port):
 class ControlDefaultInputPort(InputPort):
     def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
         super().build(name, max_edges, display_name)
-        print('build')
         if control_name is not None:
             if control_name in self.node.controls:
-                print('w')
                 raise ValueError(f'Control with name {control_name} already exists')
         else:
             control_name = 'Control0'
@@ -89,7 +87,6 @@ class ControlDefaultInputPort(InputPort):
 
         self.default_control = self.add_child(control_type, **control_kwargs)
         self.node.controls.add(control_name,self.default_control)
-        print(self.node.controls.get())
 
     def init(self):
         super().init()
