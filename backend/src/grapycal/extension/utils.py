@@ -57,7 +57,7 @@ class SObjectInfo:
 class ControlInfo(SObjectInfo):
     pass
 
-def search_sobjectinfo_by_id(serialized:SObjectSerialized,id:str)->SObjectSerialized:
+def search_sobjectinfo_by_id(serialized:SObjectSerialized,id:str)->SObjectSerialized|None:
     '''
     Search for an SObjectInfo by id recursively
     '''
@@ -67,7 +67,16 @@ def search_sobjectinfo_by_id(serialized:SObjectSerialized,id:str)->SObjectSerial
         child_info = search_sobjectinfo_by_id(child,id)
         if child_info is not None:
             return child_info
-    raise ValueError(f'No SObjectInfo with id {id} found')
+    return None
+
+def search_sobjectinfo_by_id_raise(serialized:SObjectSerialized,id:str)->SObjectSerialized:
+    '''
+    Search for an SObjectInfo by id recursively. Raise an error if not found
+    '''
+    info = search_sobjectinfo_by_id(serialized,id)
+    if info is None:
+        raise ValueError(f'Cannot find SObjectInfo with id {id}')
+    return info
 
 class NodeInfo(SObjectInfo):
     '''
@@ -79,7 +88,7 @@ class NodeInfo(SObjectInfo):
         def get_controlinfo(name:str)->ControlInfo:
             # The control can be direct child of the node, or a child of a input port
             control_id = controls[name]
-            return ControlInfo(search_sobjectinfo_by_id(serialized,control_id) )
+            return ControlInfo(search_sobjectinfo_by_id_raise(serialized,control_id))
             
         self.controls=LazyDict[str,ControlInfo](get_controlinfo,list(controls.keys()))
 

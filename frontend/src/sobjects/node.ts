@@ -81,8 +81,8 @@ export class Node extends CompSObject implements ControlHost {
             </div>
             <div class=" flex-vert space-between main-section">
                 <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-                <div id="slot_control" class="slot-control flex-vert space-between"></div>
                 <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
+                <div id="slot_control" class="slot-control flex-vert space-between"></div>
             </div>
         </div>`,
     simple:

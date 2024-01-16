@@ -59,6 +59,12 @@ input{
     -webkit-user-select: none;
 }
 
+.control textarea{
+    margin-top: -1px;
+    margin-bottom: -1px;
+    line-height: 17px;
+}
+
 button{
     
     color: inherit;
@@ -291,11 +297,13 @@ footer{
     width: 0px;
     display: flex;
     align-items: center;
+    gap: 2px;
 }
 
 :is(.normal-node) .port {
     width: 100%;
     height: fit-content;
+    min-height: 15px;
 }
 
 
@@ -363,17 +371,33 @@ footer{
 }
 
 .slot-input-port{
-    width: 100%;
     position: relative;
     gap:2px;
     align-self: start;
     align-items: center;
 }
 
+.slot-input-port:empty{
+    display: none;
+}
+
 .slot-output-port{
-    width: 100%;
     position: relative;
     gap:2px;
+}
+
+.slot-output-port:empty{
+    display: none;
+}
+
+.normal-node .slot-input-port {
+    padding: 0px 10px; 
+    width: 100%;
+}
+
+.normal-node .slot-output-port {
+    padding: 0px 10px;
+    width: 100%;
 }
 
 .normal-node .slot-output-port {
@@ -410,13 +434,6 @@ footer{
     margin: 5px 1.4px;
 }
 
-.slot-output-port :not(.port-knob) {
-    right: 10px;
-}
-
-.slot-input-port :not(.port-knob) {
-    left: 10px;
-}
 
 /* Control */
 
@@ -431,7 +448,7 @@ footer{
     position: relative;
     padding-left: 10px;
     padding-right: 10px;
-    overflow: visible;
+    /* overflow: visible; */
 }
 
 .slot-control:empty{
@@ -445,6 +462,7 @@ footer{
     overflow: hidden;
     font-size: 12px;
     min-height: 15px;
+    gap: 2px;
 }
 
 .control-button{

@@ -183,6 +183,8 @@ class Node(SObject,metaclass=NodeMeta):
     def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]|None=None,control_name='',**control_kwargs):
         '''
         Add an input port to the node.
+        If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
+        When no edges are connected to the port, the control will be used to get the data.
         '''
         if control_type is None:
             port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
