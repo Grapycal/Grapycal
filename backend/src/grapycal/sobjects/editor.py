@@ -106,7 +106,7 @@ class Editor(SObject):
                 node.old_node_info = NodeInfo(obj)
                 node.restore_from_version('',node.old_node_info)
             except Exception:
-                logger.warning(f'Failed to restore node {obj.id}')
+                logger.warning(f'Failed to restore node {obj.id}',exc_info=True)
                 if self._server.has_object(new_node_id):
                     self._server.destroy_object(new_node_id)
             else:

@@ -8,12 +8,15 @@ import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { Edge } from './edge'
+import { ControlHost } from './controls/controlHost'
 
-export class Port extends CompSObject {
+export class Port extends CompSObject implements ControlHost {
 
     display_name: StringTopic = this.getAttribute('display_name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
+    use_default: IntTopic = this.getAttribute('use_default', IntTopic)
+    default_control_display: string
     orientation: number=0;
 
     private node: Node = null;
@@ -21,6 +24,9 @@ export class Port extends CompSObject {
     element = document.createElement('div')
 
     htmlItem: HtmlItem;
+    get ancestorNode(): Node {
+        return this.node;
+    }
     eventDispatcher: EventDispatcher;
 
     moved: Action<[]> = new Action();
@@ -46,12 +52,13 @@ export class Port extends CompSObject {
 
     readonly template: string = `
     <div class="port">
-        
+
         <div class="port-label" id="label"></div>
+        <div class="slot-control" id="slot_control"></div>
         <div class="port-knob" id="Knob">
             <div class="port-knob-hitbox" id="Hitbox"></div>
         </div>
-        
+
     </div>
     `
 
@@ -78,6 +85,15 @@ export class Port extends CompSObject {
             this.htmlItem.getHtmlEl('label').innerText = label
             if(this.node)
                 this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18) 
+        })
+
+        this.default_control_display = this.htmlItem.getHtmlEl('slot_control').style.display
+        this.link(this.use_default.onSet,(use_default: number) => {
+            if(use_default) {
+                this.htmlItem.getHtmlEl('slot_control').style.display = this.default_control_display
+            } else {
+                this.htmlItem.getHtmlEl('slot_control').style.display = 'none'
+            }
         })
     }
 
