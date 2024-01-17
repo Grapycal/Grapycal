@@ -23,4 +23,8 @@ class ValuedControl(abc.ABC, Control, Generic[T]):
     @abc.abstractmethod
     def get_value(self) -> T:
         pass
+
+    @abc.abstractmethod
+    def value_ready(self) -> bool:
+        pass
          

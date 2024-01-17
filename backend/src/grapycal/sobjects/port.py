@@ -39,42 +39,11 @@ class Port(SObject):
     def get_name(self):
         return self.name.get()
 
+
 class InputPort(Port):
-    def build(self, name='port', max_edges=64, display_name=None):
-        super().build(name, max_edges, display_name)
-        self.is_input.set(1)
-
-    def init(self):
-        super().init()
-        self.on_activate = Action()
-
-    def add_edge(self, edge:'Edge'):
-        super().add_edge(edge)
-        self.node.input_edge_added(edge, self)
-
-    def remove_edge(self, edge:'Edge'):
-        super().remove_edge(edge)
-        self.node.input_edge_removed(edge, self)
-        
-    def is_all_edge_ready(self):
-        return all(edge.is_data_ready() for edge in self.edges) and len(self.edges) > 0
-    
-    def get_data(self):
-        return [edge.get_data() for edge in self.edges]
-    
-    def get_one_data(self,allow_no_data=False):
-        if allow_no_data and not self.is_all_edge_ready():
-            return None
-        return self.edges[0].get_data()
-    
-    def edge_activated(self, edge:'Edge'):
-        self.on_activate.invoke(self, edge)
-        self.node.edge_activated(edge, self)
-
-
-class ControlDefaultInputPort(InputPort):
     def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
         super().build(name, max_edges, display_name)
+        self.is_input.set(1)
         if control_name is not None:
             if control_name in self.node.controls:
                 raise ValueError(f'Control with name {control_name} already exists')
@@ -90,24 +59,38 @@ class ControlDefaultInputPort(InputPort):
 
     def init(self):
         super().init()
+        self.on_activate = Action()
         self.use_default.set(1)
 
     def add_edge(self, edge: 'Edge'):
         super().add_edge(edge)
+        self.node.input_edge_added(edge, self)
         self.use_default.set(0)
 
     def remove_edge(self, edge: 'Edge'):
         super().remove_edge(edge)
+        self.node.input_edge_removed(edge, self)
         self.use_default.set(1 if len(self.edges) == 0 else 0)
 
     def is_all_edge_ready(self):
-        return self.use_default.get() or super().is_all_edge_ready()
+        return (self.use_default.get() and self.default_control.value_ready()) or \
+            all(edge.is_data_ready() for edge in self.edges)
 
     def get_data(self):
-        return [self.default_control.get_value()] if self.use_default.get() else super().get_data()
+        return [self.default_control.get_value()] if self.use_default.get() else \
+            [edge.get_data() for edge in self.edges]
 
     def get_one_data(self, allow_no_data=False):
-        return self.default_control.get_value() if self.use_default.get() else super().get_one_data(allow_no_data)
+        if self.use_default.get():
+            return self.default_control.get_value()
+        elif allow_no_data and not self.is_all_edge_ready():
+            return None
+        return self.edges[0].get_data()
+
+    def edge_activated(self, edge:'Edge'):
+        self.on_activate.invoke(self, edge)
+        self.node.edge_activated(edge, self)
+
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
