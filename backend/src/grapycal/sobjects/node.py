@@ -300,11 +300,11 @@ class Node(SObject,metaclass=NodeMeta):
         self.controls.add(name,control)
         return control
     
-    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True,name:str|None=None) -> TextControl:
+    def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True,name:str|None=None, placeholder:str='') -> TextControl:
         '''
         Add a text control to the node.
         '''
-        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable,name=name)
+        control = self.add_control(TextControl,text=text,label=label,readonly=readonly,editable=editable,name=name,placeholder=placeholder)
         return control
     
     def add_button_control(self,label:str='',name:str|None=None) -> ButtonControl:

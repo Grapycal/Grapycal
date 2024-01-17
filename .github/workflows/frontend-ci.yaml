@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                submodules: recursive
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
@@ -20,7 +22,7 @@ jobs:
                 cache-dependency-path: frontend/package-lock.json
             - name: Build the app
               run: |
-                cd frontend && npm ci && npm run build
+                cd frontend && npm ci && npm run build:service
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx

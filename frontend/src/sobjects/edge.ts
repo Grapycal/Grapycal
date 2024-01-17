@@ -113,7 +113,10 @@ export class Edge extends CompSObject {
             this.link(this.eventDispatcher.onMoveGlobal,this.onDrag)
             this.link(this.eventDispatcher.onMouseUpGlobal,this.onDragEndWhileCreating)
         }else{
-            
+            this.eventDispatcher.onMouseDown.add((e: MouseEvent) => {
+                // pass the event to the editor
+                if(e.buttons != 1) this.eventDispatcher.forwardEvent()
+            })
             this.link(this.eventDispatcher.onDragStart,this.onDragStart)
             this.link(this.eventDispatcher.onDrag,this.onDrag)
             this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
@@ -128,13 +131,13 @@ export class Edge extends CompSObject {
         const onPortChanged = ((oldPort:Port,newPort:Port) =>{
             if(oldPort){
                 oldPort.moved.remove(this.updateSVG)
-                oldPort.edges.splice(oldPort.edges.indexOf(this),1)
+                oldPort.removeEdge(this)
             }
             if(newPort){
                 this.updateSVG()
                 
                 newPort.moved.add(this.updateSVG)
-                newPort.edges.push(this)
+                newPort.addEdge(this)
             }
         }).bind(this)
         onPortChanged(null,this.tail.getValue())
@@ -163,11 +166,11 @@ export class Edge extends CompSObject {
         this.link(this.data_ready.onSet2, (_:number,data_ready: number) => {
             if(data_ready == 0){
                 this.svg.classList.add('data-ready')
-                this.dotAnimation.start(this.pathResult)
+                this.dotAnimation.start()
             }
             else{
                 this.svg.classList.add('data-ready')
-                this.dotAnimation.start(this.pathResult)
+                this.dotAnimation.start()
                 let tmp =  data_ready
                 setTimeout(() => {
                     try{
@@ -178,7 +181,12 @@ export class Edge extends CompSObject {
                 }, 200); //delay of chatrooom sending buffer is 200ms
             }
         })
-        if(this.data_ready.getValue() == 0) this.svg.classList.add('data-ready')
+
+        // initialize data ready
+        if(this.data_ready.getValue() == 0){ 
+            this.svg.classList.add('data-ready')
+            this.dotAnimation.start()
+        }
 
         this.link(this.eventDispatcher.onMouseDown, (e: MouseEvent) => {
             // pass the event to the editor to box select
@@ -198,8 +206,8 @@ export class Edge extends CompSObject {
         if(this.head.getValue()) {
             this.head.getValue().moved.remove(this.updateSVG)
         }
-        this.head.getValue()?.edges.splice(this.head.getValue()?.edges.indexOf(this),1)
-        this.tail.getValue()?.edges.splice(this.tail.getValue()?.edges.indexOf(this),1)
+        this.head.getValue()?.removeEdge(this)
+        this.tail.getValue()?.removeEdge(this)
         this.dotAnimation.stopImmediately()
         super.onDestroy()
     }
@@ -211,7 +219,7 @@ export class Edge extends CompSObject {
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
-        if(event.ctrlKey) return;
+        if(event.ctrlKey || event.shiftKey || event.buttons != 1) { return }
         let maxR = 200
         let distToTail = this.tail.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)
         let distToHead = this.head.getValue().getComponent(Transform).worldCenter.distanceTo(mousePos)
@@ -331,6 +339,7 @@ export class Edge extends CompSObject {
         if (angle > Math.PI/2) angle -= Math.PI
         if (angle < -Math.PI/2) angle += Math.PI
         this.label.style.transform = `translate(-50%,-50%) rotate(${angle}rad) translate(0,50%)`
+        this.dotAnimation.setPathResult(this.pathResult)
     }
 
     pathParam = {
@@ -468,6 +477,9 @@ export class Edge extends CompSObject {
 }
 
 class DotAnimation{
+    /*
+    * The dot will move along the edge path in a loop 
+    */
     dot: SVGCircleElement
     stopDelay: number = 300
     stopDelayTimer: NodeJS.Timeout
@@ -481,8 +493,12 @@ class DotAnimation{
         this.dot.setAttribute('opacity','0')
     }
 
-    start(path: PathResult){
-        this.pathResult = path
+
+    setPathResult(pathResult: PathResult) {
+        this.pathResult = pathResult
+    }
+
+    start(){
         this.dot.setAttribute('opacity','1')
         if(!this.animating){
             requestAnimationFrame(this.animate.bind(this))
@@ -500,11 +516,15 @@ class DotAnimation{
             this.progress = 0
         }, this.stopDelay);
         this.stopTime = performance.now() + this.stopDelay
+
+        this.dot.setAttribute('opacity','0')
     }
 
     stopImmediately(){
         clearTimeout(this.stopDelayTimer)
         this.animating = false
+        
+        this.dot.setAttribute('opacity','0')
     }
 
     animate(){

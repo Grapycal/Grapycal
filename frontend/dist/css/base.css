@@ -315,6 +315,15 @@ footer{
     background-color : #4d4d4d;
 }
 
+.port-knob.accepts-edge{
+    outline: #919191 solid 2px;
+    outline-offset: -2px;
+}
+
+.port-knob.accepts-edge:hover{
+    outline: #c4c4c4 solid 2px;
+    outline-offset: -2px;
+}
 
 .slot-input-port .port-knob{
     left: -5px;
@@ -603,7 +612,7 @@ input:enabled, textarea:enabled{
 .sidebar-resize-handle {
     width: 10px; /* Define the width of the handle */
     cursor: ew-resize; /* Set cursor to indicate resize functionality */
-    background-color: #ccc; /* Handle color */
+    background-color: var(--z1); /* Handle color */
     height: 100%; /* Match sidebar height */
     position: absolute;
     top: 0;
@@ -1016,6 +1025,7 @@ hr{
   }
 
 code {
+    white-space: pre-wrap;
     font-family: Consolas,"courier new";
     color: var(--text-high);
     /* background-color: #f1f1f1; */

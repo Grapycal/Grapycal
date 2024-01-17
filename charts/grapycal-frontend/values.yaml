@@ -1,15 +1,15 @@
-appName: grapycal
+appName: frontend
 
-namespace: default
+namespace: grapycal
 
 frontend:
-  name: grapycal-frontend
+  name: frontend
   image:
-    repository: docker.io/patrickuuuu/grapycal-frontend:latest    
-    pullPolicy: IfNotPresent
+    repository: docker.io/grapycal/grapycal-frontend:latest    
+    pullPolicy: Always
   replicaCount: 1
   service:
-    type: ClusterIP
+    type: NodePort
     port: 80
   resources: 
     limits:

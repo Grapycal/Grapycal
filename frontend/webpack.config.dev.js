@@ -1,7 +1,15 @@
 const path = require('path');
+const webpack = require('webpack');
 module.exports = {
     entry: "./src/app.ts",
-    plugins: [],
+    plugins: [
+        new webpack.DefinePlugin({
+            __BUILD_CONFIG__: JSON.stringify({
+                isService: false,
+                wsPort: 8765,
+            }),
+        }),
+    ],
     module: { rules: [] },
     resolve: { extensions: [".ts", ".js"] },
     mode: "development",
