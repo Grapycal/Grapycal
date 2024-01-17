@@ -52,6 +52,9 @@ Define styles for different node categories
 .cate-torch{
     --cate-color: #1199fb;
 }
+.cate-numpy{
+    --cate-color: #EE82EE;
+}
 /* 
 .cate-function-math{
     --cate-color: #59C059;

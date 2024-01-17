@@ -121,7 +121,9 @@ Define styles for different node categories
 .cate-torch-neural-network .node-label{
     --cate-color: #61abff;
 }
-
+.cate-numpy{
+    --cate-color: #EE82EE;
+}
 
 /* 
 .cate-function-math{
