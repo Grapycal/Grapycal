@@ -15,7 +15,7 @@ torch = "2.*"
 torchvision = "^0.16.1"
 grapycal = ">=0.8.0"
 einops = "^0.7.0"
-
+aiofiles = "^23.2.1"
 
 
 [tool.commitizen]
