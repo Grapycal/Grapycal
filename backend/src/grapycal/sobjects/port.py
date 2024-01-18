@@ -1,12 +1,16 @@
+import abc
+from msilib import Control
 from typing import TYPE_CHECKING, Any, List
+import typing
+from grapycal.sobjects.controls.control import ValuedControl
 from objectsync import SObject, StringTopic, IntTopic
 
-from grapycal.sobjects.controls.control import ValuedControl
 from grapycal.utils.misc import Action
 
 if TYPE_CHECKING:
     from grapycal.sobjects.node import Node
     from grapycal.sobjects.edge import Edge
+
 
 class Port(SObject):
     frontend_type = 'Port'
@@ -17,7 +21,6 @@ class Port(SObject):
         self.display_name = self.add_attribute('display_name', StringTopic, name if display_name is None else display_name)
         self.max_edges = self.add_attribute('max_edges', IntTopic, max_edges)
         self.is_input = self.add_attribute('is_input', IntTopic, 0)
-        self.use_default = self.add_attribute('use_default', IntTopic, init_value=0)
 
     def init(self):
         self.edges: List[Edge] = []
@@ -60,37 +63,38 @@ class InputPort(Port):
     def init(self):
         super().init()
         self.on_activate = Action()
-        self.use_default.set(1)
+        self.use_default = len(self.edges) == 0
+        self.default_control.set_activation_callback(lambda: self.edge_activated(self.default_control))
 
     def add_edge(self, edge: 'Edge'):
         super().add_edge(edge)
         self.node.input_edge_added(edge, self)
-        self.use_default.set(0)
+        self.use_default = 0
 
     def remove_edge(self, edge: 'Edge'):
         super().remove_edge(edge)
         self.node.input_edge_removed(edge, self)
-        self.use_default.set(1 if len(self.edges) == 0 else 0)
+        self.use_default = len(self.edges) == 0
 
     def is_all_edge_ready(self):
-        return (self.use_default.get() and self.default_control.value_ready()) or \
+        return (self.use_default and self.default_control.value_ready()) or \
             all(edge.is_data_ready() for edge in self.edges)
 
     def get_data(self):
-        return [self.default_control.get_value()] if self.use_default.get() else \
+        return [self.default_control.get_value()] if self.use_default else \
             [edge.get_data() for edge in self.edges]
 
     def get_one_data(self, allow_no_data=False):
-        if self.use_default.get():
+        if self.use_default:
             return self.default_control.get_value()
         elif allow_no_data and not self.is_all_edge_ready():
             return None
         return self.edges[0].get_data()
 
-    def edge_activated(self, edge:'Edge'):
+    def edge_activated(self, edge:'Edge|ValuedControl'):
         self.on_activate.invoke(self, edge)
         self.node.edge_activated(edge, self)
-
+    
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):

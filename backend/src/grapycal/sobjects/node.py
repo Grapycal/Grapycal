@@ -511,7 +511,7 @@ class Node(SObject,metaclass=NodeMeta):
     Node events
     '''
     
-    def edge_activated(self, edge:Edge, port:InputPort):
+    def edge_activated(self, edge:Edge|ValuedControl, port:InputPort):
         '''
         Called when an edge on an input port is activated.
         '''

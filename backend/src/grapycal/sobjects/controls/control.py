@@ -2,7 +2,7 @@ from grapycal.extension.utils import ControlInfo
 from objectsync import SObject
 
 import abc
-from typing import Generic, TypeVar
+from typing import Callable, Generic, TypeVar
 
 class Control(SObject):
     '''
@@ -26,5 +26,13 @@ class ValuedControl(abc.ABC, Control, Generic[T]):
 
     @abc.abstractmethod
     def value_ready(self) -> bool:
+        pass
+
+    @abc.abstractmethod
+    def set_activation_callback(self, callback:Callable[[],None]):
+        '''
+        By invoking the callback, the control notifies the node for events such as a button click, a text change, etc.
+        The callback invokes node.on_edge_activated() method.
+        '''
         pass
          

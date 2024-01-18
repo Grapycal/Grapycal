@@ -15,7 +15,6 @@ export class Port extends CompSObject implements ControlHost {
     display_name: StringTopic = this.getAttribute('display_name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
-    use_default: IntTopic = this.getAttribute('use_default', IntTopic)
     default_control_display: string
     orientation: number=0;
 
@@ -43,10 +42,14 @@ export class Port extends CompSObject implements ControlHost {
     private edges: Edge[] = []
     addEdge(edge: Edge): void {
         this.edges.push(edge)
+        this.htmlItem.getHtmlEl('slot_control').style.display = 'none'
         this.updateAcceptsEdgeClass()
     }
     removeEdge(edge: Edge): void {
         this.edges.splice(this.edges.indexOf(edge), 1)
+        if(this.edges.length === 0){
+            this.htmlItem.getHtmlEl('slot_control').style.display = this.default_control_display
+        }
         this.updateAcceptsEdgeClass()
     }
 
@@ -88,13 +91,6 @@ export class Port extends CompSObject implements ControlHost {
         })
 
         this.default_control_display = this.htmlItem.getHtmlEl('slot_control').style.display
-        this.link(this.use_default.onSet,(use_default: number) => {
-            if(use_default) {
-                this.htmlItem.getHtmlEl('slot_control').style.display = this.default_control_display
-            } else {
-                this.htmlItem.getHtmlEl('slot_control').style.display = 'none'
-            }
-        })
     }
 
     protected onStart(): void {

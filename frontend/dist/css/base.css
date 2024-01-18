@@ -476,6 +476,7 @@ footer{
 .control-button{
     font-size: 12px;
     border: #828282 solid 1px;
+    align-self: stretch;
 }
 
 

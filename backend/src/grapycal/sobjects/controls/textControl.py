@@ -1,4 +1,4 @@
-from grapycal.sobjects.controls.control import ValuedControl, T
+from grapycal.sobjects.controls.control import ValuedControl
 from objectsync import StringTopic, IntTopic
 
 
@@ -30,3 +30,6 @@ class TextControl(ValuedControl[str]):
 
     def value_ready(self) -> bool:
         return True
+    
+    def set_activation_callback(self, callback):
+        self.activation_callback = callback

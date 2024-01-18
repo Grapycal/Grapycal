@@ -9,7 +9,7 @@ export class ButtonControl extends Control {
 
     protected template = `
     <div class="control flex-horiz">
-        <button class="control-button full-height full-width" id="button"></button>
+        <button class="control-button  full-width" id="button"></button>
     </div>
     `
 
