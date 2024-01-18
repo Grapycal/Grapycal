@@ -15,8 +15,9 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
+import { ControlHost } from './controls/controlHost'
  
-export class Node extends CompSObject {
+export class Node extends CompSObject implements ControlHost {
     errorPopup: ErrorPopup;
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
@@ -50,6 +51,7 @@ export class Node extends CompSObject {
 
 
     editor: Editor;
+    ancestorNode: Node = this;
     htmlItem: HtmlItem = new HtmlItem(this);
     eventDispatcher: EventDispatcher = new EventDispatcher(this)
     transform: Transform = null
@@ -78,10 +80,8 @@ export class Node extends CompSObject {
                 </div>
             </div>
             <div class=" flex-vert space-between main-section">
-                <div class="flex-horiz space-between full-width port-section align-start">
-                    <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
-                    <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
-                </div>
+                <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
+                <div id="slot_output_port" class=" flex-vert space-evenly slot-output-port"></div>
                 <div id="slot_control" class="slot-control flex-vert space-between"></div>
             </div>
         </div>`,
@@ -246,16 +246,22 @@ export class Node extends CompSObject {
                 }
             })
 
+            this.eventDispatcher.onMouseDown.add((e: MouseEvent) => {
+                // pass the event to the editor
+                if(e.buttons != 1) this.eventDispatcher.forwardEvent()
+            })
+
             this.eventDispatcher.onDragStart.add((e: MouseEvent,pos: Vector2) => {
+                if(e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 this.draggingTargetPos = this.transform.translation
                 this.htmlItem.baseElement.classList.add('dragging')
             })
 
             this.eventDispatcher.onDrag.add((e: MouseEvent,newPos: Vector2,oldPos: Vector2) => {
+                if (e.buttons != 1) return this.eventDispatcher.forwardEvent()
                 // pass the event to the editor to box select
                 if(e.ctrlKey){
-                    this.eventDispatcher.forwardEvent()
-                    return
+                    return this.eventDispatcher.forwardEvent()
                 }
                 if(!this.selectable.selectionManager.enabled && !this.selectable.selected) return;
                 if(!this.selectable.selected) this.selectable.click()
@@ -283,7 +289,7 @@ export class Node extends CompSObject {
                     }
                 }
             })
-            this.eventDispatcher.onDragEnd.add((e: Event,pos: Vector2) => {
+            this.eventDispatcher.onDragEnd.add((e: MouseEvent,pos: Vector2) => {
                 this.objectsync.record(() => {
                     for(let selectable of this.selectable.selectedObjects){
                         if(selectable.object instanceof Node){

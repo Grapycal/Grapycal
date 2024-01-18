@@ -126,7 +126,7 @@ export class Editor extends CompSObject{
     private boxSelectionStartClient: Vector2;
 
     private onDragStart(e: MouseEvent, mousePos: Vector2){
-        if(e.ctrlKey){
+        if(e.ctrlKey || e.shiftKey || e.buttons == 2){
             e.stopPropagation()
             this.transform.draggable = false;
             this.boxSelectionStart = this.transform.WroldToEl(mousePos,this.htmlItem.baseElement as HTMLElement,false)
@@ -174,15 +174,29 @@ export class Editor extends CompSObject{
         }
         const edges = this.TopDownSearch(Edge,matchEdge,matchEdge)
 
-        Workspace.instance.selection.clearSelection()
-        Workspace.instance.functionalSelection.clearSelection()
-        for(let node of nodes){
-            node.selectable.select()
-            node.functionalSelectable.select()
+        if (!e.ctrlKey && !e.shiftKey){ 
+            // select only the nodes and edges in the box
+            Workspace.instance.selection.clearSelection()
+            Workspace.instance.functionalSelection.clearSelection()
+            for(let node of nodes){
+                node.selectable.select()
+                node.functionalSelectable.select()
+            }
+            for(let edge of edges){
+                edge.selectable.select()
+                edge.functionalSelectable.select()
+            }
         }
-        for(let edge of edges){
-            edge.selectable.select()
-            edge.functionalSelectable.select()
+        else{ 
+            // use semantics of ctrl and shift
+            for(let node of nodes){
+                node.selectable.click()
+                node.functionalSelectable.click()
+            }
+            for(let edge of edges){
+                edge.selectable.click()
+                edge.functionalSelectable.click()
+            }
         }
 
         this.boxSelectionStart = null;

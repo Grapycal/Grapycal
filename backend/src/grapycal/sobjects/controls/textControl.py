@@ -1,14 +1,15 @@
-from grapycal.sobjects.controls.control import Control
+from grapycal.sobjects.controls.control import ValuedControl, T
 from objectsync import StringTopic, IntTopic
 
 
-class TextControl(Control):
+class TextControl(ValuedControl[str]):
     '''
     To add a text control to a node, use the following code in the node:
     ```python
     self.add_control(TextControl, text='', label='', editable=True)
     ```
     '''
+
     frontend_type = 'TextControl'
     def build(self, text:str='', label:str='',readonly=False, editable:bool=True, placeholder:str=''):
         if readonly:
@@ -23,3 +24,6 @@ class TextControl(Control):
 
     def get(self):
         return self.text.get()
+
+    def get_value(self) -> str:
+        return self.get()

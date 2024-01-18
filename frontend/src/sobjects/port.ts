@@ -8,12 +8,15 @@ import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { Edge } from './edge'
+import { ControlHost } from './controls/controlHost'
 
-export class Port extends CompSObject {
+export class Port extends CompSObject implements ControlHost {
 
     display_name: StringTopic = this.getAttribute('display_name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
+    use_default: IntTopic = this.getAttribute('use_default', IntTopic)
+    default_control_display: string
     orientation: number=0;
 
     private node: Node = null;
@@ -21,6 +24,10 @@ export class Port extends CompSObject {
     element = document.createElement('div')
 
     htmlItem: HtmlItem;
+    get ancestorNode(): Node {
+        return this.node;
+    }
+    eventDispatcher: EventDispatcher;
 
     moved: Action<[]> = new Action();
 
@@ -32,17 +39,26 @@ export class Port extends CompSObject {
         }
     }
 
-    // Managed by Edge class
-    public edges: Edge[] = []
+    // Called by Edge class
+    private edges: Edge[] = []
+    addEdge(edge: Edge): void {
+        this.edges.push(edge)
+        this.updateAcceptsEdgeClass()
+    }
+    removeEdge(edge: Edge): void {
+        this.edges.splice(this.edges.indexOf(edge), 1)
+        this.updateAcceptsEdgeClass()
+    }
 
     readonly template: string = `
     <div class="port">
-        
+
         <div class="port-label" id="label"></div>
+        <div class="slot-control" id="slot_control"></div>
         <div class="port-knob" id="Knob">
             <div class="port-knob-hitbox" id="Hitbox"></div>
         </div>
-        
+
     </div>
     `
 
@@ -56,8 +72,8 @@ export class Port extends CompSObject {
         let transform = new Transform(this,this.htmlItem.getHtmlEl('Knob'))
         transform.pivot = new Vector2(0,0)
 
-        let eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Hitbox'))
-        this.link(eventDispatcher.onDragStart,this.generateEdge.bind(this))
+        this.eventDispatcher = new EventDispatcher(this,this.htmlItem.getHtmlEl('Hitbox'))
+        this.link(this.eventDispatcher.onDragStart,this.generateEdge)
 
         new MouseOverDetector(this,this.htmlItem.getHtmlEl('Hitbox'))
 
@@ -69,6 +85,15 @@ export class Port extends CompSObject {
             this.htmlItem.getHtmlEl('label').innerText = label
             if(this.node)
                 this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18) 
+        })
+
+        this.default_control_display = this.htmlItem.getHtmlEl('slot_control').style.display
+        this.link(this.use_default.onSet,(use_default: number) => {
+            if(use_default) {
+                this.htmlItem.getHtmlEl('slot_control').style.display = this.default_control_display
+            } else {
+                this.htmlItem.getHtmlEl('slot_control').style.display = 'none'
+            }
         })
     }
 
@@ -82,6 +107,7 @@ export class Port extends CompSObject {
             }
             this.isInputChanged(this.is_input.getValue())
         })
+        this.link(this.max_edges.onSet,this.updateAcceptsEdgeClass)
     }
 
 
@@ -122,11 +148,10 @@ export class Port extends CompSObject {
         this.moved.invoke()
     }
 
-    private generateEdge(): void {
-        if(this.node.isPreview)
-            return;
-        if(!this.acceptsEdge)
-            return;
+    private generateEdge(e:MouseEvent): void {
+        if(this.node.isPreview ||
+            !this.acceptsEdge ||
+            e.buttons !== 1) return this.eventDispatcher.forwardEvent()
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
             let newEdge = as(this.objectsync.createObject('Edge', this.parent.parent.id),Edge)
@@ -141,5 +166,14 @@ export class Port extends CompSObject {
                 newEdge.data_ready.set(123)
             }
         }),true)
+    }
+
+    private updateAcceptsEdgeClass(): void {
+        if(this.acceptsEdge){
+            this.htmlItem.getHtmlEl('Knob').classList.add('accepts-edge')
+        }
+        else{
+            this.htmlItem.getHtmlEl('Knob').classList.remove('accepts-edge')
+        }
     }
 }

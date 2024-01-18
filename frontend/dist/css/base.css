@@ -59,6 +59,12 @@ input{
     -webkit-user-select: none;
 }
 
+.control textarea{
+    margin-top: -1px;
+    margin-bottom: -1px;
+    line-height: 17px;
+}
+
 button{
     
     color: inherit;
@@ -291,6 +297,13 @@ footer{
     width: 0px;
     display: flex;
     align-items: center;
+    gap: 2px;
+}
+
+:is(.normal-node) .port {
+    width: 100%;
+    height: fit-content;
+    min-height: 15px;
 }
 
 
@@ -302,6 +315,15 @@ footer{
     background-color : #4d4d4d;
 }
 
+.port-knob.accepts-edge{
+    outline: #919191 solid 2px;
+    outline-offset: -2px;
+}
+
+.port-knob.accepts-edge:hover{
+    outline: #c4c4c4 solid 2px;
+    outline-offset: -2px;
+}
 
 .slot-input-port .port-knob{
     left: -5px;
@@ -329,7 +351,7 @@ footer{
 }
 
 .port-label{
-    position: absolute;
+    position: relative;
     white-space: nowrap;
     transition: 0.5s ease-out;
     pointer-events: none;
@@ -353,14 +375,44 @@ footer{
     transform: translate(0px,-6px);
 }
 
+:is(.normal-node) .port .slot-control {
+    padding: 0px;
+}
+
 .slot-input-port{
     position: relative;
     gap:2px;
+    align-items: center;
+}
+
+.slot-input-port:empty{
+    display: none;
 }
 
 .slot-output-port{
     position: relative;
     gap:2px;
+}
+
+.slot-output-port:empty{
+    display: none;
+}
+
+.normal-node .slot-input-port {
+    padding: 0px 10px; 
+    width: 100%;
+}
+
+.normal-node .slot-output-port {
+    padding: 0px 10px;
+    width: 100%;
+}
+
+.normal-node .slot-output-port {
+    align-self: end;
+    .port {
+        flex-direction: row-reverse;
+    }
 }
 
 .simple-node .slot-input-port{
@@ -390,13 +442,6 @@ footer{
     margin: 5px 1.4px;
 }
 
-.slot-output-port .port-label{
-    right: 10px;
-}
-
-.slot-input-port .port-label{
-    left: 10px;
-}
 
 /* Control */
 
@@ -411,7 +456,7 @@ footer{
     position: relative;
     padding-left: 10px;
     padding-right: 10px;
-    overflow: visible;
+    /* overflow: visible; */
 }
 
 .slot-control:empty{
@@ -425,6 +470,7 @@ footer{
     overflow: hidden;
     font-size: 12px;
     min-height: 15px;
+    gap: 2px;
 }
 
 .control-button{
@@ -566,7 +612,7 @@ input:enabled, textarea:enabled{
 .sidebar-resize-handle {
     width: 10px; /* Define the width of the handle */
     cursor: ew-resize; /* Set cursor to indicate resize functionality */
-    background-color: #ccc; /* Handle color */
+    background-color: var(--z1); /* Handle color */
     height: 100%; /* Match sidebar height */
     position: absolute;
     top: 0;
@@ -979,6 +1025,7 @@ hr{
   }
 
 code {
+    white-space: pre-wrap;
     font-family: Consolas,"courier new";
     color: var(--text-high);
     /* background-color: #f1f1f1; */

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal-torch"
-version = "0.1.2"
+version = "0.2.0"
 description = "A Grapycal extension for PyTorch"
 authors = ["eri24816 <a931eric@gmail.com>"]
 license = "BSD-3-Clause"
