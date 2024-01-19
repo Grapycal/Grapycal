@@ -60,6 +60,11 @@ class InputPort(Port):
         self.default_control = self.add_child(control_type, **control_kwargs)
         self.node.controls.add(control_name,self.default_control)
 
+        # this topic affects css
+        self.control_takes_label = self.add_attribute('control_takes_label', IntTopic, 0)
+        if self.default_control.take_label(self.display_name.get()):
+            self.control_takes_label.set(1)
+
     def init(self):
         super().init()
         self.on_activate = Action()

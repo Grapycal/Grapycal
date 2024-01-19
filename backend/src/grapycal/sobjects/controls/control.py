@@ -35,4 +35,11 @@ class ValuedControl(abc.ABC, Control, Generic[T]):
         The callback invokes node.on_edge_activated() method.
         '''
         pass
+
+    def take_label(self, label) -> bool:
+        '''
+        If the control takes the responsibility of displaying the label of the port,
+        return True. Otherwise, return False.
+        '''
+        return False
          

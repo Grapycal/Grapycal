@@ -25,3 +25,9 @@ class ButtonControl(ValuedControl[None]):
     
     def value_ready(self) -> bool:
         return True
+    
+    def take_label(self, label) -> bool:
+        if self.label.get() == '':
+            self.label.set(label)
+            return True
+        return False

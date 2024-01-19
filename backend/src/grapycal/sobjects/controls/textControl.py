@@ -33,3 +33,13 @@ class TextControl(ValuedControl[str]):
     
     def set_activation_callback(self, callback):
         self.activation_callback = callback
+
+    def take_label(self, label) -> bool:
+        if self.label.get() == '':
+            if self.placeholder.get() == '':
+                self.placeholder.set(label)
+                return True
+            else:
+                self.label.set(label)
+                return True
+        return False

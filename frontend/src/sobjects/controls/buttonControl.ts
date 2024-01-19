@@ -1,6 +1,8 @@
-import { StringTopic } from "objectsync-client"
+import { SObject, StringTopic } from "objectsync-client"
 import { Control } from "./control";
 import { print } from "../../devUtils"
+import { Edge } from "../edge"
+import { Port } from "../port"
 
 export class ButtonControl extends Control {
     

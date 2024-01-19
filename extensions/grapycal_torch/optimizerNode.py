@@ -1,5 +1,7 @@
 from typing import List
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.controls.buttonControl import ButtonControl
+from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.node import Node
@@ -22,14 +24,15 @@ class TrainerNode(Node):
         self.css_classes.append('fit-content')
         self.lr = self.add_attribute('lr',FloatTopic,0.001,editor_type='float')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
-        self.init_modules_port = self.add_in_port('initialize network')
+        self.init_modules_port = self.add_in_port('initialize network', control_type=ButtonControl)
 
         self.train_port = self.add_in_port('train network using loss')
 
-        self.train_mode_port = self.add_in_port('switch to train mode')
-        self.eval_port = self.add_in_port('switch to eval mode')
+        self.train_mode_port = self.add_in_port('switch to train mode', control_type=ButtonControl)
+        self.eval_port = self.add_in_port('switch to eval mode', control_type=ButtonControl)
 
         self.network_names = self.add_text_control(label='network name: ',name='network name')
+        self.device = self.add_in_port('device',control_type=TextControl)
 
     def init_node(self):
         self.optimizer : torch.optim.Optimizer | None = None
