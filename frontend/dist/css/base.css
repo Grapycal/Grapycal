@@ -406,6 +406,8 @@ footer{
 .normal-node .slot-output-port {
     padding: 0px 10px;
     width: 100%;
+
+    text-align: right;
 }
 
 .normal-node .slot-output-port {
