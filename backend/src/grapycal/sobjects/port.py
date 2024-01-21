@@ -89,7 +89,7 @@ class InputPort(Port):
         return [self.default_control.get_value()] if self.use_default else \
             [edge.get_data() for edge in self.edges]
 
-    def get_one_data(self, allow_no_data=False):
+    def get_one_data(self, allow_no_data=False) -> Any:
         if self.use_default:
             return self.default_control.get_value()
         elif allow_no_data and not self.is_all_edge_ready():

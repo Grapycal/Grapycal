@@ -1,7 +1,8 @@
 .node.fit-content:not(.node-preview) {
   min-width: 50px;
-  width: fit-content;
+  width: min-content;
   max-width: 500px;
+  justify-content: stretch;
 }
 
 .node.thin {

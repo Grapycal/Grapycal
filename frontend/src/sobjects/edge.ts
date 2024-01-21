@@ -244,7 +244,7 @@ export class Edge extends CompSObject {
                     }
                 }
                 else if(this.state == EdgeState.DraggingHead){
-                    const delta = port == this.head.getValue() ? 0:1
+                    const delta = port == this.head.getValue() ? -1:0
                     if(port.is_input.getValue() && port.acceptsEdge(delta)){
                         candidatePorts.push(port)
                     }
@@ -268,7 +268,6 @@ export class Edge extends CompSObject {
             print(port.display_name.getValue(),dist)
         }
 
-        print('result',nearestPort?.display_name.getValue())
         if(nearestPort == this.tail.getValue() || nearestPort == this.head.getValue()){
             this.updateSVG();
             return;

@@ -452,7 +452,7 @@ footer{
 .port.control-takes-label:not(.has-edge) > .port-label{
     overflow: hidden;
     opacity: 0;
-    flex-basis: 0px;
+    width: 0px;
 }
 
 .port.has-edge > .slot-control{
