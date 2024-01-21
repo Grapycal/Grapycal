@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal-torch"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Grapycal extension for PyTorch"
 authors = ["eri24816 <a931eric@gmail.com>"]
 license = "BSD-3-Clause"
@@ -15,7 +15,7 @@ torch = "2.*"
 torchvision = "^0.16.1"
 grapycal = ">=0.8.0"
 einops = "^0.7.0"
-
+aiofiles = "^23.2.1"
 
 
 [tool.commitizen]
