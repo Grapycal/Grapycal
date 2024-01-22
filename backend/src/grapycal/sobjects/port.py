@@ -69,7 +69,9 @@ class InputPort(Port):
         super().init()
         self.on_activate = Action()
         self.use_default = len(self.edges) == 0
-        self.default_control.set_activation_callback(lambda: self.edge_activated(self.default_control))
+        self.default_control.set_activation_callback(
+            lambda *args,**kwargs: # so they can link the callback to Actions without caring about redundant args
+            self.edge_activated(self.default_control))
 
     def add_edge(self, edge: 'Edge'):
         super().add_edge(edge)

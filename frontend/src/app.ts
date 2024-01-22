@@ -21,6 +21,7 @@ import { Settings } from './sobjects/settings'
 import { FetchWithCache } from './utils'
 import { FileView } from './sobjects/fileView'
 import { LoginApiClient } from './loginApi/loginApi'
+import { OptionControl } from './sobjects/controls/optionControl'
 
 export const soundManager = new SoundManager();
 
@@ -126,6 +127,7 @@ function startObjectSync(wsUrl:string){
     objectsync.register(ImageControl)
     objectsync.register(ThreeControl)
     objectsync.register(LinePlotControl)
+    objectsync.register(OptionControl)
 
     objectsync.register(WebcamStream)
 

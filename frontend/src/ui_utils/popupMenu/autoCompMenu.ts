@@ -176,11 +176,12 @@ class SubstringSearchIndex{
     }
 }
 
+export type OptionInfo = {key:string,value:string,callback:()=>void,displayName?:string}
 export class AutoCompMenu extends PopupMenu{
     get template():string{
         return `
         <div class="base">
-            <input type="text" id="search" placeholder="Search...">
+            <input type="text" id="search" class="search" placeholder="Search...">
             <template id="option-template">
                 <div class="option">
                 </div>
@@ -190,15 +191,16 @@ export class AutoCompMenu extends PopupMenu{
     }
     get style():string{
         return super.style + `
-        #search{
+        .search{
             width: 100%;
-            height: 30px;
-            padding: 5px;
+            padding: 0px 5px;
             box-sizing: border-box;
             border: none;
-            border-bottom: 1px solid var(--text-low);
             background-color: var(--z1);
             color: var(--text-high);
+        }
+        .option{
+            padding:2px 5px;
         }
         `
     }
@@ -206,11 +208,13 @@ export class AutoCompMenu extends PopupMenu{
     private substringSearchIndex:SubstringSearchIndex = new SubstringSearchIndex()
     private valueToCallback:Map<string,()=>void> = new Map()
     private valueToDisplayName:Map<string,string> = new Map()
+    private lastSetValue = ''
     get value():string{
         return this.search.value
     }
     set value(val:string){
         this.search.value = val
+        this.lastSetValue = val
     }
     constructor(){
         super()
@@ -218,8 +222,10 @@ export class AutoCompMenu extends PopupMenu{
 
         this.link2(this.search,'input',this.onInputOrFocus)
         this.link2(this.search,'focus',this.onInputOrFocus)
+        
     }
-    public setOptions(options:{key:string,value:string,callback:()=>void,displayName?:string}[]){
+    
+    public setOptions(options:OptionInfo[]){
         let keys = []
         let values = []
         this.valueToCallback.clear()
@@ -254,15 +260,24 @@ export class AutoCompMenu extends PopupMenu{
         super.openAt(x,y)
         this.search.focus()
         this.onSearch()
+        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
     }
     open(){
         super.open()
         this.search.focus()
         this.onSearch()
+        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
     }
     close(): void {
         super.close()
-        if(this.hideWhenClosed)
             this.search.blur()
+        this.value = this.lastSetValue
+        this.unlink(GlobalEventDispatcher.instance.onAnyKeyDown)
+    }
+
+    private onKeyDown(e:KeyboardEvent){
+        if(e.key == 'Escape' && this.opened){
+            this.close()
+        }
     }
 }

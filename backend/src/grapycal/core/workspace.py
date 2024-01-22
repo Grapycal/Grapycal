@@ -5,6 +5,7 @@ from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.nullControl import NullControl
+from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
 from grapycal.sobjects.fileView import LocalFileView, RemoteFileView
 from grapycal.sobjects.settings import Settings
@@ -125,6 +126,7 @@ class Workspace:
         self._objectsync.register(ImageControl)
         self._objectsync.register(ThreeControl)
         self._objectsync.register(NullControl)
+        self._objectsync.register(OptionControl)
 
         self._objectsync.register(WebcamStream)
         self._objectsync.register(LinePlotControl)

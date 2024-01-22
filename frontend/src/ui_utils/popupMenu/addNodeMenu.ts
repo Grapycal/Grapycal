@@ -8,16 +8,33 @@ import { Vector2 } from "../../utils"
 
 export class AddNodeMenu extends AutoCompMenu{
     private nodeTypesTopic:DictTopic<string,any>
-    
+    get style(){
+        return super.style+`
+            .base{
+
+                background-color: var(--z2);
+                border: 1px solid var(--text-low);
+                box-shadow: 0px 0px 5px 0px black;
+            }
+            .search{
+                height:30px;
+                padding: auto 5px;
+                border-bottom: 1px solid var(--text-low);
+            }
+            .option{
+                padding:5px;
+            }
+        `
+    }
     constructor(private editor:Editor){
         super()
-        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
+        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown_)
         this.nodeTypesTopic = Workspace.instance.nodeTypesTopic
         this.link(this.nodeTypesTopic.onSet,this.updateNodeTypes)
         this.hideWhenClosed = true
     }
 
-    private onKeyDown(e:KeyboardEvent){
+    private onKeyDown_(e:KeyboardEvent){
         if(!MouseOverDetector.objectsUnderMouse.includes(this.editor)){
             return
         }
@@ -25,12 +42,6 @@ export class AddNodeMenu extends AutoCompMenu{
         ){
             this.openAt(GlobalEventDispatcher.instance.mousePos.x,GlobalEventDispatcher.instance.mousePos.y)
             this.value = ''
-        }
-        if(e.key == 'Escape' && this.opened){
-            this.close()
-        }
-        if(e.key == 'Backspace' && this.search.value.length == 0 && this.opened){
-            this.close()
         }
     }
 
