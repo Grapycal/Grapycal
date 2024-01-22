@@ -16,10 +16,13 @@ export class AddNodeMenu extends AutoCompMenu{
                 border: 1px solid var(--text-low);
                 box-shadow: 0px 0px 5px 0px black;
             }
+            .search-container{
+                border-bottom: 1px solid var(--text-low);
+            }
             .search{
+                
                 height:30px;
                 padding: auto 5px;
-                border-bottom: 1px solid var(--text-low);
             }
             .option{
                 padding:5px;

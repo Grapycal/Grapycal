@@ -181,7 +181,13 @@ export class AutoCompMenu extends PopupMenu{
     get template():string{
         return `
         <div class="base">
-            <input type="text" id="search" class="search" placeholder="Search...">
+            <div class="search-container">
+                <input type="text" id="search" class="search" placeholder="Search...">
+
+                <div class="down-arrow">&#9660;</div>
+            </div>
+            <!-- a down arrow symbol -->
+            
             <template id="option-template">
                 <div class="option">
                 </div>
@@ -191,16 +197,31 @@ export class AutoCompMenu extends PopupMenu{
     }
     get style():string{
         return super.style + `
-        .search{
+        .search-container{
+            position: relative;
             width: 100%;
-            padding: 0px 5px;
             box-sizing: border-box;
             border: none;
             background-color: var(--z1);
             color: var(--text-high);
         }
+        .search{
+            padding: 0px 5px;
+            width: 100%;
+        }
+        .down-arrow{
+            position: absolute;
+            right: 2px;
+            top: 0px;
+            bottom: 0px;
+            margin: auto;
+            height: 1em;
+            color: var(--text-low);
+            pointer-events: none;
+
+        }
         .option{
-            padding:2px 5px;
+            padding:0px 5px;
         }
         `
     }
@@ -272,7 +293,7 @@ export class AutoCompMenu extends PopupMenu{
         super.close()
             this.search.blur()
         this.value = this.lastSetValue
-        this.unlink(GlobalEventDispatcher.instance.onAnyKeyDown)
+        this.unlink(this.onKeyDown)
     }
 
     private onKeyDown(e:KeyboardEvent){
