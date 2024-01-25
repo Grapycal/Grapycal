@@ -60,9 +60,8 @@ input{
 }
 
 .control textarea{
-    margin-top: -1px;
-    margin-bottom: -1px;
     line-height: 17px;
+    border-radius: 2px;
 }
 
 button{
@@ -297,7 +296,6 @@ footer{
     width: 0px;
     display: flex;
     align-items: center;
-    gap: 2px;
 }
 
 :is(.normal-node) .port {
@@ -487,14 +485,15 @@ footer{
     overflow: hidden;
     font-size: 12px;
     min-height: 15px;
-    gap: 2px;
+    gap: 4px;
 }
 
 .control-button{
     font-size: 11px;
     line-height: 11px;
-    border: #6b6b6b solid 1px;
+    border: var(--z3) solid 1px;
     align-self: stretch;
+    border-radius: 2px;
 }
 
 
