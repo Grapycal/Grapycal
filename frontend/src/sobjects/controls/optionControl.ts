@@ -29,7 +29,7 @@ export class OptionControl extends Control {
     protected onStart(): void {
         super.onStart()
         this.menu.htmlItem.setParent(this.htmlItem,'menu')
-        this.menu.open()
+        this.menu.show()
         const optionInfos: OptionInfo[] = []
         this.link(this.options.onSet,()=>{
             for(let o of this.options.getValue()){

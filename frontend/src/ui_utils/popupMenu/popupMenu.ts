@@ -103,6 +103,12 @@ export class PopupMenu extends Componentable{
         this.link(GlobalEventDispatcher.instance.onMouseDown,this.onElsewhereClick)
     }
 
+    show(){
+        this.base.style.display = 'block'
+        this.base.style.position = 'relative'
+    }
+
+
 
     private onArrowDown(e:KeyboardEvent){
         if(!this.opened) return
@@ -136,6 +142,17 @@ export class PopupMenu extends Componentable{
     private focusOptionChange(from:number, to:number){
         this.optionElements[from].classList.remove(this.constructor.name+'-focused')
         this.optionElements[to].classList.add(this.constructor.name+'-focused')
+    }
+
+    setFocusedOption(key:string){
+        for(let i = 0;i<this.optionElements.length;i++){
+            if(this.optionElements[i].innerText == key){
+                this.focusOptionChange(this.focusedOption,i)
+                this.focusedOption = i
+                return
+            }
+        }
+        // if not found, just return
     }
 
     close(){

@@ -241,8 +241,8 @@ export class AutoCompMenu extends PopupMenu{
         super()
         this.search = this.htmlItem.getHtmlEl('search') as HTMLInputElement
 
-        this.link2(this.search,'input',this.onInputOrFocus)
-        this.link2(this.search,'focus',this.onInputOrFocus)
+        this.link2(this.search,'input',this.onInput)
+        this.link2(this.search,'focus',this.onFocus)
         
     }
     
@@ -260,8 +260,8 @@ export class AutoCompMenu extends PopupMenu{
         this.substringSearchIndex.setStrings(keys,values)
     }
 
-    private onSearch(){
-        let query = this.search.value.toLowerCase()
+    private onSearch(valueOverride:string = null){
+        let query = valueOverride != null?valueOverride:this.value.toLowerCase()
         let results = this.substringSearchIndex.search(query)
         this.clearOptions()
         for(let result of results){
@@ -272,9 +272,11 @@ export class AutoCompMenu extends PopupMenu{
             this.addOption(this.valueToDisplayName.get(result),callback)
         }
     }
-    private onInputOrFocus(){
+    private onFocus(){
         if(!this.opened)
             this.open()
+    }
+    private onInput(){
         this.onSearch()
     }
     openAt(x:number,y:number){
@@ -286,7 +288,8 @@ export class AutoCompMenu extends PopupMenu{
     open(){
         super.open()
         this.search.focus()
-        this.onSearch()
+        this.onSearch('') // show all options by setting empty query
+        this.setFocusedOption(this.value)
         this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
     }
     close(): void {
