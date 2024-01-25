@@ -205,6 +205,7 @@ export class TextBox{
     public readonly textarea = document.createElement("textarea")
     private sizeSimulator = document.createElement("div")
     public onResize = new Action<[number,number]>()
+    private _heightDelta = 0
     set value(value:string){
         if(this.hideTrailingNewline){
             if(value.endsWith("\n")){
@@ -240,6 +241,10 @@ export class TextBox{
     }
     set disabled(value:boolean){
         this.textarea.disabled = value
+    }
+    set heightDelta(value:number){
+        this._heightDelta = value
+        this.resize()
     }
     constructor(parent:HTMLElement=document.body, private hideTrailingNewline:boolean=false){
         this.textarea.classList.add('grow')
@@ -288,7 +293,7 @@ export class TextBox{
             this.textarea.style.width = calculatedWidth+ 'px';
             
             this.textarea.style.height = '0';
-            this.textarea.style.height = this.textarea.scrollHeight + 'px';
+            this.textarea.style.height = this.textarea.scrollHeight + this._heightDelta + 'px';
             // if(this.textarea.value=='' && this.textarea.disabled){
             //     this.textarea.style.height='0px'
             // }

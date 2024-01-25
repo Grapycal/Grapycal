@@ -6,6 +6,7 @@ import random
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.imageControl import ImageControl
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
+from grapycal.sobjects.controls.nullControl import NullControl
 
 from grapycal.sobjects.controls.textControl import TextControl
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control, ValuedControl
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort, ControlDefaultInputPort
+from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
 from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
@@ -180,16 +181,13 @@ class Node(SObject,metaclass=NodeMeta):
                 edge.remove()
         return super().destroy()
 
-    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]|None=None,control_name=None,**control_kwargs):
+    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]=NullControl,control_name=None,**control_kwargs):
         '''
         Add an input port to the node.
         If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
         When no edges are connected to the port, the control will be used to get the data.
         '''
-        if control_type is None:
-            port = self.add_child(InputPort,name=name,max_edges=max_edges,display_name=display_name)
-        else:
-            port = self.add_child(ControlDefaultInputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
+        port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
         self.in_ports.insert(port)
         return port
 
@@ -513,7 +511,7 @@ class Node(SObject,metaclass=NodeMeta):
     Node events
     '''
     
-    def edge_activated(self, edge:Edge, port:InputPort):
+    def edge_activated(self, edge:Edge|ValuedControl, port:InputPort):
         '''
         Called when an edge on an input port is activated.
         '''

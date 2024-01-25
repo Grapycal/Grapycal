@@ -233,27 +233,56 @@ export class Edge extends CompSObject {
     }
 
     private onDrag(event: MouseEvent, mousePos: Vector2) {
+        let candidatePorts: Port[] = []
         for(let object of MouseOverDetector.objectsUnderMouse){
             if(object instanceof Port){
                 let port = object
                 if(this.state == EdgeState.DraggingTail){
-                    if(object != this.tail.getValue() && !port.is_input.getValue() && port.acceptsEdge){
-                        this.objectsync.record(() => {
-                            this.tail.set(port)
-                        },true)
-                        break;
+                    const delta = port == this.tail.getValue() ? -1:0
+                    if(!port.is_input.getValue() && port.acceptsEdge(delta)){
+                        candidatePorts.push(port)
                     }
                 }
                 else if(this.state == EdgeState.DraggingHead){
-                    if(port != this.head.getValue() && port.is_input.getValue() && port.acceptsEdge){
-                        this.objectsync.record(() => {
-                            this.head.set(port)
-                        },true)
-                        break;
+                    const delta = port == this.head.getValue() ? -1:0
+                    if(port.is_input.getValue() && port.acceptsEdge(delta)){
+                        candidatePorts.push(port)
                     }
                 }
             }
         }
+
+        if(candidatePorts.length == 0){
+            this.updateSVG()
+            return
+        }
+
+        let nearestPort: Port | null = null
+        let nearestPortDist = Infinity
+        for(let port of candidatePorts){
+            let dist = port.getComponent(Transform).worldCenter.distanceTo(mousePos)
+            if(dist < nearestPortDist){
+                nearestPort = port
+                nearestPortDist = dist
+            }
+            print(port.display_name.getValue(),dist)
+        }
+
+        if(nearestPort == this.tail.getValue() || nearestPort == this.head.getValue()){
+            this.updateSVG();
+            return;
+        }
+
+        if(this.state == EdgeState.DraggingTail){
+            this.objectsync.record(() => {
+                this.tail.set(nearestPort)
+            },true)
+        }else{
+            this.objectsync.record(() => {
+                this.head.set(nearestPort)
+            },true)
+        }
+
         if(this.state == EdgeState.DraggingTail || this.state == EdgeState.DraggingHead) {
             this.updateSVG()
         }

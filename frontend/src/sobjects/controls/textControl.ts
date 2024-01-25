@@ -29,6 +29,8 @@ export class TextControl extends Control {
     protected onStart(): void {
         super.onStart()
         this.textBox = new TextBox(this.htmlItem.getElByClass("control"),this.editable.getValue()==0)
+        // Line height is 17px. The control should be 15+17(n-1)px tall, where n is the number of lines.
+        this.textBox.heightDelta = -2
         if(this.editable.getValue()==0){
             (this.htmlItem.baseElement as HTMLDivElement).style.minHeight = "0px"
         }

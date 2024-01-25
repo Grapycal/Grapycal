@@ -63,29 +63,34 @@ Define styles for different node categories
     color: var(--cate-color);
 }
 
-.cate-interaction{
-    --cate-color: #DCDCA8;
+.cate-interaction .node-label{
+    --cate-color: #FFBF00;
 }
 
-.cate-function{
-    --cate-color: #7bc361;
+.cate-function .node-label{
+    --cate-color: #59C059;
 }
 
-.cate-data{
-    --cate-color: #ce9177;
+.cate-data .node-label{
+    --cate-color: #ffab19;
 }
 
-.cate-test{
-    --cate-color: #569BD1;
+.cate-test .node-label{
+    --cate-color: #36cdd2;
 }
 
-.cate-procedural{
-    --cate-color: #569BD1;
+.cate-procedural .node-label{
+    --cate-color: #1199fb;
 }
 
-.cate-torch{
-    --cate-color: #9cdcfe;
+.cate-torch .node-label{
+    --cate-color: #2ae3f8;
 }
+
+.cate-torch-neural-network .node-label{
+    --cate-color: #61abff;
+}
+
 /* 
 .cate-function-math{
     --cate-color: #59C059;

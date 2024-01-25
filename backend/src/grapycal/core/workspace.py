@@ -4,6 +4,8 @@ import grapycal
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
+from grapycal.sobjects.controls.nullControl import NullControl
+from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
 from grapycal.sobjects.fileView import LocalFileView, RemoteFileView
 from grapycal.sobjects.settings import Settings
@@ -33,7 +35,7 @@ from grapycal.core import stdout_helper
 
 
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort, ControlDefaultInputPort
+from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.sobjects.sidebar import Sidebar
 
 from grapycal.core.background_runner import BackgroundRunner
@@ -116,7 +118,6 @@ class Workspace:
         self._objectsync.register(LocalFileView)
         self._objectsync.register(RemoteFileView)
         self._objectsync.register(InputPort)
-        self._objectsync.register(ControlDefaultInputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 
@@ -124,6 +125,8 @@ class Workspace:
         self._objectsync.register(ButtonControl)
         self._objectsync.register(ImageControl)
         self._objectsync.register(ThreeControl)
+        self._objectsync.register(NullControl)
+        self._objectsync.register(OptionControl)
 
         self._objectsync.register(WebcamStream)
         self._objectsync.register(LinePlotControl)

@@ -1,5 +1,7 @@
 from typing import List
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.controls.buttonControl import ButtonControl
+from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.node import Node
@@ -21,15 +23,14 @@ class TrainerNode(Node):
         self.label.set('Trainer')
         self.css_classes.append('fit-content')
         self.lr = self.add_attribute('lr',FloatTopic,0.001,editor_type='float')
-        self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
-        self.init_modules_port = self.add_in_port('initialize network')
+        self.device = self.add_in_port('device',control_type=TextControl)
+        self.network_names = self.add_in_port('network names',control_type=TextControl)
+        self.init_modules_port = self.add_in_port('initialize network', control_type=ButtonControl)
 
         self.train_port = self.add_in_port('train network using loss')
 
-        self.train_mode_port = self.add_in_port('switch to train mode')
-        self.eval_port = self.add_in_port('switch to eval mode')
-
-        self.network_names = self.add_text_control(label='network name: ',name='network name')
+        self.train_mode_port = self.add_in_port('switch to train mode', control_type=ButtonControl)
+        self.eval_port = self.add_in_port('switch to eval mode', control_type=ButtonControl)        
 
     def init_node(self):
         self.optimizer : torch.optim.Optimizer | None = None
@@ -43,7 +44,7 @@ class TrainerNode(Node):
 
     def get_module_nodes(self)->List[ModuleNode]:
         result: List[ModuleNode] = []
-        for name in self.network_names.get().split(','):
+        for name in self.network_names.get_one_data().split(','):
             mn = NetworkDefManager.get_module_nodes(name)
             result += mn
         return result
@@ -73,7 +74,7 @@ class TrainerNode(Node):
 
     def init_modules(self):
         for mn in self.get_module_nodes():
-            mn.create_module_and_update_name(self.device.get())
+            mn.create_module_and_update_name(self.device.get_one_data())
 
     def step(self):
         self.check_modules_to_track_changed()
