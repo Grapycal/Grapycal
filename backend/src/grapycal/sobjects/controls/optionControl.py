@@ -16,6 +16,8 @@ class OptionControl(ValuedControl[str]):
         self.options = self.add_attribute('options',ListTopic,options)
         self.label = self.add_attribute('label',StringTopic,label)
 
+    def init(self):
+        self.on_set = self.value.on_set
     
     def set(self, value:str):
         self.value.set(value)

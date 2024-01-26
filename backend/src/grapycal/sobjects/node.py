@@ -328,11 +328,11 @@ class Node(SObject,metaclass=NodeMeta):
         control = self.add_control(LinePlotControl,name=name)
         return control
     
-    def add_option_control(self,value:str,options:list[str],name:str|None=None) -> OptionControl:
+    def add_option_control(self,value:str,options:list[str],label:str='',name:str|None=None) -> OptionControl:
         '''
         Add an option control to the node.
         '''
-        control = self.add_control(OptionControl,value=value,options=options,name=name)
+        control = self.add_control(OptionControl,value=value,options=options,label=label,name=name)
         return control
 
     def remove_control(self,control:str|Control):

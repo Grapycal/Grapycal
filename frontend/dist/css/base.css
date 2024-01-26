@@ -107,7 +107,7 @@ footer{
 /* Works on Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(132, 132, 132) orange;
+    scrollbar-color: rgb(73, 73, 73) rgb(16, 16, 16);
   }
   
   /* Works on Chrome, Edge, and Safari */

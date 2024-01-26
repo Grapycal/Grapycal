@@ -41,3 +41,21 @@ class TestDefaultNode(Node):
 
     def double_click(self):
         self.out_port.push_data(self.in_port.get_one_data())
+
+class OptionControlExampleNode(Node):
+    category = 'function'
+
+    def build_node(self):
+        self.label.set('Select a fruit')
+        self.option_control = self.add_option_control(
+            options=['apple','banana','orange'],
+            value='apple',
+            label='Fruit'
+        )
+        self.out_port = self.add_out_port('out')
+
+    def init_node(self):
+        self.option_control.on_set += self.option_changed
+
+    def option_changed(self,value:str):
+        self.out_port.push_data(value)
