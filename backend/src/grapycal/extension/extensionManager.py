@@ -137,8 +137,6 @@ class ExtensionManager:
         logger.info(f'Updated extension {extension_name}')
         self._objectsync.clear_history_inclusive()
 
-        #TODO: cut history
-
     def unimport_extension(self, extension_name: str) -> None:
         self._destroy_preview_nodes(extension_name)
         self._check_extension_not_used(extension_name)

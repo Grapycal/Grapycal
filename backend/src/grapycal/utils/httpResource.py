@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import traceback
-from typing import Generic, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar
 from urllib.parse import ParseResult, urlparse
 import aiohttp
 from grapycal.utils.misc import as_type
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar('T')
 class HttpResource(Generic[T]):
-    def __init__(self, url:str,data_type:Type[T]=type(T),format=None):
+    def __init__(self, url:str,data_type:Type[T]=Any,format=None):
         self.url = url
         self.data: T|None = None
         self.failed = False

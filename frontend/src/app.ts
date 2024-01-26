@@ -137,19 +137,19 @@ function startObjectSync(wsUrl:string){
 
 
     document.addEventListener('keydown', function(event) {
-        if (event.ctrlKey && event.key === 'z' || event.metaKey && event.key === 'Z') {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() == 'z') {
             event.preventDefault();
             objectsync.undo(null);
         }
-        if (event.ctrlKey && event.key === 'y' || event.metaKey && event.key === 'Y') {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() == 'y') {
             event.preventDefault();
             objectsync.redo(null);
         }
-        if (event.ctrlKey && event.key === 's' || event.metaKey && event.key === 'S') {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() == 's') {
             event.preventDefault();
             objectsync.emit('ctrl+s');
         }
-        if (event.ctrlKey && event.key === 'q' || event.metaKey && event.key === 'Q') {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() == 'q') {
             event.preventDefault();
             objectsync.makeRequest('exit');
             setTimeout(() => {

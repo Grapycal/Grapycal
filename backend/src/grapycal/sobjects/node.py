@@ -7,6 +7,7 @@ from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.imageControl import ImageControl
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
 from grapycal.sobjects.controls.nullControl import NullControl
+from grapycal.sobjects.controls.optionControl import OptionControl
 
 from grapycal.sobjects.controls.textControl import TextControl
 logger = logging.getLogger(__name__)
@@ -181,7 +182,8 @@ class Node(SObject,metaclass=NodeMeta):
                 edge.remove()
         return super().destroy()
 
-    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[ValuedControl]=NullControl,control_name=None,**control_kwargs):
+    T = TypeVar('T', bound=ValuedControl)
+    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[T]=NullControl,control_name=None,**control_kwargs) -> InputPort[T]:
         '''
         Add an input port to the node.
         If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
@@ -324,6 +326,13 @@ class Node(SObject,metaclass=NodeMeta):
         Add a line plot control to the node.
         '''
         control = self.add_control(LinePlotControl,name=name)
+        return control
+    
+    def add_option_control(self,value:str,options:list[str],name:str|None=None) -> OptionControl:
+        '''
+        Add an option control to the node.
+        '''
+        control = self.add_control(OptionControl,value=value,options=options,name=name)
         return control
 
     def remove_control(self,control:str|Control):

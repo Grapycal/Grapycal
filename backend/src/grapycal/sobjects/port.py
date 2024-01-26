@@ -42,9 +42,9 @@ class Port(SObject):
     def get_name(self):
         return self.name.get()
 
-
-class InputPort(Port):
-    def build(self, control_type: type[ValuedControl], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
+T = typing.TypeVar('T', bound='ValuedControl')
+class InputPort(Port, typing.Generic[T]):
+    def build(self, control_type: type[T], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
         super().build(name, max_edges, display_name)
         self.is_input.set(1)
         if control_name is not None:

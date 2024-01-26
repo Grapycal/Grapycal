@@ -31,12 +31,14 @@ class Edge(SObject):
         self._data_ready = False
         self.reaquirable = False
 
+        self.data_ready_topic.set(1) # prevent a restored edge to show data ready
+
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set
 
         self.on_tail_set(None, self.tail.get())
         self.on_head_set(None, self.head.get())
-
+        
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
         if old_tail:
