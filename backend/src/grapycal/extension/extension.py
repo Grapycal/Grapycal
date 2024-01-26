@@ -26,7 +26,7 @@ def load_or_reload_module(module_name:str):
         module = importlib.import_module(module_name)
     return module
 
-class Extension:
+class ExtensionInfo:
     def __init__(self,extension_name:str,existing_node_types:set[type[SObject]]=set(),reload=False) -> None:
         try:
             if reload:

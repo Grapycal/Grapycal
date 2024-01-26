@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Dict, List, Tuple
 import sys
 from os.path import join, dirname
 import shutil
-from grapycal.extension.extension import Extension
+from grapycal.extension.extension import ExtensionInfo
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import Port
 import objectsync
@@ -26,7 +26,7 @@ class ExtensionManager:
         cwd = sys.path[0]
         self._local_extension_dir = join(cwd,'.grapycal','extensions')
         sys.path.append(self._local_extension_dir)
-        self._extensions: Dict[str, Extension] = {}
+        self._extensions: Dict[str, ExtensionInfo] = {}
 
         # Use this topic to inform the client about the extensions
         self._imported_extensions_topic = self._objectsync.create_topic('imported_extensions',objectsync.DictTopic,is_stateful=False)
@@ -45,7 +45,7 @@ class ExtensionManager:
         '''
         self._update_available_extensions_topic()
 
-    def import_extension(self, extension_name: str, create_preview_nodes = True) -> Extension:
+    def import_extension(self, extension_name: str, create_preview_nodes = True) -> ExtensionInfo:
         extension = self._load_extension(extension_name)
         try:
             if create_preview_nodes:
@@ -60,7 +60,7 @@ class ExtensionManager:
     def update_extension(self, extension_name: str) -> None:
         old_version = self._extensions[extension_name]
         old_node_types = set(old_version.node_types_without_extension_name.keys())
-        new_version = Extension(extension_name,set(self._objectsync.get_all_node_types().values())-set(old_version.node_types.values()),reload=True)
+        new_version = ExtensionInfo(extension_name,set(self._objectsync.get_all_node_types().values())-set(old_version.node_types.values()),reload=True)
 
         # Get diff between old and new version
         new_node_types = set(new_version.node_types_without_extension_name.keys())
@@ -221,8 +221,8 @@ class ExtensionManager:
         # update available extensions
         await self._update_available_extensions_topic_async()
 
-    def _load_extension(self, name: str) -> Extension:
-        extension = self._extensions[name] = Extension(name,set(self._objectsync.get_all_node_types().values()))
+    def _load_extension(self, name: str) -> ExtensionInfo:
+        extension = self._extensions[name] = ExtensionInfo(name,set(self._objectsync.get_all_node_types().values()))
         self._register_extension(name)
         self._imported_extensions_topic.add(name,extension.get_info())
         for node_type_name, node_type in extension.node_types.items():
@@ -265,7 +265,7 @@ class ExtensionManager:
             if obj.get_type_name() in node_types:
                 self._objectsync.destroy_object(obj.get_id())
 
-    def get_extension(self, name: str) -> Extension:
+    def get_extension(self, name: str) -> ExtensionInfo:
         return self._extensions[name]
     
     def get_extention_names(self) -> list[str]:
