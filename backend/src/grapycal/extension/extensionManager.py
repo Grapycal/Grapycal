@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Dict, List, Tuple
 import sys
 from os.path import join, dirname
 import shutil
-from grapycal.extension.extension import ExtensionInfo
+from grapycal.extension.extensionInfo import ExtensionInfo
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import Port
 import objectsync

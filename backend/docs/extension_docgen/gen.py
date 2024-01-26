@@ -1,6 +1,6 @@
 import argparse
 from typing import List
-from grapycal.extension.extension import ExtensionInfo
+from grapycal.extension.extensionInfo import ExtensionInfo
 from collections import defaultdict
 import re
 
