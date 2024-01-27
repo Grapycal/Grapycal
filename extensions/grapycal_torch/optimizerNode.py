@@ -1,6 +1,7 @@
 from typing import List
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.buttonControl import ButtonControl
+from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.functionNode import FunctionNode
@@ -99,3 +100,70 @@ class TrainerNode(Node):
         for m in self.tracked_modules:
             m.train()
             m.requires_grad_(True)
+
+class TrainNode(Node):
+    category='torch/training'
+
+    def build_node(self):
+        self.label.set('Train')
+        self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
+        self.loss_port = self.add_in_port('loss',1)
+
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.loss_port:
+            self.run(self.train_step,loss = edge.get_data())
+            return
+        if port == self.network_port:
+            self.label.set('Train '+self.network_port.get_one_data())
+
+    def train_step(self,loss:torch.Tensor):
+        loss.backward()
+
+class ConfigureNode(Node):
+    category='torch/training'
+
+    def build_node(self):
+        self.label.set('Configure Network')
+        self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
+        self.device_port = self.add_in_port('device',control_type=OptionControl, options=['default','cpu','cuda'],value='default')
+        self.reset_port = self.add_in_port('reset network',control_type=ButtonControl)
+
+        # they are attribute so they can be saved
+        self.network_name = self.add_attribute('network name',StringTopic,'')
+        self.device = self.add_attribute('device',StringTopic,'default')
+
+
+    def init_node(self):
+        self.network_port.default_control.options.set(NetworkDefManager.get_network_names())
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.network_port:
+            self.label.set('Configure '+self.network_port.get_one_data())
+            self.network_name.set(self.network_port.get_one_data())
+            mns = self.get_module_nodes()
+            if len(mns) > 0:
+                self.device.set(mns[0].get_device())
+            self.device_port.default_control.value.set(self.device.get())
+            self.run(self.set_mn_device)
+        if port == self.reset_port:
+            self.run(self.reset)
+            port.get_one_data()
+        if port == self.device_port:
+            self.device.set(self.device_port.get_one_data())
+            self.run(self.set_mn_device)
+
+    def reset(self):
+        for mn in self.get_module_nodes():
+            mn.create_module_and_update_name(self.device.get())
+
+    def set_mn_device(self):
+        device = self.device.get()
+        for mn in self.get_module_nodes():
+            mn.to(device)
+
+    def get_module_nodes(self)->List[ModuleNode]:
+        name = self.network_name.get()
+        if not NetworkDefManager.has_network(name):
+            return []
+        return NetworkDefManager.get_module_nodes(name)

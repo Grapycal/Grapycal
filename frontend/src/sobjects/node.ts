@@ -204,7 +204,6 @@ export class Node extends CompSObject implements IControlHost {
                 }
         })
 
-
         // Configure components
         
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem))

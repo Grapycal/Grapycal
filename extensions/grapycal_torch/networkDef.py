@@ -58,7 +58,17 @@ class NetworkDefManager:
         _get_modules_after(NetworkDefManager.ins[name],res)
         return list(res)
                 
-                
+    @staticmethod
+    def has_network(name):
+        return name in NetworkDefManager.ins and name in NetworkDefManager.outs
+    
+    @staticmethod
+    def get_network_names():
+        res = []
+        for name in NetworkDefManager.ins:
+            if name in NetworkDefManager.outs:
+                res.append(name)
+        return res
 
 class NetworkCallNode(Node):
     '''

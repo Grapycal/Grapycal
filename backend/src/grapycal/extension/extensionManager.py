@@ -45,14 +45,15 @@ class ExtensionManager:
         '''
         self._update_available_extensions_topic()
 
-    def import_extension(self, extension_name: str, create_preview_nodes = True) -> Extension:
+    def import_extension(self, extension_name: str, create_nodes=True) -> Extension:
         extension = self._load_extension(extension_name)
-        try:
-            if create_preview_nodes:
+        if create_nodes:
+            try:
                 self.create_preview_nodes(extension_name)
-        except Exception:
-            self._unload_extension(extension_name)
-            raise
+            except Exception:
+                self._unload_extension(extension_name)
+                raise
+            self._instantiate_singletons(extension_name)
         self._update_available_extensions_topic()
         self._objectsync.clear_history_inclusive()
         return extension
@@ -127,11 +128,12 @@ class ExtensionManager:
         # Unimport old version
         self._destroy_preview_nodes(old_version.name)
         self.unimport_extension(old_version.name)
-        self.import_extension(new_version.name,create_preview_nodes=False)
+        self._load_extension(new_version.name)
 
         self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
 
         self.create_preview_nodes(new_version.name)
+        self._instantiate_singletons(new_version.name)
         self._update_available_extensions_topic()
 
         logger.info(f'Updated extension {extension_name}')
@@ -143,6 +145,15 @@ class ExtensionManager:
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
         self._objectsync.clear_history_inclusive() 
+
+    def _instantiate_singletons(self, extension_name: str) -> None:
+        '''
+        For each singleton node type, create an instance if there is none.
+        '''
+        extension = self._extensions[extension_name]
+        for node_type_name, node_type in extension.singletonNodeTypes.items():
+            if node_type._auto_instantiate and not hasattr(node_type,'instance'):
+                self._workspace.get_workspace_object().main_editor.create_node(node_type, translation='0,0')
 
     def _update_available_extensions_topic(self) -> None:
         self._workspace.add_task_to_event_loop(self._update_available_extensions_topic_async())
@@ -256,7 +267,7 @@ class ExtensionManager:
     def create_preview_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types
         for node_type in node_types.values():
-            if not node_type.category == 'hidden':
+            if not node_type.category == 'hidden' and not node_type._is_singleton:
                 self._objectsync.create_object(node_type,parent_id=self._workspace.get_workspace_object().sidebar.get_id(),is_preview=True)
  
     def _destroy_preview_nodes(self, name: str) -> None:

@@ -1,6 +1,6 @@
-import logging 
+import logging
 logger = logging.getLogger('WORKSPACE')
-from typing import Any, Dict
+from typing import Any, Dict, Self
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.fileView import FileView, LocalFileView, RemoteFileView
@@ -11,10 +11,12 @@ from objectsync import SObject, ObjTopic, SObjectSerialized, StringTopic, IntTop
 
 class WorkspaceObject(SObject):
     frontend_type = 'Workspace'
+    ins: Self
 
     def build(self,old:SObjectSerialized|None=None):
         from grapycal.core.workspace import Workspace
         self._workspace: Workspace = self._server.globals.workspace
+        WorkspaceObject.ins = self
         if old is None:
             self.settings = self.add_child(Settings)
             self.webcam = self.add_child(WebcamStream)

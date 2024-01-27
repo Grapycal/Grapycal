@@ -217,7 +217,7 @@ class Workspace:
         resolve_deprecated_attr_format(workspace_serialized)
 
         for extension_name in data['extensions']:
-            self._extention_manager.import_extension(extension_name,create_preview_nodes=False)
+            self._extention_manager.import_extension(extension_name,create_nodes=False)
 
         self._objectsync.create_object(WorkspaceObject, parent_id='root', old=workspace_serialized, id=workspace_serialized.id)
 

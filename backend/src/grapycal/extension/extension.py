@@ -60,6 +60,11 @@ class Extension:
                 self.node_types[type_name] = obj
                 self.node_types_without_extension_name[obj.__name__] = obj
 
+        self.singletonNodeTypes:Dict[str,type[Node]] = {}
+        for name, t in self.node_types.items():
+            if t._is_singleton:
+                self.singletonNodeTypes[name] = t
+
     def add_extension_name_to_node_type(self,node_type:str)->str:
         return f'{self.name}.{node_type}'
     

@@ -5,7 +5,25 @@ from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort
 from torch import nn
 from grapycal import EventTopic
-import torch
+
+class ModuleMover:
+    '''
+    Moves a module to a device, but asynchronusly
+    '''
+    def __init__(self):
+        self._actual_device = 'default'
+        self._target_device = 'default'
+
+    def set_target_device(self,device):
+        self._target_device = device
+
+    def get_target_device(self):
+        return self._target_device
+
+    def move_if_needed(self,module:nn.Module):
+        if self._target_device != self._actual_device:
+            module.to(self._target_device)
+            self._actual_device = self._target_device
 
 class ModuleNode(Node):
     category = 'torch/neural network'
@@ -19,6 +37,7 @@ class ModuleNode(Node):
     def init_node(self):
         self.module: nn.Module|None = None
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
+        self.module_mover = ModuleMover()
 
     def create_module_and_update_name(self,device='cpu'):
         self.module = self.create_module()
@@ -33,6 +52,9 @@ class ModuleNode(Node):
             param_str = f'{num_params}'
         self.print('created module',self.module,'on device',device,'\nparameters:',param_str)
 
+    def to(self,device):
+        self.module_mover.set_target_device(device)
+        
     @abstractmethod
     def create_module(self)->nn.Module:
         pass
@@ -60,11 +82,15 @@ class ModuleNode(Node):
     def task(self):
         if self.module is None:
             self.create_module_and_update_name()
+        self.module_mover.move_if_needed(self.module) #type: ignore
         self.forward()
 
     def get_module(self)->nn.Module:
         assert self.module is not None
         return self.module 
+    
+    def get_device(self)->str:
+        return self.module_mover.get_target_device()
         
 class SimpleModuleNode(ModuleNode):
     inputs = []
@@ -90,6 +116,8 @@ class SimpleModuleNode(ModuleNode):
     def task(self):
         if self.module is None:
             self.create_module_and_update_name()
+        self.module_mover.move_if_needed(self.module) #type: ignore
+
         inputs = {}
         for port in self.in_ports:
             inputs[port.name.get()] = port.get_one_data()

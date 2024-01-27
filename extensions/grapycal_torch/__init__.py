@@ -1,7 +1,9 @@
 import asyncio
 from pathlib import Path
+from grapycal.core.workspace import Workspace
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.node import singletonNode
 from grapycal.sobjects.port import InputPort
 from .basic import *
 from .cnn import *
@@ -48,7 +50,34 @@ class MnistDatasetNode(SourceNode):
 import aiofiles
 
 
-class ImageDataset(torch.utils.data.Dataset):
+
+@singletonNode()
+class TestSingNode(Node):
+    category = "test"
+
+    def build_node(self):
+        super().build_node()
+        self.label.set("Test Singleton")
+        self.out = self.add_out_port("output")
+        self.expose_attribute(self.label,"text","haha/haha",target='global')
+
+    def task(self):
+        self.out.push_data(1)
+
+@singletonNode(auto_instantiate=False)
+class TestSing2Node(Node):
+    category = "test"
+
+    def build_node(self):
+        super().build_node()
+        self.label.set("Test Singleton")
+        self.out = self.add_out_port("output")
+
+    def task(self):
+        self.out.push_data(1)
+
+
+class ImageDataset(torch.utils.data.Dataset): # type: ignore
     """
     Loads all images from a directory into memory
     """

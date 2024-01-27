@@ -14,34 +14,69 @@ logger = logging.getLogger(__name__)
 from contextlib import contextmanager
 import functools
 import traceback
-from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generator, Literal, Self, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control, ValuedControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.io import OutputStream
-from objectsync import SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
+from objectsync import DictTopic, SObject, StringTopic, IntTopic, ListTopic, ObjListTopic, FloatTopic, Topic, ObjDictTopic, SetTopic
 from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
-    
+
+
+def singletonNode(auto_instantiate=True):
+    """
+    Decorator for singleton nodes. 
+    There can be only one instance of a singleton node in the workspace.
+    The instance can be accessed by the `instance` attribute of the class after it is instantiated.
+    Raises an error if the node is instantiated more than once.
+
+    Args:
+        - auto_instantiate: If set to True, the node will be instantiated automatically when the extension is loaded. Otherwise, the user or extension can instantiate the node at any time.
+    """
+    def wrapper(cls:type[Node]):
+        class WrapperClass(cls):
+            instance: Self
+            def __init__(self,*args,**kwargs):
+                super().__init__(*args,**kwargs)
+                if hasattr(WrapperClass, "instance"):
+                    raise RuntimeError("Singleton node can only be instantiated once")
+                WrapperClass.instance = self
+
+            def destroy(self) -> SObjectSerialized:
+                del WrapperClass.instance
+                return super().destroy()
+
+        WrapperClass._is_singleton = True
+        WrapperClass._auto_instantiate = auto_instantiate
+        WrapperClass.__name__ = cls.__name__
+        return WrapperClass
+
+    return wrapper
+
 class NodeMeta(ABCMeta):
     class_def_counter = count()
     def_order = {}
     def __init__(self, name, bases, attrs):
         self.def_order[name] = next(self.class_def_counter)
+        self._is_singleton = False # True if @sigletonNode. Used internally by the ExtensionManager.
+        self._auto_instantiate = True # Used internally by the ExtensionManager.
         return super().__init__(name, bases, attrs)
 
 class Node(SObject,metaclass=NodeMeta):
     frontend_type = 'Node'
     category = 'hidden'
+    instance: Self  # The singleton instance. Used by singleton nodes.
 
     @classmethod
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
 
     def build(self,is_preview=False,translation='0,0',restore_info=None,**build_node_args):
+        self.workspace:Workspace = self._server.globals.workspace
         
         self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
         self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
@@ -51,6 +86,7 @@ class Node(SObject,metaclass=NodeMeta):
         self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
         self.category_ = self.add_attribute('category', StringTopic, self.category)
         self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
+        self.globally_exposed_attributes = self.add_attribute('globally_exposed_attributes', DictTopic)
         self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
         self.css_classes = self.add_attribute('css_classes',SetTopic,[])
         self.icon_path = self.add_attribute('icon_path',StringTopic,f'{self.__class__.__name__[:-4].lower()}',is_stateful=False)
@@ -98,11 +134,17 @@ class Node(SObject,metaclass=NodeMeta):
         self._output_stream = OutputStream(self.raw_print)
         self._output_stream.set_event_loop(self.workspace.get_communication_event_loop())
         self.workspace.get_communication_event_loop().create_task(self._output_stream.run())
+        
+        from grapycal.sobjects.workspaceObject import WorkspaceObject
+        self.globally_exposed_attributes.on_add.add_auto( lambda k,v: WorkspaceObject.ins.settings.entries.add(k,v))
+        for k,v in self.globally_exposed_attributes.get().items():
+            WorkspaceObject.ins.settings.entries.add(k,v)
 
         self.init_node()
 
         if hasattr(self,'old_version'):
             self.restore_from_version(self.old_version,self.old_node_info)
+            
 
     def init_node(self):
         '''
@@ -164,6 +206,8 @@ class Node(SObject,metaclass=NodeMeta):
         Called when a client wants to spawn a node.
         '''
         new_node = self.workspace.get_workspace_object().main_editor.create_node(type(self))
+        if new_node is None: # failed to create node
+            return
         new_node.add_tag(f'spawned_by_{client_id}') # So the client can find the node it spawned and make it follow the mouse
         logger.info(f'Created a new {type(self).__name__}')
 
@@ -180,6 +224,8 @@ class Node(SObject,metaclass=NodeMeta):
         for port in self.out_ports:
             for edge in port.edges[:]:
                 edge.remove()
+        for name in self.globally_exposed_attributes.get():
+            self.workspace.get_workspace_object().settings.entries.pop(name)
         return super().destroy()
 
     T = TypeVar('T', bound=ValuedControl)
@@ -360,50 +406,83 @@ class Node(SObject,metaclass=NodeMeta):
             self.expose_attribute(attribute,editor_type,display_name,**editor_args)
         return attribute
     
-    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,**editor_args):
+    def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,target:Literal['self','global']='self',**editor_args):
         '''
-        Expose an attribute to the editor.
+        Expose an attribute to the inspector.
+
         Args:
             - attribute: The attribute to expose.
-
+        
             - editor_type: The type of the editor to use. Can be ``text`` or ``list``.
 
+            - display_name: The name to display in the editor. If not specified, the attribute's name will be used.
+
+            - target: The target of the attribute. Can be ``self`` or ``global``. If set to ``self``, the attribute will be exposed to the inspector of the node. If set to ``global``, the attribute will be exposed to the global settings tab.
+
+            - **editor_args: The arguments to pass to the editor. See below for details.
+        
+
+        There are 2 ways to expose an attribute:
+        1. Call this method. For example:
+            ```
+            my_attr = self.add_attribute('my_attr',ListTopic,[])
+            self.expose_attribute(my_attr,'list')
+            ```
+        2. Call the `add_attribute` method with the `editor_type` argument. For example:
+            ```
+            my_attr = self.add_attribute('my_attr',ListTopic,[],editor_type='list')
+            ```
+
+        Both ways are equivalent.
+            
         List of editor types:
-            - ``dict``: A dictionary editor. Goes with a DictTopic. editor_args: {
+            - ``dict``: A dictionary editor. Goes with a DictTopic. editor_args: 
+
+            ```
+            {
                 'key_options':list[str]|None,
                 'value_options':list[str]|None,
                 'key_strict':bool|None,
                 'value_strict':bool|None,
             }
+            ```
 
-            - ``list``: A list editor. Goes with a ListTopic. editor_args: {}
+            - ``list``: A list editor. Goes with a ListTopic. editor_args: `{}`
 
-            - ``options``: A dropdown editor. Goes with a StringTopic. editor_args: {
+            - ``options``: A dropdown editor. Goes with a StringTopic. editor_args: 
+
+            ```
+            {
                 'options':list[str],
             }
+            ```
 
-            - ``text``: A text editor. Goes with a StringTopic. 
+            - ``text``: A text editor. Goes with a StringTopic. editor_args: `{}`
 
-            - ``int``: An integer editor. Goes with an IntTopic. editor_args: {}
+            - ``int``: An integer editor. Goes with an IntTopic. editor_args: `{}`
 
-            - ``float``: A float editor. Goes with a FloatTopic. editor_args: {}
-            
-            
-
-            
-
+            - ``float``: A float editor. Goes with a FloatTopic. editor_args: `{}`
         '''
-        if editor_args is None:
+        if editor_args is None: # not stepping into the dangerous trap of Python :D
             editor_args = {}
         name = attribute.get_name()
         if display_name is None:
             display_name = name.split('/')[-1]
         editor_args['type'] = editor_type
-        self.exposed_attributes.insert({
-            'name':name,
-            'display_name':display_name,
-            'editor_args':editor_args
-        })
+
+        if target == 'self':
+            self.exposed_attributes.insert({
+                'name':name,
+                'display_name':display_name,
+                'editor_args':editor_args
+            })
+        elif target == 'global':
+            self.globally_exposed_attributes.add(name,{
+                'name':name,
+                'display_name':display_name,
+                'editor_args':editor_args
+            })
+
 
     def print(self,*args,**kwargs):
         '''
@@ -555,3 +634,4 @@ class Node(SObject,metaclass=NodeMeta):
         Called when the node is double clicked by an user.
         '''
         pass
+

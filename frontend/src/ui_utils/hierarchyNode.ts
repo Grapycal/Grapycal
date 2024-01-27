@@ -4,6 +4,49 @@ import { Linker } from "../component/linker"
 import { print } from "../devUtils"
 import { Node } from "../sobjects/node"
 
+class TwoWayMap<K,V>{
+    private readonly map = new Map<K,V>();
+    private readonly reverseMap = new Map<V,K>();
+
+    set(key: K, value: V){
+        this.map.set(key,value);
+        this.reverseMap.set(value,key);
+    }
+
+    get(key: K): V|undefined{
+        return this.map.get(key);
+    }
+
+    getReverse(value: V): K|undefined{
+        return this.reverseMap.get(value);
+    }
+
+    delete(key: K){
+        let value = this.map.get(key);
+        this.map.delete(key);
+        this.reverseMap.delete(value!);
+    }
+
+    deleteReverse(value: V){
+        let key = this.reverseMap.get(value);
+        this.map.delete(key!);
+        this.reverseMap.delete(value);
+    }
+
+    clear(){
+        this.map.clear();
+        this.reverseMap.clear();
+    }
+
+    keys(){
+        return this.map.keys();
+    }
+
+    values(){
+        return this.map.values();
+    }
+}
+
 export class HierarchyNode implements IComponentable{
     readonly template: string = `
     <div class="hierarchy-node full-width">
@@ -24,6 +67,7 @@ export class HierarchyNode implements IComponentable{
     private readonly leafs: HtmlItem[] = [];
     private readonly linker = new Linker(this);
     private expanded = true;
+    private readonly itemIdMap = new TwoWayMap<string,HtmlItem>();
 
     readonly name: string;
     readonly path: string;
@@ -79,12 +123,16 @@ export class HierarchyNode implements IComponentable{
         }
     }
 
-    addLeaf(leaf: HtmlItem|IComponentable,path: string[]|string=''){
+    addLeaf(leaf: HtmlItem|IComponentable,path: string[]|string='',id:string=null){
         let leaf_: HtmlItem;
         if(leaf instanceof HtmlItem){
             leaf_ = leaf;
         }else{
             leaf_ = leaf.componentManager.getComponent(HtmlItem);
+        }
+
+        if(id!==null){
+            this.itemIdMap.set(id,leaf_);
         }
 
         if(typeof path === 'string'){
@@ -103,12 +151,22 @@ export class HierarchyNode implements IComponentable{
         }
     }
 
+    removeLeafById(id: string){
+        let leaf = this.itemIdMap.get(id);
+        if(leaf){
+            this.removeLeaf(leaf,id);
+        }else{
+            throw new Error(`leaf with id ${id} not found`);
+        }
+    }
+
     removeLeaf(leaf: HtmlItem, path: string[]|string){
         if(typeof path === 'string'){
             path = path.split('/')
         }
         if(path.length === 0 || path[0] === ''){
             this.leafs.splice(this.leafs.indexOf(leaf),1);
+            this.itemIdMap.deleteReverse(leaf);
         }else{
             let child = this.children.get(path[0])!;
             child.removeLeaf(leaf,path.slice(1));
