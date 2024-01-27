@@ -3,6 +3,7 @@ from msilib import Control
 from typing import TYPE_CHECKING, Any, List
 import typing
 from grapycal.sobjects.controls.control import ValuedControl
+from grapycal.sobjects.controls.nullControl import NullControl
 from objectsync import SObject, StringTopic, IntTopic
 
 from grapycal.utils.misc import Action
@@ -68,7 +69,7 @@ class InputPort(Port, typing.Generic[T]):
     def init(self):
         super().init()
         self.on_activate = Action()
-        self.use_default = len(self.edges) == 0
+        self.use_default = len(self.edges) == 0 and not isinstance(self.default_control, NullControl)
         self.default_control.set_activation_callback(
             lambda *args,**kwargs: # so they can link the callback to Actions without caring about redundant args
             self.edge_activated(self.default_control))
@@ -85,7 +86,7 @@ class InputPort(Port, typing.Generic[T]):
 
     def is_all_edge_ready(self):
         return (self.use_default and self.default_control.value_ready()) or \
-            all(edge.is_data_ready() for edge in self.edges)
+            (all(edge.is_data_ready() for edge in self.edges) and len(self.edges) > 0)
 
     def get_data(self):
         return [self.default_control.get_value()] if self.use_default else \
