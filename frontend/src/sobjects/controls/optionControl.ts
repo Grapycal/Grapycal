@@ -30,8 +30,8 @@ export class OptionControl extends Control {
         super.onStart()
         this.menu.htmlItem.setParent(this.htmlItem,'menu')
         this.menu.show()
-        const optionInfos: OptionInfo[] = []
         this.link(this.options.onSet,()=>{
+            const optionInfos: OptionInfo[] = []
             for(let o of this.options.getValue()){
                 optionInfos.push({
                     key:o,value:o,callback:()=>{this.select(o)}

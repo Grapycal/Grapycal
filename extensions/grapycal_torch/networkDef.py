@@ -3,6 +3,7 @@ from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
+from grapycal.utils.misc import Action
 from objectsync.sobject import SObjectSerialized
 import torch.nn as nn
 
@@ -35,6 +36,7 @@ class NetworkDefManager:
     calls: ListDict['NetworkCallNode'] = ListDict()
     ins: Dict[str,'NetworkInNode'] = {}
     outs: Dict[str,'NetworkOutNode'] = {}
+    on_network_names_changed = Action()
 
     @staticmethod
     def get_module_nodes(name)->list[ModuleNode]:
@@ -201,6 +203,8 @@ class NetworkInNode(Node):
             for call in NetworkDefManager.calls.get(self.network_name.get()):
                 call.update_ports()
 
+        NetworkDefManager.on_network_names_changed.invoke()
+
         
         if self.is_preview:
             self.label.set('Network Input')
@@ -211,6 +215,7 @@ class NetworkInNode(Node):
             NetworkDefManager.ins[new] = self
         if old != '':
             NetworkDefManager.ins.pop(old)
+        NetworkDefManager.on_network_names_changed.invoke()
         self.update_label()
 
     def on_network_name_changed_auto(self,new):
@@ -245,6 +250,7 @@ class NetworkInNode(Node):
     def destroy(self) -> SObjectSerialized:
         if self.network_name.get() != '':
             NetworkDefManager.ins.pop(self.network_name.get())
+        NetworkDefManager.on_network_names_changed.invoke()
         return super().destroy()
 
 class NetworkOutNode(Node):
@@ -273,6 +279,7 @@ class NetworkOutNode(Node):
         if self.network_name.get() != '':
             assert self.network_name.get() not in NetworkDefManager.outs
             NetworkDefManager.outs[self.network_name.get()] = self
+        NetworkDefManager.on_network_names_changed.invoke()
 
         
         if self.is_preview:
@@ -289,6 +296,7 @@ class NetworkOutNode(Node):
             NetworkDefManager.outs[new] = self
         if old != '':
             NetworkDefManager.outs.pop(old)
+        NetworkDefManager.on_network_names_changed.invoke()
         self.update_label()
 
 
@@ -323,4 +331,5 @@ class NetworkOutNode(Node):
     def destroy(self) -> SObjectSerialized:
         if self.network_name.get() != '':
             NetworkDefManager.outs.pop(self.network_name.get())
+        NetworkDefManager.on_network_names_changed.invoke()
         return super().destroy()

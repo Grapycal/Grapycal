@@ -47,23 +47,39 @@ def singletonNode(auto_instantiate=True):
     ```
 
     """
-    def wrapper(cls:type[Node]):
-        class WrapperClass(cls):
-            instance: Self
-            def __init__(self,*args,**kwargs):
-                super().__init__(*args,**kwargs)
-                if hasattr(WrapperClass, "instance"):
-                    raise RuntimeError("Singleton node can only be instantiated once")
-                WrapperClass.instance = self
+    T = TypeVar('T', bound=Node)
+    def wrapper(cls:type[T]):
+        # class WrapperClass(cls):
+        #     instance: T
+        #     def __init__(self,*args,**kwargs):
+        #         super().__init__(*args,**kwargs)
+        #         if hasattr(WrapperClass, "instance"):
+        #             raise RuntimeError("Singleton node can only be instantiated once")
+        #         WrapperClass.instance = self # type: ignore # strange complaint from linter
 
-            def destroy(self) -> SObjectSerialized:
-                del WrapperClass.instance
-                return super().destroy()
+        #     def destroy(self) -> SObjectSerialized:
+        #         del WrapperClass.instance
+        #         return super().destroy()
 
-        WrapperClass._is_singleton = True
-        WrapperClass._auto_instantiate = auto_instantiate
-        WrapperClass.__name__ = cls.__name__
-        return WrapperClass
+        # WrapperClass._is_singleton = True
+        # WrapperClass._auto_instantiate = auto_instantiate
+        # WrapperClass.__name__ = cls.__name__
+
+        def new_init(self,*args,**kwargs):
+            if hasattr(cls, "instance"):
+                raise RuntimeError("Singleton node can only be instantiated once")
+            super(cls,self).__init__(*args,**kwargs)
+            cls.instance = self
+        cls.__init__ = new_init
+
+        def new_destroy(self) -> SObjectSerialized:
+            del cls.instance
+            return super(cls,self).destroy()
+        cls.destroy = new_destroy
+
+        cls._is_singleton = True
+        cls._auto_instantiate = auto_instantiate
+        return cls
 
     return wrapper
 
@@ -245,6 +261,8 @@ class Node(SObject,metaclass=NodeMeta):
         If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
         When no edges are connected to the port, the control will be used to get the data.
         '''
+        if control_name is None:
+            control_name = name
         port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
         self.in_ports.insert(port)
         return port

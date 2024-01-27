@@ -17,6 +17,7 @@ from .normalize import *
 from .loss import *
 from .generative import *
 from .networkDef import *
+from .settings import *
 
 
 import torch

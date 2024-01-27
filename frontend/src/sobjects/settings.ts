@@ -3,6 +3,7 @@ import { ExposedAttributeInfo, Inspector } from "../inspector/inspector"
 import { OptionsEditor } from "../inspector/OptionEditor"
 import { bindTopicCookie } from "../utils"
 import { DictTopic } from "objectsync-client"
+import { print } from "../devUtils"
 
 export class Settings extends CompSObject{
     inspector: Inspector = new Inspector()

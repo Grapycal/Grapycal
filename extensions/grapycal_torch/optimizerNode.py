@@ -101,6 +101,16 @@ class TrainerNode(Node):
             m.train()
             m.requires_grad_(True)
 
+def link_control_with_network_names(control:OptionControl):
+    def on_network_names_changed():
+        control.options.set(NetworkDefManager.get_network_names())
+    NetworkDefManager.on_network_names_changed += on_network_names_changed
+    on_network_names_changed()
+    def unlink():
+        NetworkDefManager.on_network_names_changed -= on_network_names_changed
+    return unlink
+
+
 class TrainNode(Node):
     category='torch/training'
 
@@ -108,17 +118,49 @@ class TrainNode(Node):
         self.label.set('Train')
         self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
         self.loss_port = self.add_in_port('loss',1)
+        self.network_name = self.add_attribute('network name',StringTopic,'')
 
+        existing_networks = NetworkDefManager.get_network_names()
+        if len(existing_networks) > 0:
+            self.network_name.set(existing_networks[0])
+            self.network_port.default_control.value.set(existing_networks[0])
+
+    def init_node(self):
+        self.to_unlink = link_control_with_network_names(self.network_port.default_control)
+        self.optimizing_modules : set[nn.Module]= set()
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.loss_port:
             self.run(self.train_step,loss = edge.get_data())
             return
         if port == self.network_port:
-            self.label.set('Train '+self.network_port.get_one_data())
+            network_name = self.network_port.get_one_data()
+            self.network_name.set(network_name)
+            self.label.set('Train '+network_name)
+
+    def get_module_nodes(self)->List[ModuleNode]:
+        name = self.network_name.get()
+        if not NetworkDefManager.has_network(name):
+            return []
+        return NetworkDefManager.get_module_nodes(name)
+    
+    def getModules(self)->List[nn.Module]:
+        return [mn.get_module() for mn in self.get_module_nodes()]
+
+    def create_optimizer_if_needed(self):
+        if self.optimizing_modules != set(self.getModules()):
+            self.optimizing_modules = set(self.getModules())
+            self.optimizer = torch.optim.Adam([p for m in self.optimizing_modules for p in m.parameters()])
 
     def train_step(self,loss:torch.Tensor):
+        self.create_optimizer_if_needed()
+        self.optimizer.zero_grad()
         loss.backward()
+        self.optimizer.step()
+
+    def destroy(self):
+        self.to_unlink()
+        return super().destroy()
 
 class ConfigureNode(Node):
     category='torch/training'
@@ -128,14 +170,24 @@ class ConfigureNode(Node):
         self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
         self.device_port = self.add_in_port('device',control_type=OptionControl, options=['default','cpu','cuda'],value='default')
         self.reset_port = self.add_in_port('reset network',control_type=ButtonControl)
+        self.mode_port = self.add_in_port('mode',control_type=OptionControl, options=['train','eval'],value='train')
 
         # they are attribute so they can be saved
         self.network_name = self.add_attribute('network name',StringTopic,'')
         self.device = self.add_attribute('device',StringTopic,'default')
 
+        existing_networks = NetworkDefManager.get_network_names()
+        if len(existing_networks) > 0:
+            self.network_name.set(existing_networks[0])
+            self.network_port.default_control.value.set(existing_networks[0])
 
     def init_node(self):
-        self.network_port.default_control.options.set(NetworkDefManager.get_network_names())
+        self.to_unlink = link_control_with_network_names(self.network_port.default_control)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('network name','device')
+        self.restore_controls('network name')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.network_port:
@@ -167,3 +219,7 @@ class ConfigureNode(Node):
         if not NetworkDefManager.has_network(name):
             return []
         return NetworkDefManager.get_module_nodes(name)
+    
+    def destroy(self):
+        self.to_unlink()
+        return super().destroy()

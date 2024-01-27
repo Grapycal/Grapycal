@@ -6,6 +6,8 @@ from grapycal.sobjects.port import InputPort
 from torch import nn
 from grapycal import EventTopic
 
+from .settings import SettingsNode
+
 class ModuleMover:
     '''
     Moves a module to a device, but asynchronusly
@@ -17,13 +19,21 @@ class ModuleMover:
     def set_target_device(self,device):
         self._target_device = device
 
-    def get_target_device(self):
+    def get_target_device(self,translate=False):
+        if translate:
+            return self.translate(self._target_device)
         return self._target_device
+    
+    def translate(self,device:str):
+        if device == 'default':
+            return SettingsNode.instance.default_device.get()
+        return device
 
     def move_if_needed(self,module:nn.Module):
-        if self._target_device != self._actual_device:
-            module.to(self._target_device)
-            self._actual_device = self._target_device
+        real_target = self.translate(self._target_device)
+        if real_target != self._actual_device:
+            module.to(real_target)
+            self._actual_device = real_target
 
 class ModuleNode(Node):
     category = 'torch/neural network'
@@ -41,7 +51,7 @@ class ModuleNode(Node):
 
     def create_module_and_update_name(self,device='cpu'):
         self.module = self.create_module()
-        self.module.to(device)
+        self.to(device)
         self.label.set(self.generate_label())
         num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
         if num_params > 1000000:
@@ -50,7 +60,7 @@ class ModuleNode(Node):
             param_str = f'{num_params/1000:.1f}K'
         else:
             param_str = f'{num_params}'
-        self.print('created module',self.module,'on device',device,'\nparameters:',param_str)
+        self.print('created module',self.module,'on device',self.module_mover.get_target_device(True),'\nparameters:',param_str)
 
     def to(self,device):
         self.module_mover.set_target_device(device)

@@ -3,6 +3,7 @@ import logging
 import pkgutil
 
 import subprocess
+from unittest import skip
 from grapycal.extension.extensionSearch import get_remote_extensions
 from grapycal.extension.utils import get_extension_info, get_package_version, list_to_dict
 logger = logging.getLogger(__name__)
@@ -126,7 +127,7 @@ class ExtensionManager:
         '''
 
         # Unimport old version
-        self._destroy_preview_nodes(old_version.name)
+        self._destroy_nodes(old_version.name)
         self.unimport_extension(old_version.name)
         self._load_extension(new_version.name)
 
@@ -140,8 +141,8 @@ class ExtensionManager:
         self._objectsync.clear_history_inclusive()
 
     def unimport_extension(self, extension_name: str) -> None:
-        self._destroy_preview_nodes(extension_name)
         self._check_extension_not_used(extension_name)
+        self._destroy_nodes(extension_name)
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
         self._objectsync.clear_history_inclusive() 
@@ -249,11 +250,18 @@ class ExtensionManager:
             self._objectsync.register(node_type,node_type_name)
     
     def _check_extension_not_used(self, name: str) -> None:
-        node_types = self._extensions[name].node_types
-        for obj in self._objectsync.get_objects():
-            if isinstance(obj, Node):
-                if obj.get_type_name() in node_types:
-                    raise Exception(f'Cannot unload extension {name}, there are still objects of this type in the workspace')
+        extension = self._extensions[name]
+        node_types = extension.node_types
+        skip_types = set() # skip singleton nodes with auto_instantiate=True
+        for node_type in extension.singletonNodeTypes.values():
+            if node_type._auto_instantiate:
+                skip_types.add(extension.add_extension_name_to_node_type(node_type.__name__))
+
+        for obj in self._workspace.get_workspace_object().main_editor.top_down_search(type=Node):
+            if obj.get_type_name() not in node_types: continue
+            if obj.is_preview.get(): continue
+            if obj.get_type_name() in skip_types: continue
+            raise Exception(f'Cannot unload extension {name}, there are still objects of this type in the workspace')
 
     def _unload_extension(self, name: str) -> None:
         node_types = self._extensions[name].node_types
@@ -270,11 +278,14 @@ class ExtensionManager:
             if not node_type.category == 'hidden' and not node_type._is_singleton:
                 self._objectsync.create_object(node_type,parent_id=self._workspace.get_workspace_object().sidebar.get_id(),is_preview=True)
  
-    def _destroy_preview_nodes(self, name: str) -> None:
+    def _destroy_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types
-        for obj in self._workspace.get_workspace_object().sidebar.get_children_of_type(Node):
+        for obj in self._workspace.get_workspace_object().sidebar.get_children_of_type(Node)\
+        + self._workspace.get_workspace_object().main_editor.top_down_search(type=Node):
             if obj.get_type_name() in node_types:
                 self._objectsync.destroy_object(obj.get_id())
+
+
 
     def get_extension(self, name: str) -> Extension:
         return self._extensions[name]
