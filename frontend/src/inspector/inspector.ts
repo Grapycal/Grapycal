@@ -51,7 +51,7 @@ export class Inspector extends Componentable{
         this.hierarchy.htmlItem.setParent(this.htmlItem);
     }
 
-    update(exposedAttributes: Map<string,ExposedAttributeInfo[]>, acceptAmount: number=1){
+    update(exposedAttributes: Map<string,ExposedAttributeInfo[]>, acceptAmount: number=-1){
 
         this.hierarchy.clear();
         // add groups to hierarchy
@@ -60,7 +60,7 @@ export class Inspector extends Componentable{
             let accept = true;
         
             // all node should have the attribute
-            if(infos.length !== acceptAmount){
+            if(acceptAmount != -1 && infos.length !== acceptAmount){
                 accept = false;
             }
         

@@ -153,7 +153,7 @@ class ExtensionManager:
         extension = self._extensions[extension_name]
         for node_type_name, node_type in extension.singletonNodeTypes.items():
             if node_type._auto_instantiate and not hasattr(node_type,'instance'):
-                self._workspace.get_workspace_object().main_editor.create_node(node_type, translation='0,0')
+                self._workspace.get_workspace_object().main_editor.create_node(node_type, translation='9999,9999')
 
     def _update_available_extensions_topic(self) -> None:
         self._workspace.add_task_to_event_loop(self._update_available_extensions_topic_async())

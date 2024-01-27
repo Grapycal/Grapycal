@@ -35,7 +35,17 @@ def singletonNode(auto_instantiate=True):
     Raises an error if the node is instantiated more than once.
 
     Args:
-        - auto_instantiate: If set to True, the node will be instantiated automatically when the extension is loaded. Otherwise, the user or extension can instantiate the node at any time.
+        - auto_instantiate: If set to True, the node will be instantiated (not visible) automatically when the extension is loaded. Otherwise, the user or extension can instantiate the node at any time.
+    
+    Example:
+    ```
+        @singletonNode()
+        class TestSingNode(Node):
+            category = "test"
+
+    The instance can be accessed by `TestSingNode.instance`.
+    ```
+
     """
     def wrapper(cls:type[Node]):
         class WrapperClass(cls):
@@ -391,7 +401,7 @@ class Node(SObject,metaclass=NodeMeta):
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
     def add_attribute(
         self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
-        editor_type:str|None=None, display_name:str|None=None, order_strict:bool|None=None, **editor_args
+        editor_type:str|None=None, display_name:str|None=None ,target:Literal['self','global']='self', order_strict:bool|None=None, **editor_args
         ) -> T1: 
         '''
         If order_strict is None, it will be set to the ame as is_stateful.
@@ -403,7 +413,7 @@ class Node(SObject,metaclass=NodeMeta):
         
         attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful,order_strict=order_strict)
         if editor_type is not None:
-            self.expose_attribute(attribute,editor_type,display_name,**editor_args)
+            self.expose_attribute(attribute,editor_type,display_name,target=target,**editor_args)
         return attribute
     
     def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,target:Literal['self','global']='self',**editor_args):
