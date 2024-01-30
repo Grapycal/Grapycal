@@ -69,13 +69,17 @@ class Edge(SObject):
         return super().destroy()
 
     def get_data(self)->Any:
-        
         if not self._data_ready:
             raise Exception('Data not available')
         self._activated = False
         if not self.reaquirable:
             self._data_ready = False
             self.data_ready_topic.set(random.randint(0,10000))
+        return self._data
+    
+    def peek_data(self)->Any:
+        if not self._data_ready:
+            raise Exception('Data not available')
         return self._data
     
     def push_data(self, data, label:str|None=None):
@@ -96,7 +100,7 @@ class Edge(SObject):
 
         head = self.head.get()
         if head:
-            head.edge_activated(self)
+            head.activated_by_edge(self)
 
         self._activated = False
 

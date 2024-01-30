@@ -71,8 +71,8 @@ class InputPort(Port, typing.Generic[T]):
         self.on_activate = Action()
         self.use_default = len(self.edges) == 0 and not isinstance(self.default_control, NullControl)
         self.default_control.set_activation_callback(
-            lambda *args,**kwargs: # so they can link the callback to Actions without caring about redundant args
-            self.edge_activated(self.default_control))
+            lambda *args,**kwargs: # so they can link the callback to Actions without worrying about redundant args
+            self.activated_by_control(self.default_control))
 
     def add_edge(self, edge: 'Edge'):
         super().add_edge(edge)
@@ -99,9 +99,23 @@ class InputPort(Port, typing.Generic[T]):
             return None
         return self.edges[0].get_data()
 
-    def edge_activated(self, edge:'Edge|ValuedControl'):
-        self.on_activate.invoke(self, edge)
-        self.node.edge_activated(edge, self)
+    def activated_by_edge(self, edge:'Edge'):
+        try:
+            self.default_control.set_with_value_from_edge(edge.peek_data())
+        except Exception as e:
+            # The control doesn't accept the value from the edge. We respect that and abandon the data.
+            self.node.print_exception(e)
+            edge.get_data() # to clear the data from the edge
+            return
+        self.activated(edge)
+
+    def activated_by_control(self, control:'ValuedControl'):
+        self.activated(control)
+
+    def activated(self, source: 'Edge|ValuedControl'):
+        self.on_activate.invoke(self, source)
+        self.node.edge_activated(source, self)
+        
     
 
 class OutputPort(Port):

@@ -39,3 +39,8 @@ class OptionControl(ValuedControl[str]):
             self.label.set(label)
             return True
         return False
+    
+    def set_with_value_from_edge(self, value):
+        assert value in self.options.get(), f'Value {value} is not a valid option'
+        if value != self.value.get():
+            self.set(value)

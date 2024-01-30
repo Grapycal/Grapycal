@@ -38,7 +38,7 @@ class Editor(SObject):
                 elif obj.type == 'Edge':
                     edges.append(obj)
                 else:
-                    raise Exception(f'Unknown object type {obj.type}')
+                    logger.warning(f'Unknown node type {obj.type}.')
             self.restore(nodes,edges)
 
         # called by client

@@ -3,6 +3,7 @@ from typing import Any
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort
+from objectsync import StringTopic
 from torch import nn
 from grapycal import EventTopic
 
@@ -34,6 +35,8 @@ class ModuleMover:
         if real_target != self._actual_device:
             module.to(real_target)
             self._actual_device = real_target
+            return True
+        return False
 
 class ModuleNode(Node):
     category = 'torch/neural network'
@@ -43,15 +46,18 @@ class ModuleNode(Node):
         self.label.set('Module')
         self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button',is_stateful=False)
         self.icon_path.set('nn')
+        self.mode = self.add_attribute('mode',StringTopic,'train')
 
     def init_node(self):
         self.module: nn.Module|None = None
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
         self.module_mover = ModuleMover()
+        self.mode.on_set.add_manual(self.on_mode_changed)
 
-    def create_module_and_update_name(self,device='cpu'):
+    def create_module_and_update_name(self,device='default'):
         self.module = self.create_module()
         self.to(device)
+        self.on_mode_changed(self.mode.get())
         self.label.set(self.generate_label())
         num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
         if num_params > 1000000:
@@ -60,10 +66,13 @@ class ModuleNode(Node):
             param_str = f'{num_params/1000:.1f}K'
         else:
             param_str = f'{num_params}'
-        self.print('created module',self.module,'on device',self.module_mover.get_target_device(True),'\nparameters:',param_str)
+        self.print('created module',self.module,'on ',self.module_mover.get_target_device(True),'\nparameters:',param_str)
 
     def to(self,device):
         self.module_mover.set_target_device(device)
+
+    def set_mode(self,mode):
+        self.mode.set(mode)
         
     @abstractmethod
     def create_module(self)->nn.Module:
@@ -92,7 +101,8 @@ class ModuleNode(Node):
     def task(self):
         if self.module is None:
             self.create_module_and_update_name()
-        self.module_mover.move_if_needed(self.module) #type: ignore
+        if self.module_mover.move_if_needed(self.module): #type: ignore
+            self.print('moved to',self.module_mover.get_target_device(True))
         self.forward()
 
     def get_module(self)->nn.Module:
@@ -101,7 +111,17 @@ class ModuleNode(Node):
     
     def get_device(self)->str:
         return self.module_mover.get_target_device()
-        
+    
+    def on_mode_changed(self,mode):
+        if self.module is None:
+            return
+        if mode == 'train':
+            self.module.train()
+            self.module.requires_grad_(True)
+        elif mode == 'eval':
+            self.module.eval()
+            self.module.requires_grad_(False)
+
 class SimpleModuleNode(ModuleNode):
     inputs = []
     max_in_degree = []
@@ -126,7 +146,8 @@ class SimpleModuleNode(ModuleNode):
     def task(self):
         if self.module is None:
             self.create_module_and_update_name()
-        self.module_mover.move_if_needed(self.module) #type: ignore
+        if self.module_mover.move_if_needed(self.module): #type: ignore
+            self.print('moved to',self.module_mover.get_target_device(True))
 
         inputs = {}
         for port in self.in_ports:

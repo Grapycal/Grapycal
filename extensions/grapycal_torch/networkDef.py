@@ -7,70 +7,7 @@ from grapycal.utils.misc import Action
 from objectsync.sobject import SObjectSerialized
 import torch.nn as nn
 
-from .moduleNode import ModuleNode
-
-T = TypeVar('T')
-class ListDict(Generic[T]):
-    def __init__(self):
-        self.d:Dict[str,List[T]] = {}
-
-    def append(self, key:str, value:T):
-        if key not in self.d:
-            self.d[key] = []
-        self.d[key].append(value)
-
-    def remove(self, key:str, value:T):
-        self.d[key].remove(value)
-        if len(self.d[key]) == 0:
-            self.d.pop(key)
-
-    def has(self, key:str):
-        return key in self.d
-    
-    def get(self, key:str):
-        if key not in self.d:
-            return []
-        return self.d[key]
-
-class NetworkDefManager:
-    calls: ListDict['NetworkCallNode'] = ListDict()
-    ins: Dict[str,'NetworkInNode'] = {}
-    outs: Dict[str,'NetworkOutNode'] = {}
-    on_network_names_changed = Action()
-
-    @staticmethod
-    def get_module_nodes(name)->list[ModuleNode]:
-        '''
-        Get all PyTorch modules in a network definition.
-        '''
-        
-        def _get_modules_after(node:Node,res:set[ModuleNode])->None:
-            if node in res:
-                return 
-            if isinstance(node,ModuleNode):
-                res.add(node)
-            output_edges = [edge for port in node.out_ports for edge in port.edges]
-            if isinstance(node,ModuleNode):
-                if node.module is not None:
-                    res.add(node)
-            for edge in output_edges:
-                _get_modules_after(edge.head.get().node,res)
-
-        res = set()
-        _get_modules_after(NetworkDefManager.ins[name],res)
-        return list(res)
-                
-    @staticmethod
-    def has_network(name):
-        return name in NetworkDefManager.ins and name in NetworkDefManager.outs
-    
-    @staticmethod
-    def get_network_names():
-        res = []
-        for name in NetworkDefManager.ins:
-            if name in NetworkDefManager.outs:
-                res.append(name)
-        return res
+from .manager import Manager as M
 
 class NetworkCallNode(Node):
     '''
@@ -90,7 +27,7 @@ class NetworkCallNode(Node):
     def init_node(self):
         if self.is_preview:
             self.label.set('Call Network')
-        NetworkDefManager.calls.append(self.network_name.get(),self)
+        M.net.calls.append(self.network_name.get(),self)
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
         self.update_ports()
@@ -102,8 +39,8 @@ class NetworkCallNode(Node):
 
     def on_network_name_changed(self, old, new):
         self.label.set(f'{new}')
-        NetworkDefManager.calls.remove(old,self)
-        NetworkDefManager.calls.append(new,self)
+        M.net.calls.remove(old,self)
+        M.net.calls.append(new,self)
 
     def on_network_name_changed_auto(self,new):
         self.update_ports()
@@ -113,9 +50,9 @@ class NetworkCallNode(Node):
         self.update_output_ports()
 
     def update_input_ports(self):
-        if self.network_name.get() not in NetworkDefManager.ins:
+        if self.network_name.get() not in M.net.ins:
             return
-        keys = NetworkDefManager.ins[self.network_name.get()].outs.get()
+        keys = M.net.ins[self.network_name.get()].outs.get()
         for key in keys:
             if not self.has_in_port(key):
                 self.add_in_port(key,1,display_name = key)
@@ -125,9 +62,9 @@ class NetworkCallNode(Node):
                 self.remove_in_port(key)
 
     def update_output_ports(self):
-        if self.network_name.get() not in NetworkDefManager.outs:
+        if self.network_name.get() not in M.net.outs:
             return
-        keys = NetworkDefManager.outs[self.network_name.get()].ins.get()
+        keys = M.net.outs[self.network_name.get()].ins.get()
         for key in keys:
             if not self.has_out_port(key):
                 self.add_out_port(key,display_name = key)
@@ -150,21 +87,21 @@ class NetworkCallNode(Node):
         for port in self.in_ports:
             inputs[port.name.get()] = port.get_one_data()
 
-        NetworkDefManager.ins[self.network_name.get()].start_function(inputs)
+        M.net.ins[self.network_name.get()].start_function(inputs)
 
     def end_function(self):
         if self.is_destroyed():
             return
-        if self.network_name.get() not in NetworkDefManager.outs:
+        if self.network_name.get() not in M.net.outs:
             return # assume its intended to be a void function
-        NetworkDefManager.outs[self.network_name.get()].end_function(self)
+        M.net.outs[self.network_name.get()].end_function(self)
 
     def push_result(self, result:dict):
         for key, value in result.items():
             self.get_out_port(key).push_data(value)
 
     def destroy(self) -> SObjectSerialized:
-        NetworkDefManager.calls.remove(self.network_name.get(),self)
+        M.net.calls.remove(self.network_name.get(),self)
         return super().destroy()
 
 class NetworkInNode(Node):
@@ -192,18 +129,18 @@ class NetworkInNode(Node):
         if self.is_new:
             self.outs.insert('x')
 
-        self.network_name.add_validator(lambda x,_: x not in NetworkDefManager.ins)
+        self.network_name.add_validator(lambda x,_: x not in M.net.ins)
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
         self.update_label()
         
         if self.network_name.get() != '':
-            assert self.network_name.get() not in NetworkDefManager.ins
-            NetworkDefManager.ins[self.network_name.get()] = self
-            for call in NetworkDefManager.calls.get(self.network_name.get()):
+            assert self.network_name.get() not in M.net.ins
+            M.net.ins[self.network_name.get()] = self
+            for call in M.net.calls.get(self.network_name.get()):
                 call.update_ports()
 
-        NetworkDefManager.on_network_names_changed.invoke()
+        M.net.on_network_names_changed.invoke()
 
         
         if self.is_preview:
@@ -212,15 +149,15 @@ class NetworkInNode(Node):
 
     def on_network_name_changed(self, old, new):
         if new != '':
-            NetworkDefManager.ins[new] = self
+            M.net.ins[new] = self
         if old != '':
-            NetworkDefManager.ins.pop(old)
-        NetworkDefManager.on_network_names_changed.invoke()
+            M.net.ins.pop(old)
+        M.net.on_network_names_changed.invoke()
         self.update_label()
 
     def on_network_name_changed_auto(self,new):
         if new != '':
-            for call in NetworkDefManager.calls.get(self.network_name.get()):
+            for call in M.net.calls.get(self.network_name.get()):
                 call.update_ports()
 
     def update_label(self):
@@ -240,17 +177,35 @@ class NetworkInNode(Node):
     def on_output_set(self, new):
         if self.network_name.get() == '':
             return
-        for call in NetworkDefManager.calls.get(self.network_name.get()):
+        for call in M.net.calls.get(self.network_name.get()):
             call.update_input_ports()
 
     def start_function(self,args:dict):
+        '''
+        First, check mns to have the right configuration (device, mode, etc)
+        The check happens every time the network has a forward pass so very dynamic :D
+        Hopefully it's not the bottleneck if the network is GPU bound.
+        If the network uses CPU, it is already slow so let it be. Or buy a GPU XD
+        '''
+        name = self.network_name.get()
+        device = M.conf.get_device(name)
+        if device is not None:
+            for mn in M.net.get_module_nodes(name):
+                mn.to(device)
+
+        mode = M.conf.get_mode(name)
+        if mode is not None:
+            for mn in M.net.get_module_nodes(name):
+                mn.set_mode(mode)
+
+        # Then, push the data to the input ports
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
 
     def destroy(self) -> SObjectSerialized:
         if self.network_name.get() != '':
-            NetworkDefManager.ins.pop(self.network_name.get())
-        NetworkDefManager.on_network_names_changed.invoke()
+            M.net.ins.pop(self.network_name.get())
+        M.net.on_network_names_changed.invoke()
         return super().destroy()
 
 class NetworkOutNode(Node):
@@ -271,15 +226,15 @@ class NetworkOutNode(Node):
         if self.is_new:
             self.ins.insert('x')
 
-        self.network_name.add_validator(lambda x,_: x not in NetworkDefManager.outs)
+        self.network_name.add_validator(lambda x,_: x not in M.net.outs)
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
         self.update_label()
         
         if self.network_name.get() != '':
-            assert self.network_name.get() not in NetworkDefManager.outs
-            NetworkDefManager.outs[self.network_name.get()] = self
-        NetworkDefManager.on_network_names_changed.invoke()
+            assert self.network_name.get() not in M.net.outs
+            M.net.outs[self.network_name.get()] = self
+        M.net.on_network_names_changed.invoke()
 
         
         if self.is_preview:
@@ -293,16 +248,16 @@ class NetworkOutNode(Node):
 
     def on_network_name_changed(self, old, new):
         if new != '':
-            NetworkDefManager.outs[new] = self
+            M.net.outs[new] = self
         if old != '':
-            NetworkDefManager.outs.pop(old)
-        NetworkDefManager.on_network_names_changed.invoke()
+            M.net.outs.pop(old)
+        M.net.on_network_names_changed.invoke()
         self.update_label()
 
 
     def on_network_name_changed_auto(self,new):
         if new != '':
-            for call in NetworkDefManager.calls.get(self.network_name.get()):
+            for call in M.net.calls.get(self.network_name.get()):
                 call.update_ports()
 
     def update_label(self):
@@ -317,19 +272,19 @@ class NetworkOutNode(Node):
     def on_input_set(self, new):
         if self.network_name.get() == '':
             return
-        for call in NetworkDefManager.calls.get(self.network_name.get()):
+        for call in M.net.calls.get(self.network_name.get()):
             call.update_output_ports()
 
     def end_function(self,caller:NetworkCallNode):
         for port in self.in_ports:
             if not port.is_all_edge_ready():
-                self._on_exception(RuntimeError(f'Output data missing for {port.name.get()}'))
+                self.print_exception(RuntimeError(f'Output data missing for {port.name.get()}'))
                 return
         result = {key: self.get_in_port(key).get_one_data() for key in self.ins.get()}
         caller.push_result(result)
 
     def destroy(self) -> SObjectSerialized:
         if self.network_name.get() != '':
-            NetworkDefManager.outs.pop(self.network_name.get())
-        NetworkDefManager.on_network_names_changed.invoke()
+            M.net.outs.pop(self.network_name.get())
+        M.net.on_network_names_changed.invoke()
         return super().destroy()

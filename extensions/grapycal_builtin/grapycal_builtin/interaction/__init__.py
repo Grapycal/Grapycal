@@ -34,7 +34,7 @@ class WebcamNode(Node):
         else:
             for node in existing:
                 if node != self:
-                    node._on_exception(Exception('Only one webcam node is allowed per workspace'))
+                    node.print_exception(Exception('Only one webcam node is allowed per workspace'))
 
     def build_node(self):
         self.label.set('Webcam')

@@ -18,6 +18,7 @@ from .loss import *
 from .generative import *
 from .networkDef import *
 from .settings import *
+from .configureNode import *
 
 
 import torch
@@ -49,33 +50,6 @@ class MnistDatasetNode(SourceNode):
 
 
 import aiofiles
-
-
-
-@singletonNode()
-class TestSingNode(Node):
-    category = "test"
-
-    def build_node(self):
-        super().build_node()
-        self.label.set("Test Singleton")
-        self.out = self.add_out_port("output")
-        self.expose_attribute(self.label,"text","haha/haha",target='global')
-
-    def task(self):
-        self.out.push_data(1)
-
-@singletonNode(auto_instantiate=False)
-class TestSing2Node(Node):
-    category = "test"
-
-    def build_node(self):
-        super().build_node()
-        self.label.set("Test Singleton")
-        self.out = self.add_out_port("output")
-
-    def task(self):
-        self.out.push_data(1)
 
 
 class ImageDataset(torch.utils.data.Dataset): # type: ignore
