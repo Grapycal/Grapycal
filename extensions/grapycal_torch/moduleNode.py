@@ -20,6 +20,9 @@ class ModuleMover:
     def set_target_device(self,device):
         self._target_device = device
 
+    def set_actual_device(self,device):
+        self._actual_device = device
+
     def get_target_device(self,translate=False):
         if translate:
             return self.translate(self._target_device)
@@ -54,19 +57,19 @@ class ModuleNode(Node):
         self.module_mover = ModuleMover()
         self.mode.on_set.add_manual(self.on_mode_changed)
 
-    def create_module_and_update_name(self,device='default'):
+    def create_module_and_update_name(self):
         self.module = self.create_module()
-        self.to(device)
+        self.module_mover.set_actual_device('cpu')
         self.on_mode_changed(self.mode.get())
         self.label.set(self.generate_label())
         num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
-        if num_params > 1000000:
+        if num_params >= 1000000:
             param_str = f'{num_params/1000000:.1f}M'
-        elif num_params > 1000:
+        elif num_params >= 1000:
             param_str = f'{num_params/1000:.1f}K'
         else:
             param_str = f'{num_params}'
-        self.print('created module',self.module,'on ',self.module_mover.get_target_device(True),'\nparameters:',param_str)
+        self.print('created module',self.module,'\nparameters:',param_str)
 
     def to(self,device):
         self.module_mover.set_target_device(device)

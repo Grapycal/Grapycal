@@ -30,6 +30,8 @@ class ConfigureNode(Node):
                 
         self.on_network_name_changed('',self.network_name.get())
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
+
+        self.label.set('Configure '+self.network_name.get())
         self.network_name.on_set += lambda value: self.label.set('Configure '+value)
 
         self.to_unlink = link_control_with_network_names(self.network_port.default_control)
@@ -51,7 +53,7 @@ class ConfigureNode(Node):
 
     def reset(self):
         for mn in self.get_module_nodes():
-            mn.create_module_and_update_name(self.device.get())
+            mn.create_module_and_update_name()
 
     def set_mn_device(self):
         device = self.device.get()
