@@ -5,7 +5,7 @@ from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.functionNode import FunctionNode
-from grapycal.sobjects.node import Node
+from grapycal.sobjects.node import Node, deprecated
 from grapycal.sobjects.port import InputPort
 from grapycal import FloatTopic, StringTopic
 from objectsync import ObjSetTopic, SObject
@@ -18,7 +18,7 @@ from .moduleNode import ModuleNode
 from .manager import Manager as M
 
 
-
+@deprecated('Use TrainNode instead.', '0.11.0', '0.12.0')
 class TrainerNode(Node):
     category='torch/training'
 

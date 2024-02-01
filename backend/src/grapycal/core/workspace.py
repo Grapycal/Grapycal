@@ -144,7 +144,8 @@ class Workspace:
             logger.info(f'No workspace file found at {self.path}. Creating a new workspace to start with.')
             self.initialize_workspace()
 
-        self.save_workspace(self.path)
+        if not file_exists(self.path):
+            self.save_workspace(self.path)
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
         self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)

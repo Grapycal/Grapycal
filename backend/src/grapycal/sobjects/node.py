@@ -83,6 +83,27 @@ def singletonNode(auto_instantiate=True):
 
     return wrapper
 
+def deprecated(message:str,from_version:str,to_version:str):
+    '''
+    Decorator for deprecated nodes.
+    '''
+    def wrapper(cls:type[Node]):
+        
+        old_init_node = cls.init_node
+        def new_init_node(self:Node,**kwargs):
+            old_init_node(self,**kwargs)
+            self.print_exception(RuntimeWarning(f'{cls.__name__} is deprecated from version {from_version}, and will be removed in version {to_version}. {message}'))
+            logger.warning(f'{cls.__name__} is deprecated from version {from_version} to {to_version}. {message}')
+        cls.init_node = new_init_node
+
+        if cls._deprecated == False:
+            cls._deprecated = True
+            cls.category = 'hidden'
+            cls.__doc__ = f'{cls.__doc__}\n\nDeprecated from version {from_version} to {to_version}. {message}'
+
+        return cls
+    return wrapper
+
 class NodeMeta(ABCMeta):
     class_def_counter = count()
     def_order = {}
@@ -96,6 +117,7 @@ class Node(SObject,metaclass=NodeMeta):
     frontend_type = 'Node'
     category = 'hidden'
     instance: Self  # The singleton instance. Used by singleton nodes.
+    _deprecated = False # TODO: If set to True, the node will be marked as deprecated in the inspector.
 
     @classmethod
     def get_def_order(cls):

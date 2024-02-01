@@ -4,7 +4,7 @@ from grapycal.extension_api.utils import Bus
 from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.utils.config import load_config
 from grapycal.sobjects.controls import TextControl, ButtonControl, ImageControl, OptionControl, LinePlotControl, ThreeControl
-from grapycal.sobjects.node import Node, singletonNode
+from grapycal.sobjects.node import Node, singletonNode, deprecated
 from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort, Port
