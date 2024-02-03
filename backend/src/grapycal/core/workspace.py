@@ -43,13 +43,6 @@ from grapycal.sobjects.node import Node
 
 from grapycal.core import running_module
 
-def deserialize_sort_key(x: SObjectSerialized) -> int:
-    if x.type == 'Edge':
-        return 1000000000 # Edges should be created after nodes
-    if x.id.startswith('0_'):
-        return int(x.id[2:])
-    return 0
-
 class Workspace:
     def __init__(self, port, host, path) -> None:
         self.path = path
@@ -68,7 +61,7 @@ class Workspace:
 
         self.background_runner = BackgroundRunner()
 
-        self._objectsync = objectsync.Server(port,host,deserialize_sort_key=deserialize_sort_key)
+        self._objectsync = objectsync.Server(port,host)
         
         self._extention_manager = ExtensionManager(self._objectsync,self)
 
@@ -79,6 +72,8 @@ class Workspace:
         self.webcam: WebcamStream|None = None
 
         self.data_yaml = HttpResource('https://github.com/Grapycal/grapycal_data/raw/main/data.yaml',dict)
+
+        self.grapycal_id_count = 0
 
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
@@ -154,7 +149,7 @@ class Workspace:
         self._objectsync.on_client_connect += self.client_connected
         self._objectsync.on_client_disconnect += self.client_disconnected
         import grapycal.utils.logging
-        grapycal.utils.logging.frontend_message_topic = self._objectsync.create_topic(f'status_message',objectsync.EventTopic)
+        grapycal.utils.logging.frontend_message_topic = self._objectsync.create_topic(f'status_message',objectsync.EventTopic, is_stateful=False)
 
         self._objectsync.create_topic('meta',objectsync.DictTopic,{'workspace name': self.path})
     
@@ -189,6 +184,7 @@ class Workspace:
             'extensions': self._extention_manager.get_extention_names(), 
             'client_id_count': self._objectsync.get_client_id_count(),
             'id_count': self._objectsync.get_id_count(),
+            'grapycal_id_count': self.grapycal_id_count,
             'workspace_serialized': workspace_serialized.to_dict(),
         }
         file_size = write_workspace(path, metadata, data, compress=True)
@@ -201,14 +197,19 @@ class Workspace:
         version,metadata,data = read_workspace(path)
         
         self._check_grapycal_version(version)
-        if 'extensions' in metadata: # DEPRECATED: v0.9.0 and before has no extensions in metadata
+        if 'extensions' in metadata: # DEPRECATED from v0.10.0: v0.9.0 and before has no extensions in metadata
             self._check_extensions_version(metadata['extensions'])
 
         self._objectsync.set_client_id_count(data['client_id_count'])
         self._objectsync.set_id_count(data['id_count'])
+        if 'grapycal_id_count' in data: # DEPRECATED from v0.11.0: v0.10.0 and before has no grapycal_id_count
+            self.grapycal_id_count = data['grapycal_id_count']
+        else:
+            # we cannot know the exact value of grapycal_id_count, so we set it to 032.5, which will never collide. Very smart 🤯
+            self.grapycal_id_count = 032.5
         workspace_serialized = from_dict(SObjectSerialized,data['workspace_serialized'])
 
-        # DEPRECATED: The old format of attributes is [name, type, value, value].
+        # DEPRECATED from v0.10.0: The old format of attributes is [name, type, value, value].
         def resolve_deprecated_attr_format(obj: SObjectSerialized):
             for attr in obj.attributes:
                 if attr.__len__() == 4:
@@ -287,6 +288,10 @@ class Workspace:
             self._objectsync.remove_topic(f'status_message_{client_id}')
         except:
             pass # topic may have not been created successfully.
+
+    def next_id(self):
+        self.grapycal_id_count += 1
+        return self.grapycal_id_count
 
 if __name__ == '__main__':
     import argparse

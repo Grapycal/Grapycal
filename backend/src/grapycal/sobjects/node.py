@@ -122,6 +122,12 @@ class Node(SObject,metaclass=NodeMeta):
     @classmethod
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
+    
+    def initialize(self,serialized=None,*args,**kwargs):
+        # TODO: consider add this switch to objectsync level
+        if 'serialized' in kwargs:
+            del kwargs['serialized'] # a hack making build() always called
+        return super().initialize(*args,**kwargs)
 
     def build(self,is_preview=False,translation='0,0',restore_info=None,**build_node_args):
         self.workspace:Workspace = self._server.globals.workspace
@@ -152,28 +158,8 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         if restore_info is not None:
             self.old_version, self.old_node_info = restore_info
-
-        self.build_node(**build_node_args)
-
-    def build_node(self):
-        '''
-        Create attributes, ports, and controls here.
         
-        Note: 
-            This method will not be called when the object is being restored. The child objects will be restored automatically instead of
-        running this method again.
-        '''
-
-    def init(self):
-
         self.workspace:Workspace = self._server.globals.workspace
-        
-        from grapycal.sobjects.editor import Editor # import here to avoid circular import
-        parent = self.get_parent()
-        if isinstance(parent, Editor):
-            self.editor = parent
-        else:
-            self.editor = None
 
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self.spawn , is_stateful=False)
@@ -188,6 +174,58 @@ class Node(SObject,metaclass=NodeMeta):
         for k,v in self.globally_exposed_attributes.get().items():
             WorkspaceObject.ins.settings.entries.add(k,v)
 
+        # DEPRECATED from v0.11.0: The build_node is for backward compatibility. It will be removed in the future.
+        self.build_node(**build_node_args)
+
+        self.create()
+
+
+    def create(self):
+        '''
+        Called when the node is created. Use it for initialization instead of __init__.
+        Create attributes, ports, and controls here.
+        Initialize fields here.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method. Remove the `init_node()` method.
+
+        This change makes node's code more readable and easier to maintain.
+        '''
+
+    def build_node(self):
+        '''
+        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
+
+        Create attributes, ports, and controls here.
+        
+        Note: 
+            This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+        running this method again.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method.
+        
+        This change makes node's code more readable and easier to maintain.
+        '''
+
+    def init(self):        
+        from grapycal.sobjects.editor import Editor # import here to avoid circular import
+        parent = self.get_parent()
+        if isinstance(parent, Editor):
+            self.editor = parent
+        else:
+            self.editor = None
+
         self.init_node()
 
         if hasattr(self,'old_version'):
@@ -196,15 +234,33 @@ class Node(SObject,metaclass=NodeMeta):
 
     def init_node(self):
         '''
+        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
+        
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method.
+        
+        This change makes node's code more readable and easier to maintain.
         '''
         pass
 
+    def restore(self,version,old):
+        '''
+        If the node is recreated from a serialized information, this method will be called after create().
+        The old node's information (including attribute values) is in the `old` argument.
+        '''
+        self.initialize(restore_info=(version,old))
+
     def restore_from_version(self,version:str,old:NodeInfo):
         '''
-        Called when the node is created as a result of a old node being upgraded.
-        The old node's information (including attribute values) is in the `old` argument.
+        DEPRECATED from v0.11.0: Use restore() instead.
         '''
         self.restore_attributes('translation')
 
@@ -265,13 +321,20 @@ class Node(SObject,metaclass=NodeMeta):
         Note: Overrided methods should call return super().destroy() at the end.
         '''
         self._output_stream.close()
-        # remove all edges connected to the ports
+        # # remove all edges connected to the ports
+        # for port in self.in_ports:
+        #     for edge in port.edges[:]:
+        #         edge.remove()
+        # for port in self.out_ports:
+        #     for edge in port.edges[:]:
+        #         edge.remove()
+        # raise error if the node is destroyed but still has edges
         for port in self.in_ports:
-            for edge in port.edges[:]:
-                edge.remove()
+            if len(port.edges) > 0:
+                raise RuntimeError(f'Trying to destroy node {self.get_id()} but it still has input edges')
         for port in self.out_ports:
-            for edge in port.edges[:]:
-                edge.remove()
+            if len(port.edges) > 0:
+                raise RuntimeError(f'Trying to destroy node {self.get_id()} but it still has output edges')
         for name in self.globally_exposed_attributes.get():
             self.workspace.get_workspace_object().settings.entries.pop(name)
         return super().destroy()
@@ -285,7 +348,8 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         if control_name is None:
             control_name = name
-        port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
+        id = f'{self.get_id()}_ip_{name}' # specify id so it can be restored with the same id
+        port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,id=id,**control_kwargs)
         self.in_ports.insert(port)
         return port
 
@@ -293,7 +357,8 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Add an output port to the node.
         '''
-        port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name)
+        id = f'{self.get_id()}_op_{name}' # specify id so it can be restored with the same id
+        port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name,id=id)
         self.out_ports.insert(port)
         return port
     
@@ -392,7 +457,8 @@ class Node(SObject,metaclass=NodeMeta):
                 i+=1
                 name = f'Control{i}'
 
-        control = self.add_child(control_type,**kwargs)
+        id = f'{self.get_id()}_c_{name}' # specify id so it can be restored with the same id
+        control = self.add_child(control_type,id=id,**kwargs)
         self.controls.add(name,control)
         return control
     

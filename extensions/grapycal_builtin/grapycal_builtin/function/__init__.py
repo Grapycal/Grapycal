@@ -29,7 +29,7 @@ class LambdaNode(Node):
         self.outputs = self.add_attribute('outputs',ListTopic,editor_type='list')
         self.css_classes.append('fit-content')
 
-    def init_node(self):
+
         self.input_args.on_insert.add_auto(self.on_input_arg_added)
         self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 

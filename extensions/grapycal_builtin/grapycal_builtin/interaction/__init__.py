@@ -47,7 +47,7 @@ class WebcamNode(Node):
         super().restore_from_version(version, old)
         self.restore_attributes('format')
 
-    def init_node(self):
+
         if self.is_preview.get():
             return
         self.webcam = self.workspace.webcam

@@ -55,25 +55,11 @@ export class Workspace extends CompSObject{
             if(GlobalEventDispatcher.instance.isKeyDown('Shift')) return;
             this.selection.clearSelection()
         })
-        GlobalEventDispatcher.instance.onKeyDown.add('Delete',this.deletePressed.bind(this))
-        GlobalEventDispatcher.instance.onKeyDown.add('Backspace',this.deletePressed.bind(this))
 
         new Footer()
         Footer.setStatus('Workspace loaded. Have fun!')
     }
-    private deletePressed(){
-        // check if nothing in document is focused
-        if(document.activeElement != document.body) return;
-        
-        let selectedIds = []
-        for(let s of this.selection.selected){
-            let o = s.object
-            if(o instanceof Node || o instanceof Edge){
-                selectedIds.push(o.id);
-            }
-        }
-        this.objectsync.emit('delete',{ids:selectedIds})
-    }
+
     public openWorkspace(path:string){
         this.objectsync.emit('open_workspace',{path:path})
     }

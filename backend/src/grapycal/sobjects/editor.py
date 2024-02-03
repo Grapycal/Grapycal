@@ -20,11 +20,11 @@ class Editor(SObject):
         from grapycal.core.workspace import Workspace # avoid circular import
         self.workspace: Workspace = self._server.globals.workspace
         self.node_types = self.workspace._extention_manager._node_types_topic
-        self.id_counter = count(0)
 
         # when frontend calls paste service, we need to emit the paste_wrapper event and create the nodes and edges in the callback in manual mode
         # this makes topicsync save the args of paste_wrapper in the history instead of the result of paste
-        self.on('paste_wrapper',self._paste_wrapper_emitted,self._paste_wrapper_inversed,auto=False)
+        self.on('restore_event',self._restore_callback,self._delete_callback,auto=False)
+        self.on('delete_event',self._delete_callback,self._restore_callback,auto=False)
 
         
         if old is not None:
@@ -46,7 +46,7 @@ class Editor(SObject):
         self.register_service('create_node',self.create_node_service)
         self.register_service('copy',self._copy)
         self.register_service('paste',self._paste,pass_sender=True)
-        self.register_service('cut',self._cut)
+        self.register_service('delete',self._delete)
 
         
 
@@ -56,11 +56,17 @@ class Editor(SObject):
         nodes : dict[str,SObjectSerialized] = {}
         edges : dict[str,SObjectSerialized] = {}
         for obj in node_list:
-            new_id = f'r_{next(self.id_counter)}' # r means restored
+            if obj.id in self._server._objects:
+                new_id = f'r_{self.workspace.next_id()}' # r means restored
+            else:
+                new_id = obj.id # if possible, keep the old id
             nodes[new_id] = obj
 
         for obj in edge_list:
-            new_id = f'r_{next(self.id_counter)}'
+            if obj.id in self._server._objects:
+                new_id = f'r_{self.workspace.next_id()}'
+            else:
+                new_id = obj.id
             edges[new_id] = obj
 
         # Edges and nodes may reference each other with attributes, so we need to update the references
@@ -108,7 +114,7 @@ class Editor(SObject):
                 node.old_node_info = NodeInfo(obj)
                 node.restore_from_version('',node.old_node_info)
             except Exception:
-                logger.warning(f'Failed to restore node {obj.id}',exc_info=True)
+                logger.warning(f'Failed to restore {obj.type} {obj.id}',exc_info=True)
                 if self._server.has_object(new_node_id):
                     self._server.destroy_object(new_node_id)
             else:
@@ -173,7 +179,13 @@ class Editor(SObject):
             if tail.is_full() or head.is_full():
                 logger.warning(f'edge {obj.id} was not restored. head: {new_head_id} tail: {new_tail_id}')
                 continue # skip edges that reference ports that are full
-            new_edge_id = self.create_edge_from_port_id(new_tail_id,new_head_id)
+
+            # keep the old id if possible
+            if obj.id in self._server._objects:
+                new_edge_id = f'r_{self.workspace.next_id()}'
+            else:
+                new_edge_id = obj.id
+            new_edge_id = self.create_edge_from_port_id(new_tail_id,new_head_id,new_edge_id)
             new_edge_ids.append(new_edge_id)
 
         # return the ids of the restored nodes and edges
@@ -196,18 +208,18 @@ class Editor(SObject):
             return
         self.add_child_s(node_type, is_preview=False, **kwargs)
     
-    def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:
+    def create_edge(self, tail: OutputPort, head: InputPort, new_edge_id: str|None = None) -> Edge:
         # Check the tail and head have space for the edge
         if tail.is_full() or head.is_full():
             raise Exception('A port is full')
-        return self.add_child(Edge, tail=tail, head=head)
+        return self.add_child(Edge, tail=tail, head=head, id=new_edge_id)
     
-    def create_edge_from_port_id(self, tail_id: str, head_id: str):
+    def create_edge_from_port_id(self, tail_id: str, head_id: str, new_edge_id: str|None = None) -> str:
         tail = self._server.get_object(tail_id)
         head = self._server.get_object(head_id)
         assert isinstance(tail, OutputPort)
         assert isinstance(head, InputPort)
-        new_edge = self.create_edge(tail, head)
+        new_edge = self.create_edge(tail, head, new_edge_id)
         return new_edge.get_id()
 
     def _copy(self, ids: list[str]):
@@ -241,91 +253,144 @@ class Editor(SObject):
             return
         
         # translate the center of the nodes to the mouse position
-        def get_x(node:SObjectSerialized):
-            return float(node.get_attribute('translation').split(',')[0])
-        def get_y(node:SObjectSerialized):
-            return float(node.get_attribute('translation').split(',')[1])
-        
-        x1 = min(get_x(node) for node in nodes)
-        y1 = min(get_y(node) for node in nodes)
-        x2 = max(get_x(node) for node in nodes)
-        y2 = max(get_y(node) for node in nodes)
+        if len(nodes)>0:
+            def get_x(node:SObjectSerialized):
+                return float(node.get_attribute('translation').split(',')[0])
+            def get_y(node:SObjectSerialized):
+                return float(node.get_attribute('translation').split(',')[1])
+            
+            x1 = min(get_x(node) for node in nodes)
+            y1 = min(get_y(node) for node in nodes)
+            x2 = max(get_x(node) for node in nodes)
+            y2 = max(get_y(node) for node in nodes)
 
-        dx = mouse_pos['x'] - (x1 + x2)/2
-        dy = mouse_pos['y'] - (y1 + y2)/2
+            dx = mouse_pos['x'] - (x1 + x2)/2
+            dy = mouse_pos['y'] - (y1 + y2)/2
 
-        snap = 17
-        for node in nodes:
-            new_x = float(get_x(node)) + dx
-            new_y = float(get_y(node)) + dy
-            new_x = round(new_x/snap)*snap
-            new_y = round(new_y/snap)*snap
-            new_translation = f'{new_x},{new_y}'
-            for attr in node.attributes:
-                name, type, value, is_stateful, order_strict = attr
-                if name == 'translation':
-                    attr[2] = new_translation
+            snap = 17
+            for node in nodes:
+                new_x = float(get_x(node)) + dx
+                new_y = float(get_y(node)) + dy
+                new_x = round(new_x/snap)*snap
+                new_y = round(new_y/snap)*snap
+                new_translation = f'{new_x},{new_y}'
+                for attr in node.attributes:
+                    name, type, value, is_stateful, order_strict = attr
+                    if name == 'translation':
+                        attr[2] = new_translation
         
         with self._server.record():
-            self.emit('paste_wrapper',nodes=nodes,edges=edges)
+            self.emit('restore_event',nodes=nodes,edges=edges)
             for node_id in self._new_node_ids:
                 node = self._server.get_object(node_id)
                 node.add_tag(f'pasted_by_{sender}')
 
-    def _paste_wrapper_emitted(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],is_new:bool=True,**kwargs):
-
-        if is_new:
-            # restore the nodes and edges
-            new_node_ids,new_edge_ids = self.restore(nodes,edges)
-
-            node_serialized = [self._server.get_object(id).serialize() for id in new_node_ids]
-            edge_serialized = [self._server.get_object(id).serialize() for id in new_edge_ids]
-
-            self._new_node_ids = new_node_ids # the _paste() method will use this
-            return {'nodes':node_serialized,'edges':edge_serialized,'is_new':False}
-        else:
-            for node in nodes:
-                self.add_child_s(node.type,id=node.id,serialized=node)
-            for edge in edges:
-                self.add_child_s(edge.type,id=edge.id,serialized=edge)
-
-        self._new_node_ids =  [node.id for node in nodes] # the _paste() method will use this
-
-    def _paste_wrapper_inversed(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],**kwargs):
-        # the opposite of _paste_wrapper_emitted
-        # we need to delete the nodes and edges that were pasted
-        # this is called when undoing the paste_wrapper
-
-        # delete the nodes and edges
-        for edge in edges:
-            self._server.destroy_object(edge.id)
-        for node in nodes:
-            self._server.destroy_object(node.id)
-
-    def _cut(self, ids: list[str]):
+    def _delete(self, ids: list[str]):
         '''
-        Returns a list of serialized objects
+        Ctrl+X, delete, and backspace lead to this method
         '''
+        # separate the nodes and edges
+        node_ids = []
+        edge_ids = []
 
-        result = {'nodes':[],'edges':[]} # type: dict[str,list[Dict[str,Any]]]
-
-        edges_to_delete = [] # type: list[Edge]
-        nodes_to_delete = [] # type: list[Node]
+        # check for duplicate deletion
+        # this happens when the previous delete message are still flying to the client
         for id in ids:
+            if not self._server.has_object(id):
+                logger.warning(f'Object {id} does not exist. It may have been deleted already')
+                return
             obj = self._server.get_object(id)
             if isinstance(obj,Node):
-                nodes_to_delete.append(obj)
-                result['nodes'].append(obj.serialize().to_dict())
+                if obj.is_destroyed():
+                    logger.warning(f'Node {obj} is already destroyed')
+                    return
+                node_ids.append(id)
             elif isinstance(obj,Edge):
-                edges_to_delete.append(obj)
-                result['edges'].append(obj.serialize().to_dict())
+                if obj.is_destroyed():
+                    logger.warning(f'Edge {obj} is already destroyed')
+                    return
+                edge_ids.append(id)
             else:
                 raise Exception(f'Unknown object type {obj}')
             
-        for edge in edges_to_delete:
-            edge.destroy()
+        # use delete_event so the delete can be undone and redone correctly (with restore_callback)
+        self.emit('delete_event',node_ids=node_ids,edge_ids=edge_ids)
+    
 
-        for node in nodes_to_delete:
-            node.destroy()
+    def _restore_callback(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],**kwargs):
 
-        return result
+        # restore the nodes and edges
+        new_node_ids,new_edge_ids = self.restore(nodes,edges)
+
+        self._new_node_ids = new_node_ids # the _paste() method will use this
+
+        # return the ids of the restored nodes and edges so when the event is undone,
+        # _delete_callback() can delete the nodes and edges
+        return {'node_ids':new_node_ids,'edge_ids':new_edge_ids}
+
+    def _delete_callback(self, node_ids, edge_ids,**kwargs):
+        # the opposite of _restore_callback
+        # we need to delete the nodes and edges that were pasted
+        # this is called when undoing the paste_wrapper
+
+        # determine the nodes and edges to delete
+        nodes:set[Node] = set()
+        edges:set[Edge] = set()
+        for id in node_ids:
+            obj = self._server.get_object(id)
+            if isinstance(obj,Node):
+                nodes.add(obj)
+            else:
+                raise Exception(f'{obj} is not a node')
+        for id in edge_ids:
+            obj = self._server.get_object(id)
+            if isinstance(obj,Edge):
+                edges.add(obj)
+            else:
+                raise Exception(f'{obj} is not an edge')
+
+        # also include the edges connected to the nodes
+        for node in nodes:
+            for port in node.in_ports.get() + node.out_ports.get():
+                for edge in port.edges:
+                    edges.add(edge)
+
+        # check for duplicate deletion
+        # this happens when the previous delete message are still flying to the client      
+        for edge in edges:
+            if edge.is_destroyed():
+                raise Exception(f'Edge {edge} is already destroyed')
+        for node in nodes:
+            if node.is_destroyed():
+                raise Exception(f'Node {node} is already destroyed')
+            
+        # before deleting the nodes and edges, we need to serialize them so we can restore them when the event is undone
+        node_serialized = [node.serialize() for node in nodes]
+        edge_serialized = [edge.serialize() for edge in edges]
+
+        # actually the nodes and edges
+        for edge in edges:
+            edge.remove()
+        for node in nodes:
+            node.remove()
+
+        # log the deletion
+        # TODO: deleting nodes may need thread locking
+        if len(nodes) == 0 and len(edges) == 0:
+            return
+        msg = 'Deleted '
+        if len(nodes) > 0:
+            msg += f'{len(nodes)} node'
+            if len(nodes) > 1:
+                msg += 's' # english is hard :(
+        if len(edges) > 0:
+            if len(nodes) > 0:
+                msg += ' and '
+            msg += f'{len(edges)} edge'
+            if len(edges) > 1:
+                msg += 's'
+        logger.info(msg)
+
+        # return the serialized nodes and edges so when the event is undone,
+        # _restore_callback() can restore the nodes and edges
+        return {'nodes':node_serialized,'edges':edge_serialized}
