@@ -23,7 +23,7 @@ class InPortalNode(Node):
         self.out_port = self.add_out_port('then',display_name='')
         self.css_classes.append('fit-content')
     
-    def init_node(self):
+
         PortalManager.ins.append(self.name.get(),self)
         self.name.on_set2.add_manual(self.on_name_set)
 
@@ -65,7 +65,7 @@ class OutPortalNode(Node):
         self.out_port = self.add_out_port('do',display_name='')
         self.css_classes.append('fit-content')
     
-    def init_node(self):
+
         PortalManager.outs.append(self.name.get(),self)
         self.name.on_set2.add_manual(self.on_name_set)
 

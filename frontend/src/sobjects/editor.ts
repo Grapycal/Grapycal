@@ -88,8 +88,9 @@ export class Editor extends CompSObject{
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl c'),this.copy)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl v'),this.paste)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Delete'),this.delete)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Backspace'),this.delete)
     }
-    
 
     private lastUpdatePortNearMouse = 0
     private mouseMove(e: MouseEvent){
@@ -248,7 +249,19 @@ export class Editor extends CompSObject{
             // save to clipboard
             let text = JSON.stringify(data)
             navigator.clipboard.writeText(text)
-            this.objectsync.emit('delete',{ids:selectedIds})
+            this.makeRequest('delete',{ids:selectedIds})
         })
+    }
+
+    private delete(){
+        if(document.activeElement != document.body) return;
+        let selectedIds = []
+        for(let s of Workspace.instance.selection.selected){
+            let o = s.object
+            if(o instanceof Node || o instanceof Edge){
+                selectedIds.push(o.id);
+            }
+        }
+        this.makeRequest('delete',{ids:selectedIds})
     }
 }

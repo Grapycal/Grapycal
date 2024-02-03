@@ -30,9 +30,6 @@ class VariableNode(SourceNode):
         self.label.set('Variable')
         self.shape.set('simple')
         self.css_classes.append('fit-content')
-
-    def init_node(self):
-        super().init_node()
         self.value = None
         self.has_value = False
 
@@ -73,8 +70,6 @@ class SplitNode(Node):
         self.shape.set('normal')
         self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
         self.key_mode = self.add_attribute('key mode', StringTopic, 'string', editor_type='options', options=['string','eval']) 
-
-    def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
 

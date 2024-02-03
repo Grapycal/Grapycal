@@ -109,7 +109,7 @@ def read_workspace(path,metadata_only=False) -> Tuple[str,Any,Any]:
 
     with open_func() as f:
 
-        # DEPRECATED: v0.9.0 and before has no version number and metadata
+        # DEPRECATED from v0.10.0: v0.9.0 and before has no version number and metadata
         try:
             version = f.readline().strip()
             metadata = json.loads(f.readline())

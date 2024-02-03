@@ -1,4 +1,5 @@
 from abc import ABCMeta
+from difflib import restore
 import io
 from itertools import count
 import logging
@@ -26,6 +27,13 @@ from objectsync.sobject import SObjectSerialized, WrappedTopic
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
 
+warned_no_control_name = set()
+def warn_no_control_name(control_type, node_type):
+    global warned_no_control_name
+    if control_type not in warned_no_control_name:
+        warned_no_control_name.add(control_type)
+        logger.warning(f'Consider giving a name to the control {control_type.__name__} in {node_type}\
+to avoid error when Grapycal auto restores the control.')
 
 def singletonNode(auto_instantiate=True):
     """
@@ -122,58 +130,43 @@ class Node(SObject,metaclass=NodeMeta):
     @classmethod
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
+    
+    def initialize(self,serialized=None,*args,**kwargs):
+        # TODO: consider add this switch to objectsync level
+        if 'serialized' in kwargs:
+            del kwargs['serialized'] # a hack making build() always called
+        return super().initialize(*args,**kwargs)
 
-    def build(self,is_preview=False,translation='0,0',restore_info=None,**build_node_args):
+    def build(self,is_preview=False,translation='0,0',is_new=True,**build_node_args):
         self.workspace:Workspace = self._server.globals.workspace
+        self.is_new = is_new
+        self._attributes_restore_from = {}
+        self._controls_restore_from = {}
+        self._already_restored_attributes = set()
+        self._already_restored_controls = set()
         
-        self.shape = self.add_attribute('shape', StringTopic, 'normal') # normal, simple, round
-        self.output = self.add_attribute('output', ListTopic, [], is_stateful=False)
-        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False)
-        self.label_offset = self.add_attribute('label_offset', FloatTopic, 0)
+        self.shape = self.add_attribute('shape', StringTopic, 'normal',restore_from=False) # normal, simple, round
+        self.output = self.add_attribute('output', ListTopic, [], is_stateful=False,restore_from=False)
+        self.label = self.add_attribute('label', StringTopic, '', is_stateful=False,restore_from=False)
+        self.label_offset = self.add_attribute('label_offset', FloatTopic, 0,restore_from=False)
         self.translation = self.add_attribute('translation', StringTopic,translation)
-        self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0)
-        self.category_ = self.add_attribute('category', StringTopic, self.category)
-        self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [])
-        self.globally_exposed_attributes = self.add_attribute('globally_exposed_attributes', DictTopic)
-        self.running = self.add_attribute('running',IntTopic,1,is_stateful=False) # 0 for running, other for not running
-        self.css_classes = self.add_attribute('css_classes',SetTopic,[])
-        self.icon_path = self.add_attribute('icon_path',StringTopic,f'{self.__class__.__name__[:-4].lower()}',is_stateful=False)
+        self.is_preview = self.add_attribute('is_preview', IntTopic, 1 if is_preview else 0,restore_from=False)
+        self.category_ = self.add_attribute('category', StringTopic, self.category,restore_from=False)
+        self.exposed_attributes = self.add_attribute('exposed_attributes', ListTopic, [],restore_from=False)
+        self.globally_exposed_attributes = self.add_attribute('globally_exposed_attributes', DictTopic,restore_from=False)
+        self.running = self.add_attribute('running',IntTopic,1,is_stateful=False,restore_from=False) # 0 for running, other for not running
+        self.css_classes = self.add_attribute('css_classes',SetTopic,[],restore_from=False)
+        self.icon_path = self.add_attribute('icon_path',StringTopic,f'{self.__class__.__name__[:-4].lower()}',is_stateful=False,restore_from=False)
 
         # for inspector
-        self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name())
+        self.type_topic = self.add_attribute('type', StringTopic, self.get_type_name(),restore_from=False)
 
-        self.in_ports = self.add_attribute('in_ports', ObjListTopic[InputPort])
-        self.out_ports = self.add_attribute('out_ports', ObjListTopic[OutputPort])
+        self.in_ports = self.add_attribute('in_ports', ObjListTopic[InputPort],restore_from=False)
+        self.out_ports = self.add_attribute('out_ports', ObjListTopic[OutputPort],restore_from=False)
 
-        self.controls = self.add_attribute('controls', ObjDictTopic[Control])
-
-        '''
-        Let user override build_node method instead of build method so that they don't have to call super().build(args) in their build method.
-        '''
-        if restore_info is not None:
-            self.old_version, self.old_node_info = restore_info
-
-        self.build_node(**build_node_args)
-
-    def build_node(self):
-        '''
-        Create attributes, ports, and controls here.
+        self.controls = self.add_attribute('controls', ObjDictTopic[Control],restore_from=False)
         
-        Note: 
-            This method will not be called when the object is being restored. The child objects will be restored automatically instead of
-        running this method again.
-        '''
-
-    def init(self):
-
         self.workspace:Workspace = self._server.globals.workspace
-        
-        from grapycal.sobjects.editor import Editor # import here to avoid circular import
-        parent = self.get_parent()
-        if isinstance(parent, Editor):
-            self.editor = parent
-        else:
-            self.editor = None
 
         self.on('double_click', self.double_click, is_stateful=False)
         self.on('spawn', self.spawn , is_stateful=False)
@@ -188,29 +181,130 @@ class Node(SObject,metaclass=NodeMeta):
         for k,v in self.globally_exposed_attributes.get().items():
             WorkspaceObject.ins.settings.entries.add(k,v)
 
+        # DEPRECATED from v0.11.0: The build_node is for backward compatibility. It will be removed in the future.
+        self.build_node(**build_node_args)
+
+        self.create()
+
+
+    def create(self):
+        '''
+        Called when the node is created. Use it for initialization instead of __init__.
+        Create attributes, ports, and controls here.
+        Initialize fields here.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method. Remove the `init_node()` method.
+
+        This change makes node's code more readable and easier to maintain.
+        '''
+
+    def build_node(self):
+        '''
+        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
+
+        Create attributes, ports, and controls here.
+        
+        Note: 
+            This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+        running this method again.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method.
+        
+        This change makes node's code more readable and easier to maintain.
+        '''
+
+    def init(self):        
+        from grapycal.sobjects.editor import Editor # import here to avoid circular import
+        parent = self.get_parent()
+        if isinstance(parent, Editor):
+            self.editor = parent
+        else:
+            self.editor = None
+
         self.init_node()
 
-        if hasattr(self,'old_version'):
-            self.restore_from_version(self.old_version,self.old_node_info)
-            
 
     def init_node(self):
         '''
+        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
+        
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
+
+        ---
+        Note:
+        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
+            
+        1. Rename the `build_node()` method to `create()`.
+        
+        2. Copy the code from the `init_node()` method to the `create()` method.
+        
+        This change makes node's code more readable and easier to maintain.
         '''
         pass
 
-    def restore_from_version(self,version:str,old:NodeInfo):
+    def _restore(self,version:str,old:NodeInfo):
+        self.old_node_info = old
+
+        # avoid modifying the dict will iterating
+        attributes_restore_from = self._attributes_restore_from.copy()
+        # automatically restore attributes and controls from the old node
+        for name,restore_from in attributes_restore_from.items():
+            if restore_from is None:
+                self.restore_attributes(name)
+            elif restore_from is False:
+                pass
+            else:
+                self.restore_attributes((restore_from,name))
+
+
+        controls_restore_from = self._controls_restore_from.copy()
+        for name,restore_from in controls_restore_from.items():
+            if restore_from is None:
+                self.restore_controls(name)
+            elif restore_from is False:
+                pass
+            else:
+                self.restore_controls((restore_from,name))
+
+        # manually restore the node
+        self.restore(version,old)
+        self.restore_from_version(version,old)
+
+    def restore(self,version,old):
         '''
-        Called when the node is created as a result of a old node being upgraded.
+        If the node is recreated from a serialized information, this method will be called after create().
         The old node's information (including attribute values) is in the `old` argument.
         '''
-        self.restore_attributes('translation')
+
+    def restore_from_version(self,version:str,old:NodeInfo):
+        '''
+        DEPRECATED from v0.11.0: Use restore() instead.
+        '''
 
     def restore_attributes(self,*attribute_names:str|tuple[str,str]):
         '''
-        Recover attributes from the old node.
+        You can call it in the `restore` method to restore attributes from the old node.
+        For each entry in `attribute_names`, if it's a string, the attribute with the same name will be restored from the old node. If it's a tuple, the first element is the name of the attribute in the old node, and the second element is the name of the attribute in the new node.
+
+        Example:
+        ```
+        def restore(self,version,old):
+            self.restore_attributes('position,'rotation')
+            self.restore_attributes(('old_name1','new_name1'),('old_name2','new_name2'))
+        ```
         '''
         assert self.old_node_info is not None
         for name in attribute_names:
@@ -218,6 +312,12 @@ class Node(SObject,metaclass=NodeMeta):
                 old_name,new_name = name
             else:
                 old_name,new_name = name,name
+
+            # DEPRECATED from v0.11.0: this check is for backward compatibility. 
+            if new_name in self._already_restored_attributes:
+                continue
+            self._already_restored_attributes.add(new_name)
+
             if not self.has_attribute(new_name):
                 logger.warning(f'Attribute {new_name} does not exist in {self}')
                 continue
@@ -241,13 +341,22 @@ class Node(SObject,metaclass=NodeMeta):
                 old_name,new_name = name
             else:
                 old_name,new_name = name,name
+
+            # DEPRECATED from v0.11.0: this check is for backward compatibility.
+            if new_name in self._already_restored_controls:
+                continue
+            self._already_restored_controls.add(new_name)
+            
             if not (new_name in self.controls):
                 logger.warning(f'Control {new_name} does not exist in {self}')
                 continue
             if not (old_name in self.old_node_info.controls):
                 logger.warning(f'Control {old_name} does not exist in the old node of {self}')
                 continue
-            self.controls[new_name].restore_from(self.old_node_info.controls[old_name])
+            try:
+                self.controls[new_name].restore_from(self.old_node_info.controls[old_name])
+            except Exception as e:
+                self.efagrwthnh=''
 
     def spawn(self, client_id):
         '''
@@ -265,19 +374,26 @@ class Node(SObject,metaclass=NodeMeta):
         Note: Overrided methods should call return super().destroy() at the end.
         '''
         self._output_stream.close()
-        # remove all edges connected to the ports
+        # # remove all edges connected to the ports
+        # for port in self.in_ports:
+        #     for edge in port.edges[:]:
+        #         edge.remove()
+        # for port in self.out_ports:
+        #     for edge in port.edges[:]:
+        #         edge.remove()
+        # raise error if the node is destroyed but still has edges
         for port in self.in_ports:
-            for edge in port.edges[:]:
-                edge.remove()
+            if len(port.edges) > 0:
+                raise RuntimeError(f'Trying to destroy node {self.get_id()} but it still has input edges')
         for port in self.out_ports:
-            for edge in port.edges[:]:
-                edge.remove()
+            if len(port.edges) > 0:
+                raise RuntimeError(f'Trying to destroy node {self.get_id()} but it still has output edges')
         for name in self.globally_exposed_attributes.get():
             self.workspace.get_workspace_object().settings.entries.pop(name)
         return super().destroy()
 
     T = TypeVar('T', bound=ValuedControl)
-    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[T]=NullControl,control_name=None,**control_kwargs) -> InputPort[T]:
+    def add_in_port(self,name:str,max_edges=64,display_name=None,control_type: type[T]=NullControl,control_name=None,restore_from:str|None|Literal[False]=None,**control_kwargs) -> InputPort[T]:
         '''
         Add an input port to the node.
         If control_type is not None, a control will be added to the port. It must be a subclass of ValuedControl.
@@ -285,15 +401,19 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         if control_name is None:
             control_name = name
-        port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,**control_kwargs)
+        id = f'{self.get_id()}_ip_{name}' # specify id so it can be restored with the same id
+        port = self.add_child(InputPort,control_type=control_type,name=name,max_edges=max_edges,display_name=display_name,control_name=control_name,id=id,**control_kwargs)
         self.in_ports.insert(port)
+        if control_type is not NullControl:
+            self._controls_restore_from[control_name] = restore_from
         return port
 
     def add_out_port(self,name:str,max_edges=64,display_name=None):
         '''
         Add an output port to the node.
         '''
-        port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name)
+        id = f'{self.get_id()}_op_{name}' # specify id so it can be restored with the same id
+        port = self.add_child(OutputPort,name=name,max_edges=max_edges,display_name=display_name,id=id)
         self.out_ports.insert(port)
         return port
     
@@ -378,7 +498,7 @@ class Node(SObject,metaclass=NodeMeta):
         return False
     
     T = TypeVar('T', bound=Control)
-    def add_control(self,control_type:type[T],name:str|None=None,**kwargs) -> T:
+    def add_control(self,control_type:type[T],name:str|None=None,restore_from:str|None|Literal[False]=None,**kwargs) -> T:
         '''
         Add a control to the node.
         '''
@@ -386,14 +506,18 @@ class Node(SObject,metaclass=NodeMeta):
             if name in self.controls:
                 raise ValueError(f'Control with name {name} already exists')
         else:
+            if control_type not in [ButtonControl] and restore_from is not False:
+                warn_no_control_name(control_type,self.get_type_name())
             name = 'Control0'
             i=0
             while name in self.controls:
                 i+=1
                 name = f'Control{i}'
 
-        control = self.add_child(control_type,**kwargs)
+        id = f'{self.get_id()}_c_{name}' # specify id so it can be restored with the same id
+        control = self.add_child(control_type,id=id,**kwargs)
         self.controls.add(name,control)
+        self._controls_restore_from[name] = restore_from
         return control
     
     def add_text_control(self,text:str='', label:str='',readonly=False, editable:bool=True,name:str|None=None, placeholder:str='') -> TextControl:
@@ -441,11 +565,21 @@ class Node(SObject,metaclass=NodeMeta):
     T1 = TypeVar("T1", bound=Topic|WrappedTopic)
     def add_attribute(
         self, topic_name:str, topic_type: type[T1], init_value=None, is_stateful=True,
-        editor_type:str|None=None, display_name:str|None=None ,target:Literal['self','global']='self', order_strict:bool|None=None, **editor_args
+        editor_type:str|None=None, display_name:str|None=None ,target:Literal['self','global']='self', order_strict:bool|None=None,
+            restore_from:str|None|Literal[False]=None,
+          **editor_args
         ) -> T1: 
         '''
-        If order_strict is None, it will be set to the ame as is_stateful.
-        The usage of editor_type and editor_args is the same as the expose_attribute method.
+        Add an attribute to the node.
+
+        Args:
+            - topic_name: The name of the attribute. Has to be unique in the node.
+            - topic_type: The type of the attribute. Can be one of the following: StringTopic, IntTopic, FloatTopic, ListTopic, DictTopic, SetTopic, ObjTopic, ObjListTopic, ObjDictTopic, ObjSetTopic.
+            - init_value: The initial value of the attribute. If set to None, the attribute will be initialized with the default value of the topic type.
+            - is_stateful: If set to True, the changes to the attribute will be stored in the history and can be undone or redone. If set to False, the changes will not be stored.
+            - editor_type, display_name, target, and editor_args: If editor_type is not None, the attribute will be exposed to the inspector. Please see Node.expose_attribute() for details.
+            - order_strict: If set to True, the changes to the attribute won't be merged or reordered with other changes for communication efficiency. If set to None, it will be set to the same as is_stateful.
+            - restore_from: The name of the attribute to restore from. If set to None, the attribute will restore from the attribute with the same name in the old node. If set to False, the attribute will not be restored. To restore an attribute based on different source version, see Node.restore().
         '''
 
         if order_strict is None:
@@ -454,6 +588,7 @@ class Node(SObject,metaclass=NodeMeta):
         attribute = super().add_attribute(topic_name, topic_type, init_value, is_stateful,order_strict=order_strict)
         if editor_type is not None:
             self.expose_attribute(attribute,editor_type,display_name,target=target,**editor_args)
+        self._attributes_restore_from[topic_name] = restore_from
         return attribute
     
     def expose_attribute(self,attribute:Topic|WrappedTopic,editor_type,display_name=None,target:Literal['self','global']='self',**editor_args):

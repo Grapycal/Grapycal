@@ -52,8 +52,8 @@ class ImagePasteNode(SourceNode):
         self.out_port = self.add_out_port("img")
         self.icon_path.set("image")
 
-    def init_node(self):
-        super().init_node()
+
+        
         self.format.add_validator(self.format_validator)
 
     def restore_from_version(self, version: str, old: NodeInfo):
@@ -398,8 +398,8 @@ class LinePlotNode(Node):
             options=["from 0", "continue"],
         )
 
-    def init_node(self):
-        super().init_node()
+
+        
         self.x_coord = [0]
         self.line_plot.lines.on_insert.add_auto(self.add_line)
         self.line_plot.lines.on_pop.add_auto(self.remove_line)

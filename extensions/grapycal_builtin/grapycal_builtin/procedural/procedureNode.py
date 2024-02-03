@@ -18,7 +18,7 @@ class ProcedureNode(Node):
         self.css_classes.append('fit-content')
         self.icon_path.set('steps')
 
-    def init_node(self):
+
         self.steps.add_validator(ListTopic.unique_validator)
         self.steps.on_insert.add_auto(self.add_step)
         self.steps.on_pop.add_auto(self.remove_step)
