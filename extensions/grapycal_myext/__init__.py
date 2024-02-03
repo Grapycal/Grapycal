@@ -1,4 +1,5 @@
 from grapycal import Node, Edge, InputPort
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.textControl import TextControl
@@ -42,19 +43,31 @@ class TestDefaultNode(Node):
     def double_click(self):
         self.out_port.push_data(self.in_port.get_one_data())
 
-class OptionControlExampleNode(Node):
+class BeforeNode(Node):
     category = 'function'
 
     def build_node(self):
         self.label.set('Select a fruit')
-        self.option_control = self.add_option_control(
-            options=['apple','banana','orange'],
-            value='apple',
-            label='Fruit'
-        )
+        self.option_control = self.add_option_control(options=['apple','banana'],value='apple',name='opt')
         self.out_port = self.add_out_port('out')
 
     def init_node(self):
+        self.option_control.on_set += self.option_changed
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        self.restore_attributes('opt')
+
+    def option_changed(self,value:str):
+        self.out_port.push_data(value)
+
+class AfterNode(Node):
+    category = 'function'
+
+    def create(self):
+        self.label.set('Select a fruit')
+        self.option_control = self.add_option_control(options=['apple','banana'],value='apple',name='opt')
+        self.out_port = self.add_out_port('out')
         self.option_control.on_set += self.option_changed
 
     def option_changed(self,value:str):

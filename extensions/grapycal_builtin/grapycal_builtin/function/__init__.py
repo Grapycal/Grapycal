@@ -20,7 +20,7 @@ class LambdaNode(Node):
         
     '''
     category = 'function'
-    def build_node(self):
+    def create(self):
         self.label.set('Lambda')
         self.shape.set('normal')
         self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl],restore_from=False)

@@ -109,7 +109,7 @@ class Editor(SObject):
             # The node may fail to create when the restore() method is called when pasting, and it should not be treated as an error.
             # For example, copy and paste a node that should be unique.
             try:
-                node = self.add_child_s(obj.type,id=new_node_id)
+                node = self.add_child_s(obj.type,id=new_node_id,is_new=False)
                 assert isinstance(node,Node), f'Expected node, got {node}'
                 node.old_node_info = NodeInfo(obj)
                 node._restore('',node.old_node_info)

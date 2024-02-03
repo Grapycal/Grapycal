@@ -27,6 +27,13 @@ from objectsync.sobject import SObjectSerialized, WrappedTopic
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
 
+warned_no_control_name = set()
+def warn_no_control_name(control_type, node_type):
+    global warned_no_control_name
+    if control_type not in warned_no_control_name:
+        warned_no_control_name.add(control_type)
+        logger.warning(f'Consider giving a name to the control {control_type.__name__} in {node_type}\
+to avoid error when Grapycal auto restores the control.')
 
 def singletonNode(auto_instantiate=True):
     """
@@ -130,8 +137,9 @@ class Node(SObject,metaclass=NodeMeta):
             del kwargs['serialized'] # a hack making build() always called
         return super().initialize(*args,**kwargs)
 
-    def build(self,is_preview=False,translation='0,0',**build_node_args):
+    def build(self,is_preview=False,translation='0,0',is_new=True,**build_node_args):
         self.workspace:Workspace = self._server.globals.workspace
+        self.is_new = is_new
         self._attributes_restore_from = {}
         self._controls_restore_from = {}
         self._already_restored_attributes = set()
@@ -498,6 +506,8 @@ class Node(SObject,metaclass=NodeMeta):
             if name in self.controls:
                 raise ValueError(f'Control with name {name} already exists')
         else:
+            if control_type not in [ButtonControl] and restore_from is not False:
+                warn_no_control_name(control_type,self.get_type_name())
             name = 'Control0'
             i=0
             while name in self.controls:
