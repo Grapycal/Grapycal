@@ -112,7 +112,7 @@ class Editor(SObject):
                 node = self.add_child_s(obj.type,id=new_node_id)
                 assert isinstance(node,Node), f'Expected node, got {node}'
                 node.old_node_info = NodeInfo(obj)
-                node.restore_from_version('',node.old_node_info)
+                node._restore('',node.old_node_info)
             except Exception:
                 logger.warning(f'Failed to restore {obj.type} {obj.id}',exc_info=True)
                 if self._server.has_object(new_node_id):

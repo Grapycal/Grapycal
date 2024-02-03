@@ -225,6 +225,7 @@ class Workspace:
 
         for extension_name in data['extensions']:
             self._extention_manager.create_preview_nodes(extension_name)
+            self._extention_manager._instantiate_singletons(extension_name)
 
         self._objectsync.clear_history_inclusive()
 

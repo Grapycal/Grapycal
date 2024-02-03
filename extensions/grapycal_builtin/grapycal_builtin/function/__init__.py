@@ -23,7 +23,7 @@ class LambdaNode(Node):
     def build_node(self):
         self.label.set('Lambda')
         self.shape.set('normal')
-        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl])
+        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl],restore_from=False)
 
         self.input_args = self.add_attribute('input_args',ListTopic,editor_type='list')
         self.outputs = self.add_attribute('outputs',ListTopic,editor_type='list')
@@ -40,16 +40,9 @@ class LambdaNode(Node):
         self.outputs.on_insert.add_auto(self.on_output_added)
         self.outputs.on_pop.add_auto(self.on_output_removed)
 
-        if self.is_new:
-            self.outputs.insert('')
-            self.text_controls[''].text.set('x')
-
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.input_args.set(old['input_args'])
-        self.outputs.set(old['outputs'])
-        for out_name in old['outputs']:
-            self.text_controls[out_name].text.set(old.controls[out_name]['text'])
+        # if self.is_new:
+        #     self.outputs.insert('')
+        #     self.text_controls[''].text.set('x')
     
     def on_input_arg_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)
