@@ -51,7 +51,7 @@ export class Inspector extends Componentable{
         this.hierarchy.htmlItem.setParent(this.htmlItem);
     }
 
-    update(exposedAttributes: Map<string,ExposedAttributeInfo[]>, acceptAmount: number=1){
+    update(exposedAttributes: Map<string,ExposedAttributeInfo[]>, acceptAmount: number=-1){
 
         this.hierarchy.clear();
         // add groups to hierarchy
@@ -60,7 +60,7 @@ export class Inspector extends Componentable{
             let accept = true;
         
             // all node should have the attribute
-            if(infos.length !== acceptAmount){
+            if(acceptAmount != -1 && infos.length !== acceptAmount){
                 accept = false;
             }
         
@@ -74,14 +74,15 @@ export class Inspector extends Componentable{
             
             if(accept){
                 let editorArgs = infos[0].editor_args;
-                let displayName = infos[0].display_name;
+                let path = infos[0].display_name.split('/');
+                let displayName = path.pop();
                 let editorType = Inspector.nameEditorMap[editorArgs.type]
                 let connectedAttributes :(Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>)[] = [];
                 for(let info of infos){
                     connectedAttributes.push(this.getTopicForEditor(info.name,editorType));
                 }
                 let editor = new editorType(displayName,editorArgs,connectedAttributes);
-                this.hierarchy.addLeaf(editor.htmlItem,'');
+                this.hierarchy.addLeaf(editor.htmlItem,path);
             }
             
         }
@@ -95,9 +96,13 @@ export class Inspector extends Componentable{
         }
     }
 
-    public addEditor<T extends Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>>(editor:Editor<T>,category=''): T{
-        this.hierarchy.addLeaf(editor.htmlItem,category);
+    public addEditor<T extends Topic<any>|ObjectTopic<any>|ObjListTopic<any>|ObjSetTopic<any>|ObjDictTopic<any>>(editor:Editor<T>,category:string|string[]='',id=''): T{
+        this.hierarchy.addLeaf(editor.htmlItem,category,id);
         return editor.topic;
+    }
+
+    public removeEditorById(id:string){
+        this.hierarchy.removeLeafById(id);
     }
 }
 

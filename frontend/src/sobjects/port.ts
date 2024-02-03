@@ -8,14 +8,13 @@ import { Action, Vector2, as } from '../utils'
 import { MouseOverDetector } from '../component/mouseOverDetector'
 import { EventDispatcher } from '../component/eventDispatcher'
 import { Edge } from './edge'
-import { ControlHost } from './controls/controlHost'
+import { IControlHost } from './controls/controlHost'
 
-export class Port extends CompSObject implements ControlHost {
+export class Port extends CompSObject implements IControlHost {
 
     display_name: StringTopic = this.getAttribute('display_name', StringTopic)
     is_input: IntTopic = this.getAttribute('is_input', IntTopic)
     max_edges: IntTopic = this.getAttribute('max_edges', IntTopic)
-    use_default: IntTopic = this.getAttribute('use_default', IntTopic)
     default_control_display: string
     orientation: number=0;
 
@@ -43,10 +42,14 @@ export class Port extends CompSObject implements ControlHost {
     private edges: Edge[] = []
     addEdge(edge: Edge): void {
         this.edges.push(edge)
+        this.htmlItem.baseElement.classList.add('has-edge')
         this.updateAcceptsEdgeClass()
     }
     removeEdge(edge: Edge): void {
         this.edges.splice(this.edges.indexOf(edge), 1)
+        if(this.edges.length === 0){
+            this.htmlItem.baseElement.classList.remove('has-edge')
+        }
         this.updateAcceptsEdgeClass()
     }
 
@@ -81,20 +84,16 @@ export class Port extends CompSObject implements ControlHost {
 
         this.displayLabel = true
         
+        // Initializing classes like this prevents UI from glitching (hopefully)
+        this.htmlItem.baseElement.classList.add('control-takes-label')
+        this.htmlItem.baseElement.classList.add('has-edge')
+
         this.link(this.display_name.onSet,(label: string) => {
             this.htmlItem.getHtmlEl('label').innerText = label
-            if(this.node)
-                this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18) 
+            //if(this.node)
+                //this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18) 
         })
 
-        this.default_control_display = this.htmlItem.getHtmlEl('slot_control').style.display
-        this.link(this.use_default.onSet,(use_default: number) => {
-            if(use_default) {
-                this.htmlItem.getHtmlEl('slot_control').style.display = this.default_control_display
-            } else {
-                this.htmlItem.getHtmlEl('slot_control').style.display = 'none'
-            }
-        })
     }
 
     protected onStart(): void {
@@ -108,6 +107,25 @@ export class Port extends CompSObject implements ControlHost {
             this.isInputChanged(this.is_input.getValue())
         })
         this.link(this.max_edges.onSet,this.updateAcceptsEdgeClass)
+        if(this.is_input.getValue()) {
+            this.link(this.getAttribute('control_takes_label').onSet,(takes_label: number) => {
+                if(takes_label) {
+                    this.htmlItem.baseElement.classList.add('control-takes-label')
+                } else {
+                    this.htmlItem.baseElement.classList.remove('control-takes-label')
+                }
+            })
+            if(this.getAttribute('control_takes_label').getValue()) {
+                this.htmlItem.baseElement.classList.add('control-takes-label')
+            } else {
+                this.htmlItem.baseElement.classList.remove('control-takes-label')
+            }
+        }else{
+            this.htmlItem.baseElement.classList.remove('control-takes-label')
+        }
+        if(this.edges.length === 0){
+            this.htmlItem.baseElement.classList.remove('has-edge')
+        }
     }
 
 
@@ -124,14 +142,14 @@ export class Port extends CompSObject implements ControlHost {
         this.node = as(newValue, Node);
         if(this.node.hasComponent(Transform))
             this.node.moved.add(this.moved.invoke)
-        this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18)
+        //this.node.setMinWidth( this.htmlItem.getHtmlEl('label').offsetWidth + 18)
         this.moved.invoke()
     }
 
 
 
-    public get acceptsEdge(): boolean {
-        if(this.max_edges.getValue() > this.edges.length) return true
+    public acceptsEdge(delta:number=0): boolean {
+        if(this.max_edges.getValue() > this.edges.length+delta) return true
         return false
     }
 
@@ -150,7 +168,7 @@ export class Port extends CompSObject implements ControlHost {
 
     private generateEdge(e:MouseEvent): void {
         if(this.node.isPreview ||
-            !this.acceptsEdge ||
+            !this.acceptsEdge() ||
             e.buttons !== 1) return this.eventDispatcher.forwardEvent()
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
@@ -169,7 +187,7 @@ export class Port extends CompSObject implements ControlHost {
     }
 
     private updateAcceptsEdgeClass(): void {
-        if(this.acceptsEdge){
+        if(this.acceptsEdge()){
             this.htmlItem.getHtmlEl('Knob').classList.add('accepts-edge')
         }
         else{

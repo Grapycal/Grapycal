@@ -15,9 +15,9 @@ import { Selectable } from '../component/selectable'
 import { Workspace } from './workspace'
 import { ErrorPopup } from '../ui_utils/errorPopup'
 import { ExposedAttributeInfo } from '../inspector/inspector'
-import { ControlHost } from './controls/controlHost'
+import { IControlHost } from './controls/controlHost'
  
-export class Node extends CompSObject implements ControlHost {
+export class Node extends CompSObject implements IControlHost {
     errorPopup: ErrorPopup;
     public static getCssClassesFromCategory(category: string): string[]{
         let classes = []
@@ -203,7 +203,6 @@ export class Node extends CompSObject implements ControlHost {
                     })
                 }
         })
-
 
         // Configure components
         

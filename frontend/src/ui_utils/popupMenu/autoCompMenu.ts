@@ -176,11 +176,18 @@ class SubstringSearchIndex{
     }
 }
 
+export type OptionInfo = {key:string,value:string,callback:()=>void,displayName?:string}
 export class AutoCompMenu extends PopupMenu{
     get template():string{
         return `
         <div class="base">
-            <input type="text" id="search" placeholder="Search...">
+            <div class="search-container">
+                <input type="text" id="search" class="search" placeholder="Search...">
+
+                <div class="down-arrow">&#9660;</div>
+            </div>
+            <!-- a down arrow symbol -->
+            
             <template id="option-template">
                 <div class="option">
                 </div>
@@ -190,15 +197,31 @@ export class AutoCompMenu extends PopupMenu{
     }
     get style():string{
         return super.style + `
-        #search{
+        .search-container{
+            position: relative;
             width: 100%;
-            height: 30px;
-            padding: 5px;
             box-sizing: border-box;
             border: none;
-            border-bottom: 1px solid var(--text-low);
             background-color: var(--z1);
             color: var(--text-high);
+        }
+        .search{
+            padding: 0px 5px;
+            width: 100%;
+        }
+        .down-arrow{
+            position: absolute;
+            right: 2px;
+            top: 0px;
+            bottom: 0px;
+            margin: auto;
+            height: 1em;
+            color: var(--text-low);
+            pointer-events: none;
+
+        }
+        .option{
+            padding:0px 5px;
         }
         `
     }
@@ -206,20 +229,24 @@ export class AutoCompMenu extends PopupMenu{
     private substringSearchIndex:SubstringSearchIndex = new SubstringSearchIndex()
     private valueToCallback:Map<string,()=>void> = new Map()
     private valueToDisplayName:Map<string,string> = new Map()
+    private lastSetValue = ''
     get value():string{
         return this.search.value
     }
     set value(val:string){
         this.search.value = val
+        this.lastSetValue = val
     }
     constructor(){
         super()
         this.search = this.htmlItem.getHtmlEl('search') as HTMLInputElement
 
-        this.link2(this.search,'input',this.onInputOrFocus)
-        this.link2(this.search,'focus',this.onInputOrFocus)
+        this.link2(this.search,'input',this.onInput)
+        this.link2(this.search,'focus',this.onFocus)
+        
     }
-    public setOptions(options:{key:string,value:string,callback:()=>void,displayName?:string}[]){
+    
+    public setOptions(options:OptionInfo[]){
         let keys = []
         let values = []
         this.valueToCallback.clear()
@@ -233,8 +260,8 @@ export class AutoCompMenu extends PopupMenu{
         this.substringSearchIndex.setStrings(keys,values)
     }
 
-    private onSearch(){
-        let query = this.search.value.toLowerCase()
+    private onSearch(valueOverride:string = null){
+        let query = valueOverride != null?valueOverride:this.value.toLowerCase()
         let results = this.substringSearchIndex.search(query)
         this.clearOptions()
         for(let result of results){
@@ -245,24 +272,36 @@ export class AutoCompMenu extends PopupMenu{
             this.addOption(this.valueToDisplayName.get(result),callback)
         }
     }
-    private onInputOrFocus(){
+    private onFocus(){
         if(!this.opened)
             this.open()
+    }
+    private onInput(){
         this.onSearch()
     }
     openAt(x:number,y:number){
         super.openAt(x,y)
         this.search.focus()
         this.onSearch()
+        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
     }
     open(){
         super.open()
         this.search.focus()
-        this.onSearch()
+        this.onSearch('') // show all options by setting empty query
+        this.setFocusedOption(this.value)
+        this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
     }
     close(): void {
         super.close()
-        if(this.hideWhenClosed)
             this.search.blur()
+        this.value = this.lastSetValue
+        this.unlink(this.onKeyDown)
+    }
+
+    private onKeyDown(e:KeyboardEvent){
+        if(e.key == 'Escape' && this.opened){
+            this.close()
+        }
     }
 }

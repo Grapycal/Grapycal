@@ -4,6 +4,8 @@ import grapycal
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
+from grapycal.sobjects.controls.nullControl import NullControl
+from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.threeControl import ThreeControl
 from grapycal.sobjects.fileView import LocalFileView, RemoteFileView
 from grapycal.sobjects.settings import Settings
@@ -33,7 +35,7 @@ from grapycal.core import stdout_helper
 
 
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort, OutputPort, ControlDefaultInputPort
+from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.sobjects.sidebar import Sidebar
 
 from grapycal.core.background_runner import BackgroundRunner
@@ -76,7 +78,7 @@ class Workspace:
 
         self.webcam: WebcamStream|None = None
 
-        self.data_yaml = HttpResource('https://github.com/Grapycal/grapycal_data/raw/main/data.yaml')
+        self.data_yaml = HttpResource('https://github.com/Grapycal/grapycal_data/raw/main/data.yaml',dict)
 
     def _communication_thread(self,event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
@@ -116,7 +118,6 @@ class Workspace:
         self._objectsync.register(LocalFileView)
         self._objectsync.register(RemoteFileView)
         self._objectsync.register(InputPort)
-        self._objectsync.register(ControlDefaultInputPort)
         self._objectsync.register(OutputPort)
         self._objectsync.register(Edge)
 
@@ -124,6 +125,8 @@ class Workspace:
         self._objectsync.register(ButtonControl)
         self._objectsync.register(ImageControl)
         self._objectsync.register(ThreeControl)
+        self._objectsync.register(NullControl)
+        self._objectsync.register(OptionControl)
 
         self._objectsync.register(WebcamStream)
         self._objectsync.register(LinePlotControl)
@@ -141,7 +144,8 @@ class Workspace:
             logger.info(f'No workspace file found at {self.path}. Creating a new workspace to start with.')
             self.initialize_workspace()
 
-        self.save_workspace(self.path)
+        if not file_exists(self.path):
+            self.save_workspace(self.path)
             
         self._objectsync.on('ctrl+s',lambda: self.save_workspace(self.path),is_stateful=False)
         self._objectsync.on('open_workspace',self._open_workspace_callback,is_stateful=False)
@@ -214,7 +218,7 @@ class Workspace:
         resolve_deprecated_attr_format(workspace_serialized)
 
         for extension_name in data['extensions']:
-            self._extention_manager.import_extension(extension_name,create_preview_nodes=False)
+            self._extention_manager.import_extension(extension_name,create_nodes=False)
 
         self._objectsync.create_object(WorkspaceObject, parent_id='root', old=workspace_serialized, id=workspace_serialized.id)
 

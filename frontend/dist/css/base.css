@@ -60,9 +60,8 @@ input{
 }
 
 .control textarea{
-    margin-top: -1px;
-    margin-bottom: -1px;
     line-height: 17px;
+    border-radius: 2px;
 }
 
 button{
@@ -108,7 +107,7 @@ footer{
 /* Works on Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(132, 132, 132) orange;
+    scrollbar-color: rgb(73, 73, 73) rgb(16, 16, 16);
   }
   
   /* Works on Chrome, Edge, and Safari */
@@ -297,7 +296,6 @@ footer{
     width: 0px;
     display: flex;
     align-items: center;
-    gap: 2px;
 }
 
 :is(.normal-node) .port {
@@ -406,6 +404,8 @@ footer{
 .normal-node .slot-output-port {
     padding: 0px 10px;
     width: 100%;
+
+    text-align: right;
 }
 
 .normal-node .slot-output-port {
@@ -442,6 +442,21 @@ footer{
     margin: 5px 1.4px;
 }
 
+.port-label{
+    flex-shrink: 0;
+    flex-grow: 1;
+}
+
+.port.control-takes-label:not(.has-edge) > .port-label{
+    overflow: hidden;
+    opacity: 0;
+    width: 0px;
+}
+
+.port.has-edge > .slot-control{
+    display: none;
+
+}
 
 /* Control */
 
@@ -470,12 +485,15 @@ footer{
     overflow: hidden;
     font-size: 12px;
     min-height: 15px;
-    gap: 2px;
+    gap: 4px;
 }
 
 .control-button{
-    font-size: 12px;
-    border: #828282 solid 1px;
+    font-size: 11px;
+    line-height: 11px;
+    border: var(--z3) solid 1px;
+    align-self: stretch;
+    border-radius: 2px;
 }
 
 

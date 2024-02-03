@@ -1,9 +1,9 @@
 from typing import Any, Dict
-from grapycal.sobjects.controls.control import Control
+from grapycal.sobjects.controls.control import ValuedControl
 from objectsync import StringTopic, EventTopic
 
 
-class ButtonControl(Control):
+class ButtonControl(ValuedControl[None]):
     '''
     To add a button control to a node, use the following code in the node:
     ```python
@@ -17,4 +17,17 @@ class ButtonControl(Control):
         
     def init(self):
         self.on_click = self._click.on_emit
-        
+    def set_activation_callback(self, callback):
+        self.on_click += callback
+    
+    def get_value(self) -> None:
+        return None
+    
+    def value_ready(self) -> bool:
+        return True
+    
+    def take_label(self, label) -> bool:
+        if self.label.get() == '':
+            self.label.set(label)
+            return True
+        return False

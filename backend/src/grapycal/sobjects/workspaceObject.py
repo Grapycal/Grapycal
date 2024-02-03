@@ -1,6 +1,6 @@
-import logging 
+import logging
 logger = logging.getLogger('WORKSPACE')
-from typing import Any, Dict
+from typing import Any, Dict, Self
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.editor import Editor
 from grapycal.sobjects.fileView import FileView, LocalFileView, RemoteFileView
@@ -11,10 +11,12 @@ from objectsync import SObject, ObjTopic, SObjectSerialized, StringTopic, IntTop
 
 class WorkspaceObject(SObject):
     frontend_type = 'Workspace'
+    ins: Self
 
     def build(self,old:SObjectSerialized|None=None):
         from grapycal.core.workspace import Workspace
         self._workspace: Workspace = self._server.globals.workspace
+        WorkspaceObject.ins = self
         if old is None:
             self.settings = self.add_child(Settings)
             self.webcam = self.add_child(WebcamStream)
@@ -69,7 +71,8 @@ class WorkspaceObject(SObject):
             for port in node.in_ports.get() + node.out_ports.get():
                 for edge in port.edges:
                     edges.add(edge)
-                    
+
+        # this happens when the previous delete message are still flying to the client      
         for edge in edges:
             if edge.is_destroyed():
                 raise Exception(f'Edge {edge} is already destroyed')
@@ -82,7 +85,22 @@ class WorkspaceObject(SObject):
         for node in nodes:
             node.remove()
 
-        logger.info(f'Deleted {len(nodes)} nodes and {len(edges)} edges')
+        # logger.info(f'Deleted {len(nodes)} nodes and {len(edges)} edges')
+        # TODO: deleting nodes may need thread locking
+        if len(nodes) == 0 and len(edges) == 0:
+            return
+        msg = 'Deleted '
+        if len(nodes) > 0:
+            msg += f'{len(nodes)} node'
+            if len(nodes) > 1:
+                msg += 's' # english is hard :(
+        if len(edges) > 0:
+            if len(nodes) > 0:
+                msg += ' and '
+            msg += f'{len(edges)} edge'
+            if len(edges) > 1:
+                msg += 's'
+        logger.info(msg)
 
 class WebcamStream(SObject):
     frontend_type = 'WebcamStream'

@@ -161,7 +161,7 @@ class RosbridgeNode(Node):
             
     def connection_error(self,e:Exception):
         self.disconnect()
-        self._on_exception(e)
+        self.print_exception(e)
 
     def destroy(self) -> SObjectSerialized:
         if self.status == RosbridgeNode.Status.CONNECTED:

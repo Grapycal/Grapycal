@@ -8,6 +8,8 @@ import numpy as np
 import torch
 import math
 
+from .settings import SettingsNode
+
 
 def rand_perlin_2d(shape, res, fade=lambda t: 6 * t**5 - 15 * t**4 + 10 * t**3):
     delta = (res[0] / shape[0], res[1] / shape[1])
@@ -194,7 +196,8 @@ class ArangeNode(SourceNode):
         start = float(self.start.get())
         stop = float(self.stop.get())
         step = float(self.step.get())
-        self.out_port.push_data(torch.arange(start, stop, step))
+        device = SettingsNode.instance.default_device.get()
+        self.out_port.push_data(torch.arange(start, stop, step, device=device))
 
 
 from grapycal import FunctionNode

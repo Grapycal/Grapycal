@@ -1,11 +1,13 @@
 import logging
+
+from grapycal.utils.misc import as_type
 logger = logging.getLogger(__name__)
 
 from typing import Any, Dict, List
 from dacite import from_dict
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.node import Node
+from grapycal.sobjects.node import Node, NodeMeta
 from grapycal.sobjects.port import InputPort, OutputPort, Port
 from objectsync import SObject, SObjectSerialized
 from itertools import count
@@ -36,7 +38,7 @@ class Editor(SObject):
                 elif obj.type == 'Edge':
                     edges.append(obj)
                 else:
-                    raise Exception(f'Unknown object type {obj.type}')
+                    logger.warning(f'Unknown node type {obj.type}.')
             self.restore(nodes,edges)
 
         # called by client
@@ -181,10 +183,17 @@ class Editor(SObject):
 
         return new_node_ids,new_edge_ids
 
-    def create_node(self, node_type: type, **kwargs) -> Node:
+    def create_node(self, node_type: type[Node], **kwargs)->Node|None:
+        if node_type._is_singleton and hasattr(node_type,'instance'):
+            logger.warning(f'Node type {node_type} is a singleton and already exists')
+            return None
         return self.add_child(node_type, is_preview=False, **kwargs)
     
     def create_node_service(self, node_type: str, **kwargs):
+        node_type_cls = as_type(self._server._object_types[node_type],NodeMeta)
+        if node_type_cls._is_singleton and hasattr(node_type_cls,'instance'):
+            logger.warning(f'Node type {node_type} is a singleton and already exists')
+            return
         self.add_child_s(node_type, is_preview=False, **kwargs)
     
     def create_edge(self, tail: OutputPort, head: InputPort) -> Edge:

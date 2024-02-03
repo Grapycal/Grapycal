@@ -29,15 +29,12 @@ export class PopupMenu extends Componentable{
         return `
         .base{
             display: none;
-            background-color: var(--z2);
-            border: 1px solid var(--text-low);
             border-radius: 2px;
-            box-shadow: 0px 0px 5px 0px black;
+            overflow:hidden;
             z-index: 100;
         }
         .option{ 
             cursor: pointer;
-            padding: 5px;
         }
         .option.focused{
             background-color: var(--t1);
@@ -48,7 +45,6 @@ export class PopupMenu extends Componentable{
     constructor(){
         super()
         this.htmlItem.setParentElement(document.body)
-        this.link(GlobalEventDispatcher.instance.onMouseDown,this.onElsewhereClick)
         this.base = this.htmlItem.baseElement as HTMLElement
         this.optionTemplate = this.htmlItem.getHtmlEl('option-template') as HTMLTemplateElement
         
@@ -95,13 +91,23 @@ export class PopupMenu extends Componentable{
         this.base.style.display = 'block'
         this.base.style.position = 'absolute'
         this.opened = true
+
+        this.link(GlobalEventDispatcher.instance.onMouseDown,this.onElsewhereClick)
     }
 
     open(){
         this.base.style.display = 'block'
         this.base.style.position = 'relative'
         this.opened = true
+
+        this.link(GlobalEventDispatcher.instance.onMouseDown,this.onElsewhereClick)
     }
+
+    show(){
+        this.base.style.display = 'block'
+        this.base.style.position = 'relative'
+    }
+
 
 
     private onArrowDown(e:KeyboardEvent){
@@ -138,12 +144,25 @@ export class PopupMenu extends Componentable{
         this.optionElements[to].classList.add(this.constructor.name+'-focused')
     }
 
+    setFocusedOption(key:string){
+        for(let i = 0;i<this.optionElements.length;i++){
+            if(this.optionElements[i].innerText == key){
+                this.focusOptionChange(this.focusedOption,i)
+                this.focusedOption = i
+                return
+            }
+        }
+        // if not found, just return
+    }
+
     close(){
         if(this.hideWhenClosed){
             this.base.style.display = 'none'
         }
         this.opened = false
         this.clearOptions()
+        
+        this.unlink(GlobalEventDispatcher.instance.onMouseDown)
     }
 
     clearOptions(){

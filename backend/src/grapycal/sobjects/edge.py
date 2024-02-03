@@ -31,12 +31,14 @@ class Edge(SObject):
         self._data_ready = False
         self.reaquirable = False
 
+        self.data_ready_topic.set(1) # prevent a restored edge to show data ready
+
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set
 
         self.on_tail_set(None, self.tail.get())
         self.on_head_set(None, self.head.get())
-
+        
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
         if old_tail:
@@ -67,13 +69,17 @@ class Edge(SObject):
         return super().destroy()
 
     def get_data(self)->Any:
-        
         if not self._data_ready:
             raise Exception('Data not available')
         self._activated = False
         if not self.reaquirable:
             self._data_ready = False
             self.data_ready_topic.set(random.randint(0,10000))
+        return self._data
+    
+    def peek_data(self)->Any:
+        if not self._data_ready:
+            raise Exception('Data not available')
         return self._data
     
     def push_data(self, data, label:str|None=None):
@@ -94,7 +100,7 @@ class Edge(SObject):
 
         head = self.head.get()
         if head:
-            head.edge_activated(self)
+            head.activated_by_edge(self)
 
         self._activated = False
 

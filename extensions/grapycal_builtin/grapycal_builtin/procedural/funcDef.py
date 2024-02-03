@@ -262,7 +262,7 @@ class FuncOutNode(Node):
     def end_function(self,caller:FuncCallNode):
         for port in self.in_ports:
             if not port.is_all_edge_ready():
-                self._on_exception(RuntimeError(f'Output data missing for {port.name.get()}'))
+                self.print_exception(RuntimeError(f'Output data missing for {port.name.get()}'))
                 return
         result = {key: self.get_in_port(key).get_one_data() for key in self.ins.get()}
         caller.push_result(result)
