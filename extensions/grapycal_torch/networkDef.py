@@ -77,8 +77,9 @@ class NetworkCallNode(Node):
         for port in self.in_ports:
             if not port.is_all_edge_ready():
                 return
-        self.run(self.start_function)
+        
         self.run(self.end_function, to_queue=False)
+        self.run(self.start_function, to_queue=False)
 
     def start_function(self):
         if self.is_destroyed():
