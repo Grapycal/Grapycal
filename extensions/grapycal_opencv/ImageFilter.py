@@ -7,7 +7,8 @@ import numpy as np
 class ImageFilter(Node):
     category = "opencv"
 
-    def build_node(self):
+    
+    def create(self):
         self.label.set("Image Filter")
         self.shape.set("simple")
         self.text = self.add_text_control("0")
@@ -18,10 +19,6 @@ class ImageFilter(Node):
         self.index = 0
         self.image_num = 0
         self.images = None
-
-    def init_node(self):
-        self.index = 0
-        self.image_num = 0
         self.prev_button.on_click += self.prev_button_clicked
         self.next_button.on_click += self.next_button_clicked
 
@@ -48,7 +45,7 @@ class ImageFilter(Node):
         self.run(self.init_image)
 
     def init_image(self):
-        image = np.array(self.images[0]).astype(np.float32).transpose(2, 0, 1) / 255
+        image = np.array(self.images[0]).astype(np.float32).transpose(2, 0, 1) / 255 #channels, height, width
         image = image[::-1, :, :]
         if image.shape[0] == 4:
             image = image[:3]
