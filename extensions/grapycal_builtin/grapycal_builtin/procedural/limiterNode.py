@@ -18,8 +18,8 @@ class LimiterNode(Node):
         self.reduce_factor = self.add_attribute('reduce_factor', IntTopic, 10, editor_type='int')
         self.time_span = self.add_attribute('time_span', FloatTopic, 0.2, editor_type='float')
 
-    def init_node(self):
-        super().init_node()
+
+        
         self.value = None
         self.has_value = False
         self.lock = Lock()

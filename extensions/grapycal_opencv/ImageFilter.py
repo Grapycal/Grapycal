@@ -5,9 +5,19 @@ import numpy as np
 
 
 class ImageFilter(Node):
+    '''
+    input : list of images
+
+    text : index (1 -> number of images) / number of images
+
+    output : index of image in the list
+
+    previous : previous image in the list
+    next : next image in the list
+    '''
     category = "opencv"
 
-    def build_node(self):
+    def create(self):
         self.label.set("Image Filter")
         self.shape.set("simple")
         self.text = self.add_text_control("0")
@@ -18,24 +28,22 @@ class ImageFilter(Node):
         self.index = 0
         self.image_num = 0
         self.images = None
-
-    def init_node(self):
-        self.index = 0
-        self.image_num = 0
         self.prev_button.on_click += self.prev_button_clicked
         self.next_button.on_click += self.next_button_clicked
 
     def prev_button_clicked(self):
         if self.index == 0:
-            return
-        self.index -= 1
+            self.index = self.image_num - 1
+        else :
+            self.index -= 1
         self.text.set(str(self.index + 1) + " / " + str(self.image_num))
         self.run(self.push_image)
 
     def next_button_clicked(self):
         if self.index == self.image_num - 1:
-            return
-        self.index += 1
+            self.index = 0
+        else :
+            self.index += 1
         self.text.set(str(self.index + 1) + " / " + str(self.image_num))
         self.run(self.push_image)
 
@@ -48,17 +56,15 @@ class ImageFilter(Node):
         self.run(self.init_image)
 
     def init_image(self):
-        image = np.array(self.images[0]).astype(np.float32).transpose(2, 0, 1) / 255
+        image = np.array(self.images[0]).astype(np.float32).transpose(2, 0, 1) / 255 #channels, height, width
         image = image[::-1, :, :]
         if image.shape[0] == 4:
             image = image[:3]
         self.output_port.push_data(image)
 
     def push_image(self):
-        image = (
-            np.array(self.images[self.index]).astype(np.float32).transpose(2, 0, 1)
-            / 255
-        )
+        print(self.images[self.index].shape)
+        image = np.array(self.images[self.index]).astype(np.float32).transpose(2, 0, 1) / 255
         image = image[::-1, :, :]
         if image.shape[0] == 4:
             image = image[:3]

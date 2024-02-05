@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any
+from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import InputPort
@@ -8,6 +9,7 @@ from torch import nn
 from grapycal import EventTopic
 
 from .settings import SettingsNode
+from .manager import Manager as M
 
 class ModuleMover:
     '''
@@ -50,12 +52,22 @@ class ModuleNode(Node):
         self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button',is_stateful=False)
         self.icon_path.set('nn')
         self.mode = self.add_attribute('mode',StringTopic,'train')
+        
+        # the node's id changes when it's loaded from a file, so it needs another id to identify the state dict
+        self.state_dict_id = self.add_attribute('state_dict_id',StringTopic,self.get_id())
 
     def init_node(self):
         self.module: nn.Module|None = None
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
         self.module_mover = ModuleMover()
         self.mode.on_set.add_manual(self.on_mode_changed)
+        M.mn.add(self)
+
+    def restore_from_version(self, version: str, old: NodeInfo):
+        super().restore_from_version(version, old)
+        # TODO: avoid duplicate state_dict_id
+        self.restore_attributes('state_dict_id')
+        self.restore_attributes('mode')
 
     def create_module_and_update_name(self):
         self.module = self.create_module()
@@ -124,6 +136,20 @@ class ModuleNode(Node):
         elif mode == 'eval':
             self.module.eval()
             self.module.requires_grad_(False)
+
+    def get_state_dict(self):
+        if self.module is None:
+            self.create_module_and_update_name()
+        return self.module.state_dict()
+
+    def load_state_dict(self,state_dict):
+        if self.module is None:
+            self.create_module_and_update_name()
+        self.module.load_state_dict(state_dict)
+
+    def destroy(self):
+        M.mn.remove(self)
+        return super().destroy()
 
 class SimpleModuleNode(ModuleNode):
     inputs = []

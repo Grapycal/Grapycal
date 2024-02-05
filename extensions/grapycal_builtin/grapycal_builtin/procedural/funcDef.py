@@ -47,7 +47,7 @@ class FuncCallNode(Node):
         self.shape.set('normal')
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
 
-    def init_node(self):
+
         FuncDefManager.calls.append(self.func_name.get(),self)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
@@ -139,7 +139,7 @@ class FuncInNode(Node):
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
         self.outs = self.add_attribute('outs',ListTopic,editor_type='list')
 
-    def init_node(self):
+
         self.outs.add_validator(ListTopic.unique_validator)
         self.outs.on_insert.add_auto(self.on_output_added)
         self.outs.on_pop.add_auto(self.on_output_removed)
@@ -209,7 +209,7 @@ class FuncOutNode(Node):
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
         self.ins = self.add_attribute('ins',ListTopic,editor_type='list')
 
-    def init_node(self):
+
         self.ins.add_validator(ListTopic.unique_validator)
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)

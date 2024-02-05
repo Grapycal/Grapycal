@@ -2,7 +2,7 @@ from typing import List
 from grapycal.extension.utils import NodeInfo
 from grapycal import Node, Edge, InputPort, ButtonControl, OptionControl
 
-from .utils import link_control_with_network_names
+from .utils import setup_net_name_ctrl
 
 from .moduleNode import ModuleNode
 from .manager import Manager as M
@@ -22,11 +22,6 @@ class ConfigureNode(Node):
         self.network_name = self.network_port.default_control.value
         self.device = self.device_port.default_control.value
         self.mode = self.mode_port.default_control.value
-
-        if self.is_new:
-            existing_networks = M.net.get_network_names()
-            if len(existing_networks) > 0:
-                self.network_name.set(existing_networks[0])
                 
         self.on_network_name_changed('',self.network_name.get())
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
@@ -34,7 +29,7 @@ class ConfigureNode(Node):
         self.label.set('Configure '+self.network_name.get())
         self.network_name.on_set += lambda value: self.label.set('Configure '+value)
 
-        self.to_unlink = link_control_with_network_names(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
         
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)

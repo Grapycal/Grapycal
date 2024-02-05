@@ -12,7 +12,7 @@ from objectsync import ObjSetTopic, SObject
 import torch
 from torch import nn
 
-from .utils import link_control_with_network_names
+from .utils import setup_net_name_ctrl
 from .moduleNode import ModuleNode
 
 from .manager import Manager as M
@@ -77,7 +77,7 @@ class TrainerNode(Node):
 
     def init_modules(self):
         for mn in self.get_module_nodes():
-            mn.create_module_and_update_name(self.device.get_one_data())
+            mn.create_module_and_update_name()
 
     def step(self):
         self.check_modules_to_track_changed()
@@ -112,13 +112,8 @@ class TrainNode(Node):
         self.loss_port = self.add_in_port('loss',1)
         self.network_name = self.add_attribute('network name',StringTopic,'')
 
-        existing_networks = M.net.get_network_names()
-        if len(existing_networks) > 0:
-            self.network_name.set(existing_networks[0])
-            self.network_port.default_control.value.set(existing_networks[0])
-
     def init_node(self):
-        self.to_unlink = link_control_with_network_names(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
         self.optimizing_modules : set[nn.Module]= set()
         self.optimizer_device = None
 
@@ -157,3 +152,58 @@ class TrainNode(Node):
         self.to_unlink()
         return super().destroy()
 
+class SaveNode(Node):
+    category='torch/training'
+
+    def build_node(self):
+        self.label.set('Save')
+        self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
+        self.path_port = self.add_in_port('path',control_type=TextControl)
+        self.save_port = self.add_in_port('save network',control_type=ButtonControl)
+
+    def init_node(self):
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.network_name = self.network_port.default_control.value
+        self.path = self.path_port.default_control.text
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.save_port:
+            self.run(self.save)
+            port.get_one_data()
+
+    def save(self):
+        network_name = self.network_name.get()
+        path = self.path.get()
+        M.net.save_network(network_name,path)
+
+    def destroy(self):
+        self.to_unlink()
+        return super().destroy()
+    
+class LoadNode(Node):
+    category='torch/training'
+
+    def build_node(self):
+        self.label.set('Load')
+        self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
+        self.path_port = self.add_in_port('path',control_type=TextControl)
+        self.load_port = self.add_in_port('load network',control_type=ButtonControl)
+
+    def init_node(self):
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.network_name = self.network_port.default_control.value
+        self.path = self.path_port.default_control.text
+
+    def edge_activated(self, edge: Edge, port: InputPort):
+        if port == self.load_port:
+            self.run(self.load)
+            port.get_one_data()
+
+    def load(self):
+        network_name = self.network_name.get()
+        path = self.path.get()
+        M.net.load_network(network_name,path)
+
+    def destroy(self):
+        self.to_unlink()
+        return super().destroy()

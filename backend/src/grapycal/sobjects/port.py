@@ -1,6 +1,7 @@
 import abc
+from hmac import new
 from msilib import Control
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any, List, Literal
 import typing
 from grapycal.sobjects.controls.control import ValuedControl
 from grapycal.sobjects.controls.nullControl import NullControl
@@ -58,7 +59,8 @@ class InputPort(Port, typing.Generic[T]):
                 i+=1
                 control_name = f'Control{i}'
 
-        self.default_control = self.add_child(control_type, **control_kwargs)
+        new_control_id = f'{self.node.get_id()}_c_{control_name}'
+        self.default_control = self.add_child(control_type, id=new_control_id, **control_kwargs)
         self.node.controls.add(control_name,self.default_control)
 
         # this topic affects css
