@@ -72,6 +72,14 @@ export class BindInputBoxAndTopic extends Component{
         const oldtopic = this.topics[0].getValue()
         const newtopic = this.input.value
         const lengthDiff = newtopic.length - oldtopic.length
+        
+        if (lengthDiff == 0) {
+            if (oldtopic == newtopic) {
+                // nothing changed
+                this.locked = false
+                return
+            }
+        }
 
         if (this.topics.length > 1) {
             // just set
@@ -82,14 +90,6 @@ export class BindInputBoxAndTopic extends Component{
             })
             this.locked = false
             return
-        }
-
-        if (lengthDiff == 0) {
-            if (oldtopic == newtopic) {
-                // nothing changed
-                this.locked = false
-                return
-            }
         }
         
         // Assume the changes are always right before selectionEnd
