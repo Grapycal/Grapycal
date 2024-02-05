@@ -84,7 +84,7 @@ class InputPort(Port, typing.Generic[T]):
     def remove_edge(self, edge: 'Edge'):
         super().remove_edge(edge)
         self.node.input_edge_removed(edge, self)
-        self.use_default = len(self.edges) == 0
+        self.use_default = len(self.edges) == 0 and not isinstance(self.default_control, NullControl)
 
     def is_all_edge_ready(self):
         return (self.use_default and self.default_control.value_ready()) or \

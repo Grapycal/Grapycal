@@ -33,7 +33,7 @@ class HttpResource(Generic[T]):
     async def is_avaliable(self):
         return await self.get() is not None
 
-    async def get(self)->T:
+    async def get(self)->T|None:
         if self.failed:
             raise Exception(f'Failed to get {self.url} : {self.failed_exception}')
         if self.data is not None:
@@ -54,5 +54,5 @@ class HttpResource(Generic[T]):
         except Exception as e :
             self.failed = True
             self.failed_exception = e
-            raise e
+            return None
         return self.data

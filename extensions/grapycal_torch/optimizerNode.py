@@ -155,16 +155,18 @@ class TrainNode(Node):
 class SaveNode(Node):
     category='torch/training'
 
-    def build_node(self):
+    def create(self):
         self.label.set('Save')
         self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
         self.path_port = self.add_in_port('path',control_type=TextControl)
         self.save_port = self.add_in_port('save network',control_type=ButtonControl)
 
-    def init_node(self):
         self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
+
+        if self.is_new:
+            self.path.set('network.pt')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.save_port:
@@ -189,10 +191,12 @@ class LoadNode(Node):
         self.path_port = self.add_in_port('path',control_type=TextControl)
         self.load_port = self.add_in_port('load network',control_type=ButtonControl)
 
-    def init_node(self):
         self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
+
+        if self.is_new:
+            self.path.set('network.pt')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.load_port:

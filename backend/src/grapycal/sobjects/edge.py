@@ -74,7 +74,9 @@ class Edge(SObject):
         self._activated = False
         if not self.reaquirable:
             self._data_ready = False
-            self.data_ready_topic.set(random.randint(0,10000))
+            with self._server.record(): # aquire a lock to prevent calling set while destroying
+                if not self.is_destroyed():
+                    self.data_ready_topic.set(random.randint(0,10000))
         return self._data
     
     def peek_data(self)->Any:
@@ -86,7 +88,10 @@ class Edge(SObject):
         self._data = data
         self._activated = True
         self._data_ready = True
-        self.data_ready_topic.set(0)
+        with self._server.record(): # aquire a lock to prevent calling set while destroying
+            if self.is_destroyed():
+                return
+            self.data_ready_topic.set(0)
         if label:
             self.label.set(label)
         else:

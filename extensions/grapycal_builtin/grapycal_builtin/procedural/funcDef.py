@@ -137,8 +137,8 @@ class FuncInNode(Node):
     def build_node(self):
         self.shape.set('normal')
 
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
         self.outs = self.add_attribute('outs',ListTopic,editor_type='list')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
 
 
         self.outs.add_validator(ListTopic.unique_validator)
@@ -207,8 +207,11 @@ class FuncOutNode(Node):
     def build_node(self):
         self.shape.set('normal')
 
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
+        # The order of creation of these two attrs is important.
+        # By create func_name last, it will be restored last, so the restoration of ins
+        # will not unwantingly invoke port update of CallNodes.
         self.ins = self.add_attribute('ins',ListTopic,editor_type='list')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
 
 
         self.ins.add_validator(ListTopic.unique_validator)

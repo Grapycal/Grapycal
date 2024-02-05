@@ -43,7 +43,7 @@ class WorkspaceObject(SObject):
         async def add_examples_file_view():
             data_yaml = await self._workspace.data_yaml.get()
             if data_yaml is None:
-                logger.warning(self._workspace.data_yaml.failed_exception)
+                logger.info('Cannot get example files from GitHub.')
                 return # no internet connection
             
             self.add_child(RemoteFileView,url = data_yaml['examples_url'],name = 'Examples💡')

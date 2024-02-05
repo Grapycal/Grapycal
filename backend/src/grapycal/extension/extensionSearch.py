@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 import asyncio
 import aiohttp
 import yaml
@@ -11,7 +13,7 @@ async def get_remote_extensions() -> list[dict]:
         async with aiohttp.request('GET','https://github.com/Grapycal/grapycal_data/raw/main/data.yaml') as response:
             data = yaml.safe_load(await response.text())
     except Exception as e :
-        print('Error while fetching data.yaml from github. Maybe no internet connection?')
+        logger.info('Cannot fetch data.yaml from github. Maybe no internet connection?')
         return []
 
 

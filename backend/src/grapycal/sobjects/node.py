@@ -719,14 +719,14 @@ class Node(SObject,metaclass=NodeMeta):
         '''
 
         def wrapped():
-            self.running.set(0)
+            self.set_running(True)
             self.workspace.background_runner.set_exception_callback(lambda e:self.print_exception(e,truncate=3))
             if redirect_output:
                 with self._redirect_output():
                     ret = task()
             else:
                 ret = task()
-            self.running.set(random.randint(0,10000))
+            self.set_running(False)
             return ret
         
         self.workspace.background_runner.push(wrapped,to_queue=to_queue)
@@ -735,7 +735,7 @@ class Node(SObject,metaclass=NodeMeta):
         '''
         Run a task in the current thread.
         '''
-        self.running.set(0)
+        self.set_running(True)
         try:
             if redirect_output:
                 with self._redirect_output():
@@ -744,7 +744,7 @@ class Node(SObject,metaclass=NodeMeta):
                 task()
         except Exception as e:
             self.print_exception(e,truncate=1)
-        self.running.set(random.randint(0,10000))
+        self.set_running(False)
 
     def run(self,task:Callable,background=True,to_queue=True,redirect_output=False,*args,**kwargs):
         '''
@@ -769,7 +769,7 @@ class Node(SObject,metaclass=NodeMeta):
         if self.is_destroyed():
             logger.warning(f'Exception occured in a destroyed node {self.get_id()}: {message}')
         else:
-            self.running.set(random.randint(0,10000))
+            self.set_running(False)
             if len(self.output) > 100:
                 self.output.set([])
                 self.output.insert(['error','Too many output lines. Cleared.'])
@@ -777,8 +777,17 @@ class Node(SObject,metaclass=NodeMeta):
 
 
     def flash_running_indicator(self):
-        self.running.set(0)
-        self.running.set(random.randint(0,10000))
+        self.set_running(True)
+        self.set_running(False)
+
+    def set_running(self,running:bool):
+        with self._server.record(allow_reentry=True): # aquire the lock to prevent setting the attribute while the sobject being deleted
+            if self.is_destroyed():
+                return
+            if running:
+                self.running.set(0)
+            else:
+                self.running.set(random.randint(0,10000))
 
     '''
     Node events
