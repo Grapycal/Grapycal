@@ -7,6 +7,11 @@ from objectsync.sobject import SObjectSerialized
 
 
 class ImageLoader(Node):
+    '''
+    To load image from your local storage
+    Input : number of images 
+    Output : list of images
+    '''
     category = "opencv"
 
     def build_node(self):
