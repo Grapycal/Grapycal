@@ -12,7 +12,6 @@ class ImageLoader(Node):
     Output : list of images
     '''
     category = "opencv"
-
     def create(self):
         super().build_node()
         self.shape.set("simple")
