@@ -93,6 +93,21 @@ class ImagePasteNode(SourceNode):
 
 
 class ImageDisplayNode(Node):
+    '''
+    Display an image from the input data
+    The input data can be a numpy array or a torch tensor, with one of the following shapes:
+    [..., 4 (rgba),h,w]
+    [..., 3 (rgb),h,w]
+    [..., 1 (grayscale),h,w]
+    [..., h,w]
+
+    The ... part can be any number of dimensions or none.
+
+    Do not input data with shape [h,w,c] or it will display incorrectly.
+
+    If the alpha channel is present, png format will be used, otherwise jpg format will be used.
+    Get rid of alpha channel if it is not important to save network bandwidth.
+    '''
     category = "interaction"
 
     def build_node(self):
@@ -207,17 +222,36 @@ class ImageDisplayNode(Node):
     def find_valid_slice(self, data: np.ndarray) -> str | None:
         if data.ndim == 2:
             return ":"
-        if data.ndim == 3 and data.shape[0] in [1, 3]:
+        if data.ndim == 3 and data.shape[0] in [1, 3, 4]:
             return ":"
         if data.ndim >= 3 and data.shape[-3] == 3:
             return ("0," * (data.ndim - 3))[:-1]
+        if data.ndim >= 3 and data.shape[-3] == 4:
+            return ("0," * (data.ndim - 3))[:-1] # ignore alpha channel because the front end does not support it
         if data.ndim >= 3:
             return ("0," * (data.ndim - 2))[:-1]
         return None
+    
+    def is_valid_image(self, data: np.ndarray) -> bool:
+        '''
+        Must be one of the following:
+        [4 (rgba),h,w]
+        [3 (rgb),h,w]
+        [1 (grayscale),h,w]
+        [h,w]
+        '''
+        if data.ndim == 3 and data.shape[0] in [1, 3, 4]:
+            return True
+        if data.ndim == 2:
+            return True
+        return False
 
     def preprocess_data(self, data):
         if HAS_TORCH and isinstance(data, torch.Tensor):
             data = data.detach().cpu().numpy()
+
+        if isinstance(data, list):
+            data = np.array(data) # stack them into array to be compatible with the next if statement
 
         if isinstance(data, np.ndarray):
             # Ignore all dimensions with size 1 (except last 2 dimensions)
@@ -232,33 +266,39 @@ class ImageDisplayNode(Node):
             except:
                 self.slice.text.set(":")
                 pass
-            # If 3 dimensions, transpose to (H,W,C)
-            if data.ndim == 3 and (data.shape[0] == 3 or data.shape[0] == 1):
-                data = data.transpose(1, 2, 0)
-            elif data.ndim == 2:
+            if data.ndim == 2:
                 pass
             else:
                 slice_string = self.find_valid_slice(unsliced_data)
                 if slice_string is None:
                     raise ValueError(f"Cannot display image with shape {data.shape}")
                 data = eval(f"unsliced_data[{slice_string}]", globals(), locals())
+                if not self.is_valid_image(data):
+                    raise ValueError(f"Cannot display image with shape {data.shape}")
                 self.slice.text.set(slice_string)
 
         return data
 
     def update_image(self, data):
         data = self.preprocess_data(data)
-
+        self.print(data.shape)
         # use plt to convert to jpg
         buf = io.BytesIO()
         fig = plt.figure(figsize=(10, 10))
         try:
+            #chw -> hwc
+            form = 'jpg'
+            if data.ndim == 3:
+                if data.shape[0] == 4:
+                    form = 'png'
+                
+                data = data.transpose(1, 2, 0)
             plt.imshow(
                 data, cmap=self.cmap.get(), vmin=self.vmin.get(), vmax=self.vmax.get()
             )
             plt.axis("off")
             plt.savefig(
-                buf, format="jpg", bbox_inches="tight", transparent="True", pad_inches=0
+                buf, format=form, bbox_inches="tight", transparent="True", pad_inches=0
             )
         finally:
             plt.close(fig)
