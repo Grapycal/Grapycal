@@ -252,7 +252,7 @@ export class AutoCompMenu extends PopupMenu{
         this.valueToCallback.clear()
         this.valueToDisplayName.clear()
         for(let i = 0;i<options.length;i++){
-            keys.push(options[i].key)
+            keys.push(options[i].key.toLowerCase())
             values.push(options[i].value)
             this.valueToCallback.set(options[i].value,options[i].callback)
             this.valueToDisplayName.set(options[i].value,options[i].displayName||options[i].key)
