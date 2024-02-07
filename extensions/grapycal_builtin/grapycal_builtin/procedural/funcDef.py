@@ -207,10 +207,6 @@ class FuncInNode(Node):
     def update_label(self):
         self.label.set(f'{self.func_name.get()}')
 
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('outs','func_name')
-
     def on_output_added(self, name, position):
         self.add_out_port(name,display_name = name)
 

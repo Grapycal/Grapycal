@@ -29,7 +29,7 @@ class LambdaNode(Node):
         self.outputs = self.add_attribute('outputs',ListTopic,editor_type='list')
         self.css_classes.append('fit-content')
 
-
+        self.input_args.add_validator(ListTopic.unique_validator)
         self.input_args.on_insert.add_auto(self.on_input_arg_added)
         self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 
@@ -40,9 +40,9 @@ class LambdaNode(Node):
         self.outputs.on_insert.add_auto(self.on_output_added)
         self.outputs.on_pop.add_auto(self.on_output_removed)
 
-        # if self.is_new:
-        #     self.outputs.insert('')
-        #     self.text_controls[''].text.set('x')
+        if self.is_new:
+            self.outputs.insert('')
+            self.text_controls[''].text.set('x')
     
     def on_input_arg_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)
