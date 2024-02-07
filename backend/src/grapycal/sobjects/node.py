@@ -730,15 +730,22 @@ class Node(SObject,metaclass=NodeMeta):
         Run a task in the background thread.
         '''
 
+        def exception_callback(e):
+            self.print_exception(e,truncate=3)
+            if isinstance(e,KeyboardInterrupt):
+                self.workspace.send_message_to_all('Runner interrupted by user.')
+            self.workspace.background_runner.set_exception_callback(None)
+
         def wrapped():
             self.set_running(True)
-            self.workspace.background_runner.set_exception_callback(lambda e:self.print_exception(e,truncate=3))
+            self.workspace.background_runner.set_exception_callback(exception_callback)
             if redirect_output:
                 with self._redirect_output():
                     ret = task()
             else:
                 ret = task()
             self.set_running(False)
+            self.workspace.background_runner.set_exception_callback(None)
             return ret
         
         self.workspace.background_runner.push(wrapped,to_queue=to_queue)

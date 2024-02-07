@@ -16,7 +16,7 @@ class BackgroundRunner:
         self._queue: deque = deque()
         self._stack: deque = deque()
         self._exit_flag = False
-        self._exception_callback: Callable[[Exception], None] = lambda e: orig_print('runner default exception callback:\n',traceback.format_exc())
+        self._exception_callback: Callable[[Exception|KeyboardInterrupt], None]|None=None
 
     def push(self, task: Callable, to_queue: bool = True):
         self._inputs.put((task, to_queue))
@@ -34,7 +34,7 @@ class BackgroundRunner:
         self._queue.clear()
         self._stack.clear()
 
-    def set_exception_callback(self, callback: Callable[[Exception], None]):
+    def set_exception_callback(self, callback: Callable[[Exception|KeyboardInterrupt], None]|None):
         self._exception_callback = callback
 
     def exit(self):
@@ -44,7 +44,7 @@ class BackgroundRunner:
     @contextmanager
     def no_interrupt(self):
         def handler(signum, frame):
-            logger.info("no_interrupt: continue")
+            logger.info("Cannot interrupt current task")
 
         original_sigint_handler = signal.getsignal(signal.SIGINT)
         try:
@@ -89,9 +89,16 @@ class BackgroundRunner:
                     if ret is not None:
                         self._stack.append(iter(ret))
 
-            except KeyboardInterrupt:
-                logger.info("runner catch keyboardinterrupt")
+            except KeyboardInterrupt as e:
+                logger.info("Runner interrupted")
+                if self._exception_callback is None:
+                    orig_print('No exception callback',e)
+                else:
+                    self._exception_callback(e)
 
             except Exception as e:
                 self.clear_tasks()
-                self._exception_callback(e)
+                if self._exception_callback is None:
+                    orig_print('No exception callback',e)
+                else:
+                    self._exception_callback(e)

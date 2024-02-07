@@ -11,6 +11,7 @@ import { print } from "../devUtils"
 import { NodeInspector } from "../ui_utils/nodeInspector"
 import { PopupMenu } from "../ui_utils/popupMenu/popupMenu"
 import { AppNotification } from "../ui_utils/appNotification"
+import { ControlPanel } from "../ui_utils/controlPanel"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
@@ -60,6 +61,7 @@ export class Workspace extends CompSObject{
         new Footer()
         Footer.setStatus('Workspace loaded. Have fun!')
         new AppNotification()
+        new ControlPanel()
     }
 
     public openWorkspace(path:string){

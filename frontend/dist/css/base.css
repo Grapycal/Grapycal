@@ -1,5 +1,10 @@
 /* App */
 * { box-sizing: border-box; }
+
+h1{
+    font-size: 1.4em;
+}
+
 body{
     background-color: rgb(0,0,0);
     /*no scroll*/
@@ -12,7 +17,7 @@ body{
 }
 
 header{
-    height: 40px;
+    height: 24px;
     z-index: 50;
 }
 
@@ -652,7 +657,7 @@ input:enabled, textarea:enabled{
 }
 
 .sidebar-left .sidebar-container{
-    width: 280px;
+    width: 260px;
 }
 
 .sidebar-tab{
@@ -765,7 +770,7 @@ input:enabled, textarea:enabled{
 }
 
 .hierarchy-h1{
-    font-size: 18px;
+    font-size: 1.2em;
 
 }
 

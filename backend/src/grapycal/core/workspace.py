@@ -111,7 +111,8 @@ class Workspace:
         self._objectsync.globals.workspace = self
 
         self._objectsync.register_service('exit', self.exit)
-
+        self._objectsync.register_service('interrupt', self.interrupt)
+        
         self._objectsync.register(WorkspaceObject)
         self._objectsync.register(Editor)
         self._objectsync.register(Sidebar)
@@ -164,6 +165,10 @@ class Workspace:
 
     def exit(self):
         self.background_runner.exit()
+
+    def interrupt(self):
+        self.background_runner.interrupt()
+        self.background_runner.clear_tasks()
 
     def get_communication_event_loop(self) -> asyncio.AbstractEventLoop:
         assert self._communication_event_loop is not None
