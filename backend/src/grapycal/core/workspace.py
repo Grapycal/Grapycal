@@ -316,6 +316,11 @@ class Workspace:
         self.grapycal_id_count += 1
         return self.grapycal_id_count
 
+    def clear_edges(self):
+        edges = self.get_workspace_object().top_down_search(type=Edge)
+        for edge in edges:
+            edge.clear_data()
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()

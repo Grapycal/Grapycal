@@ -735,6 +735,7 @@ class Node(SObject,metaclass=NodeMeta):
             if isinstance(e,KeyboardInterrupt):
                 self.workspace.send_message_to_all('Runner interrupted by user.')
             self.workspace.background_runner.set_exception_callback(None)
+            self.workspace.clear_edges()
 
         def wrapped():
             self.set_running(True)
