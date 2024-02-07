@@ -22,6 +22,7 @@ import { FetchWithCache } from './utils'
 import { FileView } from './sobjects/fileView'
 import { LoginApiClient } from './loginApi/loginApi'
 import { OptionControl } from './sobjects/controls/optionControl'
+import { AppNotification } from './ui_utils/appNotification'
 
 export const soundManager = new SoundManager();
 
@@ -164,7 +165,7 @@ function startObjectSync(wsUrl:string){
 
 
 
-let fetchWithCache = new FetchWithCache().fetch
+const fetchWithCache = new FetchWithCache().fetch
 export {fetchWithCache}
 
 configureHtml();

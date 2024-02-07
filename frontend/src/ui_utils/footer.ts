@@ -6,6 +6,16 @@ import { Workspace } from "../sobjects/workspace"
 import { Vector2, textToHtml } from "../utils"
 import { LIB_VERSION } from '../version';
 
+enum ClientMsgTypes{
+    STATUS='status',
+    NOTIFICATION='notification'
+}
+
+type Message = {
+    message:string,
+    type:ClientMsgTypes
+}
+
 export class Footer extends Componentable{
     static ins: Footer
     static setStatus(status: string){
@@ -86,11 +96,13 @@ export class Footer extends Componentable{
         this.link(this.eventDispatcher.onDrag,this.onDrag);
         this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
         ;
-        Workspace.instance.objectsync.on(`status_message`, (data:{message: string})=>{
-            this.setStatus(data.message);
+        Workspace.instance.objectsync.on(`status_message`, (msg:Message)=>{
+            if(msg.type==ClientMsgTypes.STATUS)
+                this.setStatus(msg.message);
         });
-        Workspace.instance.objectsync.on(`status_message_${Workspace.instance.objectsync.clientId}`, (data:{message: string})=>{
-            this.setStatus(data.message);
+        Workspace.instance.objectsync.on(`status_message_${Workspace.instance.objectsync.clientId}`, (msg:Message)=>{
+            if(msg.type==ClientMsgTypes.STATUS)
+                this.setStatus(msg.message);
         });
         Workspace.instance.objectsync.getTopic('meta',DictTopic<string,any>).onSet.add((value)=>{
             this.workspaceName.innerHTML = value.get('workspace name');

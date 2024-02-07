@@ -54,53 +54,6 @@ class WorkspaceObject(SObject):
         # read by frontend
         self.add_attribute('main_editor',ObjTopic).set(self.main_editor)
 
-    # delete functionallity is moved to editor.py
-    # def _delete_callback(self,ids):
-    #     nodes:set[Node] = set()
-    #     edges:set[Edge] = set()
-    #     for id in ids:
-    #         obj = self._server.get_object(id)
-    #         match obj:
-    #             case Node():
-    #                 nodes.add(obj)
-    #             case Edge():
-    #                 edges.add(obj)
-
-    #     for node in nodes:
-    #         for port in node.in_ports.get() + node.out_ports.get():
-    #             for edge in port.edges:
-    #                 edges.add(edge)
-
-    #     # this happens when the previous delete message are still flying to the client      
-    #     for edge in edges:
-    #         if edge.is_destroyed():
-    #             raise Exception(f'Edge {edge} is already destroyed')
-    #     for node in nodes:
-    #         if node.is_destroyed():
-    #             raise Exception(f'Node {node} is already destroyed')
-
-    #     for edge in edges:
-    #         edge.remove()
-    #     for node in nodes:
-    #         node.remove()
-
-    #     # logger.info(f'Deleted {len(nodes)} nodes and {len(edges)} edges')
-    #     # TODO: deleting nodes may need thread locking
-    #     if len(nodes) == 0 and len(edges) == 0:
-    #         return
-    #     msg = 'Deleted '
-    #     if len(nodes) > 0:
-    #         msg += f'{len(nodes)} node'
-    #         if len(nodes) > 1:
-    #             msg += 's' # english is hard :(
-    #     if len(edges) > 0:
-    #         if len(nodes) > 0:
-    #             msg += ' and '
-    #         msg += f'{len(edges)} edge'
-    #         if len(edges) > 1:
-    #             msg += 's'
-    #     logger.info(msg)
-
 class WebcamStream(SObject):
     frontend_type = 'WebcamStream'
     def build(self,old:SObjectSerialized|None=None):

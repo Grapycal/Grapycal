@@ -217,6 +217,7 @@ class Editor(SObject):
         new_node = self.add_child(node_type_cls, is_preview=False, **kwargs)
         assert isinstance(new_node,Node)
         new_node.post_create()
+        logger.info(f'Created {new_node.get_type_name()}')
         return new_node
     
     def create_edge(self, tail: OutputPort, head: InputPort, new_edge_id: str|None = None) -> Edge:
@@ -334,6 +335,21 @@ class Editor(SObject):
         new_node_ids,new_edge_ids = self._restore(nodes,edges)
 
         self._new_node_ids = new_node_ids # the _paste() method will use this
+
+        if len(nodes) != 0 or len(edges) != 0:
+            
+            msg = 'Restored '
+            if len(nodes) > 0:
+                msg += f'{len(nodes)} node'
+                if len(nodes) > 1:
+                    msg += 's' # english is hard :(
+            if len(edges) > 0:
+                if len(nodes) > 0:
+                    msg += ' and '
+                msg += f'{len(edges)} edge'
+                if len(edges) > 1:
+                    msg += 's'
+            logger.info(msg)
 
         # return the ids of the restored nodes and edges so when the event is undone,
         # _delete_callback() can delete the nodes and edges

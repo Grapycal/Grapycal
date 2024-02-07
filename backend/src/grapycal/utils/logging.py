@@ -1,7 +1,6 @@
 import logging
 import os
-
-from objectsync import EventTopic
+from typing import Callable
 
 def setup_logging():
     logging.getLogger("matplotlib").setLevel(logging.ERROR)
@@ -88,11 +87,14 @@ class FrontendFormatter(logging.Formatter):
         formatter = logging.Formatter(self.format_, datefmt=self.time_format)
         return formatter.format(record)
 
-frontend_message_topic:None|EventTopic = None
+send_client_msg:None|Callable[[str,str],None] = None
 
 class LogToFrontendHandler(logging.Handler):
     def emit(self, record: logging.LogRecord):
-        global frontend_message_topic
-        if frontend_message_topic is None:
+        from grapycal.core.workspace import ClientMsgTypes
+        if send_client_msg is None:
             return
-        frontend_message_topic.emit(message=self.format(record))
+        try:
+            send_client_msg(self.format(record),ClientMsgTypes.STATUS)
+        except:
+            print('failed to send')

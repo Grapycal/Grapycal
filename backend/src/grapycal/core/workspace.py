@@ -1,3 +1,4 @@
+from enum import Enum
 import os
 import time
 import grapycal
@@ -42,6 +43,11 @@ from grapycal.core.background_runner import BackgroundRunner
 from grapycal.sobjects.node import Node
 
 from grapycal.core import running_module
+
+class ClientMsgTypes:
+    STATUS='status'
+    NOTIFICATION='notification'
+    BOTH='both'
 
 class Workspace:
     def __init__(self, port, host, path) -> None:
@@ -148,8 +154,9 @@ class Workspace:
         # creates the status message topic so client can subscribe to it
         self._objectsync.on_client_connect += self.client_connected
         self._objectsync.on_client_disconnect += self.client_disconnected
+        self._objectsync.create_topic(f'status_message',objectsync.EventTopic, is_stateful=False)
         import grapycal.utils.logging
-        grapycal.utils.logging.frontend_message_topic = self._objectsync.create_topic(f'status_message',objectsync.EventTopic, is_stateful=False)
+        grapycal.utils.logging.send_client_msg = self.send_message_to_all
 
         self._objectsync.create_topic('meta',objectsync.DictTopic,{'workspace name': self.path})
     
@@ -192,6 +199,8 @@ class Workspace:
         node_count = len(self.get_workspace_object().main_editor.top_down_search(type=Node))
         edge_count = len(self.get_workspace_object().main_editor.top_down_search(type=Edge))
         logger.info(f'Workspace saved to {path}. Node count: {node_count}. Edge count: {edge_count}. File size: {file_size//1024} KB.')
+        self.send_message_to_all(f'Workspace saved to {path}. Node count: {node_count}. Edge count: {edge_count}. File size: {file_size//1024} KB.')
+            
 
     def load_workspace(self, path: str) -> None:
         version,metadata,data = read_workspace(path)
@@ -263,6 +272,7 @@ class Workspace:
             raise Exception(f'File {path} does not end with .grapycal')
             
         logger.info(f'Opening workspace {path}...')
+        self.send_message_to_all(f'Opening workspace {path}...')
 
         pid = os.getpid()
         exit_message_file = f'grapycal_exit_message_{pid}'
@@ -273,13 +283,20 @@ class Workspace:
     def add_task_to_event_loop(self,task):
         self._communication_event_loop.create_task(task)
 
-    def send_status_message_to_all(self,message):
-        self._objectsync.emit('status_message',message=message)
+    def send_message_to_all(self,message,type=ClientMsgTypes.NOTIFICATION):
+        if type == ClientMsgTypes.BOTH:
+            self.send_message_to_all(message,ClientMsgTypes.NOTIFICATION)
+            self.send_message_to_all(message,ClientMsgTypes.STATUS)
+        
+        self._objectsync.emit('status_message',message=message,type=type)
 
-    def send_status_message(self,message,client_id=None):
+    def send_message(self,message,client_id=None,type=ClientMsgTypes.NOTIFICATION):
+        if type == ClientMsgTypes.BOTH:
+            self.send_message(message,ClientMsgTypes.NOTIFICATION)
+            self.send_message(message,ClientMsgTypes.STATUS)
         if client_id is None:
             client_id = self._objectsync.get_action_source()
-        self._objectsync.emit(f'status_message_{client_id}',message=message)
+        self._objectsync.emit(f'status_message_{client_id}',message=message,type=type)
 
     def client_connected(self,client_id):
         self._objectsync.create_topic(f'status_message_{client_id}',objectsync.EventTopic)
