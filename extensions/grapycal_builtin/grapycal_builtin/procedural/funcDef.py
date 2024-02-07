@@ -1,8 +1,11 @@
+from collections import defaultdict
+from os import remove
 from typing import Dict, Generic, List, TypeVar
 from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort
+from grapycal.sobjects.port import InputPort, OutputPort
+from ..utils import find_next_valid_name
 from objectsync.sobject import SObjectSerialized
 
 T = TypeVar('T')
@@ -42,20 +45,27 @@ class FuncCallNode(Node):
     '''
 
     category = 'function'
-    def build_node(self):
+    def create(self):
         self.label.set('')
         self.shape.set('normal')
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        self.restore_attributes('func_name')
 
-
-        FuncDefManager.calls.append(self.func_name.get(),self)
+        # manually restore in_ports and out_ports
+        if not self.is_new:
+            assert self.old_node_info is not None
+            for port in self.old_node_info.in_ports:
+                self.add_in_port(port.name, 1, display_name=port.name)
+            for port in self.old_node_info.out_ports:
+                self.add_out_port(port.name, display_name=port.name)
+                
+        self.update_ports()
+        
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
-        self.update_ports()
-
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('func_name')
+        FuncDefManager.calls.append(self.func_name.get(),self)
+        self.label.set(f' {self.func_name.get()}')
 
     def on_func_name_changed(self, old, new):
         self.label.set(f' {new}')
@@ -72,26 +82,43 @@ class FuncCallNode(Node):
     def update_input_ports(self):
         if self.func_name.get() not in FuncDefManager.ins:
             return
-        keys = FuncDefManager.ins[self.func_name.get()].outs.get()
-        for key in keys:
-            if not self.has_in_port(key):
-                self.add_in_port(key,1,display_name = key)
-        for port in self.in_ports:
-            key = port.name.get()
-            if key not in keys:
-                self.remove_in_port(key)
+        names = FuncDefManager.ins[self.func_name.get()].outs.get()
 
+        edgesd = defaultdict[str,list[OutputPort]](list)
+
+        # reversed is a hack to make port order consistent when undoing (although it's not very important)
+        for port in reversed(self.in_ports.get().copy()):
+            name = port.get_name()
+            for edge in port.edges.copy():
+                edgesd[name].append(edge.get_tail())
+                edge.remove()
+            self.remove_in_port(name)
+
+        for name in names:
+            port = self.add_in_port(name,1)
+            edges = edgesd.get(name,[])
+            for tail in edges:
+                self.editor.create_edge(tail,port)
+                
     def update_output_ports(self):
         if self.func_name.get() not in FuncDefManager.outs:
             return
-        keys = FuncDefManager.outs[self.func_name.get()].ins.get()
-        for key in keys:
-            if not self.has_out_port(key):
-                self.add_out_port(key,display_name = key)
-        for port in self.out_ports:
-            key = port.name.get()
-            if key not in keys:
-                self.remove_out_port(key)
+        names = FuncDefManager.outs[self.func_name.get()].ins.get()
+    
+        edgesd = defaultdict[str,list[InputPort]](list)
+    
+        for port in self.out_ports.get().copy():
+            name = port.get_name()
+            for edge in port.edges.copy():
+                edgesd[name].append(edge.get_head())
+                edge.remove()
+            self.remove_out_port(name)
+    
+        for name in names:
+            port = self.add_out_port(name)
+            edges = edgesd.get(name,[])
+            for head in edges:
+                self.editor.create_edge(port,head)
 
     def edge_activated(self, edge: Edge, port):
         for port in self.in_ports:
@@ -128,54 +155,57 @@ class FuncCallNode(Node):
 class FuncInNode(Node):
     category = 'function'
 
-    # def spawn(self, client_id):
-    #     new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
-    #     new_node.add_tag(f'spawned_by_{client_id}')
-    #     new_node = self.workspace.get_workspace_object().main_editor.get().create_node(FuncOutNode)
-    #     new_node.add_tag(f'spawned_by_{client_id}')
-
-    def build_node(self):
+    def create(self):
         self.shape.set('normal')
 
-        self.outs = self.add_attribute('outs',ListTopic,editor_type='list')
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
-
-
+        # setup attributes
+        self.outs = self.add_attribute('outs',ListTopic,editor_type='list',init_value=['x'])
         self.outs.add_validator(ListTopic.unique_validator)
+        self.restore_attributes('outs')
+        
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.ins) # function name must be unique
+        self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        try:
+            self.restore_attributes('func_name')
+        except:
+            self.func_name.set('MyFunc')
+            
+        self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.ins))
+
+        # add callbacks to attributes
         self.outs.on_insert.add_auto(self.on_output_added)
         self.outs.on_pop.add_auto(self.on_output_removed)
         self.outs.on_set.add_auto(self.on_output_set)
 
-        if self.is_new:
-            self.outs.insert('x')
-
-        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.ins)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
+
         self.update_label()
+
+        for out in self.outs.get():
+            self.add_out_port(out,display_name = out)
         
-        if self.func_name.get() != '':
-            assert self.func_name.get() not in FuncDefManager.ins
-            FuncDefManager.ins[self.func_name.get()] = self
-            for call in FuncDefManager.calls.get(self.func_name.get()):
-                call.update_ports()
-        
+        if not self.is_preview.get():
+            FuncDefManager.ins[self.func_name.get()] = self         
+
+    def post_create(self):
+        for call in FuncDefManager.calls.get(self.func_name.get()):
+            call.update_ports()
 
     def on_func_name_changed(self, old, new):
-        if new != '':
+        if not self.is_preview.get():
             FuncDefManager.ins[new] = self
-        if old != '':
             FuncDefManager.ins.pop(old)
         self.update_label()
 
     def on_func_name_changed_auto(self,new):
-        if new != '':
+        if not self.is_preview.get():
             for call in FuncDefManager.calls.get(self.func_name.get()):
                 call.update_ports()
 
     def update_label(self):
         self.label.set(f'{self.func_name.get()}')
-
 
     def restore_from_version(self, version, old: NodeInfo):
         super().restore_from_version(version, old)
@@ -188,63 +218,70 @@ class FuncInNode(Node):
         self.remove_out_port(name)
 
     def on_output_set(self, new):
-        if self.func_name.get() == '':
-            return
-        for call in FuncDefManager.calls.get(self.func_name.get()):
-            call.update_input_ports()
+        if not self.is_preview.get():
+            print(FuncDefManager.calls.get(self.func_name.get()),self.func_name.get())
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_input_ports()
 
     def start_function(self,args:dict):
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
 
     def destroy(self) -> SObjectSerialized:
-        if self.func_name.get() != '':
+        if not self.is_preview.get():
             FuncDefManager.ins.pop(self.func_name.get())
         return super().destroy()
 
 class FuncOutNode(Node):
     category = 'function'
-    def build_node(self):
+    
+    def create(self):
         self.shape.set('normal')
 
-        # The order of creation of these two attrs is important.
-        # By create func_name last, it will be restored last, so the restoration of ins
-        # will not unwantingly invoke port update of CallNodes.
-        self.ins = self.add_attribute('ins',ListTopic,editor_type='list')
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text')
-
-
+        # setup attributes
+        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=['x'])
         self.ins.add_validator(ListTopic.unique_validator)
+        self.restore_attributes('ins')
+        
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.outs)
+        self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        try:
+            self.restore_attributes('func_name')
+        except:
+            self.func_name.set('MyFunc')
+
+        self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.outs))
+
+        # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)
         self.ins.on_set.add_auto(self.on_input_set)
 
-        if self.is_new:
-            self.ins.insert('x')
-
-        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.outs)
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
+
         self.update_label()
-        
-        if self.func_name.get() != '':
-            assert self.func_name.get() not in FuncDefManager.outs
+
+        for inp in self.ins.get():
+            self.add_in_port(inp,1,display_name = inp)
+
+        if not self.is_preview.get():
             FuncDefManager.outs[self.func_name.get()] = self
 
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('ins','func_name')
+    def post_create(self):
+        if not self.is_preview.get():
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_ports()
 
     def on_func_name_changed(self, old, new):
-        if new != '':
+        if not self.is_preview.get():
             FuncDefManager.outs[new] = self
-        if old != '':
             FuncDefManager.outs.pop(old)
         self.update_label()
 
-
     def on_func_name_changed_auto(self,new):
-        if new != '':
+        if not self.is_preview.get():
             for call in FuncDefManager.calls.get(self.func_name.get()):
                 call.update_ports()
 
@@ -258,10 +295,9 @@ class FuncOutNode(Node):
         self.remove_in_port(arg_name)
 
     def on_input_set(self, new):
-        if self.func_name.get() == '':
-            return
-        for call in FuncDefManager.calls.get(self.func_name.get()):
-            call.update_output_ports()
+        if not self.is_preview.get():
+            for call in FuncDefManager.calls.get(self.func_name.get()):
+                call.update_output_ports()
 
     def end_function(self,caller:FuncCallNode):
         for port in self.in_ports:
@@ -272,6 +308,6 @@ class FuncOutNode(Node):
         caller.push_result(result)
 
     def destroy(self) -> SObjectSerialized:
-        if self.func_name.get() != '':
+        if not self.is_preview.get():
             FuncDefManager.outs.pop(self.func_name.get())
         return super().destroy()

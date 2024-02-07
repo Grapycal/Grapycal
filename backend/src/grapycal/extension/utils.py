@@ -57,6 +57,11 @@ class SObjectInfo:
 class ControlInfo(SObjectInfo):
     pass
 
+class PortInfo(SObjectInfo):
+    def __init__(self, serialized: SObjectSerialized):
+        super().__init__(serialized)
+        self.name = self.attributes['name']
+
 def search_sobjectinfo_by_id(serialized:SObjectSerialized,id:str)->SObjectSerialized|None:
     '''
     Search for an SObjectInfo by id recursively
@@ -91,6 +96,19 @@ class NodeInfo(SObjectInfo):
             return ControlInfo(search_sobjectinfo_by_id_raise(serialized,control_id))
             
         self.controls=LazyDict[str,ControlInfo](get_controlinfo,list(controls.keys()))
+
+        self.in_ports: List[PortInfo] = []
+        for id in self.attributes['in_ports']:
+            sin = search_sobjectinfo_by_id_raise(serialized,id)
+            self.in_ports.append(PortInfo(sin))
+
+        self.out_ports: List[PortInfo] = []
+        for id in self.attributes['out_ports']:
+            sin = search_sobjectinfo_by_id_raise(serialized,id)
+            self.out_ports.append(PortInfo(sin))
+
+
+
 
 class Clock:
     def __init__(self, interval: float):

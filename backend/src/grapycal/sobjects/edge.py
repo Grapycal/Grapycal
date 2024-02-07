@@ -117,3 +117,15 @@ class Edge(SObject):
     
     def is_data_ready(self):
         return self._data_ready
+
+    def get_tail(self):
+        tail = self.tail.get()
+        assert tail is not None
+        return tail
+    
+    def get_head(self):
+        head = self.head.get()
+        assert head is not None
+        return head
+    
+    

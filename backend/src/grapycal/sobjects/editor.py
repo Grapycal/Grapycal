@@ -43,14 +43,18 @@ class Editor(SObject):
 
         # called by client
         self.register_service('create_edge',self.create_edge_from_port_id)
-        self.register_service('create_node',self.create_node_service)
+        self.register_service('create_node',self._create_node_service)
         self.register_service('copy',self._copy)
         self.register_service('paste',self._paste,pass_sender=True)
         self.register_service('delete',self._delete)
 
-        
+    def restore(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized]):
+        self.emit('restore_event',nodes=nodes,edges=edges) # manual mode
+        for node in self._restored_nodes:
+            # the post_create method must called outside of the restore_event to be in auto mode
+            node.post_create()
 
-    def restore(self, node_list : list[SObjectSerialized], edge_list : list[SObjectSerialized]):
+    def _restore(self, node_list : list[SObjectSerialized], edge_list : list[SObjectSerialized]):
         
         # Generate new ids for the nodes and edges
         nodes : dict[str,SObjectSerialized] = {}
@@ -109,9 +113,9 @@ class Editor(SObject):
             # The node may fail to create when the restore() method is called when pasting, and it should not be treated as an error.
             # For example, copy and paste a node that should be unique.
             try:
-                node = self.add_child_s(obj.type,id=new_node_id,is_new=False)
+                old_node_info = NodeInfo(obj)
+                node = self.add_child_s(obj.type,id=new_node_id,is_new=False,old_node_info=old_node_info)
                 assert isinstance(node,Node), f'Expected node, got {node}'
-                node.old_node_info = NodeInfo(obj)
                 node._restore('',node.old_node_info)
             except Exception:
                 logger.warning(f'Failed to restore {obj.type} {obj.id}',exc_info=True)
@@ -193,20 +197,27 @@ class Editor(SObject):
         for _,node in new_nodes.values():
             new_node_ids.append(node.get_id())
 
+        # used by self.restore() 
+        self._restored_nodes = [node for _,node in new_nodes.values()]
+
         return new_node_ids,new_edge_ids
 
-    def create_node(self, node_type: type[Node], **kwargs)->Node|None:
-        if node_type._is_singleton and hasattr(node_type,'instance'):
-            logger.warning(f'Node type {node_type} is a singleton and already exists')
-            return None
-        return self.add_child(node_type, is_preview=False, **kwargs)
     
-    def create_node_service(self, node_type: str, **kwargs):
-        node_type_cls = as_type(self._server._object_types[node_type],NodeMeta)
+    def _create_node_service(self, node_type: str, **kwargs):
+        self.create_node(node_type, **kwargs)
+
+    def create_node(self, node_type: str|type[Node], **kwargs) -> Node|None:
+        if isinstance(node_type,str):
+            node_type_cls = as_type(self._server._object_types[node_type],NodeMeta)
+        else:
+            node_type_cls = node_type
         if node_type_cls._is_singleton and hasattr(node_type_cls,'instance'):
             logger.warning(f'Node type {node_type} is a singleton and already exists')
-            return
-        self.add_child_s(node_type, is_preview=False, **kwargs)
+            return None
+        new_node = self.add_child(node_type_cls, is_preview=False, **kwargs)
+        assert isinstance(new_node,Node)
+        new_node.post_create()
+        return new_node
     
     def create_edge(self, tail: OutputPort, head: InputPort, new_edge_id: str|None = None) -> Edge:
         # Check the tail and head have space for the edge
@@ -280,7 +291,7 @@ class Editor(SObject):
                         attr[2] = new_translation
         
         with self._server.record():
-            self.emit('restore_event',nodes=nodes,edges=edges)
+            self.restore(nodes=nodes,edges=edges)
             for node_id in self._new_node_ids:
                 node = self._server.get_object(node_id)
                 node.add_tag(f'pasted_by_{sender}')
@@ -320,7 +331,7 @@ class Editor(SObject):
     def _restore_callback(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized],**kwargs):
 
         # restore the nodes and edges
-        new_node_ids,new_edge_ids = self.restore(nodes,edges)
+        new_node_ids,new_edge_ids = self._restore(nodes,edges)
 
         self._new_node_ids = new_node_ids # the _paste() method will use this
 

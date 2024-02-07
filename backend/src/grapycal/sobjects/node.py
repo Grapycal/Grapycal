@@ -137,9 +137,10 @@ class Node(SObject,metaclass=NodeMeta):
             del kwargs['serialized'] # a hack making build() always called
         return super().initialize(*args,**kwargs)
 
-    def build(self,is_preview=False,translation='0,0',is_new=True,**build_node_args):
+    def build(self,is_preview=False,translation='0,0',is_new=True,old_node_info:NodeInfo|None=None,**build_node_args):
         self.workspace:Workspace = self._server.globals.workspace
         self.is_new = is_new
+        self.old_node_info = old_node_info
         self._attributes_restore_from = {}
         self._controls_restore_from = {}
         self._already_restored_attributes = set()
@@ -193,6 +194,8 @@ class Node(SObject,metaclass=NodeMeta):
         Create attributes, ports, and controls here.
         Initialize fields here.
 
+        Do not affect other nodes' attributes, controls, or ports or create/destroy other nodes in this method, or the history will be messed up. Use post_create() for that purpose.
+
         ---
         Note:
         From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
@@ -242,6 +245,8 @@ class Node(SObject,metaclass=NodeMeta):
         
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
+
+        Do not affect other nodes' attributes, controls, or ports or create/destroy other nodes in this method. Use post_create() for that purpose.
 
         ---
         Note:
@@ -306,14 +311,14 @@ class Node(SObject,metaclass=NodeMeta):
             self.restore_attributes(('old_name1','new_name1'),('old_name2','new_name2'))
         ```
         '''
-        assert self.old_node_info is not None
+        if self.is_new:
+            return
         for name in attribute_names:
             if isinstance(name,tuple):
                 old_name,new_name = name
             else:
                 old_name,new_name = name,name
 
-            # DEPRECATED from v0.11.0: this check is for backward compatibility. 
             if new_name in self._already_restored_attributes:
                 continue
             self._already_restored_attributes.add(new_name)
@@ -357,6 +362,13 @@ class Node(SObject,metaclass=NodeMeta):
                 self.controls[new_name].restore_from(self.old_node_info.controls[old_name])
             except Exception as e:
                 self.efagrwthnh=''
+
+    def post_create(self):
+        '''
+        Called after the node is created and restored. Use it for affecting other nodes during the creation process. "Affecting" means creating or destroying other nodes, or modifying other nodes' attributes, controls, or ports.
+
+        It will not be called when the node is restored from undo/redo because if so, other nodes will be affected twice.
+        '''
 
     def spawn(self, client_id):
         '''
