@@ -291,6 +291,7 @@ export class AutoCompMenu extends PopupMenu{
         this.onSearch('') // show all options by setting empty query
         this.setFocusedOption(this.value)
         this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
+        this.search.selectionEnd = 1000 // Select all.
     }
     close(): void {
         super.close()
