@@ -208,7 +208,7 @@ class LoadNode(Node):
         network_name = self.network_name.get()
         path = self.path.get()
         M.net.load_network(network_name,path)
-        self.workspace.send_message_to_all(f'Loaded {network_name} to {path}.')
+        self.workspace.send_message_to_all(f'Loaded {network_name} from {path}.')
 
     def destroy(self):
         self.to_unlink()
