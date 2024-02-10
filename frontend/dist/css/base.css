@@ -112,16 +112,17 @@ footer{
 /* Works on Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(73, 73, 73) rgb(16, 16, 16);
+    scrollbar-color: rgb(54, 54, 54) transparent;
   }
   
   /* Works on Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
     width: 12px;
+    border-radius: 10px;
   }
   
   *::-webkit-scrollbar-track {
-    background: rgb(16, 16, 16);
+    background: transparent;
   }
   
   *::-webkit-scrollbar-thumb {
