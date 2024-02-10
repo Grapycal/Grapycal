@@ -138,6 +138,7 @@ export class Editor extends CompSObject{
 
     private onDrag(e: MouseEvent, mousePos: Vector2, prevMousePos: Vector2){
         if(!this.boxSelectionStart) return;
+        e.preventDefault()
         mousePos = this.transform.WroldToEl(mousePos,this.htmlItem.baseElement as HTMLElement,false)
         let boxSelection = new Vector2(mousePos.x-this.boxSelectionStart.x,mousePos.y-this.boxSelectionStart.y)
         let boxSelectionSize = new Vector2(Math.abs(boxSelection.x),Math.abs(boxSelection.y))

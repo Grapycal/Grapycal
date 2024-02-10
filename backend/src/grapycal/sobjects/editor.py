@@ -325,6 +325,9 @@ class Editor(SObject):
             else:
                 raise Exception(f'Unknown object type {obj}')
             
+        if len(node_ids) == 0 and len(edge_ids) == 0:
+            return
+            
         # use delete_event so the delete can be undone and redone correctly (with restore_callback)
         self.emit('delete_event',node_ids=node_ids,edge_ids=edge_ids)
     
@@ -403,8 +406,6 @@ class Editor(SObject):
 
         # log the deletion
         # TODO: deleting nodes may need thread locking
-        if len(nodes) == 0 and len(edges) == 0:
-            return
         msg = 'Deleted '
         if len(nodes) > 0:
             msg += f'{len(nodes)} node'
