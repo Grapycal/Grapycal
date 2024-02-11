@@ -108,36 +108,39 @@ class TrainNode(Node):
 
     def build_node(self):
         self.label.set('Train')
-        self.network_port = self.add_in_port('network',control_type=OptionControl, options=['net a','net b'])
+        self.css_classes.append('fit-content')
+        self.network_port = self.add_in_port('network',control_type=OptionControl,restore_from=False)
         self.loss_port = self.add_in_port('loss',1)
-        self.network_name = self.add_attribute('network name',StringTopic,'')
+        self.network_name = self.network_port.default_control.value
 
     def init_node(self):
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control,multi=True)
         self.optimizing_modules : set[nn.Module]= set()
         self.optimizer_device = None
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        if port == self.loss_port:
+        if port == self.loss_port: 
             self.run(self.train_step,loss = edge.get_data())
             return
         if port == self.network_port:
-            network_name = self.network_port.get_one_data()
-            self.network_name.set(network_name)
-            self.label.set('Train '+network_name)
+            self.label.set('Train '+ self.network_name.get())
 
     def get_module_nodes(self)->List[ModuleNode]:
-        name = self.network_name.get()
-        if not M.net.has_network(name):
-            return []
-        return M.net.get_module_nodes(name)
+        names = self.network_name.get()
+        res = []
+        for name in names.split(','):
+            if M.net.has_network(name):
+                res += M.net.get_module_nodes(name)
+            else:
+                raise Exception(f'Network {name} does not exist.')
+        return res
     
-    def getModules(self)->List[nn.Module]:
+    def get_modules(self)->List[nn.Module]:
         return [mn.get_module() for mn in self.get_module_nodes()]
 
     def create_optimizer_if_needed(self,loss_device):
-        if self.optimizing_modules != set(self.getModules()) or self.optimizer_device != loss_device:
-            self.optimizing_modules = set(self.getModules())
+        if self.optimizing_modules != set(self.get_modules()) or self.optimizer_device != loss_device:
+            self.optimizing_modules = set(self.get_modules())
             self.optimizer = torch.optim.Adam([p for m in self.optimizing_modules for p in m.parameters()])
             print('optimizer recreated', len(self.optimizing_modules),' modules')
             self.optimizer_device = loss_device

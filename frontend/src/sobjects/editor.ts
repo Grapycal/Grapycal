@@ -73,7 +73,7 @@ export class Editor extends CompSObject{
         
         this.transform.scale = 1
         this.transform.maxScale = 8
-        this.transform.minScale = 0.4
+        this.transform.minScale = 0.1
         this.transform.draggable = true;
         this.transform.scrollable = true;
 

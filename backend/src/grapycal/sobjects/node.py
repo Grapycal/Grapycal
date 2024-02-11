@@ -1,5 +1,4 @@
 from abc import ABCMeta
-from difflib import restore
 import io
 from itertools import count
 import logging
@@ -704,7 +703,7 @@ class Node(SObject,metaclass=NodeMeta):
         else:
             if len(self.output) > 100:
                 self.output.set([])
-                self.output.insert(['error','Too many output lines. Cleared.'])
+                self.output.insert(['error','Too many output lines. Cleared.\n'])
             self.output.insert(['output',data])
 
 
@@ -792,7 +791,7 @@ class Node(SObject,metaclass=NodeMeta):
             self.set_running(False)
             if len(self.output) > 100:
                 self.output.set([])
-                self.output.insert(['error','Too many output lines. Cleared.'])
+                self.output.insert(['error','Too many output lines. Cleared.\n'])
             self.output.insert(['error',message])
 
 

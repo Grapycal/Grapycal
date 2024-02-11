@@ -1,9 +1,22 @@
 
 from grapycal import OptionControl
-def setup_net_name_ctrl(control:OptionControl):
+def setup_net_name_ctrl(control:OptionControl,multi=False):
     from .manager import Manager as M
     def on_network_names_changed():
-        control.options.set(M.net.get_network_names())
+        existing_networks = M.net.get_network_names()
+        options = []
+        if not multi:
+            options = existing_networks
+        else:
+            limit = 64
+            for n in range(1,len(existing_networks)+1):
+                # all combinations of n names
+                import itertools
+                for c in itertools.combinations(existing_networks,n):
+                    options.append(','.join(c))
+                if len(options) > limit:
+                    break
+        control.options.set(options)
     M.net.on_network_names_changed += on_network_names_changed
     on_network_names_changed()
 
