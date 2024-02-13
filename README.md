@@ -22,8 +22,8 @@ The goal of this project is to make a programming language align with human perc
 The full documentaition can be found [here](https://docs.grapycal.org/).
 
 ## Get Started
-
 ```bash
+# Requires python 3.11
 pip install grapycal grapycal-builtin
 grapycal # Grapycal is now avaliable at localhost:9001
 ```
