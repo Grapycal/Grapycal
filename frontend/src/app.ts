@@ -27,41 +27,43 @@ import { AppNotification } from './ui_utils/appNotification'
 export const soundManager = new SoundManager();
 
 function tryReconnect(): void{
-    // test websocket availability every 1 second
-    const ws = new WebSocket(`ws://${location.hostname}:8765`);
-    const to = setTimeout(() => {
-        ws.close();
-        tryReconnect();
-    }, 1000);
-    ws.onopen = () => {
-        ws.close();
-        clearTimeout(to);
+    fetch(`http://${location.hostname}:8765`, {
+        method: "GET",
+        signal: AbortSignal.timeout(2000),
+        mode: 'no-cors'
+    })
+    .then((response) => {
         window.location.reload();
-    };
+    })
+    .catch((error) => {
+        print('failed to reconnect');
+        // wait for 2 seconds before trying again
+        setTimeout(tryReconnect, 2000);
+    });
 }
 
 function configureHtml(){
-    
+
     document.addEventListener('contextmenu', function(event) {
         event.preventDefault();
     });
-    
+
     function documentReady(callback: Function): void {
-        if (document.readyState === "complete" || document.readyState === "interactive") 
+        if (document.readyState === "complete" || document.readyState === "interactive")
             callback()
         else
             document.addEventListener("DOMContentLoaded", (event: Event) => {
                 callback()
             })
-    
+
       }
-    
+
     let desiredWidth: number = null;
     let prevX: number = null;
     let sidebarRight = document.getElementById('sidebar-right');
-    
+
     const MIN_WIDTH = 10; // 最小寬度
-    const MAX_WIDTH = 500; // 最大寬度  
+    const MAX_WIDTH = 500; // 最大寬度
     function resizeSidebar(event: MouseEvent): void {
         event.preventDefault(); // prevents selecting text
         if (desiredWidth != null && sidebarRight) {
@@ -77,20 +79,20 @@ function configureHtml(){
             sidebarRight.style.width = newWidth + 'px';
         }
       }
-    
+
     if (sidebarRight){
         document.getElementById('sidebar-resize-handle').addEventListener('mousedown', function(event: MouseEvent) {
             desiredWidth = sidebarRight.offsetWidth;
             prevX = event.x;
             document.addEventListener('mousemove', resizeSidebar, false);
         }, false)
-    
+
         document.addEventListener('mouseup', function(event: MouseEvent) {
             desiredWidth = undefined;
             document.removeEventListener('mousemove', resizeSidebar, false);
         }, false);
     }
-    
+
     documentReady(function(event: Event) {
         document.getElementById('sidebar-collapse-right').addEventListener('click', function(event) {
             let sidebar = document.getElementById('sidebar-collapse-right').parentElement;
@@ -101,13 +103,13 @@ function configureHtml(){
                 sidebar.classList.add('collapsed');
                 document.getElementById('sidebar-collapse-right').innerText = '<'
             }
-        });  
-        
+        });
+
         // new Header()
     })
-    
-    
-    
+
+
+
 }
 
 function startObjectSync(wsUrl:string){
@@ -158,7 +160,7 @@ function startObjectSync(wsUrl:string){
             }, 1000);
         }
     });
-    
+
     // for debugging
     expose('o',objectsync)
 }
@@ -177,7 +179,7 @@ declare var __BUILD_CONFIG__: {
 }
 
 // webpack define plugin will replace __BUILD_CONFIG__ with the injected value
-const buildConfig = __BUILD_CONFIG__ 
+const buildConfig = __BUILD_CONFIG__
 
 if (buildConfig.isService){
     // // let loginApi handle login and start ObjectSync
@@ -190,7 +192,7 @@ if (buildConfig.isService){
 
     // We have not made the api yet, so we will just use the ws url directly
     startObjectSync(`wss://workspace.grapycal.org`)
-    
+
 }else{
     // every thing else will be handled by ObjectSync.
     startObjectSync(`ws://${location.hostname}:${buildConfig.wsPort}`)

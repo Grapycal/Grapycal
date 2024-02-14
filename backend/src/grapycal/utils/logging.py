@@ -5,7 +5,7 @@ from typing import Callable
 if 1 + 1 == 3:
     from grapycal.sobjects.node import Node
 
-user_logger = logging.getLogger("USER")
+user_logger = logging.getLogger("user")
 
 
 def info_extension(node: "Node|str", msg: str, *args, **kwargs):
@@ -82,23 +82,31 @@ class NameTranslator(logging.Filter):
         self.debug_objectsync = debug_objectsync
 
     dictionary = {
-        "objectsync.server": "OS",
-        "objectsync.sobject": "SOBJECT",
-        "topicsync.server.server": "TOPICSYNC",
-        "topicsync.topic": "TOPIC",
-        "topicsync.server.client_manager": "CLIENT",
-        "workspace": "WORKSPACE",
-        "grapycal.extension.extensionManager": "EXTENSION",
+        "objectsync.server": "objsync",
+        "objectsync.sobject": "sobject",
+        "topicsync.server.server": "topicsync",
+        "topicsync.topic": "topic",
+        "topicsync.server.client_manager": "client",
+        "workspace": "workspace",
+        "grapycal.extension.extensionManager": "ext_manager",
     }
 
     def filter(self, record):
         if record.name.startswith("websockets"):
             return False
-        if not self.debug_objectsync and (
-            record.name.startswith("topicsync") or record.name.startswith("objectsync")
+        if (
+            not self.debug_objectsync
+            and (
+                record.name.startswith("topicsync")
+                or record.name.startswith("objectsync")
+            )
+            and record.levelno <= logging.DEBUG
         ):
             return False
-        record.short_name = self.dictionary.get(record.name, record.name)
+        if record.name.startswith("grapycal_"):
+            record.short_name = "ext:" + record.name[9:]
+        else:
+            record.short_name = self.dictionary.get(record.name, record.name)
         return True
 
 
@@ -130,7 +138,7 @@ class ConsoleLogFormatter(logging.Formatter):
     no_bold = "\x1b[22m"
     reset = "\x1b[0m"
     # format = "%(threadName)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    format_ = f"%(levelname)5s {bold}[%(short_name)s]\t{no_bold} %(message)s"
+    format_ = f"{bold}%(short_name)13s |{no_bold} %(message)s"
 
     FORMATS = {
         "default": {

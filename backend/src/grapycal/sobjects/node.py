@@ -44,8 +44,8 @@ def warn_no_control_name(control_type, node):
     node_type = node.get_type_name()
     warn_extension(
         node,
-        f"Consider giving a name to the control {control_type.__name__} in {node_type}\
-to avoid error when Grapycal auto restores the control.",
+        f"Consider giving a name to the control {control_type.__name__} in {node_type} \
+to prevent error when Grapycal auto restores the control.",
         extra={"key": f"No control name {node_type}"},
     )
 
