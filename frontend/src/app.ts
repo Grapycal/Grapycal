@@ -106,8 +106,6 @@ function configureHtml(){
                 document.getElementById('sidebar-collapse-right').innerText = '<'
             }
         });
-
-        // new Header()
     })
 
 
@@ -161,7 +159,7 @@ function startObjectSync(wsUrl:string){
                 window.location.reload();
             }, 1000);
         }
-    });
+    },{capture: true});
 
     // for debugging
     expose('o',objectsync)
