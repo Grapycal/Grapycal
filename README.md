@@ -16,6 +16,9 @@ Grapycal is a general-purpose visual programming language based on Python. It pr
 
 The goal of this project is to make a programming language align with human perception at best, while being powerful with the help of Python, its backend.
 
+Compatibility: 
+-  Python 3.11
+-  Chrome browser (have severe performance issue on Safari; FireFox is not tested.)
 
 ## Documentation
 
