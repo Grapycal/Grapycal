@@ -1,0 +1,35 @@
+:py:mod:`grapycal.sobjects.controls.threeControl`
+=================================================
+
+.. py:module:: grapycal.sobjects.controls.threeControl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.threeControl.ThreeControl
+
+
+
+
+.. py:class:: ThreeControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+       
+
+   .. py:attribute:: frontend_type
+      :value: 'ThreeControl'
+
+      
+
+   .. py:method:: build()
+
+
+

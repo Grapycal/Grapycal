@@ -1,0 +1,75 @@
+:py:mod:`grapycal.utils.nodeGen`
+================================
+
+.. py:module:: grapycal.utils.nodeGen
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.nodeGen.FunctionNodeGenerator
+   grapycal.utils.nodeGen.ClassNodeGenerator
+   grapycal.utils.nodeGen.FuncionNodeGenerator
+   grapycal.utils.nodeGen.ModuleNodeGenerator
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.nodeGen.doc_prettify
+
+
+
+.. py:function:: doc_prettify(doc: str) -> str
+
+
+.. py:class:: FunctionNodeGenerator(func: Callable[Ellipsis, Any], func_name: str | None = None, doc: str | None = None, category: str | None = None, in_ports: list[str] | None = None, out_ports: list[str] | None = None, max_in_degree: list[int] | None = None, shape: str | None = None, css_classes: list[str] | None = None, display_port_names: bool = True)
+
+
+   .. py:method:: initial_values()
+
+
+   .. py:method:: generate()
+
+
+
+.. py:class:: ClassNodeGenerator(cls: Callable[Ellipsis, Any], cls_name: str | None = None, doc: str | None = None, category: str | None = None, in_ports: list[str] | None = None, out_ports: list[str] | None = None, max_in_degree: list[int] | None = None, shape: str | None = None, css_classes: list[str] | None = None, display_port_names: bool = True, special=False)
+
+
+   .. py:method:: initial_values()
+
+
+   .. py:method:: generate()
+
+
+
+.. py:class:: FuncionNodeGenerator(func: Callable[Ellipsis, Any], func_name: str | None = None, doc: str | None = None, category: str | None = None, in_ports: list[str] | None = None, out_ports: list[str] | None = None, max_in_degree: list[int] | None = None, shape: str | None = None, css_classes: list[str] | None = None, display_port_names: bool = True, display_default_ports: int = None)
+
+
+   .. py:method:: initial_values()
+
+
+   .. py:method:: generate()
+
+
+
+.. py:class:: ModuleNodeGenerator(module: types.ModuleType, routins: list[Any] | None = None, classes: list[Any] | None = None, vars: list[Any] | None = None, detect_private_function: bool | None = False, detect_reserved_function: bool | None = None, detect_static_vars: bool | None = False, detect_private_vars: bool | None = None, detect_reserved_vars: bool | None = False)
+
+
+   Bases: :py:obj:`object`
+
+   .. py:method:: detect_routuns_and_classes()
+
+
+   .. py:method:: generate()
+
+
+

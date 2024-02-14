@@ -1,0 +1,81 @@
+:py:mod:`grapycal.sobjects.editor`
+==================================
+
+.. py:module:: grapycal.sobjects.editor
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.editor.Editor
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.editor.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: Editor
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Editor'
+
+      
+
+   .. py:method:: build(old: objectsync.SObjectSerialized | None = None)
+
+
+   .. py:method:: restore(node_list: list[objectsync.SObjectSerialized], edge_list: list[objectsync.SObjectSerialized])
+
+
+   .. py:method:: create_node(node_type: type, **kwargs) -> grapycal.sobjects.node.Node
+
+
+   .. py:method:: create_node_service(node_type: str, **kwargs)
+
+
+   .. py:method:: create_edge(tail: grapycal.sobjects.port.OutputPort, head: grapycal.sobjects.port.InputPort) -> grapycal.sobjects.edge.Edge
+
+
+   .. py:method:: create_edge_from_port_id(tail_id: str, head_id: str)
+
+
+   .. py:method:: _copy(ids: list[str])
+
+      Returns a list of serialized objects
+
+
+   .. py:method:: _paste(data: dict[str, list[Dict]], mouse_pos: dict[str, int], sender: int)
+
+      data is the result of _copy
+
+
+   .. py:method:: _paste_wrapper_emitted(nodes: list[objectsync.SObjectSerialized], edges: list[objectsync.SObjectSerialized], is_new: bool = True, **kwargs)
+
+
+   .. py:method:: _paste_wrapper_inversed(nodes: list[objectsync.SObjectSerialized], edges: list[objectsync.SObjectSerialized], **kwargs)
+
+
+   .. py:method:: _cut(ids: list[str])
+
+      Returns a list of serialized objects
+
+
+

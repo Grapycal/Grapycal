@@ -1,0 +1,44 @@
+:py:mod:`grapycal.sobjects.controls.linePlotControl`
+====================================================
+
+.. py:module:: grapycal.sobjects.controls.linePlotControl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.linePlotControl.LinePlotControl
+
+
+
+
+.. py:class:: LinePlotControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+       
+
+   .. py:attribute:: frontend_type
+      :value: 'LinePlotControl'
+
+      
+
+   .. py:method:: build()
+
+
+   .. py:method:: add_points(name, xs, ys)
+
+
+   .. py:method:: clear(name)
+
+
+   .. py:method:: clear_all()
+
+
+

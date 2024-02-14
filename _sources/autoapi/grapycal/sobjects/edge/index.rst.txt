@@ -1,0 +1,79 @@
+:py:mod:`grapycal.sobjects.edge`
+================================
+
+.. py:module:: grapycal.sobjects.edge
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.edge.Edge
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.edge.HAS_TORCH
+   grapycal.sobjects.edge.HAS_NUMPY
+
+
+.. py:data:: HAS_TORCH
+   :value: True
+
+   
+
+.. py:data:: HAS_NUMPY
+   :value: True
+
+   
+
+.. py:class:: Edge
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Edge'
+
+      
+
+   .. py:method:: build(tail: grapycal.sobjects.port.OutputPort | None = None, head: grapycal.sobjects.port.InputPort | None = None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: on_tail_set(old_tail: grapycal.sobjects.port.Port | None, new_tail: grapycal.sobjects.port.Port | None)
+
+
+   .. py:method:: on_head_set(old_head: grapycal.sobjects.port.Port | None, new_head: grapycal.sobjects.port.InputPort | None)
+
+
+   .. py:method:: destroy() -> objectsync.sobject.SObjectSerialized
+
+
+   .. py:method:: get_data() -> Any
+
+
+   .. py:method:: push_data(data, label: str | None = None)
+
+
+   .. py:method:: set_label(label)
+
+
+   .. py:method:: is_activated()
+
+
+   .. py:method:: is_data_ready()
+
+
+

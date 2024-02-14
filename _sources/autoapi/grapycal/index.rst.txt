@@ -1,0 +1,668 @@
+:py:mod:`grapycal`
+==================
+
+.. py:module:: grapycal
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   core/index.rst
+   extension/index.rst
+   sobjects/index.rst
+   utils/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   __main__/index.rst
+   app/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.GrapycalApp
+   grapycal.SourceNode
+   grapycal.TextControl
+   grapycal.ButtonControl
+   grapycal.ImageControl
+   grapycal.Node
+   grapycal.FunctionNode
+   grapycal.Edge
+   grapycal.InputPort
+   grapycal.OutputPort
+   grapycal.Port
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.load_config
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.__version__
+
+
+.. py:data:: __version__
+   :value: '0.10.0'
+
+   
+
+.. py:class:: GrapycalApp(config: grapycal.utils.usersettings.Settings)
+
+
+   The backend server
+
+   :param usersettings.Settings config: the configuration for server
+
+   .. py:method:: run() -> None
+
+      Server main loop
+
+
+   .. py:method:: _run_workspace()
+
+      Run a workspace. Ensure that the workspace is terminated when the context is exited.
+
+
+   .. py:method:: _waitForWorkspace(workspace: subprocess.Popen)
+
+
+
+.. py:class:: SourceNode
+
+
+   Bases: :py:obj:`grapycal.sobjects.node.Node`
+
+   Inherit from this class to conveniently create a node that can be a source of the graph (can be activated by the user.)
+   This type of node can be activated by double clicking the node or by sending a signal the run port on the node.
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: init_node()
+
+      This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+      the node is built.
+
+
+   .. py:method:: task()
+
+      Define the task of this node here. 
+      By default, this method will be called when double clicking the node or when the run port on the node
+        is activated (if there is one).
+
+
+   .. py:method:: double_click()
+
+      Called when the node is double clicked by an user.
+
+
+   .. py:method:: on_activate(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.InputPort)
+
+
+
+.. py:function:: load_config(path)
+
+
+.. py:class:: TextControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+   To add a text control to a node, use the following code in the node:
+   ```python
+   self.add_control(TextControl, text='', label='', editable=True)
+   ```
+
+   .. py:attribute:: frontend_type
+      :value: 'TextControl'
+
+      
+
+   .. py:method:: build(text: str = '', label: str = '', readonly=False, editable: bool = True)
+
+
+   .. py:method:: set(text: str)
+
+
+   .. py:method:: get()
+
+
+
+.. py:class:: ButtonControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+   To add a button control to a node, use the following code in the node:
+   ```python
+   self.add_control(Button, label='')
+   ```
+
+   .. py:attribute:: frontend_type
+      :value: 'ButtonControl'
+
+      
+
+   .. py:method:: build(label: str = '')
+
+
+   .. py:method:: init()
+
+
+
+.. py:class:: ImageControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+       
+
+   .. py:attribute:: frontend_type
+      :value: 'ImageControl'
+
+      
+
+   .. py:method:: build()
+
+
+   .. py:method:: restore_from(old: grapycal.extension.utils.ControlInfo)
+
+      Default recovery process. If the control class get updated in Grapycal, override this method to customize the recovery process
+      for different Grapycal versions.
+
+
+   .. py:method:: set(image: bytes | io.BytesIO | None)
+
+
+   .. py:method:: get() -> bytes
+
+
+
+.. py:class:: Node
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Node'
+
+      
+
+   .. py:attribute:: category
+      :value: 'hidden'
+
+      
+
+   .. py:attribute:: T
+
+      
+
+   .. py:attribute:: T1
+
+      
+
+   .. py:method:: get_def_order()
+      :classmethod:
+
+
+   .. py:method:: build(is_preview=False, translation='0,0', restore_info=None, **build_node_args)
+
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: init_node()
+
+      This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+      the node is built.
+
+
+   .. py:method:: restore_from_version(version: str, old: grapycal.extension.utils.NodeInfo)
+
+      Called when the node is created as a result of a old node being upgraded.
+      The old node's information (including attribute values) is in the `old` argument.
+
+
+   .. py:method:: restore_attributes(*attribute_names: str | tuple[str, str])
+
+      Recover attributes from the old node.
+
+
+   .. py:method:: restore_controls(*control_names: str | tuple[str, str])
+
+      Recover controls from the old node.
+
+
+   .. py:method:: spawn(client_id)
+
+      Called when a client wants to spawn a node.
+
+
+   .. py:method:: destroy() -> objectsync.sobject.SObjectSerialized
+
+      Called when the node is destroyed. You can override this method to do something before the node is destroyed.
+      Note: Overrided methods should call return super().destroy() at the end.
+
+
+   .. py:method:: add_in_port(name: str, max_edges=64, display_name=None)
+
+      Add an input port to the node.
+
+
+   .. py:method:: add_out_port(name: str, max_edges=64, display_name=None)
+
+      Add an output port to the node.
+
+
+   .. py:method:: remove_in_port(name: str)
+
+      Remove an input port from the node.
+
+
+   .. py:method:: remove_out_port(name: str)
+
+      Remove an output port from the node.
+
+
+   .. py:method:: get_in_port(name: str) -> grapycal.sobjects.port.InputPort
+
+      Get an input port by its name.
+
+
+   .. py:method:: get_out_port(name: str) -> grapycal.sobjects.port.OutputPort
+
+      an output port by its name.
+
+
+   .. py:method:: has_in_port(name: str) -> bool
+
+      Check if an input port exists.
+
+
+   .. py:method:: has_out_port(name: str) -> bool
+
+      Check if an output port exists.
+
+
+   .. py:method:: add_control(control_type: type[T], name: str | None = None, **kwargs) -> T
+
+      Add a control to the node.
+
+
+   .. py:method:: add_text_control(text: str = '', label: str = '', readonly=False, editable: bool = True, name: str | None = None) -> grapycal.sobjects.controls.textControl.TextControl
+
+      Add a text control to the node.
+
+
+   .. py:method:: add_button_control(label: str = '', name: str | None = None) -> grapycal.sobjects.controls.buttonControl.ButtonControl
+
+      Add a button control to the node.
+
+
+   .. py:method:: add_image_control(name: str | None = None) -> grapycal.sobjects.controls.imageControl.ImageControl
+
+      Add an image control to the node.
+
+
+   .. py:method:: add_lineplot_control(name: str | None = None) -> grapycal.sobjects.controls.linePlotControl.LinePlotControl
+
+      Add a line plot control to the node.
+
+
+   .. py:method:: remove_control(control: str | grapycal.sobjects.controls.control.Control)
+
+
+   .. py:method:: add_attribute(topic_name: str, topic_type: type[T1], init_value=None, is_stateful=True, editor_type: str | None = None, display_name: str | None = None, order_strict: bool | None = None, **editor_args) -> T1
+
+      If order_strict is None, it will be set to the ame as is_stateful.
+      The usage of editor_type and editor_args is the same as the expose_attribute method.
+
+
+   .. py:method:: expose_attribute(attribute: objectsync.Topic | objectsync.sobject.WrappedTopic, editor_type, display_name=None, **editor_args)
+
+      Expose an attribute to the editor.
+      Args:
+          - attribute: The attribute to expose.
+
+          - editor_type: The type of the editor to use. Can be ``text`` or ``list``.
+
+      List of editor types:
+          - ``dict``: A dictionary editor. Goes with a DictTopic. editor_args: {
+              'key_options':list[str]|None,
+              'value_options':list[str]|None,
+              'key_strict':bool|None,
+              'value_strict':bool|None,
+          }
+
+          - ``list``: A list editor. Goes with a ListTopic. editor_args: {}
+
+          - ``options``: A dropdown editor. Goes with a StringTopic. editor_args: {
+              'options':list[str],
+          }
+
+          - ``text``: A text editor. Goes with a StringTopic. 
+
+          - ``int``: An integer editor. Goes with an IntTopic. editor_args: {}
+
+          - ``float``: A float editor. Goes with a FloatTopic. editor_args: {}
+          
+          
+
+          
+
+
+
+   .. py:method:: print(*args, **kwargs)
+
+      Print to the node's output.
+
+
+   .. py:method:: raw_print(data)
+
+
+   .. py:method:: _redirect_output()
+
+      Returns a context manager that redirects stdout to the node's output stream.
+
+
+   .. py:method:: _run_in_background(task: Callable[[], None], to_queue=True, redirect_output=False)
+
+      Run a task in the background thread.
+
+
+   .. py:method:: _run_directly(task: Callable[[], None], redirect_output=False)
+
+      Run a task in the current thread.
+
+
+   .. py:method:: run(task: Callable, background=True, to_queue=True, redirect_output=False, *args, **kwargs)
+
+      Run a task in the node's context i.e. the stdout and errors will be redirected to the node's output attribute and be displayed in front-end.
+
+      Args:
+          - task: The task to run.
+
+          - background: If set to True, the task will be scheduled to run in the background thread. Otherwise, it will be run in the current thread immediately.
+          
+          - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.            If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
+
+
+   .. py:method:: _on_exception(e, truncate=0)
+
+
+   .. py:method:: flash_running_indicator()
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.InputPort)
+
+      Called when an edge on an input port is activated.
+
+
+   .. py:method:: input_edge_added(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.InputPort)
+
+      Called when an edge is added to an input port.
+
+
+   .. py:method:: input_edge_removed(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.InputPort)
+
+      Called when an edge is removed from an input port.
+
+
+   .. py:method:: output_edge_added(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.OutputPort)
+
+      Called when an edge is added to an output port.
+
+
+   .. py:method:: output_edge_removed(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.OutputPort)
+
+      Called when an edge is removed from an output port.
+
+
+   .. py:method:: double_click()
+
+      Called when the node is double clicked by an user.
+
+
+
+.. py:class:: FunctionNode
+
+
+   Bases: :py:obj:`grapycal.sobjects.node.Node`
+
+   .. py:attribute:: inputs
+      :value: []
+
+      
+
+   .. py:attribute:: max_in_degree
+      :value: []
+
+      
+
+   .. py:attribute:: outputs
+      :value: []
+
+      
+
+   .. py:attribute:: display_port_names
+      :value: True
+
+      
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge on an input port is activated.
+
+
+   .. py:method:: task()
+
+
+   .. py:method:: calculate(**inputs) -> Any
+      :abstractmethod:
+
+      Define the function of this node here.
+
+      :param **inputs: A dict of lists. Each dict entry is the data from one input port. For example, if there is only one input port named "in" with two            edges connected, the value of inputs will be `{'in':[data_from_edge_1, data_from_edge_2]}`.
+      :return: A list of outputs. Each entry in the list will be pushed to one output port. For example, if there is only one output port,            the value of the return suold be `[data_to_port]`. If there are multiple edges connected to one output port,            they will all receive the same data.
+
+      Examples::
+
+          class SumNode(FunctionNode):
+              inputs = ['items']
+              outputs = ['sum']
+              ...
+              def calculate(self, items):
+                  return {'sum':sum(items)} # Return the sum of the data
+
+
+   .. py:method:: input_edge_added(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is added to an input port.
+
+
+   .. py:method:: input_edge_removed(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is removed from an input port.
+
+
+   .. py:method:: remove()
+
+
+
+.. py:class:: Edge
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Edge'
+
+      
+
+   .. py:method:: build(tail: grapycal.sobjects.port.OutputPort | None = None, head: grapycal.sobjects.port.InputPort | None = None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: on_tail_set(old_tail: grapycal.sobjects.port.Port | None, new_tail: grapycal.sobjects.port.Port | None)
+
+
+   .. py:method:: on_head_set(old_head: grapycal.sobjects.port.Port | None, new_head: grapycal.sobjects.port.InputPort | None)
+
+
+   .. py:method:: destroy() -> objectsync.sobject.SObjectSerialized
+
+
+   .. py:method:: get_data() -> Any
+
+
+   .. py:method:: push_data(data, label: str | None = None)
+
+
+   .. py:method:: set_label(label)
+
+
+   .. py:method:: is_activated()
+
+
+   .. py:method:: is_data_ready()
+
+
+
+.. py:class:: InputPort
+
+
+   Bases: :py:obj:`Port`
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: is_all_edge_ready()
+
+
+   .. py:method:: get_data()
+
+
+   .. py:method:: get_one_data(allow_no_data=False)
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge)
+
+
+
+.. py:class:: OutputPort
+
+
+   Bases: :py:obj:`Port`
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: push_data(data: Any = None, label: str | None = None, retain: bool = False)
+
+      Push data to all connected edges.
+      If retain is True, the data will be pushed to all future edges when they're connected as well.
+
+
+   .. py:method:: disable_retain()
+
+      Disable retain mode.
+
+
+
+.. py:class:: Port
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Port'
+
+      
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: is_full()
+
+
+   .. py:method:: get_name()
+
+
+

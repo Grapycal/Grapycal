@@ -1,0 +1,2383 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 --><title>Index - Grapycal 0.10.0 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Grapycal 0.10.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Grapycal 0.10.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/run_grapycal.html">Run Grapycal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/extension.html">Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Manual</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_manual/node.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_manual/grapycal_builtin.html">Built-in Nodes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribution Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide/contribution.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide/project_overview.html">Project Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="contribution_guide/define_a_node.html">Extension</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Extension</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide/define_a_node_from_higher_level.html">Define a Node Type: The Easy Way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide/define_a_node_from_node.html">Define a Node Type: The Low-Level Way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide/define_a_node_from_node.html#node-creation-process">Node Creation Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide/examples_of_node_definition.html">Examples of Node Definition</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/grapycal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of grapycal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/grapycal/core/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of grapycal.core</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/core/background_runner/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.background_runner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/core/local/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.local</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/core/running_module/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.running_module</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/core/stdout_helper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.stdout_helper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/core/workspace/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.workspace</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/grapycal/extension/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of grapycal.extension</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/extension/extension/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extension</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/extension/extensionManager/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extensionManager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/extension/extensionSearch/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extensionSearch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/extension/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/grapycal/sobjects/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of grapycal.sobjects</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of grapycal.sobjects.controls</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/buttonControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.buttonControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/control/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.control</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/imageControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.imageControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.linePlotControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/textControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.textControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/grapycal/sobjects/controls/threeControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.threeControl</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/DVfunctionNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.DVfunctionNode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/edge/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.edge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/editor/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.editor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/fileView/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.fileView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/functionNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.functionNode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/node/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.node</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/port/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/settings/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.settings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/sidebar/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.sidebar</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/sourceNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.sourceNode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/sobjects/workspaceObject/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.workspaceObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/grapycal/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of grapycal.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/file/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/httpResource/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.httpResource</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/logging/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.logging</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/misc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.misc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/nodeGen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.nodeGen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/grapycal/utils/usersettings/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.usersettings</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/grapycal/__main__/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.__main__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/grapycal/app/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.app</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
+</section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__abs__">__abs__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__add__">__add__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.Action.__add__">__add__() (grapycal.utils.misc.Action method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__aenter__">__aenter__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__aexit__">__aexit__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__aiter__">__aiter__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__and__">__and__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__anext__">__anext__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__await__">__await__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__bool__">__bool__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__bytes__">__bytes__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__call__">__call__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup.__call__">__call__() (grapycal.core.local._ProxyLookup method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__call__">(grapycal.core.local.Local method)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.__call__">(grapycal.core.local.LocalStack method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ceil__">__ceil__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__class__">__class__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__complex__">__complex__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__contains__">__contains__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.LazyDict.__contains__">__contains__() (grapycal.extension.utils.LazyDict method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__copy__">__copy__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__deepcopy__">__deepcopy__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__delattr__">__delattr__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__delattr__">__delattr__() (grapycal.core.local.Local method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__delitem__">__delitem__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__dir__">__dir__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__divmod__">__divmod__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__doc__">__doc__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__enter__">__enter__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__eq__">__eq__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__exit__">__exit__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__float__">__float__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__floor__">__floor__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__floordiv__">__floordiv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__format__">__format__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ge__">__ge__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup.__get__">__get__() (grapycal.core.local._ProxyLookup method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__getattr__">__getattr__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__getattr__">__getattr__() (grapycal.core.local.Local method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.__getattr__">(grapycal.utils.usersettings.Settings method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__getitem__">__getitem__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.LazyDict.__getitem__">__getitem__() (grapycal.extension.utils.LazyDict method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.SObjectInfo.__getitem__">(grapycal.extension.utils.SObjectInfo method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__gt__">__gt__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__hash__">__hash__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__iadd__">__iadd__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__iand__">__iand__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ifloordiv__">__ifloordiv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ilshift__">__ilshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__imatmul__">__imatmul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__imod__">__imod__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__imul__">__imul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__index__">__index__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__instancecheck__">__instancecheck__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__int__">__int__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__invert__">__invert__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ior__">__ior__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ipow__">__ipow__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__irshift__">__irshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__isub__">__isub__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__iter__">__iter__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__iter__">__iter__() (grapycal.core.local.Local method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__itruediv__">__itruediv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ixor__">__ixor__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__le__">__le__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__len__">__len__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__length_hint__">__length_hint__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__lshift__">__lshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__lt__">__lt__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__matmul__">__matmul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__mod__">__mod__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__mul__">__mul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ne__">__ne__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__neg__">__neg__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__next__">__next__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__or__">__or__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__pos__">__pos__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__pow__">__pow__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__radd__">__radd__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rand__">__rand__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rdivmod__">__rdivmod__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__release_local__">__release_local__() (grapycal.core.local.Local method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.__release_local__">(grapycal.core.local.LocalStack method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__repr__">__repr__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup.__repr__">__repr__() (grapycal.core.local._ProxyLookup method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__reversed__">__reversed__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rfloordiv__">__rfloordiv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rlshift__">__rlshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rmatmul__">__rmatmul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rmod__">__rmod__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rmul__">__rmul__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__ror__">__ror__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__round__">__round__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rpow__">__rpow__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rrshift__">__rrshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rshift__">__rshift__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rsub__">__rsub__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rtruediv__">__rtruediv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__rxor__">__rxor__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup.__set_name__">__set_name__() (grapycal.core.local._ProxyLookup method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__setattr__">__setattr__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__setattr__">__setattr__() (grapycal.core.local.Local method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.__setattr__">(grapycal.utils.usersettings.Settings method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__setitem__">__setitem__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyIOp.__slots__">__slots__ (grapycal.core.local._ProxyIOp attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup.__slots__">(grapycal.core.local._ProxyLookup attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local.__slots__">(grapycal.core.local.Local attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalManager.__slots__">(grapycal.core.local.LocalManager attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__slots__">(grapycal.core.local.LocalProxy attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.__slots__">(grapycal.core.local.LocalStack attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__str__">__str__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__sub__">__sub__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.Action.__sub__">__sub__() (grapycal.utils.misc.Action method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__subclasscheck__">__subclasscheck__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__truediv__">__truediv__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__trunc__">__trunc__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.__version__">__version__ (in module grapycal)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__wrapped__">__wrapped__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy.__xor__">__xor__ (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace._async_communication_thread">_async_communication_thread() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._check_extension_compatible">_check_extension_compatible() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._check_extension_not_used">_check_extension_not_used() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace._check_extensions_version">_check_extensions_version() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace._check_grapycal_version">_check_grapycal_version() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace._communication_thread">_communication_thread() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor._copy">_copy() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor._cut">_cut() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode._default_value">_default_value (grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WorkspaceObject._delete_callback">_delete_callback() (grapycal.sobjects.workspaceObject.WorkspaceObject method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._destroy_preview_nodes">_destroy_preview_nodes() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream._disable_flush">_disable_flush() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream._enable_flush">_enable_flush() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy._get_current_object">_get_current_object (grapycal.core.local.LocalProxy attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper._get_stream">_get_stream() (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._identity">_identity() (in module grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._install_extension">_install_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._install_extension_async">_install_extension_async() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._l_to_r_op">_l_to_r_op() (in module grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._load_extension">_load_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node._on_exception">_on_exception() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node._on_exception">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace._open_workspace_callback">_open_workspace_callback() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor._paste">_paste() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor._paste_wrapper_emitted">_paste_wrapper_emitted() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor._paste_wrapper_inversed">_paste_wrapper_inversed() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyIOp">_ProxyIOp (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local._ProxyLookup">_ProxyLookup (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node._redirect_output">_redirect_output() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node._redirect_output">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._register_extension">_register_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node._run_directly">_run_directly() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node._run_directly">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node._run_in_background">_run_in_background() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node._run_in_background">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/app/index.html#grapycal.app.GrapycalApp._run_workspace">_run_workspace() (grapycal.app.GrapycalApp method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.GrapycalApp._run_workspace">(grapycal.GrapycalApp method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._scan_available_extensions">_scan_available_extensions() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings._settings_defaults">_settings_defaults (grapycal.utils.usersettings.Settings attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings._settings_types">_settings_types (grapycal.utils.usersettings.Settings attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._unload_extension">_unload_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._update_available_extensions_topic">_update_available_extensions_topic() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager._update_available_extensions_topic_async">_update_available_extensions_topic_async() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/app/index.html#grapycal.app.GrapycalApp._waitForWorkspace">_waitForWorkspace() (grapycal.app.GrapycalApp method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.GrapycalApp._waitForWorkspace">(grapycal.GrapycalApp method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.Action">Action (class in grapycal.utils.misc)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_attribute">add_attribute() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_attribute">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_button_control">add_button_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_button_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_control">add_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.add_dir">add_dir() (grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.add_edge">add_edge() (grapycal.InputPort method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.add_edge">(grapycal.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Port.add_edge">(grapycal.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.add_edge">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.add_edge">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.add_edge">(grapycal.sobjects.port.Port method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extension/index.html#grapycal.extension.extension.Extension.add_extension_name_to_node_type">add_extension_name_to_node_type() (grapycal.extension.extension.Extension method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.add_file">add_file() (grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_image_control">add_image_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_image_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_in_port">add_in_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_in_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_lineplot_control">add_lineplot_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_lineplot_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_out_port">add_out_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_out_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl.add_points">add_points() (grapycal.sobjects.controls.linePlotControl.LinePlotControl method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.add_setting">add_setting() (grapycal.utils.usersettings.Settings method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.add_task_to_event_loop">add_task_to_event_loop() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.add_text_control">add_text_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.add_text_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.app_id">app_id (grapycal.utils.usersettings.Settings attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.as_type">as_type() (in module grapycal.utils.misc)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.AttrInfo">AttrInfo (class in grapycal.extension.utils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner">BackgroundRunner (class in grapycal.core.background_runner)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.blue">blue (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.bold">bold (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.bold_red">bold_red (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ButtonControl.build">build() (grapycal.ButtonControl method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Edge.build">(grapycal.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl.build">(grapycal.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.build">(grapycal.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.build">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.build">(grapycal.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Port.build">(grapycal.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ButtonControl.build">(grapycal.sobjects.controls.ButtonControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#grapycal.sobjects.controls.buttonControl.ButtonControl.build">(grapycal.sobjects.controls.buttonControl.ButtonControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl.build">(grapycal.sobjects.controls.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl.build">(grapycal.sobjects.controls.imageControl.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl.build">(grapycal.sobjects.controls.linePlotControl.LinePlotControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.TextControl.build">(grapycal.sobjects.controls.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl.build">(grapycal.sobjects.controls.textControl.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/threeControl/index.html#grapycal.sobjects.controls.threeControl.ThreeControl.build">(grapycal.sobjects.controls.threeControl.ThreeControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.build">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.build">(grapycal.sobjects.editor.Editor method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.build">(grapycal.sobjects.fileView.FileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.build">(grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.RemoteFileView.build">(grapycal.sobjects.fileView.RemoteFileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.build">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.build">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.build">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.build">(grapycal.sobjects.port.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WebcamStream.build">(grapycal.sobjects.workspaceObject.WebcamStream method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WorkspaceObject.build">(grapycal.sobjects.workspaceObject.WorkspaceObject method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.TextControl.build">(grapycal.TextControl method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.build_node">build_node() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.build_node">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.build_node">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.build_node">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.build_node">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode.build_node">(grapycal.sobjects.sourceNode.SourceNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode.build_node">(grapycal.SourceNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ButtonControl">ButtonControl (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ButtonControl">(class in grapycal.sobjects.controls)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#grapycal.sobjects.controls.buttonControl.ButtonControl">(class in grapycal.sobjects.controls.buttonControl)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.calculate">calculate() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.calculate">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.calculate">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.category">category (grapycal.Node attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.category">(grapycal.sobjects.node.Node attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.check_ready">check_ready() (grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.NodeMeta.class_def_counter">class_def_counter (grapycal.sobjects.node.NodeMeta attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ClassNodeGenerator">ClassNodeGenerator (class in grapycal.utils.nodeGen)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalManager.cleanup">cleanup() (grapycal.core.local.LocalManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl.clear">clear() (grapycal.sobjects.controls.linePlotControl.LinePlotControl method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl.clear_all">clear_all() (grapycal.sobjects.controls.linePlotControl.LinePlotControl method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.clear_tasks">clear_tasks() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.client_connected">client_connected() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.client_disconnected">client_disconnected() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.Clock">Clock (class in grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.close">close() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter">ConsoleLogFormatter (class in grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/control/index.html#grapycal.sobjects.controls.control.Control">Control (class in grapycal.sobjects.controls.control)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.ControlInfo">ControlInfo (class in grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.create_edge">create_edge() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.create_edge_from_port_id">create_edge_from_port_id() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.create_node">create_node() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.create_node_service">create_node_service() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.create_preview_nodes">create_preview_nodes() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.NodeMeta.def_order">def_order (grapycal.sobjects.node.NodeMeta attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.default_only">default_only (grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.default_value">default_value (grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.delete">delete() (grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.deserialize_sort_key">deserialize_sort_key() (in module grapycal.core.workspace)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.destroy">destroy() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.destroy">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.destroy">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.destroy">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ModuleNodeGenerator.detect_routuns_and_classes">detect_routuns_and_classes() (grapycal.utils.nodeGen.ModuleNodeGenerator method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.NameTranslator.dictionary">dictionary (grapycal.utils.logging.NameTranslator attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.disable_flush">disable_flush() (grapycal.utils.io.OutputStream method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.disable_proxy">disable_proxy() (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.disable_retain">disable_retain() (grapycal.OutputPort method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.disable_retain">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.display_port_names">display_port_names (grapycal.FunctionNode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.display_port_names">(grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.display_port_names">(grapycal.sobjects.functionNode.FunctionNode attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.doc_prettify">doc_prettify() (in module grapycal.utils.nodeGen)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.double_click">double_click() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.double_click">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode.double_click">(grapycal.sobjects.sourceNode.SourceNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode.double_click">(grapycal.SourceNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode">DVfunctionNode (class in grapycal.sobjects.DVfunctionNode)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge">Edge (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge">(class in grapycal.sobjects.edge)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.edge_activated">edge_activated() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.edge_activated">(grapycal.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.edge_activated">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.edge_activated">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.edge_activated">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.edge_activated">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.edge_activated">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor">Editor (class in grapycal.sobjects.editor)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.LogToFrontendHandler.emit">emit() (grapycal.utils.logging.LogToFrontendHandler method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.enable_flush">enable_flush() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.enable_proxy">enable_proxy() (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.exit">exit() (grapycal.core.background_runner.BackgroundRunner method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.exit">(grapycal.core.workspace.Workspace method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.expose_attribute">expose_attribute() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.expose_attribute">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extension/index.html#grapycal.extension.extension.Extension">Extension (class in grapycal.extension.extension)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager">ExtensionManager (class in grapycal.extension.extensionManager)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.F">F (in module grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.file_exists">file_exists() (in module grapycal.utils.io)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView">FileView (class in grapycal.sobjects.fileView)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.NameTranslator.filter">filter() (grapycal.utils.logging.NameTranslator method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.flash_running_indicator">flash_running_indicator() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.flash_running_indicator">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.flush">flush() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.format">format() (grapycal.utils.logging.ConsoleLogFormatter method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.FrontendFormatter.format">(grapycal.utils.logging.FrontendFormatter method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.format_">format_ (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.FORMATS">FORMATS (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.frontend_message_topic">frontend_message_topic (in module grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ButtonControl.frontend_type">frontend_type (grapycal.ButtonControl attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Edge.frontend_type">(grapycal.Edge attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl.frontend_type">(grapycal.ImageControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.frontend_type">(grapycal.Node attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Port.frontend_type">(grapycal.Port attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ButtonControl.frontend_type">(grapycal.sobjects.controls.ButtonControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#grapycal.sobjects.controls.buttonControl.ButtonControl.frontend_type">(grapycal.sobjects.controls.buttonControl.ButtonControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl.frontend_type">(grapycal.sobjects.controls.ImageControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl.frontend_type">(grapycal.sobjects.controls.imageControl.ImageControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl.frontend_type">(grapycal.sobjects.controls.linePlotControl.LinePlotControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.TextControl.frontend_type">(grapycal.sobjects.controls.TextControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl.frontend_type">(grapycal.sobjects.controls.textControl.TextControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/threeControl/index.html#grapycal.sobjects.controls.threeControl.ThreeControl.frontend_type">(grapycal.sobjects.controls.threeControl.ThreeControl attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.frontend_type">(grapycal.sobjects.edge.Edge attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.frontend_type">(grapycal.sobjects.editor.Editor attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.frontend_type">(grapycal.sobjects.fileView.FileView attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.frontend_type">(grapycal.sobjects.node.Node attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.frontend_type">(grapycal.sobjects.port.Port attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/settings/index.html#grapycal.sobjects.settings.Settings.frontend_type">(grapycal.sobjects.settings.Settings attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sidebar/index.html#grapycal.sobjects.sidebar.Sidebar.frontend_type">(grapycal.sobjects.sidebar.Sidebar attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WebcamStream.frontend_type">(grapycal.sobjects.workspaceObject.WebcamStream attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WorkspaceObject.frontend_type">(grapycal.sobjects.workspaceObject.WorkspaceObject attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.TextControl.frontend_type">(grapycal.TextControl attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.FrontendFormatter">FrontendFormatter (class in grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FuncionNodeGenerator">FuncionNodeGenerator (class in grapycal.utils.nodeGen)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode">FunctionNode (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode">(class in grapycal.sobjects.functionNode)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FunctionNodeGenerator">FunctionNodeGenerator (class in grapycal.utils.nodeGen)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ClassNodeGenerator.generate">generate() (grapycal.utils.nodeGen.ClassNodeGenerator method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FuncionNodeGenerator.generate">(grapycal.utils.nodeGen.FuncionNodeGenerator method)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FunctionNodeGenerator.generate">(grapycal.utils.nodeGen.FunctionNodeGenerator method)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ModuleNodeGenerator.generate">(grapycal.utils.nodeGen.ModuleNodeGenerator method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl.get">get() (grapycal.ImageControl method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl.get">(grapycal.sobjects.controls.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl.get">(grapycal.sobjects.controls.imageControl.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.TextControl.get">(grapycal.sobjects.controls.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl.get">(grapycal.sobjects.controls.textControl.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.TextControl.get">(grapycal.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/httpResource/index.html#grapycal.utils.httpResource.HttpResource.get">(grapycal.utils.httpResource.HttpResource method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.get_communication_event_loop">get_communication_event_loop() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.get_data">get_data() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.get_data">(grapycal.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.get_data">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.get_data">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.get_def_order">get_def_order() (grapycal.Node class method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.get_def_order">(grapycal.sobjects.node.Node class method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/file/index.html#grapycal.utils.file.get_direct_sub_folders">get_direct_sub_folders() (in module grapycal.utils.file)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.get_extension">get_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.get_extension_info">get_extension_info() (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.get_extensions_info">get_extensions_info() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.get_extention_names">get_extention_names() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.get_in_port">get_in_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.get_in_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extension/index.html#grapycal.extension.extension.Extension.get_info">get_info() (grapycal.extension.extension.Extension method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Port.get_name">get_name() (grapycal.Port method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.get_name">(grapycal.sobjects.port.Port method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.get_one_data">get_one_data() (grapycal.InputPort method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.get_one_data">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.get_out_port">get_out_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.get_out_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extensionSearch/index.html#grapycal.extension.extensionSearch.get_package_metadata">get_package_metadata() (in module grapycal.extension.extensionSearch)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.get_package_version">get_package_version() (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.get_package_version_from_pyproject">get_package_version_from_pyproject() (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/extensionSearch/index.html#grapycal.extension.extensionSearch.get_remote_extensions">get_remote_extensions() (in module grapycal.extension.extensionSearch)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.get_workspace_metadata">get_workspace_metadata() (grapycal.sobjects.fileView.FileView method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.get_workspace_metadata">(grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.RemoteFileView.get_workspace_metadata">(grapycal.sobjects.fileView.RemoteFileView method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.get_workspace_object">get_workspace_object() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li>
+    grapycal
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#module-grapycal">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.__main__
+
+        <ul>
+          <li><a href="autoapi/grapycal/__main__/index.html#module-grapycal.__main__">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.app
+
+        <ul>
+          <li><a href="autoapi/grapycal/app/index.html#module-grapycal.app">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/index.html#module-grapycal.core">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core.background_runner
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/background_runner/index.html#module-grapycal.core.background_runner">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core.local
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/local/index.html#module-grapycal.core.local">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core.running_module
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/running_module/index.html#module-grapycal.core.running_module">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core.stdout_helper
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/stdout_helper/index.html#module-grapycal.core.stdout_helper">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.core.workspace
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/workspace/index.html#module-grapycal.core.workspace">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.extension
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/index.html#module-grapycal.extension">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.extension.extension
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/extension/index.html#module-grapycal.extension.extension">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.extension.extensionManager
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/extensionManager/index.html#module-grapycal.extension.extensionManager">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    grapycal.extension.extensionSearch
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/extensionSearch/index.html#module-grapycal.extension.extensionSearch">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.extension.utils
+
+        <ul>
+          <li><a href="autoapi/grapycal/extension/utils/index.html#module-grapycal.extension.utils">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/index.html#module-grapycal.sobjects">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#module-grapycal.sobjects.controls">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.buttonControl
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#module-grapycal.sobjects.controls.buttonControl">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.control
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/control/index.html#module-grapycal.sobjects.controls.control">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.imageControl
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#module-grapycal.sobjects.controls.imageControl">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.linePlotControl
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#module-grapycal.sobjects.controls.linePlotControl">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.textControl
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#module-grapycal.sobjects.controls.textControl">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.controls.threeControl
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/threeControl/index.html#module-grapycal.sobjects.controls.threeControl">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.DVfunctionNode
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#module-grapycal.sobjects.DVfunctionNode">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.edge
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#module-grapycal.sobjects.edge">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.editor
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/editor/index.html#module-grapycal.sobjects.editor">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.fileView
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#module-grapycal.sobjects.fileView">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.functionNode
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#module-grapycal.sobjects.functionNode">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.node
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#module-grapycal.sobjects.node">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.port
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#module-grapycal.sobjects.port">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.settings
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/settings/index.html#module-grapycal.sobjects.settings">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.sidebar
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/sidebar/index.html#module-grapycal.sobjects.sidebar">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.sourceNode
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#module-grapycal.sobjects.sourceNode">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.sobjects.workspaceObject
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#module-grapycal.sobjects.workspaceObject">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/index.html#module-grapycal.utils">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.config
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/config/index.html#module-grapycal.utils.config">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.file
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/file/index.html#module-grapycal.utils.file">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.httpResource
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/httpResource/index.html#module-grapycal.utils.httpResource">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.io
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/io/index.html#module-grapycal.utils.io">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.logging
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/logging/index.html#module-grapycal.utils.logging">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.misc
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/misc/index.html#module-grapycal.utils.misc">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.nodeGen
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#module-grapycal.utils.nodeGen">module</a>
+</li>
+        </ul></li>
+        <li>
+    grapycal.utils.usersettings
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/usersettings/index.html#module-grapycal.utils.usersettings">module</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.GrapycalApp">GrapycalApp (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/app/index.html#grapycal.app.GrapycalApp">(class in grapycal.app)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.green">green (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.grey">grey (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.SObjectInfo.has_attribute">has_attribute() (grapycal.extension.utils.SObjectInfo method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.has_in_port">has_in_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.has_in_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.HAS_NUMPY">HAS_NUMPY (in module grapycal.sobjects.edge)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.has_out_port">has_out_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.has_out_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.HAS_TORCH">HAS_TORCH (in module grapycal.sobjects.edge)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/httpResource/index.html#grapycal.utils.httpResource.HttpResource">HttpResource (class in grapycal.utils.httpResource)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.I">I (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl">ImageControl (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl">(class in grapycal.sobjects.controls)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl">(class in grapycal.sobjects.controls.imageControl)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.import_extension">import_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ButtonControl.init">init() (grapycal.ButtonControl method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Edge.init">(grapycal.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.init">(grapycal.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.init">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.init">(grapycal.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Port.init">(grapycal.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ButtonControl.init">(grapycal.sobjects.controls.ButtonControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#grapycal.sobjects.controls.buttonControl.ButtonControl.init">(grapycal.sobjects.controls.buttonControl.ButtonControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.init">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.init">(grapycal.sobjects.fileView.FileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.init">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.init">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.init">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.init">(grapycal.sobjects.port.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WebcamStream.init">(grapycal.sobjects.workspaceObject.WebcamStream method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.init_node">init_node() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.init_node">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.init_node">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode.init_node">(grapycal.sobjects.sourceNode.SourceNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode.init_node">(grapycal.SourceNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ClassNodeGenerator.initial_values">initial_values() (grapycal.utils.nodeGen.ClassNodeGenerator method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FuncionNodeGenerator.initial_values">(grapycal.utils.nodeGen.FuncionNodeGenerator method)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.FunctionNodeGenerator.initial_values">(grapycal.utils.nodeGen.FunctionNodeGenerator method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.initialize_workspace">initialize_workspace() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.input_edge_added">input_edge_added() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.input_edge_added">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.input_edge_added">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.input_edge_added">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.input_edge_added">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.input_edge_removed">input_edge_removed() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.input_edge_removed">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.input_edge_removed">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.input_edge_removed">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.input_edge_removed">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.InputPort">InputPort (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort">(class in grapycal.sobjects.port)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.inputs">inputs (grapycal.FunctionNode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.inputs">(grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.inputs">(grapycal.sobjects.functionNode.FunctionNode attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.interrupt">interrupt() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.Action.invoke">invoke() (grapycal.utils.misc.Action method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.is_activated">is_activated() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.is_activated">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.is_all_edge_ready">is_all_edge_ready() (grapycal.InputPort method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.is_all_edge_ready">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/httpResource/index.html#grapycal.utils.httpResource.HttpResource.is_avaliable">is_avaliable() (grapycal.utils.httpResource.HttpResource method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.is_data_ready">is_data_ready() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.is_data_ready">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.is_empty">is_empty() (grapycal.sobjects.fileView.FileView method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Port.is_full">is_full() (grapycal.Port method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.is_full">(grapycal.sobjects.port.Port method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.LazyDict.keys">keys() (grapycal.extension.utils.LazyDict method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.LazyDict">LazyDict (class in grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl">LinePlotControl (class in grapycal.sobjects.controls.linePlotControl)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.list_to_dict">list_to_dict() (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.load_config">load_config() (in module grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/config/index.html#grapycal.utils.config.load_config">(in module grapycal.utils.config)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extension/index.html#grapycal.extension.extension.load_or_reload_module">load_or_reload_module() (in module grapycal.extension.extension)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.load_settings">load_settings() (grapycal.utils.usersettings.Settings method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.load_workspace">load_workspace() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.Local">Local (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView">LocalFileView (class in grapycal.sobjects.fileView)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalManager">LocalManager (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalProxy">LocalProxy (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack">LocalStack (class in grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.logger">logger (in module grapycal.core.background_runner)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.logger">(in module grapycal.core.workspace)</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/extension/index.html#grapycal.extension.extension.logger">(in module grapycal.extension.extension)</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.logger">(in module grapycal.extension.extensionManager)</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.logger">(in module grapycal.extension.utils)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.logger">(in module grapycal.sobjects.editor)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.logger">(in module grapycal.sobjects.fileView)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.logger">(in module grapycal.sobjects.node)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.logger">(in module grapycal.sobjects.workspaceObject)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/httpResource/index.html#grapycal.utils.httpResource.logger">(in module grapycal.utils.httpResource)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.logger">(in module grapycal.utils.io)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.LogToFrontendHandler">LogToFrontendHandler (class in grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.ls">ls() (grapycal.sobjects.fileView.FileView method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.LocalFileView.ls">(grapycal.sobjects.fileView.LocalFileView method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.RemoteFileView.ls">(grapycal.sobjects.fileView.RemoteFileView method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/__main__/index.html#grapycal.__main__.main">main() (in module grapycal.__main__)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.max_in_degree">max_in_degree (grapycal.FunctionNode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.max_in_degree">(grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.max_in_degree">(grapycal.sobjects.functionNode.FunctionNode attribute)</a>
+</li>
+        </ul></li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#module-grapycal">grapycal</a>
+</li>
+          <li><a href="autoapi/grapycal/__main__/index.html#module-grapycal.__main__">grapycal.__main__</a>
+</li>
+          <li><a href="autoapi/grapycal/app/index.html#module-grapycal.app">grapycal.app</a>
+</li>
+          <li><a href="autoapi/grapycal/core/index.html#module-grapycal.core">grapycal.core</a>
+</li>
+          <li><a href="autoapi/grapycal/core/background_runner/index.html#module-grapycal.core.background_runner">grapycal.core.background_runner</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#module-grapycal.core.local">grapycal.core.local</a>
+</li>
+          <li><a href="autoapi/grapycal/core/running_module/index.html#module-grapycal.core.running_module">grapycal.core.running_module</a>
+</li>
+          <li><a href="autoapi/grapycal/core/stdout_helper/index.html#module-grapycal.core.stdout_helper">grapycal.core.stdout_helper</a>
+</li>
+          <li><a href="autoapi/grapycal/core/workspace/index.html#module-grapycal.core.workspace">grapycal.core.workspace</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/index.html#module-grapycal.extension">grapycal.extension</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/extension/index.html#module-grapycal.extension.extension">grapycal.extension.extension</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/extensionManager/index.html#module-grapycal.extension.extensionManager">grapycal.extension.extensionManager</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/extensionSearch/index.html#module-grapycal.extension.extensionSearch">grapycal.extension.extensionSearch</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/utils/index.html#module-grapycal.extension.utils">grapycal.extension.utils</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/index.html#module-grapycal.sobjects">grapycal.sobjects</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#module-grapycal.sobjects.controls">grapycal.sobjects.controls</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/buttonControl/index.html#module-grapycal.sobjects.controls.buttonControl">grapycal.sobjects.controls.buttonControl</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/control/index.html#module-grapycal.sobjects.controls.control">grapycal.sobjects.controls.control</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#module-grapycal.sobjects.controls.imageControl">grapycal.sobjects.controls.imageControl</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/linePlotControl/index.html#module-grapycal.sobjects.controls.linePlotControl">grapycal.sobjects.controls.linePlotControl</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#module-grapycal.sobjects.controls.textControl">grapycal.sobjects.controls.textControl</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/threeControl/index.html#module-grapycal.sobjects.controls.threeControl">grapycal.sobjects.controls.threeControl</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#module-grapycal.sobjects.DVfunctionNode">grapycal.sobjects.DVfunctionNode</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#module-grapycal.sobjects.edge">grapycal.sobjects.edge</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/editor/index.html#module-grapycal.sobjects.editor">grapycal.sobjects.editor</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#module-grapycal.sobjects.fileView">grapycal.sobjects.fileView</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#module-grapycal.sobjects.functionNode">grapycal.sobjects.functionNode</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#module-grapycal.sobjects.node">grapycal.sobjects.node</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#module-grapycal.sobjects.port">grapycal.sobjects.port</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/settings/index.html#module-grapycal.sobjects.settings">grapycal.sobjects.settings</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sidebar/index.html#module-grapycal.sobjects.sidebar">grapycal.sobjects.sidebar</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#module-grapycal.sobjects.sourceNode">grapycal.sobjects.sourceNode</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#module-grapycal.sobjects.workspaceObject">grapycal.sobjects.workspaceObject</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/index.html#module-grapycal.utils">grapycal.utils</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/config/index.html#module-grapycal.utils.config">grapycal.utils.config</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/file/index.html#module-grapycal.utils.file">grapycal.utils.file</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/httpResource/index.html#module-grapycal.utils.httpResource">grapycal.utils.httpResource</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/io/index.html#module-grapycal.utils.io">grapycal.utils.io</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/logging/index.html#module-grapycal.utils.logging">grapycal.utils.logging</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/misc/index.html#module-grapycal.utils.misc">grapycal.utils.misc</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/nodeGen/index.html#module-grapycal.utils.nodeGen">grapycal.utils.nodeGen</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/usersettings/index.html#module-grapycal.utils.usersettings">grapycal.utils.usersettings</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/nodeGen/index.html#grapycal.utils.nodeGen.ModuleNodeGenerator">ModuleNodeGenerator (class in grapycal.utils.nodeGen)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.NameTranslator">NameTranslator (class in grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.no_bold">no_bold (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.no_interrupt">no_interrupt() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node">Node (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node">(class in grapycal.sobjects.node)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.NodeInfo">NodeInfo (class in grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.NodeMeta">NodeMeta (class in grapycal.sobjects.node)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.O">O (in module grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode.on_activate">on_activate() (grapycal.sobjects.sourceNode.SourceNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode.on_activate">(grapycal.SourceNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.on_head_set">on_head_set() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.on_head_set">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.on_inputs_attribute_add">on_inputs_attribute_add() (grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.on_inputs_attribute_remove">on_inputs_attribute_remove() (grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.on_tail_set">on_tail_set() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.on_tail_set">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.FileView.open_workspace">open_workspace() (grapycal.sobjects.fileView.FileView method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.RemoteFileView.open_workspace">(grapycal.sobjects.fileView.RemoteFileView method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.orig___stderr__">orig___stderr__ (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.orig___stdout__">orig___stdout__ (in module grapycal.core.stdout_helper)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.orig_print">orig_print() (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.orig_stderr">orig_stderr (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.orig_stdout">orig_stdout (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.output_edge_added">output_edge_added() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.output_edge_added">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.output_edge_removed">output_edge_removed() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.output_edge_removed">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort">OutputPort (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort">(class in grapycal.sobjects.port)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.outputs">outputs (grapycal.FunctionNode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.outputs">(grapycal.sobjects.DVfunctionNode.DVfunctionNode attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.outputs">(grapycal.sobjects.functionNode.FunctionNode attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream">OutputStream (class in grapycal.utils.io)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.parser">parser (in module grapycal.core.workspace)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.path2str">path2str() (in module grapycal.sobjects.fileView)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.pop">pop() (grapycal.core.local.LocalStack method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Port">Port (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port">(class in grapycal.sobjects.port)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.print">print() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.print">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.push">push() (grapycal.core.background_runner.BackgroundRunner method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.push">(grapycal.core.local.LocalStack method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.push_data">push_data() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.push_data">(grapycal.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.push_data">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.push_data">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.push_to_queue">push_to_queue() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.push_to_stack">push_to_stack() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.raw_print">raw_print() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.raw_print">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.read_workspace">read_workspace() (in module grapycal.utils.io)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.red">red (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.redirect">redirect() (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.release_local">release_local() (in module grapycal.core.local)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/fileView/index.html#grapycal.sobjects.fileView.RemoteFileView">RemoteFileView (class in grapycal.sobjects.fileView)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.remove">remove() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.remove">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.remove">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.remove_control">remove_control() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.remove_control">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.InputPort.remove_edge">remove_edge() (grapycal.InputPort method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/index.html#grapycal.OutputPort.remove_edge">(grapycal.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Port.remove_edge">(grapycal.Port method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.InputPort.remove_edge">(grapycal.sobjects.port.InputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.OutputPort.remove_edge">(grapycal.sobjects.port.OutputPort method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/port/index.html#grapycal.sobjects.port.Port.remove_edge">(grapycal.sobjects.port.Port method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.remove_in_port">remove_in_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.remove_in_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.remove_out_port">remove_out_port() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.remove_out_port">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.reset">reset (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/editor/index.html#grapycal.sobjects.editor.Editor.restore">restore() (grapycal.sobjects.editor.Editor method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.restore_attributes">restore_attributes() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.restore_attributes">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.restore_controls">restore_controls() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.restore_controls">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl.restore_from">restore_from() (grapycal.ImageControl method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/control/index.html#grapycal.sobjects.controls.control.Control.restore_from">(grapycal.sobjects.controls.control.Control method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl.restore_from">(grapycal.sobjects.controls.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl.restore_from">(grapycal.sobjects.controls.imageControl.ImageControl method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.restore_from_version">restore_from_version() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.restore_from_version">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.restore_from_version">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/app/index.html#grapycal.app.GrapycalApp.run">run() (grapycal.app.GrapycalApp method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.run">(grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.run">(grapycal.core.workspace.Workspace method)</a>
+</li>
+          <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.Clock.run">(grapycal.extension.utils.Clock method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.GrapycalApp.run">(grapycal.GrapycalApp method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.Node.run">(grapycal.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.run">(grapycal.sobjects.node.Node method)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.run">(grapycal.utils.io.OutputStream method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.save_settings">save_settings() (grapycal.utils.usersettings.Settings method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.save_workspace">save_workspace() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.send_status_message">send_status_message() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.send_status_message_to_all">send_status_message_to_all() (grapycal.core.workspace.Workspace method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.ImageControl.set">set() (grapycal.ImageControl method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.ImageControl.set">(grapycal.sobjects.controls.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl.set">(grapycal.sobjects.controls.imageControl.ImageControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.TextControl.set">(grapycal.sobjects.controls.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl.set">(grapycal.sobjects.controls.textControl.TextControl method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.TextControl.set">(grapycal.TextControl method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.set_event_loop">set_event_loop() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner.set_exception_callback">set_exception_callback() (grapycal.core.background_runner.BackgroundRunner method)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Edge.set_label">set_label() (grapycal.Edge method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/edge/index.html#grapycal.sobjects.edge.Edge.set_label">(grapycal.sobjects.edge.Edge method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/sobjects/settings/index.html#grapycal.sobjects.settings.Settings">Settings (class in grapycal.sobjects.settings)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings">(class in grapycal.utils.usersettings)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.settings_directory">settings_directory (grapycal.utils.usersettings.Settings attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/usersettings/index.html#grapycal.utils.usersettings.Settings.settings_file">settings_file (grapycal.utils.usersettings.Settings attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.setup_logging">setup_logging() (in module grapycal.utils.logging)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/sidebar/index.html#grapycal.sobjects.sidebar.Sidebar">Sidebar (class in grapycal.sobjects.sidebar)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.smallest_jpg">smallest_jpg (in module grapycal.sobjects.controls.imageControl)</a>
+</li>
+        <li><a href="autoapi/grapycal/extension/utils/index.html#grapycal.extension.utils.SObjectInfo">SObjectInfo (class in grapycal.extension.utils)</a>
+</li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode">SourceNode (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode">(class in grapycal.sobjects.sourceNode)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.spawn">spawn() (grapycal.Node method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.spawn">(grapycal.sobjects.node.Node method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.start">start() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.T">T (grapycal.Node attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.T">(grapycal.sobjects.node.Node attribute)</a>
+</li>
+          <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.T">(in module grapycal.core.local)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/httpResource/index.html#grapycal.utils.httpResource.T">(in module grapycal.utils.httpResource)</a>
+</li>
+          <li><a href="autoapi/grapycal/utils/misc/index.html#grapycal.utils.misc.T">(in module grapycal.utils.misc)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.Node.T1">T1 (grapycal.Node attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/node/index.html#grapycal.sobjects.node.Node.T1">(grapycal.sobjects.node.Node attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/index.html#grapycal.FunctionNode.task">task() (grapycal.FunctionNode method)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/DVfunctionNode/index.html#grapycal.sobjects.DVfunctionNode.DVfunctionNode.task">(grapycal.sobjects.DVfunctionNode.DVfunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/functionNode/index.html#grapycal.sobjects.functionNode.FunctionNode.task">(grapycal.sobjects.functionNode.FunctionNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/sourceNode/index.html#grapycal.sobjects.sourceNode.SourceNode.task">(grapycal.sobjects.sourceNode.SourceNode method)</a>
+</li>
+          <li><a href="autoapi/grapycal/index.html#grapycal.SourceNode.task">(grapycal.SourceNode method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/index.html#grapycal.TextControl">TextControl (class in grapycal)</a>
+
+        <ul>
+          <li><a href="autoapi/grapycal/sobjects/controls/index.html#grapycal.sobjects.controls.TextControl">(class in grapycal.sobjects.controls)</a>
+</li>
+          <li><a href="autoapi/grapycal/sobjects/controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl">(class in grapycal.sobjects.controls.textControl)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/grapycal/core/stdout_helper/index.html#grapycal.core.stdout_helper.thread_proxies">thread_proxies (in module grapycal.core.stdout_helper)</a>
+</li>
+        <li><a href="autoapi/grapycal/sobjects/controls/threeControl/index.html#grapycal.sobjects.controls.threeControl.ThreeControl">ThreeControl (class in grapycal.sobjects.controls.threeControl)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.FrontendFormatter.time_format">time_format (grapycal.utils.logging.FrontendFormatter attribute)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/local/index.html#grapycal.core.local.LocalStack.top">top (grapycal.core.local.LocalStack property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.unimport_extension">unimport_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/extension/extensionManager/index.html#grapycal.extension.extensionManager.ExtensionManager.update_extension">update_extension() (grapycal.extension.extensionManager.ExtensionManager method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace.vars">vars() (grapycal.core.workspace.Workspace method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WebcamStream">WebcamStream (class in grapycal.sobjects.workspaceObject)</a>
+</li>
+        <li><a href="autoapi/grapycal/core/workspace/index.html#grapycal.core.workspace.Workspace">Workspace (class in grapycal.core.workspace)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/sobjects/workspaceObject/index.html#grapycal.sobjects.workspaceObject.WorkspaceObject">WorkspaceObject (class in grapycal.sobjects.workspaceObject)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.OutputStream.write">write() (grapycal.utils.io.OutputStream method)</a>
+</li>
+        <li><a href="autoapi/grapycal/utils/io/index.html#grapycal.utils.io.write_workspace">write_workspace() (in module grapycal.utils.io)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Y" class="genindex-section">
+  <h2>Y</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/grapycal/utils/logging/index.html#grapycal.utils.logging.ConsoleLogFormatter.yellow">yellow (grapycal.utils.logging.ConsoleLogFormatter attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Grapycal Team
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

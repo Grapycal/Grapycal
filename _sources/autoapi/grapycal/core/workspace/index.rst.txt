@@ -1,0 +1,106 @@
+:py:mod:`grapycal.core.workspace`
+=================================
+
+.. py:module:: grapycal.core.workspace
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.workspace.Workspace
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.workspace.deserialize_sort_key
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.workspace.logger
+   grapycal.core.workspace.parser
+
+
+.. py:data:: logger
+
+   
+
+.. py:function:: deserialize_sort_key(x: objectsync.sobject.SObjectSerialized) -> int
+
+
+.. py:class:: Workspace(port, host, path)
+
+
+   .. py:method:: _communication_thread(event_loop_set_event: threading.Event)
+
+
+   .. py:method:: _async_communication_thread(event_loop_set_event: threading.Event)
+      :async:
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:method:: exit()
+
+
+   .. py:method:: get_communication_event_loop() -> asyncio.AbstractEventLoop
+
+
+   .. py:method:: initialize_workspace() -> None
+
+
+   .. py:method:: save_workspace(path: str) -> None
+
+
+   .. py:method:: load_workspace(path: str) -> None
+
+
+   .. py:method:: _check_grapycal_version(version: str)
+
+
+   .. py:method:: _check_extensions_version(extensions_info)
+
+
+   .. py:method:: get_workspace_object() -> grapycal.sobjects.workspaceObject.WorkspaceObject
+
+
+   .. py:method:: vars() -> Dict[str, Any]
+
+
+   .. py:method:: _open_workspace_callback(path, no_exist_ok=False)
+
+
+   .. py:method:: add_task_to_event_loop(task)
+
+
+   .. py:method:: send_status_message_to_all(message)
+
+
+   .. py:method:: send_status_message(message, client_id=None)
+
+
+   .. py:method:: client_connected(client_id)
+
+
+   .. py:method:: client_disconnected(client_id)
+
+
+
+.. py:data:: parser
+
+   
+

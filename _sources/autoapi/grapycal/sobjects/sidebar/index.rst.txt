@@ -1,0 +1,30 @@
+:py:mod:`grapycal.sobjects.sidebar`
+===================================
+
+.. py:module:: grapycal.sobjects.sidebar
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.sidebar.Sidebar
+
+
+
+
+.. py:class:: Sidebar
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Sidebar'
+
+      
+
+

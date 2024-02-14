@@ -1,0 +1,40 @@
+:py:mod:`grapycal.app`
+======================
+
+.. py:module:: grapycal.app
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.app.GrapycalApp
+
+
+
+
+.. py:class:: GrapycalApp(config: grapycal.utils.usersettings.Settings)
+
+
+   The backend server
+
+   :param usersettings.Settings config: the configuration for server
+
+   .. py:method:: run() -> None
+
+      Server main loop
+
+
+   .. py:method:: _run_workspace()
+
+      Run a workspace. Ensure that the workspace is terminated when the context is exited.
+
+
+   .. py:method:: _waitForWorkspace(workspace: subprocess.Popen)
+
+
+

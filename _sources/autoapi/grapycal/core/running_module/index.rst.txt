@@ -1,0 +1,11 @@
+:py:mod:`grapycal.core.running_module`
+======================================
+
+.. py:module:: grapycal.core.running_module
+
+.. autoapi-nested-parse::
+
+   This module is used as the namespace where the graph is running.
+
+
+

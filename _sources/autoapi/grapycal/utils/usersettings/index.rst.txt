@@ -1,0 +1,77 @@
+:py:mod:`grapycal.utils.usersettings`
+=====================================
+
+.. py:module:: grapycal.utils.usersettings
+
+.. autoapi-nested-parse::
+
+   Provide interface for persistent portable editable user settings
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.usersettings.Settings
+
+
+
+
+.. py:class:: Settings(app_id)
+
+
+   Bases: :py:obj:`dict`
+
+   Provide interface for portable persistent user editable settings 
+
+   .. py:attribute:: app_id
+
+      
+
+   .. py:attribute:: settings_directory
+
+      
+
+   .. py:attribute:: settings_file
+
+      
+
+   .. py:attribute:: _settings_types
+
+      
+
+   .. py:attribute:: _settings_defaults
+
+      
+
+   .. py:method:: add_setting(setting_name, setting_type=str, default=None)
+
+      Define a settings option (and default value) 
+
+
+   .. py:method:: load_settings()
+
+      Set default values and parse stored settings file 
+
+
+   .. py:method:: save_settings()
+
+      Write the settings data to disk 
+
+
+   .. py:method:: __getattr__(setting_name)
+
+      Provide attribute-based access to stored config data 
+
+
+   .. py:method:: __setattr__(setting_name, setting_value)
+
+      Provide attribute-based access to stored config data 
+
+
+

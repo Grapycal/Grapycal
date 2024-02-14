@@ -1,0 +1,66 @@
+:py:mod:`grapycal.sobjects.workspaceObject`
+===========================================
+
+.. py:module:: grapycal.sobjects.workspaceObject
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.workspaceObject.WorkspaceObject
+   grapycal.sobjects.workspaceObject.WebcamStream
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.workspaceObject.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: WorkspaceObject
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Workspace'
+
+      
+
+   .. py:method:: build(old: objectsync.SObjectSerialized | None = None)
+
+
+   .. py:method:: _delete_callback(ids)
+
+
+
+.. py:class:: WebcamStream
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'WebcamStream'
+
+      
+
+   .. py:method:: build(old: objectsync.SObjectSerialized | None = None)
+
+
+   .. py:method:: init()
+
+
+

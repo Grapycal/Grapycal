@@ -1,0 +1,58 @@
+:py:mod:`grapycal.sobjects.sourceNode`
+======================================
+
+.. py:module:: grapycal.sobjects.sourceNode
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.sourceNode.SourceNode
+
+
+
+
+.. py:class:: SourceNode
+
+
+   Bases: :py:obj:`grapycal.sobjects.node.Node`
+
+   Inherit from this class to conveniently create a node that can be a source of the graph (can be activated by the user.)
+   This type of node can be activated by double clicking the node or by sending a signal the run port on the node.
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: init_node()
+
+      This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+      the node is built.
+
+
+   .. py:method:: task()
+
+      Define the task of this node here. 
+      By default, this method will be called when double clicking the node or when the run port on the node
+        is activated (if there is one).
+
+
+   .. py:method:: double_click()
+
+      Called when the node is double clicked by an user.
+
+
+   .. py:method:: on_activate(edge: grapycal.sobjects.edge.Edge, port: grapycal.sobjects.port.InputPort)
+
+
+

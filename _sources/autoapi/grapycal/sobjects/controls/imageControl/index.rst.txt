@@ -1,0 +1,60 @@
+:py:mod:`grapycal.sobjects.controls.imageControl`
+=================================================
+
+.. py:module:: grapycal.sobjects.controls.imageControl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.imageControl.ImageControl
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.imageControl.smallest_jpg
+
+
+.. py:data:: smallest_jpg
+   :value: '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDREND...'
+
+   
+
+.. py:class:: ImageControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+       
+
+   .. py:attribute:: frontend_type
+      :value: 'ImageControl'
+
+      
+
+   .. py:method:: build()
+
+
+   .. py:method:: restore_from(old: grapycal.extension.utils.ControlInfo)
+
+      Default recovery process. If the control class get updated in Grapycal, override this method to customize the recovery process
+      for different Grapycal versions.
+
+
+   .. py:method:: set(image: bytes | io.BytesIO | None)
+
+
+   .. py:method:: get() -> bytes
+
+
+

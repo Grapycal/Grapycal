@@ -1,0 +1,161 @@
+:py:mod:`grapycal.sobjects.fileView`
+====================================
+
+.. py:module:: grapycal.sobjects.fileView
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.fileView.FileView
+   grapycal.sobjects.fileView.LocalFileView
+   grapycal.sobjects.fileView.RemoteFileView
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.fileView.path2str
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.fileView.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: FileView
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'FileView'
+
+      
+
+   .. py:method:: build(name, **kwargs)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: ls(path)
+      :abstractmethod:
+
+
+   .. py:method:: is_empty(path)
+
+
+   .. py:method:: get_workspace_metadata(path)
+      :abstractmethod:
+
+
+   .. py:method:: open_workspace(path)
+
+
+
+.. py:class:: LocalFileView
+
+
+   Bases: :py:obj:`FileView`
+
+   .. py:method:: build(**kwargs)
+
+
+   .. py:method:: ls(path)
+
+
+   .. py:method:: get_workspace_metadata(path)
+
+
+   .. py:method:: add_file(path)
+
+
+   .. py:method:: add_dir(path)
+
+
+   .. py:method:: delete(path)
+
+      Delete file or dir
+
+
+
+.. py:function:: path2str(path)
+
+
+.. py:class:: RemoteFileView
+
+
+   Bases: :py:obj:`FileView`
+
+   format:
+   {
+       "name": "workspaces",
+       "files": [
+           {
+               "name": "Welcome.grapycal",
+               "version": "0.9.0",
+               "extensions": [
+                   {
+                       "name": "grapycal_builtin",
+                       "version": "0.9.0"
+                   }
+               ]
+           }
+       ],
+       "dirs": [
+           {
+               "name": "grapycal_torch",
+               "files": [
+                   {
+                       "name": "ImageEdit.grapycal",
+                       "version": "0.9.0",
+                       "extensions": [
+                           {
+                               "name": "grapycal_torch",
+                               "version": "0.1.2"
+                           },
+                           {
+                               "name": "grapycal_builtin",
+                               "version": "0.9.0"
+                           }
+                       ]
+                   }
+               ],
+               "dirs": []
+           }
+       ]
+   }
+
+   .. py:method:: build(url: str, **kwargs)
+
+
+   .. py:method:: ls(path)
+      :async:
+
+
+   .. py:method:: get_workspace_metadata(path)
+      :async:
+
+
+   .. py:method:: open_workspace(path: str)
+      :async:
+
+
+

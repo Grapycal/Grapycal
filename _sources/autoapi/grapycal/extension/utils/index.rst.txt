@@ -1,0 +1,146 @@
+:py:mod:`grapycal.extension.utils`
+==================================
+
+.. py:module:: grapycal.extension.utils
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.utils.LazyDict
+   grapycal.extension.utils.AttrInfo
+   grapycal.extension.utils.SObjectInfo
+   grapycal.extension.utils.ControlInfo
+   grapycal.extension.utils.NodeInfo
+   grapycal.extension.utils.Clock
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.utils.get_package_version
+   grapycal.extension.utils.get_package_version_from_pyproject
+   grapycal.extension.utils.list_to_dict
+   grapycal.extension.utils.get_extension_info
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.utils.logger
+   grapycal.extension.utils.I
+   grapycal.extension.utils.O
+
+
+.. py:data:: logger
+
+   
+
+.. py:data:: I
+
+   
+
+.. py:data:: O
+
+   
+
+.. py:class:: LazyDict(gen: Callable[[I], O], keys: List[I])
+
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`I`\ , :py:obj:`O`\ ]
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+   .. py:method:: __getitem__(idx: I) -> O
+
+
+   .. py:method:: __contains__(idx: I) -> bool
+
+
+   .. py:method:: keys()
+
+
+
+.. py:class:: AttrInfo(name, type_name, value, is_stateful, order_strict)
+
+
+
+.. py:class:: SObjectInfo(serialized: objectsync.sobject.SObjectSerialized)
+
+
+   .. py:method:: has_attribute(name)
+
+
+   .. py:method:: __getitem__(name: str)
+
+      Returns the value of an attribute
+
+
+
+.. py:class:: ControlInfo(serialized: objectsync.sobject.SObjectSerialized)
+
+
+   Bases: :py:obj:`SObjectInfo`
+
+
+.. py:class:: NodeInfo(serialized: objectsync.sobject.SObjectSerialized)
+
+
+   Bases: :py:obj:`SObjectInfo`
+
+   An easier-to-use interface to read SObjectSerialized of a node
+
+
+.. py:class:: Clock(interval: float)
+
+
+   .. py:method:: run()
+      :async:
+
+
+
+.. py:function:: get_package_version(package_name: str) -> str
+
+   Find the version of a package. Considering editable installs, the developer may have changed the version but not installed it.
+   In this case, the new version will not be reflected in pkg_resources. So we first try to find the version in pyproject.toml.
+
+
+.. py:function:: get_package_version_from_pyproject(package_name: str) -> str | None
+
+
+.. py:function:: list_to_dict(l: List[dict], key: str) -> Dict[Any, dict]
+
+   Convert a list of dicts to a dict of dicts
+
+
+.. py:function:: get_extension_info(name) -> dict
+
+

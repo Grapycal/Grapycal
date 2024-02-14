@@ -1,0 +1,93 @@
+:py:mod:`grapycal.sobjects.functionNode`
+========================================
+
+.. py:module:: grapycal.sobjects.functionNode
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.functionNode.FunctionNode
+
+
+
+
+.. py:class:: FunctionNode
+
+
+   Bases: :py:obj:`grapycal.sobjects.node.Node`
+
+   .. py:attribute:: inputs
+      :value: []
+
+      
+
+   .. py:attribute:: max_in_degree
+      :value: []
+
+      
+
+   .. py:attribute:: outputs
+      :value: []
+
+      
+
+   .. py:attribute:: display_port_names
+      :value: True
+
+      
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge on an input port is activated.
+
+
+   .. py:method:: task()
+
+
+   .. py:method:: calculate(**inputs) -> Any
+      :abstractmethod:
+
+      Define the function of this node here.
+
+      :param **inputs: A dict of lists. Each dict entry is the data from one input port. For example, if there is only one input port named "in" with two            edges connected, the value of inputs will be `{'in':[data_from_edge_1, data_from_edge_2]}`.
+      :return: A list of outputs. Each entry in the list will be pushed to one output port. For example, if there is only one output port,            the value of the return suold be `[data_to_port]`. If there are multiple edges connected to one output port,            they will all receive the same data.
+
+      Examples::
+
+          class SumNode(FunctionNode):
+              inputs = ['items']
+              outputs = ['sum']
+              ...
+              def calculate(self, items):
+                  return {'sum':sum(items)} # Return the sum of the data
+
+
+   .. py:method:: input_edge_added(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is added to an input port.
+
+
+   .. py:method:: input_edge_removed(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is removed from an input port.
+
+
+   .. py:method:: remove()
+
+
+

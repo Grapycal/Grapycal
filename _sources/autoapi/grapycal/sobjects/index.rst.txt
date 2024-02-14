@@ -1,0 +1,34 @@
+:py:mod:`grapycal.sobjects`
+===========================
+
+.. py:module:: grapycal.sobjects
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   controls/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   DVfunctionNode/index.rst
+   edge/index.rst
+   editor/index.rst
+   fileView/index.rst
+   functionNode/index.rst
+   node/index.rst
+   port/index.rst
+   settings/index.rst
+   sidebar/index.rst
+   sourceNode/index.rst
+   workspaceObject/index.rst
+
+

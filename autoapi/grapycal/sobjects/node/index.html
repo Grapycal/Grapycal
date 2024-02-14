@@ -1,0 +1,783 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="grapycal.sobjects.port" href="../port/index.html" /><link rel="prev" title="grapycal.sobjects.functionNode" href="../functionNode/index.html" />
+
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+        <title>grapycal.sobjects.node - Grapycal 0.10.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">Grapycal 0.10.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Grapycal 0.10.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/run_grapycal.html">Run Grapycal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/extension.html">Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Manual</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_manual/node.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_manual/grapycal_builtin.html">Built-in Nodes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribution Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contribution_guide/contribution.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contribution_guide/project_overview.html">Project Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../contribution_guide/define_a_node.html">Extension</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Extension</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contribution_guide/define_a_node_from_higher_level.html">Define a Node Type: The Easy Way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contribution_guide/define_a_node_from_node.html">Define a Node Type: The Low-Level Way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contribution_guide/define_a_node_from_node.html#node-creation-process">Node Creation Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contribution_guide/examples_of_node_definition.html">Examples of Node Definition</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of grapycal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of grapycal.core</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/background_runner/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.background_runner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/local/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.local</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/running_module/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.running_module</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/stdout_helper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.stdout_helper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/workspace/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.core.workspace</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../extension/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of grapycal.extension</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../extension/extension/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extension</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extension/extensionManager/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extensionManager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extension/extensionSearch/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.extensionSearch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extension/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.extension.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of grapycal.sobjects</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4 has-children"><a class="reference internal" href="../controls/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of grapycal.sobjects.controls</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../controls/buttonControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.buttonControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../controls/control/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.control</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../controls/imageControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.imageControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../controls/linePlotControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.linePlotControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../controls/textControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.textControl</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../controls/threeControl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.controls.threeControl</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../DVfunctionNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.DVfunctionNode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../edge/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.edge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../editor/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.editor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileView/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.fileView</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functionNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.functionNode</span></code></a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.node</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../port/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../settings/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.settings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sidebar/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.sidebar</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sourceNode/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.sourceNode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../workspaceObject/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.workspaceObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of grapycal.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/file/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/httpResource/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.httpResource</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/logging/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.logging</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/misc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.misc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/nodeGen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.nodeGen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/usersettings/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.utils.usersettings</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../__main__/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.__main__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../app/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.app</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-grapycal.sobjects.node">
+<span id="grapycal-sobjects-node"></span><h1><a class="reference internal" href="#module-grapycal.sobjects.node" title="grapycal.sobjects.node"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.node</span></code></a><a class="headerlink" href="#module-grapycal.sobjects.node" title="Permalink to this heading">#</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">#</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#grapycal.sobjects.node.NodeMeta" title="grapycal.sobjects.node.NodeMeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodeMeta</span></code></a></p></td>
+<td><p>Metaclass for defining Abstract Base Classes (ABCs).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#grapycal.sobjects.node.Node" title="grapycal.sobjects.node.Node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Node</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#grapycal.sobjects.node.logger" title="grapycal.sobjects.node.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py data">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.logger">
+<span class="sig-prename descclassname"><span class="pre">grapycal.sobjects.node.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#grapycal.sobjects.node.logger" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.NodeMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">grapycal.sobjects.node.</span></span><span class="sig-name descname"><span class="pre">NodeMeta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.NodeMeta" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABCMeta</span></code></p>
+<p>Metaclass for defining Abstract Base Classes (ABCs).</p>
+<p>Use this metaclass to create an ABC.  An ABC can be subclassed
+directly, and then acts as a mix-in class.  You can also register
+unrelated concrete classes (even built-in classes) and unrelated
+ABCs as ‘virtual subclasses’ – these and their descendants will
+be considered subclasses of the registering ABC by the built-in
+issubclass() function, but the registering ABC won’t show up in
+their MRO (Method Resolution Order) nor will method
+implementations defined by the registering ABC be callable (not
+even via super()).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.NodeMeta.class_def_counter">
+<span class="sig-name descname"><span class="pre">class_def_counter</span></span><a class="headerlink" href="#grapycal.sobjects.node.NodeMeta.class_def_counter" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.NodeMeta.def_order">
+<span class="sig-name descname"><span class="pre">def_order</span></span><a class="headerlink" href="#grapycal.sobjects.node.NodeMeta.def_order" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">grapycal.sobjects.node.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><a class="headerlink" href="#grapycal.sobjects.node.Node" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">objectsync.SObject</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.frontend_type">
+<span class="sig-name descname"><span class="pre">frontend_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Node'</span></em><a class="headerlink" href="#grapycal.sobjects.node.Node.frontend_type" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hidden'</span></em><a class="headerlink" href="#grapycal.sobjects.node.Node.category" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.T">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.T" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.T1">
+<span class="sig-name descname"><span class="pre">T1</span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.T1" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.get_def_order">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_def_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.get_def_order" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_preview</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0,0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">build_node_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.build" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.build_node">
+<span class="sig-name descname"><span class="pre">build_node</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.build_node" title="Permalink to this definition">#</a></dt>
+<dd><p>Create attributes, ports, and controls here.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>This method will not be called when the object is being restored. The child objects will be restored automatically instead of</p>
+</dd>
+</dl>
+<p>running this method again.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.init" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.init_node">
+<span class="sig-name descname"><span class="pre">init_node</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.init_node" title="Permalink to this definition">#</a></dt>
+<dd><p>This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+the node is built.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.restore_from_version">
+<span class="sig-name descname"><span class="pre">restore_from_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../extension/utils/index.html#grapycal.extension.utils.NodeInfo" title="grapycal.extension.utils.NodeInfo"><span class="pre">grapycal.extension.utils.NodeInfo</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.restore_from_version" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when the node is created as a result of a old node being upgraded.
+The old node’s information (including attribute values) is in the <cite>old</cite> argument.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.restore_attributes">
+<span class="sig-name descname"><span class="pre">restore_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">attribute_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.restore_attributes" title="Permalink to this definition">#</a></dt>
+<dd><p>Recover attributes from the old node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.restore_controls">
+<span class="sig-name descname"><span class="pre">restore_controls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">control_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.restore_controls" title="Permalink to this definition">#</a></dt>
+<dd><p>Recover controls from the old node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.spawn">
+<span class="sig-name descname"><span class="pre">spawn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.spawn" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when a client wants to spawn a node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.destroy">
+<span class="sig-name descname"><span class="pre">destroy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">objectsync.sobject.SObjectSerialized</span></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.destroy" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when the node is destroyed. You can override this method to do something before the node is destroyed.
+Note: Overrided methods should call return super().destroy() at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_in_port">
+<span class="sig-name descname"><span class="pre">add_in_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_in_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an input port to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_out_port">
+<span class="sig-name descname"><span class="pre">add_out_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_out_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an output port to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.remove_in_port">
+<span class="sig-name descname"><span class="pre">remove_in_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.remove_in_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove an input port from the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.remove_out_port">
+<span class="sig-name descname"><span class="pre">remove_out_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.remove_out_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove an output port from the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.get_in_port">
+<span class="sig-name descname"><span class="pre">get_in_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.InputPort" title="grapycal.sobjects.port.InputPort"><span class="pre">grapycal.sobjects.port.InputPort</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.get_in_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Get an input port by its name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.get_out_port">
+<span class="sig-name descname"><span class="pre">get_out_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.OutputPort" title="grapycal.sobjects.port.OutputPort"><span class="pre">grapycal.sobjects.port.OutputPort</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.get_out_port" title="Permalink to this definition">#</a></dt>
+<dd><p>an output port by its name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.has_in_port">
+<span class="sig-name descname"><span class="pre">has_in_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.has_in_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if an input port exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.has_out_port">
+<span class="sig-name descname"><span class="pre">has_out_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.has_out_port" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if an output port exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_control">
+<span class="sig-name descname"><span class="pre">add_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_control" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a control to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_text_control">
+<span class="sig-name descname"><span class="pre">add_text_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../controls/textControl/index.html#grapycal.sobjects.controls.textControl.TextControl" title="grapycal.sobjects.controls.textControl.TextControl"><span class="pre">grapycal.sobjects.controls.textControl.TextControl</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_text_control" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a text control to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_button_control">
+<span class="sig-name descname"><span class="pre">add_button_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../controls/buttonControl/index.html#grapycal.sobjects.controls.buttonControl.ButtonControl" title="grapycal.sobjects.controls.buttonControl.ButtonControl"><span class="pre">grapycal.sobjects.controls.buttonControl.ButtonControl</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_button_control" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a button control to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_image_control">
+<span class="sig-name descname"><span class="pre">add_image_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../controls/imageControl/index.html#grapycal.sobjects.controls.imageControl.ImageControl" title="grapycal.sobjects.controls.imageControl.ImageControl"><span class="pre">grapycal.sobjects.controls.imageControl.ImageControl</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_image_control" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an image control to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_lineplot_control">
+<span class="sig-name descname"><span class="pre">add_lineplot_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../controls/linePlotControl/index.html#grapycal.sobjects.controls.linePlotControl.LinePlotControl" title="grapycal.sobjects.controls.linePlotControl.LinePlotControl"><span class="pre">grapycal.sobjects.controls.linePlotControl.LinePlotControl</span></a></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_lineplot_control" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a line plot control to the node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.remove_control">
+<span class="sig-name descname"><span class="pre">remove_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../controls/control/index.html#grapycal.sobjects.controls.control.Control" title="grapycal.sobjects.controls.control.Control"><span class="pre">grapycal.sobjects.controls.control.Control</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.remove_control" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.add_attribute">
+<span class="sig-name descname"><span class="pre">add_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T1</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_stateful</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">editor_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T1</span></span></span><a class="headerlink" href="#grapycal.sobjects.node.Node.add_attribute" title="Permalink to this definition">#</a></dt>
+<dd><p>If order_strict is None, it will be set to the ame as is_stateful.
+The usage of editor_type and editor_args is the same as the expose_attribute method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.expose_attribute">
+<span class="sig-name descname"><span class="pre">expose_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">objectsync.Topic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">objectsync.sobject.WrappedTopic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">editor_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.expose_attribute" title="Permalink to this definition">#</a></dt>
+<dd><p>Expose an attribute to the editor.
+Args:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>attribute: The attribute to expose.</p></li>
+<li><p>editor_type: The type of the editor to use. Can be <code class="docutils literal notranslate"><span class="pre">text</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<dl>
+<dt>List of editor types:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">dict</span></code>: A dictionary editor. Goes with a DictTopic. editor_args: {</dt><dd><p>‘key_options’:list[str]|None,
+‘value_options’:list[str]|None,
+‘key_strict’:bool|None,
+‘value_strict’:bool|None,</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>}</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code>: A list editor. Goes with a ListTopic. editor_args: {}</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">options</span></code>: A dropdown editor. Goes with a StringTopic. editor_args: {</dt><dd><p>‘options’:list[str],</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>}</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">text</span></code>: A text editor. Goes with a StringTopic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>: An integer editor. Goes with an IntTopic. editor_args: {}</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float</span></code>: A float editor. Goes with a FloatTopic. editor_args: {}</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.print" title="Permalink to this definition">#</a></dt>
+<dd><p>Print to the node’s output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.raw_print">
+<span class="sig-name descname"><span class="pre">raw_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.raw_print" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node._redirect_output">
+<span class="sig-name descname"><span class="pre">_redirect_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node._redirect_output" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a context manager that redirects stdout to the node’s output stream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node._run_in_background">
+<span class="sig-name descname"><span class="pre">_run_in_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node._run_in_background" title="Permalink to this definition">#</a></dt>
+<dd><p>Run a task in the background thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node._run_directly">
+<span class="sig-name descname"><span class="pre">_run_directly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node._run_directly" title="Permalink to this definition">#</a></dt>
+<dd><p>Run a task in the current thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.run" title="Permalink to this definition">#</a></dt>
+<dd><p>Run a task in the node’s context i.e. the stdout and errors will be redirected to the node’s output attribute and be displayed in front-end.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><ul class="simple">
+<li><p>task: The task to run.</p></li>
+<li><p>background: If set to True, the task will be scheduled to run in the background thread. Otherwise, it will be run in the current thread immediately.</p></li>
+<li><p>to_queue: This argument is used only when <cite>background</cite> is True. If set to True, the task will be pushed to the <a class="reference internal" href="../../core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner" title="grapycal.core.background_runner.BackgroundRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackgroundRunner</span></code></a>’s queue.            If set to False, the task will be pushed to its stack. See <a class="reference internal" href="../../core/background_runner/index.html#grapycal.core.background_runner.BackgroundRunner" title="grapycal.core.background_runner.BackgroundRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackgroundRunner</span></code></a> for more details.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node._on_exception">
+<span class="sig-name descname"><span class="pre">_on_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node._on_exception" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.flash_running_indicator">
+<span class="sig-name descname"><span class="pre">flash_running_indicator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.flash_running_indicator" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.edge_activated">
+<span class="sig-name descname"><span class="pre">edge_activated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../edge/index.html#grapycal.sobjects.edge.Edge" title="grapycal.sobjects.edge.Edge"><span class="pre">grapycal.sobjects.edge.Edge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.InputPort" title="grapycal.sobjects.port.InputPort"><span class="pre">grapycal.sobjects.port.InputPort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.edge_activated" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when an edge on an input port is activated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.input_edge_added">
+<span class="sig-name descname"><span class="pre">input_edge_added</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../edge/index.html#grapycal.sobjects.edge.Edge" title="grapycal.sobjects.edge.Edge"><span class="pre">grapycal.sobjects.edge.Edge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.InputPort" title="grapycal.sobjects.port.InputPort"><span class="pre">grapycal.sobjects.port.InputPort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.input_edge_added" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when an edge is added to an input port.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.input_edge_removed">
+<span class="sig-name descname"><span class="pre">input_edge_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../edge/index.html#grapycal.sobjects.edge.Edge" title="grapycal.sobjects.edge.Edge"><span class="pre">grapycal.sobjects.edge.Edge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.InputPort" title="grapycal.sobjects.port.InputPort"><span class="pre">grapycal.sobjects.port.InputPort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.input_edge_removed" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when an edge is removed from an input port.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.output_edge_added">
+<span class="sig-name descname"><span class="pre">output_edge_added</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../edge/index.html#grapycal.sobjects.edge.Edge" title="grapycal.sobjects.edge.Edge"><span class="pre">grapycal.sobjects.edge.Edge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.OutputPort" title="grapycal.sobjects.port.OutputPort"><span class="pre">grapycal.sobjects.port.OutputPort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.output_edge_added" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when an edge is added to an output port.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.output_edge_removed">
+<span class="sig-name descname"><span class="pre">output_edge_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../edge/index.html#grapycal.sobjects.edge.Edge" title="grapycal.sobjects.edge.Edge"><span class="pre">grapycal.sobjects.edge.Edge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../port/index.html#grapycal.sobjects.port.OutputPort" title="grapycal.sobjects.port.OutputPort"><span class="pre">grapycal.sobjects.port.OutputPort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.output_edge_removed" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when an edge is removed from an output port.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="grapycal.sobjects.node.Node.double_click">
+<span class="sig-name descname"><span class="pre">double_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grapycal.sobjects.node.Node.double_click" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when the node is double clicked by an user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../port/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.port</span></code></div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../functionNode/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.functionNode</span></code></div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Grapycal Team
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grapycal.sobjects.node</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#grapycal.sobjects.node.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.NodeMeta"><code class="docutils literal notranslate"><span class="pre">NodeMeta</span></code></a><ul>
+<li><a class="reference internal" href="#grapycal.sobjects.node.NodeMeta.class_def_counter"><code class="docutils literal notranslate"><span class="pre">NodeMeta.class_def_counter</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.NodeMeta.def_order"><code class="docutils literal notranslate"><span class="pre">NodeMeta.def_order</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.frontend_type"><code class="docutils literal notranslate"><span class="pre">Node.frontend_type</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.category"><code class="docutils literal notranslate"><span class="pre">Node.category</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.T"><code class="docutils literal notranslate"><span class="pre">Node.T</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.T1"><code class="docutils literal notranslate"><span class="pre">Node.T1</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.get_def_order"><code class="docutils literal notranslate"><span class="pre">Node.get_def_order()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.build"><code class="docutils literal notranslate"><span class="pre">Node.build()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.build_node"><code class="docutils literal notranslate"><span class="pre">Node.build_node()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.init"><code class="docutils literal notranslate"><span class="pre">Node.init()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.init_node"><code class="docutils literal notranslate"><span class="pre">Node.init_node()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.restore_from_version"><code class="docutils literal notranslate"><span class="pre">Node.restore_from_version()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.restore_attributes"><code class="docutils literal notranslate"><span class="pre">Node.restore_attributes()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.restore_controls"><code class="docutils literal notranslate"><span class="pre">Node.restore_controls()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.spawn"><code class="docutils literal notranslate"><span class="pre">Node.spawn()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.destroy"><code class="docutils literal notranslate"><span class="pre">Node.destroy()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_in_port"><code class="docutils literal notranslate"><span class="pre">Node.add_in_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_out_port"><code class="docutils literal notranslate"><span class="pre">Node.add_out_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.remove_in_port"><code class="docutils literal notranslate"><span class="pre">Node.remove_in_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.remove_out_port"><code class="docutils literal notranslate"><span class="pre">Node.remove_out_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.get_in_port"><code class="docutils literal notranslate"><span class="pre">Node.get_in_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.get_out_port"><code class="docutils literal notranslate"><span class="pre">Node.get_out_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.has_in_port"><code class="docutils literal notranslate"><span class="pre">Node.has_in_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.has_out_port"><code class="docutils literal notranslate"><span class="pre">Node.has_out_port()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_control"><code class="docutils literal notranslate"><span class="pre">Node.add_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_text_control"><code class="docutils literal notranslate"><span class="pre">Node.add_text_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_button_control"><code class="docutils literal notranslate"><span class="pre">Node.add_button_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_image_control"><code class="docutils literal notranslate"><span class="pre">Node.add_image_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_lineplot_control"><code class="docutils literal notranslate"><span class="pre">Node.add_lineplot_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.remove_control"><code class="docutils literal notranslate"><span class="pre">Node.remove_control()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.add_attribute"><code class="docutils literal notranslate"><span class="pre">Node.add_attribute()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.expose_attribute"><code class="docutils literal notranslate"><span class="pre">Node.expose_attribute()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.print"><code class="docutils literal notranslate"><span class="pre">Node.print()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.raw_print"><code class="docutils literal notranslate"><span class="pre">Node.raw_print()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node._redirect_output"><code class="docutils literal notranslate"><span class="pre">Node._redirect_output()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node._run_in_background"><code class="docutils literal notranslate"><span class="pre">Node._run_in_background()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node._run_directly"><code class="docutils literal notranslate"><span class="pre">Node._run_directly()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.run"><code class="docutils literal notranslate"><span class="pre">Node.run()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node._on_exception"><code class="docutils literal notranslate"><span class="pre">Node._on_exception()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.flash_running_indicator"><code class="docutils literal notranslate"><span class="pre">Node.flash_running_indicator()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.edge_activated"><code class="docutils literal notranslate"><span class="pre">Node.edge_activated()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.input_edge_added"><code class="docutils literal notranslate"><span class="pre">Node.input_edge_added()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.input_edge_removed"><code class="docutils literal notranslate"><span class="pre">Node.input_edge_removed()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.output_edge_added"><code class="docutils literal notranslate"><span class="pre">Node.output_edge_added()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.output_edge_removed"><code class="docutils literal notranslate"><span class="pre">Node.output_edge_removed()</span></code></a></li>
+<li><a class="reference internal" href="#grapycal.sobjects.node.Node.double_click"><code class="docutils literal notranslate"><span class="pre">Node.double_click()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/scripts/furo.js"></script>
+    </body>
+</html>

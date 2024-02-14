@@ -1,0 +1,19 @@
+:py:mod:`grapycal.core`
+=======================
+
+.. py:module:: grapycal.core
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   background_runner/index.rst
+   local/index.rst
+   running_module/index.rst
+   stdout_helper/index.rst
+   workspace/index.rst
+
+

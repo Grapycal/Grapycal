@@ -1,0 +1,90 @@
+:py:mod:`grapycal.core.stdout_helper`
+=====================================
+
+.. py:module:: grapycal.core.stdout_helper
+
+.. autoapi-nested-parse::
+
+   https://stackoverflow.com/questions/14890997/redirect-stdout-to-a-file-only-for-a-specific-thread#:~:text=You%20cannot%20redirect%20stdout%20for,messes%20with%20all%20of%20them.
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.stdout_helper.orig_print
+   grapycal.core.stdout_helper.redirect
+   grapycal.core.stdout_helper._get_stream
+   grapycal.core.stdout_helper.enable_proxy
+   grapycal.core.stdout_helper.disable_proxy
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.stdout_helper.orig___stdout__
+   grapycal.core.stdout_helper.orig___stderr__
+   grapycal.core.stdout_helper.orig_stdout
+   grapycal.core.stdout_helper.orig_stderr
+   grapycal.core.stdout_helper.thread_proxies
+
+
+.. py:data:: orig___stdout__
+
+   
+
+.. py:data:: orig___stderr__
+
+   
+
+.. py:data:: orig_stdout
+
+   
+
+.. py:data:: orig_stderr
+
+   
+
+.. py:data:: thread_proxies
+
+   
+
+.. py:function:: orig_print(*args, flush=False)
+
+
+.. py:function:: redirect(stringio: Any)
+
+   Context manager for redirecting stdout to a single io object.
+
+
+.. py:function:: _get_stream(original)
+
+   Returns the inner function for use in the LocalProxy object.
+
+   :param original: The stream to be returned if thread is not proxied.
+   :type original: ``file``
+   :return: The inner function for use in the LocalProxy object.
+   :rtype: ``function``
+
+
+.. py:function:: enable_proxy(redirect_error=True)
+
+   Overwrites __stdout__, __stderr__, stdout, and stderr with the proxied
+   objects.
+
+
+.. py:function:: disable_proxy()
+
+   Overwrites __stdout__, __stderr__, stdout, and stderr with the original
+   objects.
+
+

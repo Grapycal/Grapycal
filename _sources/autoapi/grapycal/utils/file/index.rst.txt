@@ -1,0 +1,22 @@
+:py:mod:`grapycal.utils.file`
+=============================
+
+.. py:module:: grapycal.utils.file
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.file.get_direct_sub_folders
+
+
+
+.. py:function:: get_direct_sub_folders(path: str) -> list[str]
+
+

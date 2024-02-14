@@ -1,0 +1,41 @@
+:py:mod:`grapycal.sobjects.controls.buttonControl`
+==================================================
+
+.. py:module:: grapycal.sobjects.controls.buttonControl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.buttonControl.ButtonControl
+
+
+
+
+.. py:class:: ButtonControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+   To add a button control to a node, use the following code in the node:
+   ```python
+   self.add_control(Button, label='')
+   ```
+
+   .. py:attribute:: frontend_type
+      :value: 'ButtonControl'
+
+      
+
+   .. py:method:: build(label: str = '')
+
+
+   .. py:method:: init()
+
+
+

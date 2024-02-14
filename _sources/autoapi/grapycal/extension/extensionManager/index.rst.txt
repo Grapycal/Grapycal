@@ -1,0 +1,101 @@
+:py:mod:`grapycal.extension.extensionManager`
+=============================================
+
+.. py:module:: grapycal.extension.extensionManager
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.extensionManager.ExtensionManager
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.extensionManager.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: ExtensionManager(objectsync_server: objectsync.Server, workspace: grapycal.core.workspace.Workspace)
+
+
+   .. py:method:: start() -> None
+
+      Called after the event loop is started.
+
+
+   .. py:method:: import_extension(extension_name: str, create_preview_nodes=True) -> grapycal.extension.extension.Extension
+
+
+   .. py:method:: update_extension(extension_name: str) -> None
+
+
+   .. py:method:: unimport_extension(extension_name: str) -> None
+
+
+   .. py:method:: _update_available_extensions_topic() -> None
+
+
+   .. py:method:: _update_available_extensions_topic_async() -> None
+      :async:
+
+      This function is async because it sends requests to get package metadata.
+
+
+   .. py:method:: _scan_available_extensions() -> list[dict]
+
+      Returns a list of available extensions that is importable but not imported yet.
+
+
+   .. py:method:: _check_extension_compatible(extension_name: str)
+      :async:
+
+
+   .. py:method:: _install_extension(extension_name: str) -> None
+
+
+   .. py:method:: _install_extension_async(extension_name: str) -> None
+      :async:
+
+
+   .. py:method:: _load_extension(name: str) -> grapycal.extension.extension.Extension
+
+
+   .. py:method:: _register_extension(name: str) -> None
+
+
+   .. py:method:: _check_extension_not_used(name: str) -> None
+
+
+   .. py:method:: _unload_extension(name: str) -> None
+
+
+   .. py:method:: create_preview_nodes(name: str) -> None
+
+
+   .. py:method:: _destroy_preview_nodes(name: str) -> None
+
+
+   .. py:method:: get_extension(name: str) -> grapycal.extension.extension.Extension
+
+
+   .. py:method:: get_extention_names() -> list[str]
+
+
+   .. py:method:: get_extensions_info() -> List[dict]
+
+
+

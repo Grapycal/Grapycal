@@ -1,0 +1,743 @@
+:py:mod:`grapycal.core.local`
+=============================
+
+.. py:module:: grapycal.core.local
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.local.Local
+   grapycal.core.local.LocalStack
+   grapycal.core.local.LocalManager
+   grapycal.core.local._ProxyLookup
+   grapycal.core.local._ProxyIOp
+   grapycal.core.local.LocalProxy
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.local.release_local
+   grapycal.core.local._l_to_r_op
+   grapycal.core.local._identity
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.local.T
+   grapycal.core.local.F
+
+
+.. py:data:: T
+
+   
+
+.. py:data:: F
+
+   
+
+.. py:function:: release_local(local: Local | LocalStack) -> None
+
+   Release the data for the current context in a :class:`Local` or
+   :class:`LocalStack` without using a :class:`LocalManager`.
+
+   This should not be needed for modern use cases, and may be removed
+   in the future.
+
+   .. versionadded:: 0.6.1
+
+
+.. py:class:: Local(context_var: contextvars.ContextVar[dict[str, Any]] | None = None)
+
+
+   Create a namespace of context-local data. This wraps a
+   :class:`ContextVar` containing a :class:`dict` value.
+
+   This may incur a performance penalty compared to using individual
+   context vars, as it has to copy data to avoid mutating the dict
+   between nested contexts.
+
+   :param context_var: The :class:`~contextvars.ContextVar` to use as
+       storage for this local. If not given, one will be created.
+       Context vars not created at the global scope may interfere with
+       garbage collection.
+
+   .. versionchanged:: 2.0
+       Uses ``ContextVar`` instead of a custom storage implementation.
+
+   .. py:attribute:: __slots__
+      :value: ('__storage',)
+
+      
+
+   .. py:method:: __iter__() -> Iterator[tuple[str, Any]]
+
+
+   .. py:method:: __call__(name: str, *, unbound_message: str | None = None) -> LocalProxy
+
+      Create a :class:`LocalProxy` that access an attribute on this
+      local namespace.
+
+      :param name: Proxy this attribute.
+      :param unbound_message: The error message that the proxy will
+          show if the attribute isn't set.
+
+
+   .. py:method:: __release_local__() -> None
+
+
+   .. py:method:: __getattr__(name: str) -> Any
+
+
+   .. py:method:: __setattr__(name: str, value: Any) -> None
+
+      Implement setattr(self, name, value).
+
+
+   .. py:method:: __delattr__(name: str) -> None
+
+      Implement delattr(self, name).
+
+
+
+.. py:class:: LocalStack(context_var: contextvars.ContextVar[list[T]] | None = None)
+
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+   Create a stack of context-local data. This wraps a
+   :class:`ContextVar` containing a :class:`list` value.
+
+   This may incur a performance penalty compared to using individual
+   context vars, as it has to copy data to avoid mutating the list
+   between nested contexts.
+
+   :param context_var: The :class:`~contextvars.ContextVar` to use as
+       storage for this local. If not given, one will be created.
+       Context vars not created at the global scope may interfere with
+       garbage collection.
+
+   .. versionchanged:: 2.0
+       Uses ``ContextVar`` instead of a custom storage implementation.
+
+   .. versionadded:: 0.6.1
+
+   .. py:property:: top
+      :type: T | None
+
+      The topmost item on the stack.  If the stack is empty,
+      `None` is returned.
+
+
+   .. py:attribute:: __slots__
+      :value: ('_storage',)
+
+      
+
+   .. py:method:: __release_local__() -> None
+
+
+   .. py:method:: push(obj: T) -> list[T]
+
+      Add a new item to the top of the stack.
+
+
+   .. py:method:: pop() -> T | None
+
+      Remove the top item from the stack and return it. If the
+      stack is empty, return ``None``.
+
+
+   .. py:method:: __call__(name: str | None = None, *, unbound_message: str | None = None) -> LocalProxy
+
+      Create a :class:`LocalProxy` that accesses the top of this
+      local stack.
+
+      :param name: If given, the proxy access this attribute of the
+          top item, rather than the item itself.
+      :param unbound_message: The error message that the proxy will
+          show if the stack is empty.
+
+
+
+.. py:class:: LocalManager(locals: None | Local | LocalStack | Iterable[Local | LocalStack] = None)
+
+
+   Manage releasing the data for the current context in one or more
+   :class:`Local` and :class:`LocalStack` objects.
+
+   This should not be needed for modern use cases, and may be removed
+   in the future.
+
+   :param locals: A local or list of locals to manage.
+
+   .. versionchanged:: 2.1
+       The ``ident_func`` was removed.
+
+   .. versionchanged:: 0.7
+       The ``ident_func`` parameter was added.
+
+   .. versionchanged:: 0.6.1
+       The :func:`release_local` function can be used instead of a
+       manager.
+
+   .. py:attribute:: __slots__
+      :value: ('locals',)
+
+      
+
+   .. py:method:: cleanup() -> None
+
+      Release the data in the locals for this context. Call this at
+      the end of each request or use :meth:`make_middleware`.
+
+
+
+.. py:class:: _ProxyLookup(f: Callable | None = None, fallback: Callable | None = None, class_value: Any | None = None, is_attr: bool = False)
+
+
+   Descriptor that handles proxied attribute lookup for
+   :class:`LocalProxy`.
+
+   :param f: The built-in function this attribute is accessed through.
+       Instead of looking up the special method, the function call
+       is redone on the object.
+   :param fallback: Return this function if the proxy is unbound
+       instead of raising a :exc:`RuntimeError`.
+   :param is_attr: This proxied name is an attribute, not a function.
+       Call the fallback immediately to get the value.
+   :param class_value: Value to return when accessed from the
+       ``LocalProxy`` class directly. Used for ``__doc__`` so building
+       docs still works.
+
+   .. py:attribute:: __slots__
+      :value: ('bind_f', 'fallback', 'is_attr', 'class_value', 'name')
+
+      
+
+   .. py:method:: __set_name__(owner: LocalProxy, name: str) -> None
+
+
+   .. py:method:: __get__(instance: LocalProxy, owner: type | None = None) -> Any
+
+
+   .. py:method:: __repr__() -> str
+
+      Return repr(self).
+
+
+   .. py:method:: __call__(instance: LocalProxy, *args: Any, **kwargs: Any) -> Any
+
+      Support calling unbound methods from the class. For example,
+      this happens with ``copy.copy``, which does
+      ``type(x).__copy__(x)``. ``type(x)`` can't be proxied, so it
+      returns the proxy type and descriptor.
+
+
+
+.. py:class:: _ProxyIOp(f: Callable | None = None, fallback: Callable | None = None)
+
+
+   Bases: :py:obj:`_ProxyLookup`
+
+   Look up an augmented assignment method on a proxied object. The
+   method is wrapped to return the proxy instead of the object.
+
+   .. py:attribute:: __slots__
+      :value: ()
+
+      
+
+
+.. py:function:: _l_to_r_op(op: F) -> F
+
+   Swap the argument order to turn an l-op into an r-op.
+
+
+.. py:function:: _identity(o: T) -> T
+
+
+.. py:class:: LocalProxy(local: contextvars.ContextVar[T] | Local | LocalStack[T] | Callable[[], T], name: str | None = None, *, unbound_message: str | None = None)
+
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+   A proxy to the object bound to a context-local object. All
+   operations on the proxy are forwarded to the bound object. If no
+   object is bound, a ``RuntimeError`` is raised.
+
+   :param local: The context-local object that provides the proxied
+       object.
+   :param name: Proxy this attribute from the proxied object.
+   :param unbound_message: The error message to show if the
+       context-local object is unbound.
+
+   Proxy a :class:`~contextvars.ContextVar` to make it easier to
+   access. Pass a name to proxy that attribute.
+
+   .. code-block:: python
+
+       _request_var = ContextVar("request")
+       request = LocalProxy(_request_var)
+       session = LocalProxy(_request_var, "session")
+
+   Proxy an attribute on a :class:`Local` namespace by calling the
+   local with the attribute name:
+
+   .. code-block:: python
+
+       data = Local()
+       user = data("user")
+
+   Proxy the top item on a :class:`LocalStack` by calling the local.
+   Pass a name to proxy that attribute.
+
+   .. code-block::
+
+       app_stack = LocalStack()
+       current_app = app_stack()
+       g = app_stack("g")
+
+   Pass a function to proxy the return value from that function. This
+   was previously used to access attributes of local objects before
+   that was supported directly.
+
+   .. code-block:: python
+
+       session = LocalProxy(lambda: request.session)
+
+   ``__repr__`` and ``__class__`` are proxied, so ``repr(x)`` and
+   ``isinstance(x, cls)`` will look like the proxied object. Use
+   ``issubclass(type(x), LocalProxy)`` to check if an object is a
+   proxy.
+
+   .. code-block:: python
+
+       repr(user)  # <User admin>
+       isinstance(user, User)  # True
+       issubclass(type(user), LocalProxy)  # True
+
+   .. versionchanged:: 2.2.2
+       ``__wrapped__`` is set when wrapping an object, not only when
+       wrapping a function, to prevent doctest from failing.
+
+   .. versionchanged:: 2.2
+       Can proxy a ``ContextVar`` or ``LocalStack`` directly.
+
+   .. versionchanged:: 2.2
+       The ``name`` parameter can be used with any proxied object, not
+       only ``Local``.
+
+   .. versionchanged:: 2.2
+       Added the ``unbound_message`` parameter.
+
+   .. versionchanged:: 2.0
+       Updated proxied attributes and methods to reflect the current
+       data model.
+
+   .. versionchanged:: 0.6.1
+       The class can be instantiated with a callable.
+
+   .. py:attribute:: __slots__
+      :value: ('__wrapped', '_get_current_object')
+
+      
+
+   .. py:attribute:: _get_current_object
+      :type: Callable[[], T]
+
+      Return the current object this proxy is bound to. If the proxy is
+      unbound, this raises a ``RuntimeError``.
+
+      This should be used if you need to pass the object to something that
+      doesn't understand the proxy. It can also be useful for performance
+      if you are accessing the object multiple times in a function, rather
+      than going through the proxy multiple times.
+
+
+   .. py:attribute:: __doc__
+
+      
+
+   .. py:attribute:: __wrapped__
+
+      
+
+   .. py:attribute:: __repr__
+
+      
+
+   .. py:attribute:: __str__
+
+      
+
+   .. py:attribute:: __bytes__
+
+      
+
+   .. py:attribute:: __format__
+
+      
+
+   .. py:attribute:: __lt__
+
+      
+
+   .. py:attribute:: __le__
+
+      
+
+   .. py:attribute:: __eq__
+
+      
+
+   .. py:attribute:: __ne__
+
+      
+
+   .. py:attribute:: __gt__
+
+      
+
+   .. py:attribute:: __ge__
+
+      
+
+   .. py:attribute:: __hash__
+
+      
+
+   .. py:attribute:: __bool__
+
+      
+
+   .. py:attribute:: __getattr__
+
+      
+
+   .. py:attribute:: __setattr__
+
+      
+
+   .. py:attribute:: __delattr__
+
+      
+
+   .. py:attribute:: __dir__
+
+      
+
+   .. py:attribute:: __class__
+
+      
+
+   .. py:attribute:: __instancecheck__
+
+      
+
+   .. py:attribute:: __subclasscheck__
+
+      
+
+   .. py:attribute:: __call__
+
+      
+
+   .. py:attribute:: __len__
+
+      
+
+   .. py:attribute:: __length_hint__
+
+      
+
+   .. py:attribute:: __getitem__
+
+      
+
+   .. py:attribute:: __setitem__
+
+      
+
+   .. py:attribute:: __delitem__
+
+      
+
+   .. py:attribute:: __iter__
+
+      
+
+   .. py:attribute:: __next__
+
+      
+
+   .. py:attribute:: __reversed__
+
+      
+
+   .. py:attribute:: __contains__
+
+      
+
+   .. py:attribute:: __add__
+
+      
+
+   .. py:attribute:: __sub__
+
+      
+
+   .. py:attribute:: __mul__
+
+      
+
+   .. py:attribute:: __matmul__
+
+      
+
+   .. py:attribute:: __truediv__
+
+      
+
+   .. py:attribute:: __floordiv__
+
+      
+
+   .. py:attribute:: __mod__
+
+      
+
+   .. py:attribute:: __divmod__
+
+      
+
+   .. py:attribute:: __pow__
+
+      
+
+   .. py:attribute:: __lshift__
+
+      
+
+   .. py:attribute:: __rshift__
+
+      
+
+   .. py:attribute:: __and__
+
+      
+
+   .. py:attribute:: __xor__
+
+      
+
+   .. py:attribute:: __or__
+
+      
+
+   .. py:attribute:: __radd__
+
+      
+
+   .. py:attribute:: __rsub__
+
+      
+
+   .. py:attribute:: __rmul__
+
+      
+
+   .. py:attribute:: __rmatmul__
+
+      
+
+   .. py:attribute:: __rtruediv__
+
+      
+
+   .. py:attribute:: __rfloordiv__
+
+      
+
+   .. py:attribute:: __rmod__
+
+      
+
+   .. py:attribute:: __rdivmod__
+
+      
+
+   .. py:attribute:: __rpow__
+
+      
+
+   .. py:attribute:: __rlshift__
+
+      
+
+   .. py:attribute:: __rrshift__
+
+      
+
+   .. py:attribute:: __rand__
+
+      
+
+   .. py:attribute:: __rxor__
+
+      
+
+   .. py:attribute:: __ror__
+
+      
+
+   .. py:attribute:: __iadd__
+
+      
+
+   .. py:attribute:: __isub__
+
+      
+
+   .. py:attribute:: __imul__
+
+      
+
+   .. py:attribute:: __imatmul__
+
+      
+
+   .. py:attribute:: __itruediv__
+
+      
+
+   .. py:attribute:: __ifloordiv__
+
+      
+
+   .. py:attribute:: __imod__
+
+      
+
+   .. py:attribute:: __ipow__
+
+      
+
+   .. py:attribute:: __ilshift__
+
+      
+
+   .. py:attribute:: __irshift__
+
+      
+
+   .. py:attribute:: __iand__
+
+      
+
+   .. py:attribute:: __ixor__
+
+      
+
+   .. py:attribute:: __ior__
+
+      
+
+   .. py:attribute:: __neg__
+
+      
+
+   .. py:attribute:: __pos__
+
+      
+
+   .. py:attribute:: __abs__
+
+      
+
+   .. py:attribute:: __invert__
+
+      
+
+   .. py:attribute:: __complex__
+
+      
+
+   .. py:attribute:: __int__
+
+      
+
+   .. py:attribute:: __float__
+
+      
+
+   .. py:attribute:: __index__
+
+      
+
+   .. py:attribute:: __round__
+
+      
+
+   .. py:attribute:: __trunc__
+
+      
+
+   .. py:attribute:: __floor__
+
+      
+
+   .. py:attribute:: __ceil__
+
+      
+
+   .. py:attribute:: __enter__
+
+      
+
+   .. py:attribute:: __exit__
+
+      
+
+   .. py:attribute:: __await__
+
+      
+
+   .. py:attribute:: __aiter__
+
+      
+
+   .. py:attribute:: __anext__
+
+      
+
+   .. py:attribute:: __aenter__
+
+      
+
+   .. py:attribute:: __aexit__
+
+      
+
+   .. py:attribute:: __copy__
+
+      
+
+   .. py:attribute:: __deepcopy__
+
+      
+
+

@@ -1,0 +1,22 @@
+:py:mod:`grapycal.utils.config`
+===============================
+
+.. py:module:: grapycal.utils.config
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.config.load_config
+
+
+
+.. py:function:: load_config(path)
+
+

@@ -1,0 +1,32 @@
+:py:mod:`grapycal.extension.extensionSearch`
+============================================
+
+.. py:module:: grapycal.extension.extensionSearch
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.extension.extensionSearch.get_remote_extensions
+   grapycal.extension.extensionSearch.get_package_metadata
+
+
+
+.. py:function:: get_remote_extensions() -> list[dict]
+   :async:
+
+   Returns a list of available extensions that is not installed yet.
+
+
+.. py:function:: get_package_metadata(package_name: str) -> dict
+   :async:
+
+   Returns the metadata of a package.
+
+

@@ -1,0 +1,63 @@
+:py:mod:`grapycal.utils.misc`
+=============================
+
+.. py:module:: grapycal.utils.misc
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.misc.Action
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.misc.as_type
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.misc.T
+
+
+.. py:data:: T
+
+   
+
+.. py:function:: as_type(x, t: type[T]) -> T
+
+
+.. py:class:: Action
+
+
+   A hub for callbacks
+
+   .. py:method:: __add__(callback: Callable)
+
+      Temporary backward compatibility. To be removed.
+
+
+   .. py:method:: __sub__(callback: Callable)
+
+      Temporary backward compatibility. To be removed.
+
+
+   .. py:method:: invoke(*args: Any, **kwargs: Any) -> Any
+
+      Call each callback in the action with the given arguments.
+
+
+

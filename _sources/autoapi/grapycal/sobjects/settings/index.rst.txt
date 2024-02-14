@@ -1,0 +1,30 @@
+:py:mod:`grapycal.sobjects.settings`
+====================================
+
+.. py:module:: grapycal.sobjects.settings
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.settings.Settings
+
+
+
+
+.. py:class:: Settings
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Settings'
+
+      
+
+

@@ -1,0 +1,82 @@
+:py:mod:`grapycal.utils.io`
+===========================
+
+.. py:module:: grapycal.utils.io
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.io.OutputStream
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.io.write_workspace
+   grapycal.utils.io.read_workspace
+   grapycal.utils.io.file_exists
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.io.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: OutputStream(on_flush: Callable[[str], None], hz=20)
+
+
+   .. py:method:: set_event_loop(event_loop)
+
+
+   .. py:method:: run()
+      :async:
+
+
+   .. py:method:: write(data)
+
+
+   .. py:method:: flush()
+
+
+   .. py:method:: enable_flush()
+
+
+   .. py:method:: _enable_flush()
+
+
+   .. py:method:: disable_flush()
+
+
+   .. py:method:: _disable_flush()
+
+
+   .. py:method:: close()
+
+
+
+.. py:function:: write_workspace(path: str, metadata, data: Any, compress=False)
+
+
+.. py:function:: read_workspace(path, metadata_only=False) -> Tuple[str, Any, Any]
+
+
+.. py:function:: file_exists(path)
+
+

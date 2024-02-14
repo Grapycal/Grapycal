@@ -1,0 +1,69 @@
+:py:mod:`grapycal.utils.httpResource`
+=====================================
+
+.. py:module:: grapycal.utils.httpResource
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.httpResource.HttpResource
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.httpResource.logger
+   grapycal.utils.httpResource.T
+
+
+.. py:data:: logger
+
+   
+
+.. py:data:: T
+
+   
+
+.. py:class:: HttpResource(url: str, data_type: Type[T] = type(T), format=None)
+
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+   .. py:method:: is_avaliable()
+      :async:
+
+
+   .. py:method:: get() -> T
+      :async:
+
+
+

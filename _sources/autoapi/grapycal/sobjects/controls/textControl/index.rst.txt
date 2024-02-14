@@ -1,0 +1,44 @@
+:py:mod:`grapycal.sobjects.controls.textControl`
+================================================
+
+.. py:module:: grapycal.sobjects.controls.textControl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.controls.textControl.TextControl
+
+
+
+
+.. py:class:: TextControl
+
+
+   Bases: :py:obj:`grapycal.sobjects.controls.control.Control`
+
+   To add a text control to a node, use the following code in the node:
+   ```python
+   self.add_control(TextControl, text='', label='', editable=True)
+   ```
+
+   .. py:attribute:: frontend_type
+      :value: 'TextControl'
+
+      
+
+   .. py:method:: build(text: str = '', label: str = '', readonly=False, editable: bool = True)
+
+
+   .. py:method:: set(text: str)
+
+
+   .. py:method:: get()
+
+
+

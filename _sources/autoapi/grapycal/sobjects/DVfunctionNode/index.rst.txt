@@ -1,0 +1,132 @@
+:py:mod:`grapycal.sobjects.DVfunctionNode`
+==========================================
+
+.. py:module:: grapycal.sobjects.DVfunctionNode
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.DVfunctionNode.DVfunctionNode
+
+
+
+
+.. py:class:: DVfunctionNode
+
+
+   Bases: :py:obj:`grapycal.sobjects.node.Node`
+
+   .. py:attribute:: inputs
+      :value: []
+
+      
+
+   .. py:attribute:: max_in_degree
+      :value: []
+
+      
+
+   .. py:attribute:: outputs
+      :value: []
+
+      
+
+   .. py:attribute:: display_port_names
+      :value: True
+
+      
+
+   .. py:attribute:: default_value
+      :type: list[dict]
+      :value: []
+
+      
+
+   .. py:attribute:: default_only
+      :type: bool
+      :value: False
+
+      
+
+   .. py:attribute:: _default_value
+      :type: list[str]
+      :value: []
+
+      
+
+   .. py:method:: build_node()
+
+      Create attributes, ports, and controls here.
+
+      Note: 
+          This method will not be called when the object is being restored. The child objects will be restored automatically instead of
+      running this method again.
+
+
+   .. py:method:: init_node()
+
+      This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
+      the node is built.
+
+
+   .. py:method:: on_inputs_attribute_add(topic_name, _)
+
+
+   .. py:method:: on_inputs_attribute_remove(topic_name)
+
+
+   .. py:method:: check_ready()
+
+
+   .. py:method:: restore_from_version(version: str, old: grapycal.extension.utils.NodeInfo)
+
+      Called when the node is created as a result of a old node being upgraded.
+      The old node's information (including attribute values) is in the `old` argument.
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge on an input port is activated.
+
+
+   .. py:method:: task()
+
+
+   .. py:method:: calculate(**inputs) -> Any
+      :abstractmethod:
+
+      Define the function of this node here.
+
+      :param **inputs: A dict of lists. Each dict entry is the data from one input port. For example, if there is only one input port named "in" with two            edges connected, the value of inputs will be `{'in':[data_from_edge_1, data_from_edge_2]}`.
+      :return: A list of outputs. Each entry in the list will be pushed to one output port. For example, if there is only one output port,            the value of the return suold be `[data_to_port]`. If there are multiple edges connected to one output port,            they will all receive the same data.
+
+      Examples::
+
+          class SumNode(FunctionNode):
+              inputs = ['items']
+              outputs = ['sum']
+              ...
+              def calculate(self, items):
+                  return {'sum':sum(items)} # Return the sum of the data
+
+
+   .. py:method:: input_edge_added(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is added to an input port.
+
+
+   .. py:method:: input_edge_removed(edge: grapycal.sobjects.edge.Edge, port)
+
+      Called when an edge is removed from an input port.
+
+
+   .. py:method:: remove()
+
+
+

@@ -1,0 +1,109 @@
+:py:mod:`grapycal.sobjects.port`
+================================
+
+.. py:module:: grapycal.sobjects.port
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.sobjects.port.Port
+   grapycal.sobjects.port.InputPort
+   grapycal.sobjects.port.OutputPort
+
+
+
+
+.. py:class:: Port
+
+
+   Bases: :py:obj:`objectsync.SObject`
+
+   .. py:attribute:: frontend_type
+      :value: 'Port'
+
+      
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: is_full()
+
+
+   .. py:method:: get_name()
+
+
+
+.. py:class:: InputPort
+
+
+   Bases: :py:obj:`Port`
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: is_all_edge_ready()
+
+
+   .. py:method:: get_data()
+
+
+   .. py:method:: get_one_data(allow_no_data=False)
+
+
+   .. py:method:: edge_activated(edge: grapycal.sobjects.edge.Edge)
+
+
+
+.. py:class:: OutputPort
+
+
+   Bases: :py:obj:`Port`
+
+   .. py:method:: build(name='port', max_edges=64, display_name=None)
+
+
+   .. py:method:: init()
+
+
+   .. py:method:: add_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: remove_edge(edge: grapycal.sobjects.edge.Edge)
+
+
+   .. py:method:: push_data(data: Any = None, label: str | None = None, retain: bool = False)
+
+      Push data to all connected edges.
+      If retain is True, the data will be pushed to all future edges when they're connected as well.
+
+
+   .. py:method:: disable_retain()
+
+      Disable retain mode.
+
+
+

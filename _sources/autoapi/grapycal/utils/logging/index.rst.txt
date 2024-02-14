@@ -1,0 +1,272 @@
+:py:mod:`grapycal.utils.logging`
+================================
+
+.. py:module:: grapycal.utils.logging
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.logging.NameTranslator
+   grapycal.utils.logging.ConsoleLogFormatter
+   grapycal.utils.logging.FrontendFormatter
+   grapycal.utils.logging.LogToFrontendHandler
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.logging.setup_logging
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.utils.logging.frontend_message_topic
+
+
+.. py:function:: setup_logging()
+
+
+.. py:class:: NameTranslator(name='')
+
+
+   Bases: :py:obj:`logging.Filter`
+
+   Filter instances are used to perform arbitrary filtering of LogRecords.
+
+   Loggers and Handlers can optionally use Filter instances to filter
+   records as desired. The base filter class only allows events which are
+   below a certain point in the logger hierarchy. For example, a filter
+   initialized with "A.B" will allow events logged by loggers "A.B",
+   "A.B.C", "A.B.C.D", "A.B.D" etc. but not "A.BB", "B.A.B" etc. If
+   initialized with the empty string, all events are passed.
+
+   .. py:attribute:: dictionary
+
+      
+
+   .. py:method:: filter(record)
+
+      Determine if the specified record is to be logged.
+
+      Returns True if the record should be logged, or False otherwise.
+      If deemed appropriate, the record may be modified in-place.
+
+
+
+.. py:class:: ConsoleLogFormatter(fmt=None, datefmt=None, style='%', validate=True, *, defaults=None)
+
+
+   Bases: :py:obj:`logging.Formatter`
+
+   Formatter instances are used to convert a LogRecord to text.
+
+   Formatters need to know how a LogRecord is constructed. They are
+   responsible for converting a LogRecord to (usually) a string which can
+   be interpreted by either a human or an external system. The base Formatter
+   allows a formatting string to be specified. If none is supplied, the
+   style-dependent default value, "%(message)s", "{message}", or
+   "${message}", is used.
+
+   The Formatter can be initialized with a format string which makes use of
+   knowledge of the LogRecord attributes - e.g. the default value mentioned
+   above makes use of the fact that the user's message and arguments are pre-
+   formatted into a LogRecord's message attribute. Currently, the useful
+   attributes in a LogRecord are described by:
+
+   %(name)s            Name of the logger (logging channel)
+   %(levelno)s         Numeric logging level for the message (DEBUG, INFO,
+                       WARNING, ERROR, CRITICAL)
+   %(levelname)s       Text logging level for the message ("DEBUG", "INFO",
+                       "WARNING", "ERROR", "CRITICAL")
+   %(pathname)s        Full pathname of the source file where the logging
+                       call was issued (if available)
+   %(filename)s        Filename portion of pathname
+   %(module)s          Module (name portion of filename)
+   %(lineno)d          Source line number where the logging call was issued
+                       (if available)
+   %(funcName)s        Function name
+   %(created)f         Time when the LogRecord was created (time.time()
+                       return value)
+   %(asctime)s         Textual time when the LogRecord was created
+   %(msecs)d           Millisecond portion of the creation time
+   %(relativeCreated)d Time in milliseconds when the LogRecord was created,
+                       relative to the time the logging module was loaded
+                       (typically at application startup time)
+   %(thread)d          Thread ID (if available)
+   %(threadName)s      Thread name (if available)
+   %(process)d         Process ID (if available)
+   %(message)s         The result of record.getMessage(), computed just as
+                       the record is emitted
+
+   .. py:attribute:: green
+      :value: '\x1b[32;20m'
+
+      
+
+   .. py:attribute:: blue
+      :value: '\x1b[34;20m'
+
+      
+
+   .. py:attribute:: grey
+      :value: '\x1b[38;20m'
+
+      
+
+   .. py:attribute:: yellow
+      :value: '\x1b[33;20m'
+
+      
+
+   .. py:attribute:: red
+      :value: '\x1b[31;20m'
+
+      
+
+   .. py:attribute:: bold_red
+      :value: '\x1b[31;1m'
+
+      
+
+   .. py:attribute:: bold
+      :value: '\x1b[1m'
+
+      
+
+   .. py:attribute:: no_bold
+      :value: '\x1b[22m'
+
+      
+
+   .. py:attribute:: reset
+      :value: '\x1b[0m'
+
+      
+
+   .. py:attribute:: format_
+
+      
+
+   .. py:attribute:: FORMATS
+
+      
+
+   .. py:method:: format(record: logging.LogRecord)
+
+      Format the specified record as text.
+
+      The record's attribute dictionary is used as the operand to a
+      string formatting operation which yields the returned string.
+      Before formatting the dictionary, a couple of preparatory steps
+      are carried out. The message attribute of the record is computed
+      using LogRecord.getMessage(). If the formatting string uses the
+      time (as determined by a call to usesTime(), formatTime() is
+      called to format the event time. If there is exception information,
+      it is formatted using formatException() and appended to the message.
+
+
+
+.. py:class:: FrontendFormatter(fmt=None, datefmt=None, style='%', validate=True, *, defaults=None)
+
+
+   Bases: :py:obj:`logging.Formatter`
+
+   Formatter instances are used to convert a LogRecord to text.
+
+   Formatters need to know how a LogRecord is constructed. They are
+   responsible for converting a LogRecord to (usually) a string which can
+   be interpreted by either a human or an external system. The base Formatter
+   allows a formatting string to be specified. If none is supplied, the
+   style-dependent default value, "%(message)s", "{message}", or
+   "${message}", is used.
+
+   The Formatter can be initialized with a format string which makes use of
+   knowledge of the LogRecord attributes - e.g. the default value mentioned
+   above makes use of the fact that the user's message and arguments are pre-
+   formatted into a LogRecord's message attribute. Currently, the useful
+   attributes in a LogRecord are described by:
+
+   %(name)s            Name of the logger (logging channel)
+   %(levelno)s         Numeric logging level for the message (DEBUG, INFO,
+                       WARNING, ERROR, CRITICAL)
+   %(levelname)s       Text logging level for the message ("DEBUG", "INFO",
+                       "WARNING", "ERROR", "CRITICAL")
+   %(pathname)s        Full pathname of the source file where the logging
+                       call was issued (if available)
+   %(filename)s        Filename portion of pathname
+   %(module)s          Module (name portion of filename)
+   %(lineno)d          Source line number where the logging call was issued
+                       (if available)
+   %(funcName)s        Function name
+   %(created)f         Time when the LogRecord was created (time.time()
+                       return value)
+   %(asctime)s         Textual time when the LogRecord was created
+   %(msecs)d           Millisecond portion of the creation time
+   %(relativeCreated)d Time in milliseconds when the LogRecord was created,
+                       relative to the time the logging module was loaded
+                       (typically at application startup time)
+   %(thread)d          Thread ID (if available)
+   %(threadName)s      Thread name (if available)
+   %(process)d         Process ID (if available)
+   %(message)s         The result of record.getMessage(), computed just as
+                       the record is emitted
+
+   .. py:attribute:: time_format
+      :value: '%H:%M:%S'
+
+      
+
+   .. py:method:: format(record: logging.LogRecord)
+
+      Format the specified record as text.
+
+      The record's attribute dictionary is used as the operand to a
+      string formatting operation which yields the returned string.
+      Before formatting the dictionary, a couple of preparatory steps
+      are carried out. The message attribute of the record is computed
+      using LogRecord.getMessage(). If the formatting string uses the
+      time (as determined by a call to usesTime(), formatTime() is
+      called to format the event time. If there is exception information,
+      it is formatted using formatException() and appended to the message.
+
+
+
+.. py:data:: frontend_message_topic
+   :type: None | objectsync.EventTopic
+
+   
+
+.. py:class:: LogToFrontendHandler(level=NOTSET)
+
+
+   Bases: :py:obj:`logging.Handler`
+
+   Handler instances dispatch logging events to specific destinations.
+
+   The base handler class. Acts as a placeholder which defines the Handler
+   interface. Handlers can optionally use Formatter instances to format
+   records as desired. By default, no formatter is specified; in this case,
+   the 'raw' message as determined by record.message is logged.
+
+   .. py:method:: emit(record: logging.LogRecord)
+
+      Do whatever it takes to actually log the specified logging record.
+
+      This version is intended to be implemented by subclasses and so
+      raises a NotImplementedError.
+
+
+

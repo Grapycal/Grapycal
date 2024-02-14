@@ -1,0 +1,62 @@
+:py:mod:`grapycal.core.background_runner`
+=========================================
+
+.. py:module:: grapycal.core.background_runner
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.background_runner.BackgroundRunner
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   grapycal.core.background_runner.logger
+
+
+.. py:data:: logger
+
+   
+
+.. py:class:: BackgroundRunner
+
+
+   .. py:method:: push(task: Callable, to_queue: bool = True)
+
+
+   .. py:method:: push_to_queue(task: Callable)
+
+
+   .. py:method:: push_to_stack(task: Callable)
+
+
+   .. py:method:: interrupt()
+
+
+   .. py:method:: clear_tasks()
+
+
+   .. py:method:: set_exception_callback(callback: Callable[[Exception], None])
+
+
+   .. py:method:: exit()
+
+
+   .. py:method:: no_interrupt()
+
+
+   .. py:method:: run()
+
+
+
