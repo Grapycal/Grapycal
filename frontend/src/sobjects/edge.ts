@@ -265,7 +265,6 @@ export class Edge extends CompSObject {
                 nearestPort = port
                 nearestPortDist = dist
             }
-            print(port.display_name.getValue(),dist)
         }
 
         if(nearestPort == this.tail.getValue() || nearestPort == this.head.getValue()){
