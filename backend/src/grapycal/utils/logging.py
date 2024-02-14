@@ -100,7 +100,7 @@ class NameTranslator(logging.Filter):
                 record.name.startswith("topicsync")
                 or record.name.startswith("objectsync")
             )
-            and record.levelno <= logging.DEBUG
+            and record.levelno < logging.WARNING
         ):
             return False
         if record.name.startswith("grapycal_"):

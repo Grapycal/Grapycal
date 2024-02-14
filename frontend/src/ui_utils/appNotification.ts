@@ -47,8 +47,8 @@ export class AppNotification extends Componentable{
         });
     }
 
-    public add(content:string){
-        const item = new AppNotificationItem(content)
+    public add(content:string,sustain = 2000,decay = 1000){
+        const item = new AppNotificationItem(content,sustain,decay)
         item.htmlItem.setParent(this.htmlItem)
     }
 
@@ -74,11 +74,10 @@ class AppNotificationItem extends Componentable{
         `
     }
     private startTime = Date.now()
-    private sustain = 2000
-    private decay = 1000
+
     private base: HTMLDivElement
     private underMouse = false
-    constructor(content:string){
+    constructor(content:string,private sustain = 2000,private decay = 1000){
         super()
         this.htmlItem.baseElement.innerHTML = content
         this.link2(this.htmlItem.baseElement,'mouseenter',this.mouseenter)
@@ -110,7 +109,7 @@ class AppNotificationItem extends Componentable{
         else{
             this.base.style.opacity = '1'
         }
-        
+
         requestAnimationFrame(this.animate.bind(this))
     }
 }
