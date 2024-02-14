@@ -9,7 +9,7 @@ import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
 import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
-import { Vector2 } from "../utils"
+import { Vector2, getSelectionText } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
 import { Edge } from "./edge"
@@ -211,6 +211,7 @@ export class Editor extends CompSObject{
 
     private copy(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         let selectedIds = []
         for(let s of Workspace.instance.selection.selected){
             let o = s.object
@@ -227,6 +228,7 @@ export class Editor extends CompSObject{
 
     private paste(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         navigator.clipboard.readText().then(text=>{
             let data = null
             try{
@@ -243,6 +245,7 @@ export class Editor extends CompSObject{
 
     private cut(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         // cut is copy + delete
         let selectedIds:string[] = []
         for(let s of Workspace.instance.selection.selected){

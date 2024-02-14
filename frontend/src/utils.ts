@@ -349,3 +349,10 @@ export function bindTopicCookie(topic:Topic<string>,cookieName:string,defaultVal
         setCookie(cookieName,value)
     })
 }
+
+export function getSelectionText(): string|null {
+    if (window.getSelection) {
+        return window.getSelection().toString();
+    }
+    return '';
+}

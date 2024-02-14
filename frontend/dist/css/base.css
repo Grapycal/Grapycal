@@ -90,7 +90,7 @@ img{
     display: block;
 }
 
-input[disabled],textarea[disabled] {pointer-events:none}
+/* input[disabled],textarea[disabled] {pointer-events:none} */
 
 footer{
     position: absolute;
