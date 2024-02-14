@@ -18,7 +18,7 @@ The goal of this project is to make a programming language align with human perc
 
 Compatibility: 
 -  Python 3.11
--  Chrome browser (have severe performance issue on Safari; FireFox is not tested.)
+-  Chrome browser (Grapycal is laggy on Safari; FireFox is not tested.)
 
 ## Documentation
 
