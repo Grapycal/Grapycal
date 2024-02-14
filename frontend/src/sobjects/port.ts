@@ -126,6 +126,9 @@ export class Port extends CompSObject implements IControlHost {
         if(this.edges.length === 0){
             this.htmlItem.baseElement.classList.remove('has-edge')
         }
+        this.eventDispatcher.isDraggable = (e:MouseEvent)=>!(this.node.isPreview ||
+                    !this.acceptsEdge() ||
+                    e.buttons !== 1)
     }
 
 
@@ -149,6 +152,7 @@ export class Port extends CompSObject implements IControlHost {
 
 
     public acceptsEdge(delta:number=0): boolean {
+        if(this.node!=null && this.node.isPreview) return false
         if(this.max_edges.getValue() > this.edges.length+delta) return true
         return false
     }
@@ -167,9 +171,6 @@ export class Port extends CompSObject implements IControlHost {
     }
 
     private generateEdge(e:MouseEvent): void {
-        if(this.node.isPreview ||
-            !this.acceptsEdge() ||
-            e.buttons !== 1) return this.eventDispatcher.forwardEvent()
         this.objectsync.clearPretendedChanges()
         this.objectsync.record((() => {
             let newEdge = as(this.objectsync.createObject('Edge', this.parent.parent.id),Edge)

@@ -232,7 +232,8 @@ export class Edge extends CompSObject {
         }
     }
 
-    private onDrag(event: MouseEvent, mousePos: Vector2) {
+    private onDrag(e: MouseEvent, mousePos: Vector2) {
+        e.preventDefault()
         let candidatePorts: Port[] = []
         for(let object of MouseOverDetector.objectsUnderMouse){
             if(object instanceof Port){
