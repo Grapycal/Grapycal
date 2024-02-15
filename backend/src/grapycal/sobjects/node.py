@@ -41,10 +41,10 @@ if TYPE_CHECKING:
 
 
 def warn_no_control_name(control_type, node):
-    node_type = node.get_type_name()
+    node_type = node.get_type_name().split('.')[1]
     warn_extension(
         node,
-        f"Consider giving a name to the control {control_type.__name__} in {node_type} \
+        f"Consider giving a name to the {control_type.__name__} in {node_type} \
 to prevent error when Grapycal auto restores the control.",
         extra={"key": f"No control name {node_type}"},
     )
@@ -181,8 +181,6 @@ class Node(SObject, metaclass=NodeMeta):
         self.workspace: Workspace = self._server.globals.workspace
         self.is_new = is_new
         self.old_node_info = old_node_info
-        self._attributes_restore_from = {}
-        self._controls_restore_from = {}
         self._already_restored_attributes = set()
         self._already_restored_controls = set()
 
@@ -341,32 +339,10 @@ class Node(SObject, metaclass=NodeMeta):
         """
         pass
 
-    def _restore(self, version: str, old: NodeInfo):
-        self.old_node_info = old
-
-        # avoid modifying the dict will iterating
-        attributes_restore_from = self._attributes_restore_from.copy()
-        # automatically restore attributes and controls from the old node
-        for name, restore_from in attributes_restore_from.items():
-            if restore_from is None:
-                self.restore_attributes(name)
-            elif restore_from is False:
-                pass
-            else:
-                self.restore_attributes((restore_from, name))
-
-        controls_restore_from = self._controls_restore_from.copy()
-        for name, restore_from in controls_restore_from.items():
-            if restore_from is None:
-                self.restore_controls(name)
-            elif restore_from is False:
-                pass
-            else:
-                self.restore_controls((restore_from, name))
-
-        # manually restore the node
-        self.restore(version, old)
-        self.restore_from_version(version, old)
+    def _restore(self, version: str): # manually restore the node
+        assert self.old_node_info is not None
+        self.restore(version, self.old_node_info)
+        self.restore_from_version(version, self.old_node_info)
 
     def restore(self, version, old):
         """
@@ -418,7 +394,7 @@ class Node(SObject, metaclass=NodeMeta):
                 )
                 continue
             new_attr = self.get_attribute(new_name)
-            old_attr = self.old_node_info[old_name]
+            old_attr = self.old_node_info[old_name] #type: ignore # not self.is_new grarauntees old_node_info is not None
             if isinstance(new_attr, WrappedTopic):
                 new_attr.set_raw(old_attr)
             else:
@@ -428,6 +404,8 @@ class Node(SObject, metaclass=NodeMeta):
         """
         Recover controls from the old node.
         """
+        if self.is_new:
+            return
         assert self.old_node_info is not None
         for name in control_names:
             if isinstance(name, tuple):
@@ -542,7 +520,12 @@ class Node(SObject, metaclass=NodeMeta):
         )
         self.in_ports.insert(port)
         if control_type is not NullControl:
-            self._controls_restore_from[control_name] = restore_from
+            if restore_from is None:
+                self.restore_controls(name)
+            elif restore_from is False:
+                pass
+            else:
+                self.restore_controls((restore_from, name))
         return port
 
     def add_out_port(self, name: str, max_edges=64, display_name=None):
@@ -663,7 +646,15 @@ class Node(SObject, metaclass=NodeMeta):
         id = f"{self.get_id()}_c_{name}"  # specify id so it can be restored with the same id
         control = self.add_child(control_type, id=id, **kwargs)
         self.controls.add(name, control)
-        self._controls_restore_from[name] = restore_from
+
+        # restore the control
+        if restore_from is None:
+            self.restore_controls(name)
+        elif restore_from is False:
+            pass
+        else:
+            self.restore_controls((restore_from, name))
+
         return control
 
     def add_text_control(
@@ -768,7 +759,12 @@ class Node(SObject, metaclass=NodeMeta):
             self.expose_attribute(
                 attribute, editor_type, display_name, target=target, **editor_args
             )
-        self._attributes_restore_from[topic_name] = restore_from
+        if restore_from is None:
+            self.restore_attributes(topic_name)
+        elif restore_from is False:
+            pass
+        else:
+            self.restore_attributes((restore_from, topic_name))
         return attribute
 
     def expose_attribute(

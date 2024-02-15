@@ -135,7 +135,7 @@ class Editor(SObject):
                     obj.type, id=new_node_id, is_new=False, old_node_info=old_node_info
                 )
                 assert isinstance(node, Node), f"Expected node, got {node}"
-                node._restore("", node.old_node_info)
+                node._restore("") #TODO: pass the version
             except Exception:
                 extension_name, type_name = obj.type.split(".")
                 warn_extension(
