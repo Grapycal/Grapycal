@@ -288,6 +288,7 @@ export class Transform extends Component{
     private onDrag(e:MouseEvent,mousePos:Vector2,prevMousePos:Vector2){
         if((e.buttons & this.dragButton) == 0)
             return;
+        e.preventDefault(); // prevents selecting text
         let startMouseLocal = this.worldToLocal(prevMousePos);
         let mouseLocal = this.worldToLocal(mousePos);
         let delta = new Vector2(

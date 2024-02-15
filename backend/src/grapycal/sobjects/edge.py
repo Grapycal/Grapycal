@@ -72,10 +72,15 @@ class Edge(SObject):
         if not self._data_ready:
             raise Exception('Data not available')
         self._activated = False
+        temp = self._data
         if not self.reaquirable:
             self._data_ready = False
-            self.data_ready_topic.set(random.randint(0,10000))
-        return self._data
+            
+            with self._server.record(allow_reentry=True): # aquire a lock to prevent calling set while destroying
+                if not self.is_destroyed():
+                    self.data_ready_topic.set(random.randint(0,10000))
+            self._data = None # reloase memory
+        return temp
     
     def peek_data(self)->Any:
         if not self._data_ready:
@@ -86,7 +91,10 @@ class Edge(SObject):
         self._data = data
         self._activated = True
         self._data_ready = True
-        self.data_ready_topic.set(0)
+        with self._server.record(allow_reentry=True): # aquire a lock to prevent calling set while destroying
+            if self.is_destroyed():
+                return
+            self.data_ready_topic.set(0)
         if label:
             self.label.set(label)
         else:
@@ -104,6 +112,10 @@ class Edge(SObject):
 
         self._activated = False
 
+    def clear_data(self):
+        if self.is_data_ready():
+            self.get_data() # clear the data
+
     def set_label(self, label):
         self.label.set(label)
     
@@ -112,3 +124,15 @@ class Edge(SObject):
     
     def is_data_ready(self):
         return self._data_ready
+
+    def get_tail(self):
+        tail = self.tail.get()
+        assert tail is not None
+        return tail
+    
+    def get_head(self):
+        head = self.head.get()
+        assert head is not None
+        return head
+    
+    

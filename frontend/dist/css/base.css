@@ -1,5 +1,10 @@
 /* App */
 * { box-sizing: border-box; }
+
+h1{
+    font-size: 1.4em;
+}
+
 body{
     background-color: rgb(0,0,0);
     /*no scroll*/
@@ -12,7 +17,7 @@ body{
 }
 
 header{
-    height: 40px;
+    height: 24px;
     z-index: 50;
 }
 
@@ -85,7 +90,7 @@ img{
     display: block;
 }
 
-input[disabled],textarea[disabled] {pointer-events:none}
+/* input[disabled],textarea[disabled] {pointer-events:none} */
 
 footer{
     position: absolute;
@@ -107,16 +112,17 @@ footer{
 /* Works on Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(73, 73, 73) rgb(16, 16, 16);
+    scrollbar-color: rgb(54, 54, 54) transparent;
   }
   
   /* Works on Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
     width: 12px;
+    border-radius: 10px;
   }
   
   *::-webkit-scrollbar-track {
-    background: rgb(16, 16, 16);
+    background: transparent;
   }
   
   *::-webkit-scrollbar-thumb {
@@ -652,7 +658,7 @@ input:enabled, textarea:enabled{
 }
 
 .sidebar-left .sidebar-container{
-    width: 280px;
+    width: 260px;
 }
 
 .sidebar-tab{
@@ -765,7 +771,7 @@ input:enabled, textarea:enabled{
 }
 
 .hierarchy-h1{
-    font-size: 18px;
+    font-size: 1.2em;
 
 }
 

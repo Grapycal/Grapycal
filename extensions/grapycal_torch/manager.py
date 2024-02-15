@@ -123,7 +123,6 @@ class NetManager:
             raise Exception(f'Network {name} does not exist')
         state_dicts = {}
         for mn in self.get_module_nodes(name):
-            assert mn.module is not None
             state_dicts[mn.state_dict_id.get()] = mn.get_state_dict()
         torch.save(state_dicts,path)
 

@@ -36,17 +36,12 @@ class WebcamNode(Node):
                 if node != self:
                     node.print_exception(Exception('Only one webcam node is allowed per workspace'))
 
-    def build_node(self):
+    def create(self):
         self.label.set('Webcam')
         self.shape.set('simple')
         self.format = self.add_attribute('format',StringTopic,'numpy',editor_type='options',options=['torch','numpy'])
         self.out_port = self.add_out_port('img')
         self.button = self.add_button_control('Start streamimg','button')
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('format')
-
 
         if self.is_preview.get():
             return

@@ -115,6 +115,10 @@ export class EventDispatcher extends Component{
     private eventElement: ICanReceiveMouseEvent = null;
     private prevMousePos: Vector2 = Vector2.zero;
     private fowardCalled: boolean = false;
+    private _isDraggable: (e:MouseEvent) => boolean = () => true;
+    public set isDraggable(value: (e:MouseEvent) => boolean){
+        this._isDraggable = value;
+    }
 
     get mousePos(){return GlobalEventDispatcher.instance.mousePos;}
     get onMoveGlobal(){return GlobalEventDispatcher.instance.onMove;}
@@ -183,6 +187,12 @@ export class EventDispatcher extends Component{
     private _onMouseDown(event: MouseEvent){
         this.fowardCalled = false;
         this.onMouseDown.invoke(event);
+        if(!this._isDraggable(event)){
+            if (!this.fowardCalled && this.onMouseDown.numCallbacks > 0){
+                event.stopPropagation();
+            }
+            return;
+        }
         document.addEventListener('mousemove', this._onMouseMove);
         document.addEventListener('mouseup', this._onMouseUp);
         this.prevMousePos = new Vector2(this.mousePos.x, this.mousePos.y);

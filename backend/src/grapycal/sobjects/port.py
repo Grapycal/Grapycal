@@ -49,6 +49,8 @@ class InputPort(Port, typing.Generic[T]):
     def build(self, control_type: type[T], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
         super().build(name, max_edges, display_name)
         self.is_input.set(1)
+        if control_type is NullControl:
+            control_name = None
         if control_name is not None:
             if control_name in self.node.controls:
                 raise ValueError(f'Control with name {control_name} already exists')
@@ -84,7 +86,7 @@ class InputPort(Port, typing.Generic[T]):
     def remove_edge(self, edge: 'Edge'):
         super().remove_edge(edge)
         self.node.input_edge_removed(edge, self)
-        self.use_default = len(self.edges) == 0
+        self.use_default = len(self.edges) == 0 and not isinstance(self.default_control, NullControl)
 
     def is_all_edge_ready(self):
         return (self.use_default and self.default_control.value_ready()) or \

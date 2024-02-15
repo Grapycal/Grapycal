@@ -24,6 +24,9 @@ export class OptionControl extends Control {
             flex-shrink: 0;
             min-width: 20px;
         }
+        .control{
+            min-width: 130px;
+        }
     `
 
     protected onStart(): void {

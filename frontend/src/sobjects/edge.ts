@@ -66,7 +66,7 @@ export class Edge extends CompSObject {
         this.updateSVG = this.updateSVG.bind(this)
         this.onDrag = this.onDrag.bind(this)
         this.onDragEndWhileCreating = this.onDragEndWhileCreating.bind(this)
-        
+
         // setup components
         this.htmlItem = new HtmlItem(this)
         this.htmlItem.applyTemplate(this.template)
@@ -77,7 +77,7 @@ export class Edge extends CompSObject {
         this.transform.pivot = Vector2.zero
         this.transform.translation = Vector2.zero
 
-        
+
         this.path = this.htmlItem.getEl('path',SVGPathElement)
         this.path_hit_box = this.htmlItem.getEl('path_hit_box',SVGPathElement)
         this.base = this.htmlItem.getEl('base',HTMLDivElement)
@@ -101,7 +101,7 @@ export class Edge extends CompSObject {
 
     protected onStart(): void {
         super.onStart()
-        
+
         this.selectable = new Selectable(this, Workspace.instance.selection)
         this.functionalSelectable = new Selectable(this, Workspace.instance.functionalSelection)
 
@@ -135,7 +135,7 @@ export class Edge extends CompSObject {
             }
             if(newPort){
                 this.updateSVG()
-                
+
                 newPort.moved.add(this.updateSVG)
                 newPort.addEdge(this)
             }
@@ -183,7 +183,7 @@ export class Edge extends CompSObject {
         })
 
         // initialize data ready
-        if(this.data_ready.getValue() == 0){ 
+        if(this.data_ready.getValue() == 0){
             this.svg.classList.add('data-ready')
             this.dotAnimation.start()
         }
@@ -193,9 +193,9 @@ export class Edge extends CompSObject {
             if(e.ctrlKey){
                 this.eventDispatcher.forwardEvent()
                 return
-            }  
+            }
         })
-        
+
 
     }
 
@@ -211,7 +211,7 @@ export class Edge extends CompSObject {
         this.dotAnimation.stopImmediately()
         super.onDestroy()
     }
-    
+
     protected onParentChangedTo(newValue: SObject): void {
         super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || this.editor.htmlItem) //>????????????
@@ -232,7 +232,8 @@ export class Edge extends CompSObject {
         }
     }
 
-    private onDrag(event: MouseEvent, mousePos: Vector2) {
+    private onDrag(e: MouseEvent, mousePos: Vector2) {
+        e.preventDefault()
         let candidatePorts: Port[] = []
         for(let object of MouseOverDetector.objectsUnderMouse){
             if(object instanceof Port){
@@ -265,7 +266,6 @@ export class Edge extends CompSObject {
                 nearestPort = port
                 nearestPortDist = dist
             }
-            print(port.display_name.getValue(),dist)
         }
 
         if(nearestPort == this.tail.getValue() || nearestPort == this.head.getValue()){
@@ -288,8 +288,8 @@ export class Edge extends CompSObject {
         }
     }
 
-    private onDragEnd(event: MouseEvent, mousePos: Vector2) {           
-        if(this.state == EdgeState.DraggingTail && 
+    private onDragEnd(event: MouseEvent, mousePos: Vector2) {
+        if(this.state == EdgeState.DraggingTail &&
             (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
@@ -321,7 +321,7 @@ export class Edge extends CompSObject {
 
     private onDragEndWhileCreating(){
 
-        if(this.state == EdgeState.DraggingTail && 
+        if(this.state == EdgeState.DraggingTail &&
             (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue())))
             {
                 this.objectsync.clearPretendedChanges();
@@ -392,14 +392,14 @@ export class Edge extends CompSObject {
         let head_orientation: number
 
         if(
-            this.state == EdgeState.DraggingTail && 
+            this.state == EdgeState.DraggingTail &&
             this.head.getValue() != null &&
             (this.tail.getValue() == null || !MouseOverDetector.objectsUnderMouse.includes(this.tail.getValue()))){
             tail = this.transform.worldToLocal(this.eventDispatcher.mousePos)
             head = this.transform.worldToLocal(this.head.getValue().getComponent(Transform).worldCenter)
             //tail_orientation = Math.atan2(head.y - tail.y, head.x - tail.x)
             tail_orientation = 0
-            head_orientation = this.head.getValue().orientation 
+            head_orientation = this.head.getValue().orientation
         }
         else if(
             this.state == EdgeState.DraggingHead &&
@@ -418,8 +418,8 @@ export class Edge extends CompSObject {
             head_orientation = this.head.getValue().orientation
         }
 
-        if(tail.equals(this.pathParam.tail) && 
-            head.equals(this.pathParam.head) && 
+        if(tail.equals(this.pathParam.tail) &&
+            head.equals(this.pathParam.head) &&
             tail_orientation == this.pathParam.tail_orientation &&
             head_orientation == this.pathParam.head_orientation
         )return null // no change
@@ -464,7 +464,7 @@ export class Edge extends CompSObject {
         //     normal:tangent.rotate(Math.PI/2),
         //     length:d
         // }
-        
+
 
 
         // let delta = head.sub(tail)
@@ -489,7 +489,7 @@ export class Edge extends CompSObject {
         // let centerToM = c1.sub(m)
         // let d = centerToM.length
         // let commonTangentDir= centerToM.rotate(Math.asin(r/d)*flip).normalized()
-        
+
         // let ct1 = m.add(commonTangentDir.mulScalar((d*d-r*r)**0.5))
         // let ct2 = m.sub(commonTangentDir.mulScalar((d*d-r*r)**0.5))
         // let path = `M ${tail.x} ${tail.y} A ${r} ${r} 0 0 ${flip==1?1:0} ${ct1.x} ${ct1.y} L ${ct2.x} ${ct2.y} A ${r} ${r} 0 0 ${flip==1?0:1} ${head.x} ${head.y}`
@@ -500,14 +500,14 @@ export class Edge extends CompSObject {
         //     normal:tangent.rotate(Math.PI/2),
         //     length:head.sub(tail).length
         // }
-        
+
         return path
     }
 }
 
 class DotAnimation{
     /*
-    * The dot will move along the edge path in a loop 
+    * The dot will move along the edge path in a loop
     */
     dot: SVGCircleElement
     stopDelay: number = 300
@@ -552,7 +552,7 @@ class DotAnimation{
     stopImmediately(){
         clearTimeout(this.stopDelayTimer)
         this.animating = false
-        
+
         this.dot.setAttribute('opacity','0')
     }
 

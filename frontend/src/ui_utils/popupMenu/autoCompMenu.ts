@@ -252,7 +252,7 @@ export class AutoCompMenu extends PopupMenu{
         this.valueToCallback.clear()
         this.valueToDisplayName.clear()
         for(let i = 0;i<options.length;i++){
-            keys.push(options[i].key)
+            keys.push(options[i].key.toLowerCase())
             values.push(options[i].value)
             this.valueToCallback.set(options[i].value,options[i].callback)
             this.valueToDisplayName.set(options[i].value,options[i].displayName||options[i].key)
@@ -291,6 +291,7 @@ export class AutoCompMenu extends PopupMenu{
         this.onSearch('') // show all options by setting empty query
         this.setFocusedOption(this.value)
         this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown)
+        this.search.selectionEnd = 1000 // Select all.
     }
     close(): void {
         super.close()

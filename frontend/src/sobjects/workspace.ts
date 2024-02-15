@@ -10,20 +10,23 @@ import { Buffer } from "buffer";
 import { print } from "../devUtils"
 import { NodeInspector } from "../ui_utils/nodeInspector"
 import { PopupMenu } from "../ui_utils/popupMenu/popupMenu"
+import { AppNotification } from "../ui_utils/appNotification"
+import { ControlPanel } from "../ui_utils/controlPanel"
 
 export class Workspace extends CompSObject{
     public static instance: Workspace
     readonly main_editor = this.getAttribute('main_editor', ObjectTopic<Editor>)
     readonly eventDispatcher = new EventDispatcher(this, document.getElementById('workspace'))
     // This selection manager is for the regular selecting
-    readonly selection = new SelectionManager(this) 
+    readonly selection = new SelectionManager(this)
     // This selection manager is used by attr editors in the inspector
-    readonly functionalSelection = new SelectionManager(this) 
+    readonly functionalSelection = new SelectionManager(this)
     readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
     readonly nodeTypesTopic = this.objectsync.getTopic('node_types',DictTopic<string,any>)
     readonly popupMenu = new PopupMenu()
-    
+    appNotif: AppNotification
+
     get clientId(){
         return this.objectsync.clientId
     }
@@ -32,7 +35,7 @@ export class Workspace extends CompSObject{
         (this.selection as any).name = 'selection';
         (this.functionalSelection as any).name = 'functionalSelection'
         this.popupMenu.hideWhenClosed = true
-        
+
         Workspace.instance = this
         this.selection.onSelect.add((selectable)=>{
             let obj = selectable.object
@@ -58,6 +61,9 @@ export class Workspace extends CompSObject{
 
         new Footer()
         Footer.setStatus('Workspace loaded. Have fun!')
+        this.appNotif = new AppNotification()
+        this.appNotif.add('Workspace loaded. Have fun!', 5000)
+        new ControlPanel()
     }
 
     public openWorkspace(path:string){
@@ -71,10 +77,10 @@ export class WebcamStream extends CompSObject{
     stream: MediaStream = null
     interval:number = 200
     timer: NodeJS.Timeout
-    
+
     protected onStart(): void {
         // (navigator.mediaDevices as any).getUserMedia = (navigator.mediaDevices as any).getUserMedia || (navigator.mediaDevices as any).webkitGetUserMedia || (navigator.mediaDevices as any).mozGetUserMedia || (navigator.mediaDevices as any).msGetUserMedia
-        
+
         this.image = this.getAttribute('image', StringTopic)
         this.sourceClient = this.getAttribute('source_client', IntTopic)
         this.sourceClient.onSet.add((sourceClient)=>{
@@ -100,7 +106,7 @@ export class WebcamStream extends CompSObject{
 
             video.setAttribute('autoplay', 'true');
             video.onloadeddata = () => {
-            
+
                 video.play();
             }
         })
@@ -143,7 +149,7 @@ function getImageFromStream(stream: MediaStream) {
     const videoTrack = stream.getVideoTracks()[0];
     const imageCapture = new (window as any).ImageCapture(videoTrack);
     return imageCapture.takePhoto({imageWidth: 48, imageHeight: 32});
-    
+
   } else {
 
 
@@ -162,5 +168,5 @@ function getImageFromStream(stream: MediaStream) {
         }
       });
   }
-  
+
 }

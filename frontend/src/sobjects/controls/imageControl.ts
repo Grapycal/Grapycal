@@ -17,6 +17,14 @@ export class ImageControl extends Control {
     .focused{
         outline: 1px solid #ffffff;
     }
+    .control{
+        background: #eee url('data:image/svg+xml,\
+           <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"         fill-opacity=".25" >\
+                    <rect x="200" width="200" height="200" />\
+                    <rect y="200" width="200" height="200" />\
+                    </svg>');
+        background-size: 20px 20px;
+    }
     `
 
     protected onStart(): void {

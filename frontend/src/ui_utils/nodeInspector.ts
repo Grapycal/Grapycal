@@ -160,9 +160,7 @@ export class NodeInspector extends Componentable{
         if (description === null) {
             description = '**This node has no description.**'
         }
-        console.log(description)
         const markdownDescription = Marked.parse(description);
-        // this.nodeDescriptionDiv.innerText = description
         this.nodeDescriptionDiv.innerHTML = markdownDescription
     }
     

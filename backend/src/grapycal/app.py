@@ -112,7 +112,8 @@ class GrapycalApp:
         Run a workspace. Ensure that the workspace is terminated when the context is exited.
         """
         print(
-            f'Starting workspace {self._config["path"]} at {self._config["host"]}:{self._config["port"]}...'
+            f'Starting workspace {self._config["path"]} at {self._config["host"]}:{self._config["port"]}...\n'
+            + "─" * 100
         )
 
         workspace = subprocess.Popen(

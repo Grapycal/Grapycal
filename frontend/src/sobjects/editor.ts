@@ -9,7 +9,7 @@ import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
 import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
-import { Vector2 } from "../utils"
+import { Vector2, getSelectionText } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
 import { Edge } from "./edge"
@@ -73,7 +73,7 @@ export class Editor extends CompSObject{
         
         this.transform.scale = 1
         this.transform.maxScale = 8
-        this.transform.minScale = 0.4
+        this.transform.minScale = 0.1
         this.transform.draggable = true;
         this.transform.scrollable = true;
 
@@ -89,7 +89,12 @@ export class Editor extends CompSObject{
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl v'),this.paste)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Delete'),this.delete)
-        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Backspace'),this.delete)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl y'),this.preventDefault)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl z'),this.preventDefault)
+    }
+
+    private preventDefault(e: KeyboardEvent){
+        e.preventDefault()
     }
 
     private lastUpdatePortNearMouse = 0
@@ -138,6 +143,7 @@ export class Editor extends CompSObject{
 
     private onDrag(e: MouseEvent, mousePos: Vector2, prevMousePos: Vector2){
         if(!this.boxSelectionStart) return;
+        e.preventDefault()
         mousePos = this.transform.WroldToEl(mousePos,this.htmlItem.baseElement as HTMLElement,false)
         let boxSelection = new Vector2(mousePos.x-this.boxSelectionStart.x,mousePos.y-this.boxSelectionStart.y)
         let boxSelectionSize = new Vector2(Math.abs(boxSelection.x),Math.abs(boxSelection.y))
@@ -205,6 +211,7 @@ export class Editor extends CompSObject{
 
     private copy(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         let selectedIds = []
         for(let s of Workspace.instance.selection.selected){
             let o = s.object
@@ -221,6 +228,7 @@ export class Editor extends CompSObject{
 
     private paste(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         navigator.clipboard.readText().then(text=>{
             let data = null
             try{
@@ -237,6 +245,7 @@ export class Editor extends CompSObject{
 
     private cut(){
         if(document.activeElement != document.body) return;
+        if(getSelectionText() != '') return;
         // cut is copy + delete
         let selectedIds:string[] = []
         for(let s of Workspace.instance.selection.selected){

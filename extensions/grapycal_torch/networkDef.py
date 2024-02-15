@@ -1,11 +1,14 @@
+from collections import defaultdict
 from typing import Dict, Generic, List, TypeVar
 from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.port import InputPort
+from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal.utils.misc import Action
 from objectsync.sobject import SObjectSerialized
 import torch.nn as nn
+
+from .utils import find_next_valid_name
 
 from .manager import Manager as M
 
@@ -18,24 +21,28 @@ class NetworkCallNode(Node):
     '''
 
     category = 'torch/neural network'
-    def build_node(self):
+    def create(self):
         self.label.set('')
         self.shape.set('normal')
-        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
-        self.icon_path.set('nn')
+        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
+        self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        self.restore_attributes('network name')
 
-    def init_node(self):
-        if self.is_preview:
-            self.label.set('Call Network')
-        M.net.calls.append(self.network_name.get(),self)
+        # manually restore in_ports and out_ports
+        if not self.is_new:
+            assert self.old_node_info is not None
+            for port in self.old_node_info.in_ports:
+                self.add_in_port(port.name, 1, display_name=port.name)
+            for port in self.old_node_info.out_ports:
+                self.add_out_port(port.name, display_name=port.name)
+                
+        self.update_ports()
+        
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
-        self.update_ports()
-        self.label.set(f'{self.network_name.get()}')
-
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('network name')
+        M.net.calls.append(self.network_name.get(),self)
+        self.label.set(f' {self.network_name.get()}')
+    
 
     def on_network_name_changed(self, old, new):
         self.label.set(f'{new}')
@@ -52,33 +59,51 @@ class NetworkCallNode(Node):
     def update_input_ports(self):
         if self.network_name.get() not in M.net.ins:
             return
-        keys = M.net.ins[self.network_name.get()].outs.get()
-        for key in keys:
-            if not self.has_in_port(key):
-                self.add_in_port(key,1,display_name = key)
-        for port in self.in_ports:
-            key = port.name.get()
-            if key not in keys:
-                self.remove_in_port(key)
+        names = M.net.ins[self.network_name.get()].outs.get()
 
+        edgesd = defaultdict[str,list[OutputPort]](list)
+
+        # reversed is a hack to make port order consistent when undoing (although it's not very important)
+        for port in reversed(self.in_ports.get().copy()):
+            name = port.get_name()
+            for edge in port.edges.copy():
+                edgesd[name].append(edge.get_tail())
+                edge.remove()
+            self.remove_in_port(name)
+
+        for name in names:
+            port = self.add_in_port(name,1)
+            edges = edgesd.get(name,[])
+            for tail in edges:
+                self.editor.create_edge(tail,port)
+                
     def update_output_ports(self):
         if self.network_name.get() not in M.net.outs:
             return
-        keys = M.net.outs[self.network_name.get()].ins.get()
-        for key in keys:
-            if not self.has_out_port(key):
-                self.add_out_port(key,display_name = key)
-        for port in self.out_ports:
-            key = port.name.get()
-            if key not in keys:
-                self.remove_out_port(key)
+        names = M.net.outs[self.network_name.get()].ins.get()
+    
+        edgesd = defaultdict[str,list[InputPort]](list)
+    
+        for port in self.out_ports.get().copy():
+            name = port.get_name()
+            for edge in port.edges.copy():
+                edgesd[name].append(edge.get_head())
+                edge.remove()
+            self.remove_out_port(name)
+    
+        for name in names:
+            port = self.add_out_port(name)
+            edges = edgesd.get(name,[])
+            for head in edges:
+                self.editor.create_edge(port,head)
 
     def edge_activated(self, edge: Edge, port):
         for port in self.in_ports:
             if not port.is_all_edge_ready():
                 return
-        self.run(self.start_function)
+                    
         self.run(self.end_function, to_queue=False)
+        self.run(self.start_function, to_queue=False)
 
     def start_function(self):
         if self.is_destroyed():
@@ -107,66 +132,57 @@ class NetworkCallNode(Node):
 class NetworkInNode(Node):
     category = 'torch/neural network'
 
-    # def spawn(self, client_id):
-    #     new_node = self.workspace.get_workspace_object().main_editor.get().create_node(type(self))
-    #     new_node.add_tag(f'spawned_by_{client_id}')
-    #     new_node = self.workspace.get_workspace_object().main_editor.get().create_node(NetworkOutNode)
-    #     new_node.add_tag(f'spawned_by_{client_id}')
-
-    def build_node(self):
+    def create(self):
         self.shape.set('normal')
 
-        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
-        self.outs = self.add_attribute('outs',ListTopic,editor_type='list')
-        self.icon_path.set('nn')
-
-    def init_node(self):
+        # setup attributes
+        self.outs = self.add_attribute('outs',ListTopic,editor_type='list',init_value=['x'])
         self.outs.add_validator(ListTopic.unique_validator)
+        self.restore_attributes('outs')
+        
+        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
+        self.network_name.add_validator(lambda x,_: x not in M.net.ins) # function name must be unique
+        self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        try:
+            self.restore_attributes('network name')
+        except:
+            self.network_name.set('My Network')
+            
+        self.network_name.set(find_next_valid_name(self.network_name.get(),M.net.ins))
+
+        # add callbacks to attributes
         self.outs.on_insert.add_auto(self.on_output_added)
         self.outs.on_pop.add_auto(self.on_output_removed)
         self.outs.on_set.add_auto(self.on_output_set)
 
-        if self.is_new:
-            self.outs.insert('x')
-
-        self.network_name.add_validator(lambda x,_: x not in M.net.ins)
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
+
         self.update_label()
-        
-        if self.network_name.get() != '':
-            assert self.network_name.get() not in M.net.ins
-            M.net.ins[self.network_name.get()] = self
-            for call in M.net.calls.get(self.network_name.get()):
-                call.update_ports()
 
-        M.net.on_network_names_changed.invoke()
-
+        for out in self.outs.get():
+            self.add_out_port(out,display_name = out)
         
-        if self.is_preview:
-            self.label.set('Network Input')
-        
+        if not self.is_preview.get():
+            M.net.ins[self.network_name.get()] = self         
 
+    def post_create(self):
+        for call in M.net.calls.get(self.network_name.get()):
+            call.update_ports()
+        
     def on_network_name_changed(self, old, new):
-        if new != '':
+        if not self.is_preview.get():
             M.net.ins[new] = self
-        if old != '':
             M.net.ins.pop(old)
-        M.net.on_network_names_changed.invoke()
         self.update_label()
 
     def on_network_name_changed_auto(self,new):
-        if new != '':
+        if not self.is_preview.get():
             for call in M.net.calls.get(self.network_name.get()):
                 call.update_ports()
 
     def update_label(self):
-        self.label.set(f'{self.network_name.get()}\'s input')
-
-
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('outs','network name')
+        self.label.set(f'{self.network_name.get()}')
 
     def on_output_added(self, name, position):
         self.add_out_port(name,display_name = name)
@@ -175,105 +191,84 @@ class NetworkInNode(Node):
         self.remove_out_port(name)
 
     def on_output_set(self, new):
-        if self.network_name.get() == '':
-            return
-        for call in M.net.calls.get(self.network_name.get()):
-            call.update_input_ports()
+        if not self.is_preview.get():
+            print(M.net.calls.get(self.network_name.get()),self.network_name.get())
+            for call in M.net.calls.get(self.network_name.get()):
+                call.update_input_ports()
 
     def start_function(self,args:dict):
-        '''
-        First, check mns to have the right configuration (device, mode, etc)
-        The check happens every time the network has a forward pass so very dynamic :D
-        Hopefully it's not the bottleneck if the network is GPU bound.
-        If the network uses CPU, it is already slow so let it be. Or buy a GPU XD
-        '''
-        name = self.network_name.get()
-        device = M.conf.get_device(name)
-        if device is not None:
-            for mn in M.net.get_module_nodes(name):
-                mn.to(device)
-
-        mode = M.conf.get_mode(name)
-        if mode is not None:
-            for mn in M.net.get_module_nodes(name):
-                mn.set_mode(mode)
-
-        # Then, push the data to the input ports
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
 
     def destroy(self) -> SObjectSerialized:
-        if self.network_name.get() != '':
+        if not self.is_preview.get():
             M.net.ins.pop(self.network_name.get())
-        M.net.on_network_names_changed.invoke()
         return super().destroy()
 
 class NetworkOutNode(Node):
     category = 'torch/neural network'
-    def build_node(self):
+    def create(self):
         self.shape.set('normal')
 
-        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text')
-        self.ins = self.add_attribute('ins',ListTopic,editor_type='list')
-        self.icon_path.set('nn')
-
-    def init_node(self):
+        # setup attributes
+        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=['x'])
         self.ins.add_validator(ListTopic.unique_validator)
+        self.restore_attributes('ins')
+        
+        self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
+        self.network_name.add_validator(lambda x,_: x not in M.net.outs) # function name must be unique
+        self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
+        try:
+            self.restore_attributes('network name')
+        except:
+            self.network_name.set('My Network')
+            
+        self.network_name.set(find_next_valid_name(self.network_name.get(),M.net.outs))
+
+        # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)
         self.ins.on_set.add_auto(self.on_input_set)
 
-        if self.is_new:
-            self.ins.insert('x')
-
-        self.network_name.add_validator(lambda x,_: x not in M.net.outs)
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
+
         self.update_label()
+
+        for inp in self.ins.get():
+            self.add_in_port(inp,1,display_name = inp)
         
-        if self.network_name.get() != '':
-            assert self.network_name.get() not in M.net.outs
-            M.net.outs[self.network_name.get()] = self
-        M.net.on_network_names_changed.invoke()
+        if not self.is_preview.get():
+            M.net.outs[self.network_name.get()] = self         
 
+    def post_create(self):
+        for call in M.net.calls.get(self.network_name.get()):
+            call.update_ports()
         
-        if self.is_preview:
-            self.label.set('Network Output')
-
-            
-
-    def restore_from_version(self, version, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('ins','network name')
-
     def on_network_name_changed(self, old, new):
-        if new != '':
+        if not self.is_preview.get():
             M.net.outs[new] = self
-        if old != '':
             M.net.outs.pop(old)
-        M.net.on_network_names_changed.invoke()
         self.update_label()
-
 
     def on_network_name_changed_auto(self,new):
-        if new != '':
+        if not self.is_preview.get():
             for call in M.net.calls.get(self.network_name.get()):
                 call.update_ports()
 
     def update_label(self):
-        self.label.set(f'{self.network_name.get()}\'s output')
+        self.label.set(f'{self.network_name.get()}')
 
-    def on_input_added(self, arg_name, position):# currently only support adding to the end
-        self.add_in_port(arg_name,1,display_name = arg_name)
+    def on_input_added(self, name, position):
+        self.add_in_port(name,1,display_name = name)
 
-    def on_input_removed(self, arg_name, position):
-        self.remove_in_port(arg_name)
+    def on_input_removed(self, name, position):
+        self.remove_in_port(name)
 
     def on_input_set(self, new):
-        if self.network_name.get() == '':
-            return
-        for call in M.net.calls.get(self.network_name.get()):
-            call.update_output_ports()
+        if not self.is_preview.get():
+            for call in M.net.calls.get(self.network_name.get()):
+                call.update_output_ports()
 
     def end_function(self,caller:NetworkCallNode):
         for port in self.in_ports:
@@ -284,7 +279,6 @@ class NetworkOutNode(Node):
         caller.push_result(result)
 
     def destroy(self) -> SObjectSerialized:
-        if self.network_name.get() != '':
+        if not self.is_preview.get():
             M.net.outs.pop(self.network_name.get())
-        M.net.on_network_names_changed.invoke()
         return super().destroy()
