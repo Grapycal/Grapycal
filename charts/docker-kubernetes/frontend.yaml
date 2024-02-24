@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grapycal-frontend
+  namespace: default
+  labels:
+    app: grapycal-frontend
+    env: docker-desktop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grapycal-frontend
+      env: docker-desktop
+  template:
+    metadata:
+      labels:
+        app: grapycal-frontend
+        env: docker-desktop
+    spec:
+      containers:
+        - name: grapycal-frontend-container
+          image: docker.io/patrickuuuu/grapycal-frontend:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: grapycal-frontend
+  namespace: default
+  labels:
+    app: grapycal-frontend
+    env: docker-desktop
+spec:
+  selector:
+    app: grapycal-frontend
+    env: docker-desktop
+  ports:
+    - protocol: TCP
+      port: 8766
+      targetPort: 80
+  type: LoadBalancer
