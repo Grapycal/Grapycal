@@ -1,6 +1,5 @@
 import abc
 from hmac import new
-from msilib import Control
 from typing import TYPE_CHECKING, Any, List, Literal
 import typing
 from grapycal.sobjects.controls.control import ValuedControl
