@@ -1,7 +1,7 @@
 import numpy
 from grapycal import FunctionNode
 
-class SinNode(FunctionNode):
+class TrigonometricNode(FunctionNode):
     '''
     Calculate the sines of an array of values or one value. The array must be must NumPy arrays,
 
@@ -19,11 +19,14 @@ class SinNode(FunctionNode):
     def build_node(self):
         super().build_node()
         self.label.set('sin')
+        self.option_control = self.add_option_control(options=['sin','cos','tan'],value='apple',name='opt')
         self.shape.set('round')
 
     def calculate(self, inp):
         return numpy.sin(inp)
     
+    def option_changed(self,value:str):
+        self.out_port.push_data(value)
 class CosNode(FunctionNode):
     '''
     Calculate the cosines of an array of values or one value. The array must be must NumPy arrays,
@@ -334,21 +337,22 @@ class Log1pNode(FunctionNode):
 
     def calculate(self, inp):
         return numpy.log1p(inp)
-class AbsNode(FunctionNode):
-    '''abs'''
-    category = 'numpy/operations'
-    inputs = ['inp']
-    outputs = ['result']
-    max_in_degree = [1]
-    display_port_names = True
+    
+# class AbsNode(FunctionNode):
+#     '''abs'''
+#     category = 'numpy/operations'
+#     inputs = ['inp']
+#     outputs = ['result']
+#     max_in_degree = [1]
+#     display_port_names = True
 
-    def build_node(self):
-        super().build_node()
-        self.label.set('abs')
-        self.shape.set('simple')
+#     def create(self):
+#         super().create()
+#         self.label.set('abs')
+#         self.shape.set('simple')
 
-    def calculate(self, inp):
-        return numpy.abs(inp)
+#     def calculate(self, inp):
+#         return numpy.abs(inp)
 class SignNode(FunctionNode):
     '''sign'''
     category = 'numpy/operations'
