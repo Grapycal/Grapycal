@@ -614,6 +614,7 @@ input:enabled, textarea:enabled{
 .sidebar-tab-btn{
     width: 100%;
     height: 45px;
+    user-select: none;
 }
 
 .sidebar-tab-btn-icon{

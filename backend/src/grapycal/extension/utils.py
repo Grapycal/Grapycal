@@ -24,6 +24,9 @@ class LazyDict(Generic[I,O]):
     
     def keys(self):
         return self._keys
+    
+    def values(self):
+        return [self.gen(k) for k in self._keys]
 
 
 class AttrInfo:
@@ -90,6 +93,7 @@ class NodeInfo(SObjectInfo):
     def __init__(self, serialized: SObjectSerialized):
         super().__init__(serialized)
         controls: Dict[str,str] = self.attributes['controls']
+        self.controls_id_to_name = {v:k for k,v in controls.items()}
         def get_controlinfo(name:str)->ControlInfo:
             # The control can be direct child of the node, or a child of a input port
             control_id = controls[name]
@@ -97,16 +101,18 @@ class NodeInfo(SObjectInfo):
             
         self.controls=LazyDict[str,ControlInfo](get_controlinfo,list(controls.keys()))
 
-        self.in_ports: List[PortInfo] = []
-        for id in self.attributes['in_ports']:
-            sin = search_sobjectinfo_by_id_raise(serialized,id)
-            self.in_ports.append(PortInfo(sin))
+        # self.in_ports: List[PortInfo] = []
+        # for id in self.attributes['in_ports']:
+        #     sin = search_sobjectinfo_by_id_raise(serialized,id)
+        #     self.in_ports.append(PortInfo(sin))
 
-        self.out_ports: List[PortInfo] = []
-        for id in self.attributes['out_ports']:
-            sin = search_sobjectinfo_by_id_raise(serialized,id)
-            self.out_ports.append(PortInfo(sin))
+        # self.out_ports: List[PortInfo] = []
+        # for id in self.attributes['out_ports']:
+        #     sin = search_sobjectinfo_by_id_raise(serialized,id)
+        #     self.out_ports.append(PortInfo(sin))
 
+        self.in_ports = LazyDict[str,PortInfo](lambda name:PortInfo(search_sobjectinfo_by_id_raise(serialized,controls[name])),list(controls.keys()))
+        self.out_ports = LazyDict[str,PortInfo](lambda name:PortInfo(search_sobjectinfo_by_id_raise(serialized,controls[name])),list(controls.keys()))
 
 
 
