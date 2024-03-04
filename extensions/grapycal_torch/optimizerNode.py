@@ -119,14 +119,14 @@ class TrainNode(Node):
         self.label.set("Train")
         self.css_classes.append("fit-content")
         self.network_port = self.add_in_port(
-            "network", control_type=OptionControl, restore_from=None
+            "network", control_type=OptionControl
         )
         self.loss_port = self.add_in_port("loss", 1)
         self.network_name = self.network_port.default_control.value
 
     def init_node(self):
         self.to_unlink = setup_net_name_ctrl(
-            self.network_port.default_control, multi=True
+            self.network_port.default_control, multi=True, set_value=self.is_new
         )
         self.optimizing_modules: set[nn.Module] = set()
         self.optimizer_device = None
@@ -186,7 +186,7 @@ class SaveNode(Node):
         self.save_port = self.add_in_port("save network", control_type=ButtonControl)
 
     def init_node(self):
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
 
@@ -220,7 +220,7 @@ class LoadNode(Node):
         self.path_port = self.add_in_port("path", control_type=TextControl)
         self.load_port = self.add_in_port("load network", control_type=ButtonControl)
 
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
 

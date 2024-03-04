@@ -9,14 +9,16 @@ import einops
 
 class CatNode(FunctionNode):
     category = 'torch/operations'
+    inputs = ['inputs']
+    outputs = ['out']
     def build_node(self):
+        super().build_node()
         self.label.set('🐱0')
         self.shape.set('round')
         self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
-        self.add_in_port('inputs')
-        self.add_out_port('out')
     
     def init_node(self):
+        super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
@@ -33,14 +35,16 @@ class CatNode(FunctionNode):
 
 class StackNode(FunctionNode):
     category = 'torch/operations'
+    inputs = ['inputs']
+    outputs = ['out']
     def build_node(self):
+        super().build_node()
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('☰0')
         self.shape.set('round')
-        self.add_in_port('inputs')
-        self.add_out_port('out')
     
     def init_node(self):
+        super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
@@ -111,23 +115,19 @@ class SqueezeNode(FunctionNode):
     
 class RearrangeNode(FunctionNode):
     category = 'torch/operations'
+    inputs = ['inputs']
+    outputs = ['out']
     def build_node(self):
         super().build_node()
         self.pattern_control = self.add_control(TextControl,name='pattern_control',label='')
         self.label.set('Rearrange')
         self.shape.set('simple')
-        self.add_in_port('inputs')
-        self.add_out_port('out')
         self.css_classes.append('fit-content')
 
     def init_node(self):
         super().init_node()
         if self.is_new:
             self.pattern_control.text.set('b c h w -> b (c h w)')
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls('pattern_control')
 
     def calculate(self, inputs):
         raw_arg = self.pattern_control.text.get().split(',')

@@ -313,20 +313,9 @@ class Node(SObject, metaclass=NodeMeta):
         """
         pass
 
-    def _restore(self, version: str): # manually restore the node
-        assert self.old_node_info is not None
-        self.restore(version, self.old_node_info)
-        self.restore_from_version(version, self.old_node_info)
-
-    def restore(self, version, old):
-        """
-        If the node is recreated from a serialized information, this method will be called after create().
-        The old node's information (including attribute values) is in the `old` argument.
-        """
-
     def restore_from_version(self, version: str, old: NodeInfo):
         """
-        DEPRECATED from v0.11.0: Use restore() instead.
+        DEPRECATED from v0.11.0: Restoration of attributes and controls should be done in build() via therestore_from argument in add_attribute and add_control.
         """
 
     def restore_attributes(self, *attribute_names: str | tuple[str, str]):
@@ -439,14 +428,6 @@ class Node(SObject, metaclass=NodeMeta):
         Note: Overrided methods should call return super().destroy() at the end.
         """
         self._output_stream.close()
-        # # remove all edges connected to the ports
-        # for port in self.in_ports:
-        #     for edge in port.edges[:]:
-        #         edge.remove()
-        # for port in self.out_ports:
-        #     for edge in port.edges[:]:
-        #         edge.remove()
-        # raise error if the node is destroyed but still has edges
         for port in self.in_ports:
             if len(port.edges) > 0:
                 raise RuntimeError(

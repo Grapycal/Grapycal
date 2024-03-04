@@ -211,11 +211,6 @@ class ImageDisplayNode(Node):
         self.in_port = self.add_in_port("data", 1, "")
         self.icon_path.set("image")
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls("img", "slice")
-        self.restore_attributes("cmap", "vmin", "vmax")
-
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.update_image, data=self.in_port.get_one_data())
 
@@ -281,7 +276,6 @@ class ImageDisplayNode(Node):
 
     def update_image(self, data):
         data = self.preprocess_data(data)
-        self.print(data.shape)
         # use plt to convert to jpg
         buf = io.BytesIO()
         fig = plt.figure(figsize=(10, 10))
@@ -437,14 +431,15 @@ class LinePlotNode(Node):
             editor_type="options",
             options=["from 0", "continue"],
         )
-
-
         
         self.x_coord = [0]
         self.line_plot.lines.on_insert.add_auto(self.add_line)
         self.line_plot.lines.on_pop.add_auto(self.remove_line)
         if self.is_new:
             self.line_plot.lines.insert("line", 0)
+        else:
+            for name in self.line_plot.lines:
+                self.add_line(name, None)
 
     def add_line(self, name, _):
         self.add_in_port(name, 1)
@@ -452,10 +447,6 @@ class LinePlotNode(Node):
     def remove_line(self, name, _):
         self.remove_in_port(name)
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes("x coord mode")
-        self.restore_controls("lineplot")
 
     def edge_activated(self, edge: Edge, port: InputPort):
         match port:

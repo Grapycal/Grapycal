@@ -29,7 +29,7 @@ class ConfigureNode(Node):
         self.label.set('Configure '+self.network_name.get())
         self.network_name.on_set += lambda value: self.label.set('Configure '+value)
 
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
         
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
