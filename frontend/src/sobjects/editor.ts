@@ -101,7 +101,7 @@ export class Editor extends CompSObject{
         e.preventDefault()
     }
 
-    public isRunning(node:Node):boolean{
+    public isRunning(node:Node|Edge):boolean{
         return this.running_nodes.has(node)
     }
 

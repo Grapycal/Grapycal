@@ -25,6 +25,16 @@ class Editor(SObject):
         self.workspace: Workspace = self._server.globals.workspace
         self.node_types = self.workspace._extention_manager._node_types_topic
 
+
+        # used by frontend
+        self._running_nodes = self.add_attribute("running_nodes", ObjSetTopic, is_stateful=False)
+        self._set_running_true = set()
+        self._set_running_true_2 = set()
+        self._running = set()
+        self._set_running_lock = threading.Lock()
+        
+        self.workspace.clock.on_tick += self.check_running_nodes
+
         if old is not None:
             # If the editor is loaded from a save, we need to recreate the nodes and edges.
             nodes: list[SObjectSerialized] = []
@@ -50,14 +60,6 @@ class Editor(SObject):
         self.register_service("paste", self._paste, pass_sender=True)
         self.register_service("delete", self._delete)
 
-        # used by frontend
-        self._running_nodes = self.add_attribute("running_nodes", ObjSetTopic, is_stateful=False)
-        self._set_running_true = set()
-        self._set_running_true_2 = set()
-        self._running = set()
-        self._set_running_lock = threading.Lock()
-
-        self.workspace.clock.on_tick += self.check_running_nodes
 
     def check_running_nodes(self):
         with self._set_running_lock:
@@ -65,7 +67,7 @@ class Editor(SObject):
             self._set_running_true_2 = self._set_running_true
             self._set_running_true = set()
 
-    def set_running(self, node: Node, running: bool):
+    def set_running(self, node: Node|Edge, running: bool):
         with self._set_running_lock:
             if running:
                 self._set_running_true.add(node)

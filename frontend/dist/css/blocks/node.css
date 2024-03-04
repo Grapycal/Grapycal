@@ -48,13 +48,13 @@ Define styles for different node categories
 }
 
 .node-label-underlay{
-    background: linear-gradient(319deg, var(--t2), transparent 50%);
+    background: linear-gradient(319deg, var(--cate-color) 10%, transparent 75%);
     background-size: 200%;
     opacity: 0;
 }
 
 .node.running .node-label-underlay{
-    opacity: 1;
+    opacity: 0.8;
 }
 
 .node:not(.running) .node-label-underlay{
@@ -63,18 +63,18 @@ Define styles for different node categories
 
 /* an animation to make the underlay move from 100% to 0% */
 .node.running .node-label-underlay{
-    animation: underlay 2s infinite ease-out;
+    animation: underlay 2s infinite;
 }
 
 @keyframes underlay {
     0% {
-        background-position-x: 80%;
+        background-position-x: 50%;
     }
     50% {
-        background-position-x: 40%;
+        background-position-x: 0%;
     }
     100% {
-        background-position-x: 80%;
+        background-position-x: 50%;
     }
 }
 

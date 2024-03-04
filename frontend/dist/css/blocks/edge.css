@@ -17,6 +17,7 @@
 
 .edge.data-ready{
     stroke: var(--t2);
+    opacity: 0.7;
 }
 
 .edge.data-ready.selected{
@@ -25,5 +26,5 @@
 
 .edge:not(.data-ready){
 
-    transition: stroke 0.2s ease-out;
+    transition: stroke 0.2s ease-out opacity 0.2s ease-out;
 }

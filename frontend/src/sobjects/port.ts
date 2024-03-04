@@ -177,12 +177,10 @@ export class Port extends CompSObject implements IControlHost {
             if(this.is_input.getValue()){
                 newEdge.addTag('CreatingDragTail')
                 newEdge.head.set(this)
-                newEdge.data_ready.set(123)
             }
             else{
                 newEdge.addTag('CreatingDragHead')
                 newEdge.tail.set(this)
-                newEdge.data_ready.set(123)
             }
         }),true)
     }

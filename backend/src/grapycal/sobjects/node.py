@@ -437,6 +437,8 @@ class Node(SObject, metaclass=NodeMeta):
                 )
         for name in self.globally_exposed_attributes.get():
             self.workspace.get_workspace_object().settings.entries.pop(name)
+        
+        self.editor.set_running(self, False)
         return super().destroy()
 
     T = TypeVar("T", bound=ValuedControl)
