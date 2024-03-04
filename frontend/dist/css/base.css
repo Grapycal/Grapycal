@@ -69,6 +69,10 @@ input{
     border-radius: 2px;
 }
 
+.control textarea:not([disabled]){
+    min-height: 15px;
+}
+
 button{
     
     color: inherit;
@@ -631,6 +635,8 @@ input:enabled, textarea:enabled{
     right: 0px;
     width: 300px;
     overflow-y: scroll;
+    /* initially hidden */
+    display: none; 
 }
 
 .sidebar-resize-handle {
