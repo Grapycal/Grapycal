@@ -119,6 +119,8 @@ class InputPort(Port, typing.Generic[T]):
     def activated(self, source: 'Edge|ValuedControl'):
         self.on_activate.invoke(self, source)
         self.node.edge_activated(source, self)
+
+    # TODO remove control from node when port is removed
         
     
 

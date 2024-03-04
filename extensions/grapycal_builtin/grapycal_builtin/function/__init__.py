@@ -20,16 +20,16 @@ class LambdaNode(Node):
         
     '''
     category = 'function'
-    def create(self):
+    def build_node(self):
         self.label.set('Lambda')
         self.shape.set('normal')
-        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl],restore_from=False)
+        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl])
 
         self.input_args = self.add_attribute('input_args',ListTopic,editor_type='list')
         self.outputs = self.add_attribute('outputs',ListTopic,editor_type='list')
         self.css_classes.append('fit-content')
 
-        self.input_args.add_validator(ListTopic.unique_validator)
+    def init_node(self):
         self.input_args.on_insert.add_auto(self.on_input_arg_added)
         self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 

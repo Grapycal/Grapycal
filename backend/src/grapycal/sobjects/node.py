@@ -12,7 +12,7 @@ from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.textControl import TextControl
 
 logger = logging.getLogger(__name__)
-from grapycal.utils.logging import user_logger, warn_extension
+from grapycal.utils.logging import error_extension, user_logger, warn_extension
 from contextlib import contextmanager
 import functools
 import traceback
@@ -260,49 +260,29 @@ class Node(SObject, metaclass=NodeMeta):
         for k, v in self.globally_exposed_attributes.get().items():
             WorkspaceObject.ins.settings.entries.add(k, v)
 
-        # DEPRECATED from v0.11.0: The build_node is for backward compatibility. It will be removed in the future.
         self.build_node(**build_node_args)
 
         self.create()
 
     def create(self):
         """
-        Called when the node is created. Use it for initialization instead of __init__.
-        Create attributes, ports, and controls here.
-        Initialize fields here.
-
-        Do not affect other nodes' attributes, controls, or ports or create/destroy other nodes in this method, or the history will be messed up. Use post_create() for that purpose.
-
-        ---
-        Note:
-        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
-
-        1. Rename the `build_node()` method to `create()`.
-
-        2. Copy the code from the `init_node()` method to the `create()` method. Remove the `init_node()` method.
-
-        This change makes node's code more readable and easier to maintain.
+        This method was orignated from a wrong design and should not be used. It will be removed in few commits.
+        Use build_node() and init_node() instead.
         """
+        # check for override of create
+        if self.create != Node.create:
+            error_extension(self,
+                f"Class {self.__class__.__name__} has overridden create() method. The Node.create() method was orignated from a wrong design and should not be used. It will be removed in few commits. Use build_node() and init_node() instead."
+            )
+            exit(1)
 
     def build_node(self):
         """
-        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
-
         Create attributes, ports, and controls here.
 
         Note:
             This method will not be called when the object is being restored. The child objects will be restored automatically instead of
         running this method again.
-
-        ---
-        Note:
-        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
-
-        1. Rename the `build_node()` method to `create()`.
-
-        2. Copy the code from the `init_node()` method to the `create()` method.
-
-        This change makes node's code more readable and easier to maintain.
         """
 
     def init(self):
@@ -320,22 +300,10 @@ class Node(SObject, metaclass=NodeMeta):
 
     def init_node(self):
         """
-        DEPRECATED from v0.11.0: This method is deprecated. Use create() instead.
-
         This method is called after the node is built and its ports and controls are created. Use this method if you want to do something after
         the node is built.
 
         Do not affect other nodes' attributes, controls, or ports or create/destroy other nodes in this method. Use post_create() for that purpose.
-
-        ---
-        Note:
-        From v0.11.0, the create() method replaces build_node() and init_node(). To migrate to create():
-
-        1. Rename the `build_node()` method to `create()`.
-
-        2. Copy the code from the `init_node()` method to the `create()` method.
-
-        This change makes node's code more readable and easier to maintain.
         """
         pass
 
@@ -458,7 +426,6 @@ class Node(SObject, metaclass=NodeMeta):
         new_node.add_tag(
             f"spawned_by_{client_id}"
         )  # So the client can find the node it spawned and make it follow the mouse
-        user_logger.info(f"Created a new {type(self).__name__}")
 
     def destroy(self) -> SObjectSerialized:
         """
