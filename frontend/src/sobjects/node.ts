@@ -40,7 +40,6 @@ export class Node extends CompSObject implements IControlHost {
     exposed_attributes: ListTopic<ExposedAttributeInfo> = this.getAttribute('exposed_attributes', ListTopic<ExposedAttributeInfo>)
     type_topic: StringTopic = this.getAttribute('type', StringTopic)
     output: ListTopic<[string,string]> = this.getAttribute('output', ListTopic<[string,string]>)
-    running: IntTopic = this.getAttribute('running', IntTopic)
     css_classes: SetTopic = this.getAttribute('css_classes', SetTopic)
     icon_path: StringTopic = this.getAttribute('icon_path', StringTopic)
     
@@ -72,6 +71,7 @@ export class Node extends CompSObject implements IControlHost {
             
             <div class="node-selection"></div>
             <div class="node-label full-width">
+                <div class="node-label-underlay"></div>
                 <div id="label"></div>
             </div>
 
@@ -98,6 +98,7 @@ export class Node extends CompSObject implements IControlHost {
 
                 <div class="full-width flex-vert space-evenly">
                     <div class="node-label full-width flex-horiz">
+                        <div class="node-label-underlay"></div>
                         <div id="label"></div>
                     </div>
                     <div id="slot_control"  class="slot-control main-section"></div>
@@ -116,6 +117,7 @@ export class Node extends CompSObject implements IControlHost {
             <div class="flex-horiz node-content">
                 <div id="slot_input_port" class=" flex-vert space-evenly slot-input-port"></div>
                 <div class="full-width flex-vert space-evenly node-label"> 
+                    <div class="node-label-underlay"></div>
                     <div id="label" class="center-align"></div>
                 </div>
                 <div id="slot_control" style="display:none"></div>
@@ -176,22 +178,19 @@ export class Node extends CompSObject implements IControlHost {
             }
         })
 
-        this.link(this.running.onSet2, (_:number,running: number) => {
-            if(running == 0)
-                this.htmlItem.baseElement.classList.add('running')
-            else{
-                this.htmlItem.baseElement.classList.add('running')
-                let tmp =  running
-                setTimeout(() => {
-                    try{
-                    if( tmp == this.running.getValue())
-                        this.htmlItem.baseElement.classList.remove('running')
-                    }catch(e){}
-                }, 200); //delay of chatrooom sending buffer is 200ms
-            }
-        })
+        if (!this.isPreview){
+            this.link(this.editor.runningChanged.slice(this), (running: boolean) => {
+                print('running changed',running)
+                if(running == true)
+                    this.htmlItem.baseElement.classList.add('running')
+                else{
+                    this.htmlItem.baseElement.classList.remove('running')
+                }
+            }) 
 
-        if (this.running.getValue() == 0) this.htmlItem.baseElement.classList.add('running')
+            if (this.editor.isRunning(this)) this.htmlItem.baseElement.classList.add('running')
+        }
+
 
         this.link(this.output.onInsert, ([type, value]: [string, string]) => {
                 if(type == 'error'){

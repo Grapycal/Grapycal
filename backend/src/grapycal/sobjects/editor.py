@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from grapycal.utils.misc import as_type
 
@@ -11,7 +12,7 @@ from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node, NodeMeta
 from grapycal.sobjects.port import InputPort, OutputPort, Port
-from objectsync import SObject, SObjectSerialized
+from objectsync import ObjSetTopic, SObject, SObjectSerialized
 from itertools import count
 
 
@@ -48,6 +49,29 @@ class Editor(SObject):
         self.register_service("copy", self._copy)
         self.register_service("paste", self._paste, pass_sender=True)
         self.register_service("delete", self._delete)
+
+        # used by frontend
+        self._running_nodes = self.add_attribute("running_nodes", ObjSetTopic, is_stateful=False)
+        self._set_running_true = set()
+        self._set_running_true_2 = set()
+        self._running = set()
+        self._set_running_lock = threading.Lock()
+
+        self.workspace.clock.on_tick += self.check_running_nodes
+
+    def check_running_nodes(self):
+        with self._set_running_lock:
+            self._running_nodes.set(list(self._running | self._set_running_true | self._set_running_true_2))
+            self._set_running_true_2 = self._set_running_true
+            self._set_running_true = set()
+
+    def set_running(self, node: Node, running: bool):
+        with self._set_running_lock:
+            if running:
+                self._set_running_true.add(node)
+                self._running.add(node)
+            else:
+                self._running.discard(node)
 
     def restore(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized]):
         # restore the nodes and edges

@@ -117,12 +117,17 @@ class Clock:
     def __init__(self, interval: float):
         self.interval = interval
         self.on_tick = Action()
+        self.on_tick_2 = Action()
 
 
     async def run(self):
+        i = 0
         while True:
             await asyncio.sleep(self.interval)
             self.on_tick.invoke()
+            if i % 2 == 0:
+                self.on_tick_2.invoke()
+            i += 1
 
 def get_package_version(package_name:str)->str:
     '''

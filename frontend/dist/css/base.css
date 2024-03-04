@@ -166,11 +166,21 @@ footer{
 }
 
 .node-label{
+    position: relative;
     height: 20.5px;
     
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     z-index: -1;
+}
+
+.node-label-underlay{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: -2;
 }
 
 .simple-node .node-label{
@@ -192,6 +202,13 @@ footer{
 }
 
 .round-node .node-label{
+    
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.round-node .node-label-underlay{
     
     width: 30px;
     height: 30px;

@@ -13,9 +13,10 @@ def setup_net_name_ctrl(control:OptionControl,multi=False,set_value=True):
                 # all combinations of n names
                 import itertools
                 for c in itertools.combinations(existing_networks,n):
+                    if len(options) > limit:
+                        break
                     options.append(','.join(c))
-                if len(options) > limit:
-                    break
+                    
         control.options.set(options)
     M.net.on_network_names_changed += on_network_names_changed
     on_network_names_changed()

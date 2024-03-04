@@ -215,9 +215,6 @@ class Node(SObject, metaclass=NodeMeta):
         self.globally_exposed_attributes = self.add_attribute(
             "globally_exposed_attributes", DictTopic, restore_from=None
         )
-        self.running = self.add_attribute(
-            "running", IntTopic, 1, is_stateful=False, restore_from=None
-        )  # 0 for running, other for not running
         self.css_classes = self.add_attribute(
             "css_classes", SetTopic, [], restore_from=None
         )
@@ -953,9 +950,9 @@ class Node(SObject, metaclass=NodeMeta):
             if self.is_destroyed():
                 return
             if running:
-                self.running.set(0)
+                self.editor.set_running(self, True)
             else:
-                self.running.set(random.randint(0, 10000))
+                self.editor.set_running(self, False)
 
     """
     Node events

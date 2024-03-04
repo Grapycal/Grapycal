@@ -1,4 +1,4 @@
-import { ObjectSyncClient, SObject } from "objectsync-client"
+import { ObjSetTopic, ObjectSyncClient, SObject } from "objectsync-client"
 import { ComponentManager } from "../component/component"
 import { EventDispatcher as EventDispatcher, GlobalEventDispatcher } from "../component/eventDispatcher"
 import { HtmlItem } from "../component/htmlItem"
@@ -9,7 +9,7 @@ import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
 import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
-import { Vector2, getSelectionText } from "../utils"
+import { ActionDict, Vector2, getSelectionText } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
 import { Edge } from "./edge"
@@ -57,6 +57,9 @@ export class Editor extends CompSObject{
     htmlItem: HtmlItem;
     transform: Transform;
     mouseOverDetector: MouseOverDetector;
+
+    running_nodes: ObjSetTopic = this.getAttribute('running_nodes',ObjSetTopic);
+    runningChanged = new ActionDict<SObject,[boolean]>();
     
     constructor(objectsync: ObjectSyncClient, id: string){
         super(objectsync,id);
@@ -80,7 +83,8 @@ export class Editor extends CompSObject{
         this.link(this.eventDispatcher.onDragStart,this.onDragStart)
         this.link(this.eventDispatcher.onDrag,this.onDrag)
         this.link(this.eventDispatcher.onDragEnd,this.onDragEnd)
-
+        this.link(this.running_nodes.onAppend, (node:Node)=>this.runningChanged.invoke(node,true))
+        this.link(this.running_nodes.onRemove, (node:Node)=>this.runningChanged.invoke(node,false))
     }
 
     protected onStart(): void {
@@ -95,6 +99,10 @@ export class Editor extends CompSObject{
 
     private preventDefault(e: KeyboardEvent){
         e.preventDefault()
+    }
+
+    public isRunning(node:Node):boolean{
+        return this.running_nodes.has(node)
     }
 
     private lastUpdatePortNearMouse = 0
