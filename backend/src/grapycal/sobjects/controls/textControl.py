@@ -32,7 +32,7 @@ class TextControl(ValuedControl[str]):
         return True
     
     def set_activation_callback(self, callback):
-        self.activation_callback = callback
+        self.text.on_set += callback
 
     def take_label(self, label) -> bool:
         if self.label.get() == '':
@@ -43,3 +43,6 @@ class TextControl(ValuedControl[str]):
                 self.label.set(label)
                 return True
         return False
+    
+    def set_with_value_from_edge(self, value):
+        self.set(value)
