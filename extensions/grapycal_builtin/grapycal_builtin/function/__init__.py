@@ -23,26 +23,32 @@ class LambdaNode(Node):
     def build_node(self):
         self.label.set('Lambda')
         self.shape.set('normal')
-        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl])
+        self.text_controls = self.add_attribute('text_controls',ObjDictTopic[TextControl],restore_from=None)
 
         self.input_args = self.add_attribute('input_args',ListTopic,editor_type='list')
         self.outputs = self.add_attribute('outputs',ListTopic,editor_type='list')
         self.css_classes.append('fit-content')
 
-    def init_node(self):
-        self.input_args.on_insert.add_auto(self.on_input_arg_added)
-        self.input_args.on_pop.add_auto(self.on_input_arg_removed)
-
         if self.is_new:
             self.input_args.insert('x')
+            self.on_input_arg_added('x',0)
+            self.outputs.insert('')
+            self.on_output_added('',0)
+            self.text_controls[''].text.set('x')
+        else:
+            for arg in self.input_args:
+                self.on_input_arg_added(arg,-1)
+            for out in self.outputs:
+                self.on_output_added(out,-1)
+
+    def init_node(self):
+        self.input_args.add_validator(ListTopic.unique_validator)
+        self.input_args.on_insert.add_auto(self.on_input_arg_added)
+        self.input_args.on_pop.add_auto(self.on_input_arg_removed)
 
         self.outputs.add_validator(ListTopic.unique_validator)
         self.outputs.on_insert.add_auto(self.on_output_added)
         self.outputs.on_pop.add_auto(self.on_output_removed)
-
-        if self.is_new:
-            self.outputs.insert('')
-            self.text_controls[''].text.set('x')
     
     def on_input_arg_added(self, arg_name, position):# currently only support adding to the end
         self.add_in_port(arg_name,1,display_name = arg_name)

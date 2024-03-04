@@ -101,20 +101,17 @@ class NodeInfo(SObjectInfo):
             
         self.controls=LazyDict[str,ControlInfo](get_controlinfo,list(controls.keys()))
 
-        # self.in_ports: List[PortInfo] = []
-        # for id in self.attributes['in_ports']:
-        #     sin = search_sobjectinfo_by_id_raise(serialized,id)
-        #     self.in_ports.append(PortInfo(sin))
+        self.in_ports: Dict[str,PortInfo] = {}
+        for id in self.attributes['in_ports']:
+            sin = search_sobjectinfo_by_id_raise(serialized,id)
+            port_info = PortInfo(sin)
+            self.in_ports[port_info.name] = port_info
 
-        # self.out_ports: List[PortInfo] = []
-        # for id in self.attributes['out_ports']:
-        #     sin = search_sobjectinfo_by_id_raise(serialized,id)
-        #     self.out_ports.append(PortInfo(sin))
-
-        self.in_ports = LazyDict[str,PortInfo](lambda name:PortInfo(search_sobjectinfo_by_id_raise(serialized,controls[name])),list(controls.keys()))
-        self.out_ports = LazyDict[str,PortInfo](lambda name:PortInfo(search_sobjectinfo_by_id_raise(serialized,controls[name])),list(controls.keys()))
-
-
+        self.out_ports: Dict[str,PortInfo] = {}
+        for id in self.attributes['out_ports']:
+            sin = search_sobjectinfo_by_id_raise(serialized,id)
+            port_info = PortInfo(sin)
+            self.out_ports[port_info.name] = port_info
 
 class Clock:
     def __init__(self, interval: float):

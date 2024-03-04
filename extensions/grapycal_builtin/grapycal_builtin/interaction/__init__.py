@@ -13,9 +13,6 @@ class LabelNode(Node):
         self.shape.set('simple')
         self.css_classes.append('fit-content')
         self.expose_attribute(self.label, editor_type='text')
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
         self.restore_attributes('label')
 
 class WebcamNode(Node):

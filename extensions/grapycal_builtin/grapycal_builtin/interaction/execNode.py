@@ -54,6 +54,14 @@ class ExecNode(SourceNode):
         self.print_last_expr = self.add_attribute('print last expr',StringTopic,editor_type='options',options=['yes','no'],init_value='yes')
         self.icon_path.set('python')
 
+        if not self.is_new:
+            for name in self.inputs:
+                self.add_input(name,None)
+            for name in self.outputs:
+                self.add_output(name,None)
+
+    def init_node(self):
+        super().init_node()
         self.inputs.on_insert.add_auto(self.add_input)
         self.inputs.on_pop.add_auto(self.pop_input)
         self.outputs.on_insert.add_auto(self.add_output)

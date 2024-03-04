@@ -1,4 +1,5 @@
 from abc import ABCMeta
+import enum
 import io
 from itertools import count
 import logging
@@ -154,6 +155,9 @@ class NodeMeta(ABCMeta):
         return super().__init__(name, bases, attrs)
 
 
+class RESTORE_FROM(enum.Enum):
+    SAME = 0
+
 class Node(SObject, metaclass=NodeMeta):
     frontend_type = "Node"
     category = "hidden"
@@ -163,12 +167,15 @@ class Node(SObject, metaclass=NodeMeta):
     @classmethod
     def get_def_order(cls):
         return cls.def_order[cls.__name__]
+    
+    def initialize(self, serialized:SObjectSerialized|None=None, *args, **kwargs):
 
-    def initialize(self, serialized=None, *args, **kwargs):
-        # TODO: consider add this switch to objectsync level
-        if "serialized" in kwargs:
-            del kwargs["serialized"]  # a hack making build() always called
-        return super().initialize(*args, **kwargs)
+        self._already_restored_attributes = set()
+        self._already_restored_controls = set()
+        self.old_node_info = NodeInfo(serialized) if serialized is not None else None
+        self.is_building = False
+
+        super().initialize(serialized, *args, **kwargs)
 
     def build(
         self,
@@ -178,91 +185,68 @@ class Node(SObject, metaclass=NodeMeta):
         old_node_info: NodeInfo | None = None,
         **build_node_args,
     ):
-        self.workspace: Workspace = self._server.globals.workspace
         self.is_new = is_new
         self.old_node_info = old_node_info
-        self._already_restored_attributes = set()
-        self._already_restored_controls = set()
+        self.workspace: Workspace = self._server.globals.workspace
+        self.is_building = True
 
         self.shape = self.add_attribute(
-            "shape", StringTopic, "normal", restore_from=False
+            "shape", StringTopic, "normal", restore_from=None
         )  # normal, simple, round
         self.output = self.add_attribute(
-            "output", ListTopic, [], is_stateful=False, restore_from=False
+            "output", ListTopic, [], is_stateful=False, restore_from=None
         )
         self.label = self.add_attribute(
-            "label", StringTopic, "", is_stateful=False, restore_from=False
+            "label", StringTopic, "", is_stateful=False, restore_from=None
         )
         self.label_offset = self.add_attribute(
-            "label_offset", FloatTopic, 0, restore_from=False
+            "label_offset", FloatTopic, 0, restore_from=None
         )
         self.translation = self.add_attribute("translation", StringTopic, translation)
         self.is_preview = self.add_attribute(
-            "is_preview", IntTopic, 1 if is_preview else 0, restore_from=False
+            "is_preview", IntTopic, 1 if is_preview else 0, restore_from=None
         )
         self.category_ = self.add_attribute(
-            "category", StringTopic, self.category, restore_from=False
+            "category", StringTopic, self.category, restore_from=None
         )
         self.exposed_attributes = self.add_attribute(
-            "exposed_attributes", ListTopic, [], restore_from=False
+            "exposed_attributes", ListTopic, [], restore_from=None
         )
         self.globally_exposed_attributes = self.add_attribute(
-            "globally_exposed_attributes", DictTopic, restore_from=False
+            "globally_exposed_attributes", DictTopic, restore_from=None
         )
         self.running = self.add_attribute(
-            "running", IntTopic, 1, is_stateful=False, restore_from=False
+            "running", IntTopic, 1, is_stateful=False, restore_from=None
         )  # 0 for running, other for not running
         self.css_classes = self.add_attribute(
-            "css_classes", SetTopic, [], restore_from=False
+            "css_classes", SetTopic, [], restore_from=None
         )
         self.icon_path = self.add_attribute(
             "icon_path",
             StringTopic,
             f"{self.__class__.__name__[:-4].lower()}",
             is_stateful=False,
-            restore_from=False,
+            restore_from=None,
         )
 
         # for inspector
         self.type_topic = self.add_attribute(
-            "type", StringTopic, self.get_type_name(), restore_from=False
+            "type", StringTopic, self.get_type_name(), restore_from=None
         )
 
         self.in_ports = self.add_attribute(
-            "in_ports", ObjListTopic[InputPort], restore_from=False
+            "in_ports", ObjListTopic[InputPort], restore_from=None
         )
         self.out_ports = self.add_attribute(
-            "out_ports", ObjListTopic[OutputPort], restore_from=False
+            "out_ports", ObjListTopic[OutputPort], restore_from=None
         )
 
         self.controls = self.add_attribute(
-            "controls", ObjDictTopic[Control], restore_from=False
+            "controls", ObjDictTopic[Control], restore_from=None
         )
-
-        self.workspace: Workspace = self._server.globals.workspace
-
-        self.on("double_click", self.double_click, is_stateful=False)
-        self.on("spawn", self.spawn, is_stateful=False)
-
-        self._output_stream = OutputStream(self.raw_print)
-        self._output_stream.set_event_loop(
-            self.workspace.get_communication_event_loop()
-        )
-        self.workspace.get_communication_event_loop().create_task(
-            self._output_stream.run()
-        )
-
-        from grapycal.sobjects.workspaceObject import WorkspaceObject
-
-        self.globally_exposed_attributes.on_add.add_auto(
-            lambda k, v: WorkspaceObject.ins.settings.entries.add(k, v)
-        )
-        for k, v in self.globally_exposed_attributes.get().items():
-            WorkspaceObject.ins.settings.entries.add(k, v)
 
         self.build_node(**build_node_args)
-
-        self.create()
+        self.is_building = False
 
     def create(self):
         """
@@ -270,7 +254,7 @@ class Node(SObject, metaclass=NodeMeta):
         Use build_node() and init_node() instead.
         """
         # check for override of create
-        if self.create != Node.create:
+        if type(self).create != Node.create:
             error_extension(self,
                 f"Class {self.__class__.__name__} has overridden create() method. The Node.create() method was orignated from a wrong design and should not be used. It will be removed in few commits. Use build_node() and init_node() instead."
             )
@@ -295,6 +279,28 @@ class Node(SObject, metaclass=NodeMeta):
             self.editor = parent
         else:
             self.editor = None
+
+        self.workspace: Workspace = self._server.globals.workspace
+        
+        self.on("double_click", self.double_click, is_stateful=False)
+        self.on("spawn", self.spawn, is_stateful=False)
+
+        self._output_stream = OutputStream(self.raw_print)
+        self._output_stream.set_event_loop(
+            self.workspace.get_communication_event_loop()
+        )
+        self.workspace.get_communication_event_loop().create_task(
+            self._output_stream.run()
+        )
+
+        from grapycal.sobjects.workspaceObject import WorkspaceObject
+
+        self.globally_exposed_attributes.on_add.add_auto(
+            lambda k, v: WorkspaceObject.ins.settings.entries.add(k, v)
+        )
+        for k, v in self.globally_exposed_attributes.get().items():
+            WorkspaceObject.ins.settings.entries.add(k, v)
+
 
         self.init_node()
 
@@ -335,7 +341,7 @@ class Node(SObject, metaclass=NodeMeta):
             self.restore_attributes(('old_name1','new_name1'),('old_name2','new_name2'))
         ```
         """
-        if self.is_new:
+        if self.is_new or not self.is_building:
             return
         for name in attribute_names:
             if isinstance(name, tuple):
@@ -372,7 +378,7 @@ class Node(SObject, metaclass=NodeMeta):
         """
         Recover controls from the old node.
         """
-        if self.is_new:
+        if self.is_new or not self.is_building:
             return
         assert self.old_node_info is not None
         for name in control_names:
@@ -390,14 +396,14 @@ class Node(SObject, metaclass=NodeMeta):
                 warn_extension(
                     self,
                     f"Control {new_name} does not exist in {self}",
-                    extra={"key": f"Control not exist {self.get_type_name()}"},
+                    extra={"key": f"Control not exist {self.get_type_name()} {new_name}"},
                 )
                 continue
             if not (old_name in self.old_node_info.controls):
                 warn_extension(
                     self,
                     f"Control {old_name} does not exist in the old node of {self}",
-                    extra={"key": f"Control not exist old {self.get_type_name()}"},
+                    extra={"key": f"Control not exist old {self.get_type_name()} {old_name}"},
                 )
                 continue
             try:
@@ -464,7 +470,7 @@ class Node(SObject, metaclass=NodeMeta):
         display_name=None,
         control_type: type[T] = NullControl,
         control_name=None,
-        restore_from: str | None | Literal[False] = None,
+        restore_from: str | None | RESTORE_FROM = RESTORE_FROM.SAME,
         **control_kwargs,
     ) -> InputPort[T]:
         """
@@ -474,7 +480,6 @@ class Node(SObject, metaclass=NodeMeta):
         """
         if control_name is None:
             control_name = name
-        id = f"{self.get_id()}_ip_{name}"  # specify id so it can be restored with the same id
         port = self.add_child(
             InputPort,
             control_type=control_type,
@@ -482,7 +487,6 @@ class Node(SObject, metaclass=NodeMeta):
             max_edges=max_edges,
             display_name=display_name,
             control_name=control_name,
-            id=id,
             **control_kwargs,
         )
         self.in_ports.insert(port)
@@ -500,9 +504,9 @@ class Node(SObject, metaclass=NodeMeta):
 
         self.controls.add(control_name, port.default_control)
         if control_type is not NullControl:
-            if restore_from is None:
+            if restore_from == RESTORE_FROM.SAME:
                 self.restore_controls(name)
-            elif restore_from is False:
+            elif restore_from is None:
                 pass
             else:
                 self.restore_controls((restore_from, name))
@@ -512,9 +516,8 @@ class Node(SObject, metaclass=NodeMeta):
         """
         Add an output port to the node.
         """
-        id = f"{self.get_id()}_op_{name}"  # specify id so it can be restored with the same id
         port = self.add_child(
-            OutputPort, name=name, max_edges=max_edges, display_name=display_name, id=id
+            OutputPort, name=name, max_edges=max_edges, display_name=display_name
         )
         self.out_ports.insert(port)
         return port
@@ -605,7 +608,7 @@ class Node(SObject, metaclass=NodeMeta):
         self,
         control_type: type[T],
         name: str | None = None,
-        restore_from: str | None | Literal[False] = None,
+        restore_from: str | None | RESTORE_FROM = RESTORE_FROM.SAME,
         **kwargs,
     ) -> T:
         """
@@ -615,7 +618,7 @@ class Node(SObject, metaclass=NodeMeta):
             if name in self.controls:
                 raise ValueError(f"Control with name {name} already exists")
         else:
-            if control_type not in [ButtonControl] and restore_from is not False:
+            if control_type not in [ButtonControl] and restore_from is not None:
                 warn_no_control_name(control_type, self)
             name = "Control0"
             i = 0
@@ -623,14 +626,13 @@ class Node(SObject, metaclass=NodeMeta):
                 i += 1
                 name = f"Control{i}"
 
-        id = f"{self.get_id()}_c_{name}"  # specify id so it can be restored with the same id
-        control = self.add_child(control_type, id=id, **kwargs)
+        control = self.add_child(control_type,  **kwargs)
         self.controls.add(name, control)
 
         # restore the control
-        if restore_from is None:
+        if restore_from == RESTORE_FROM.SAME:
             self.restore_controls(name)
-        elif restore_from is False:
+        elif restore_from is None:
             pass
         else:
             self.restore_controls((restore_from, name))
@@ -713,7 +715,7 @@ class Node(SObject, metaclass=NodeMeta):
         display_name: str | None = None,
         target: Literal["self", "global"] = "self",
         order_strict: bool | None = None,
-        restore_from: str | None | Literal[False] = None,
+        restore_from: str | None | RESTORE_FROM = RESTORE_FROM.SAME,
         **editor_args,
     ) -> T1:
         """
@@ -739,9 +741,9 @@ class Node(SObject, metaclass=NodeMeta):
             self.expose_attribute(
                 attribute, editor_type, display_name, target=target, **editor_args
             )
-        if restore_from is None:
+        if restore_from == RESTORE_FROM.SAME:
             self.restore_attributes(topic_name)
-        elif restore_from is False:
+        elif restore_from is None:
             pass
         else:
             self.restore_attributes((restore_from, topic_name))

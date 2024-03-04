@@ -119,7 +119,7 @@ class TrainNode(Node):
         self.label.set("Train")
         self.css_classes.append("fit-content")
         self.network_port = self.add_in_port(
-            "network", control_type=OptionControl, restore_from=False
+            "network", control_type=OptionControl, restore_from=None
         )
         self.loss_port = self.add_in_port("loss", 1)
         self.network_name = self.network_port.default_control.value

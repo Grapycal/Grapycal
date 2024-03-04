@@ -54,9 +54,9 @@ class FuncCallNode(Node):
         # manually restore in_ports and out_ports
         if not self.is_new:
             assert self.old_node_info is not None
-            for port in self.old_node_info.in_ports:
+            for port in self.old_node_info.in_ports.values():
                 self.add_in_port(port.name, 1, display_name=port.name)
-            for port in self.old_node_info.out_ports:
+            for port in self.old_node_info.out_ports.values():
                 self.add_out_port(port.name, display_name=port.name)
                 
     def init_node(self):

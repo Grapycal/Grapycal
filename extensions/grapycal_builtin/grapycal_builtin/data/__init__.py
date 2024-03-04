@@ -70,12 +70,14 @@ class SplitNode(Node):
         self.shape.set('normal')
         self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
         self.key_mode = self.add_attribute('key mode', StringTopic, 'string', editor_type='options', options=['string','eval']) 
+        
+        if not self.is_new:
+            for key in self.keys:
+                self.add_out_port(key)
+
+    def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('keys','key mode')
 
     def add_key(self, key, position):
         self.add_out_port(key)
