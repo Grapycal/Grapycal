@@ -21,7 +21,7 @@ class NetworkCallNode(Node):
     '''
 
     category = 'torch/neural network'
-    def create(self):
+    def build_node(self):
         self.label.set('')
         self.shape.set('normal')
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
@@ -37,7 +37,8 @@ class NetworkCallNode(Node):
                 self.add_out_port(port.name, display_name=port.name)
                 
         self.update_ports()
-        
+
+    def init_node(self):
         self.network_name.on_set2.add_manual(self.on_network_name_changed)
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
         M.net.calls.append(self.network_name.get(),self)
@@ -132,7 +133,7 @@ class NetworkCallNode(Node):
 class NetworkInNode(Node):
     category = 'torch/neural network'
 
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -160,6 +161,7 @@ class NetworkInNode(Node):
 
         self.update_label()
 
+    def init_node(self):
         for out in self.outs.get():
             self.add_out_port(out,display_name = out)
         
@@ -207,7 +209,7 @@ class NetworkInNode(Node):
 
 class NetworkOutNode(Node):
     category = 'torch/neural network'
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -225,6 +227,7 @@ class NetworkOutNode(Node):
             
         self.network_name.set(find_next_valid_name(self.network_name.get(),M.net.outs))
 
+    def init_node(self):
         # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)

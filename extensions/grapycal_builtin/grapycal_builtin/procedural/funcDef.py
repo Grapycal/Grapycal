@@ -45,12 +45,11 @@ class FuncCallNode(Node):
     '''
 
     category = 'function'
-    def create(self):
+    def build_node(self):
         self.label.set('')
         self.shape.set('normal')
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
-        self.restore_attributes('func_name')
 
         # manually restore in_ports and out_ports
         if not self.is_new:
@@ -60,6 +59,7 @@ class FuncCallNode(Node):
             for port in self.old_node_info.out_ports:
                 self.add_out_port(port.name, display_name=port.name)
                 
+    def init_node(self):
         self.update_ports()
         
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
@@ -155,7 +155,7 @@ class FuncCallNode(Node):
 class FuncInNode(Node):
     category = 'function'
 
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -173,6 +173,7 @@ class FuncInNode(Node):
             
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.ins))
 
+    def init_node(self):
         # add callbacks to attributes
         self.outs.on_insert.add_auto(self.on_output_added)
         self.outs.on_pop.add_auto(self.on_output_removed)
@@ -231,7 +232,7 @@ class FuncInNode(Node):
 class FuncOutNode(Node):
     category = 'function'
     
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -249,6 +250,7 @@ class FuncOutNode(Node):
 
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.outs))
 
+    def init_node(self):
         # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)

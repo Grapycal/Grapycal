@@ -1,12 +1,16 @@
 from collections import defaultdict
+from typing import Any
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
 from .forNode import *
 from .procedureNode import ProcedureNode
 from .limiterNode import LimiterNode
 from .funcDef import *
+import time
 
 class PortalManager:
     ins = ListDict['InPortalNode']()
@@ -84,3 +88,19 @@ class OutPortalNode(Node):
     def destroy(self) -> SObjectSerialized:
         PortalManager.outs.remove(self.name.get(),self)
         return super().destroy()
+    
+class SleepNode(FunctionNode):
+    category = 'procedural'
+    inputs = ['start']
+    outputs = ['done']
+
+    def build_node(self):
+        super().build_node()
+        time_port = self.add_in_port('time',control_type=TextControl,display_name='time')
+        self.shape.set('normal')
+        self.label.set('Sleep')
+        self.time_control = time_port.default_control
+
+    def calculate(self, **inputs) -> Any:
+        time.sleep(float(self.time_control.get_value()))
+        return None

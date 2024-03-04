@@ -1,6 +1,5 @@
 import abc
 from hmac import new
-from msilib import Control
 from typing import TYPE_CHECKING, Any, List, Literal
 import typing
 from grapycal.sobjects.controls.control import ValuedControl
@@ -49,21 +48,8 @@ class InputPort(Port, typing.Generic[T]):
     def build(self, control_type: type[T], name='port', max_edges=64, display_name=None,control_name=None, **control_kwargs):
         super().build(name, max_edges, display_name)
         self.is_input.set(1)
-        if control_type is NullControl:
-            control_name = None
-        if control_name is not None:
-            if control_name in self.node.controls:
-                raise ValueError(f'Control with name {control_name} already exists')
-        else:
-            control_name = 'Control0'
-            i=0
-            while control_name in self.node.controls:
-                i+=1
-                control_name = f'Control{i}'
-
-        new_control_id = f'{self.node.get_id()}_c_{control_name}'
-        self.default_control = self.add_child(control_type, id=new_control_id, **control_kwargs)
-        self.node.controls.add(control_name,self.default_control)
+        
+        self.default_control = self.add_child(control_type, **control_kwargs)
 
         # this topic affects css
         self.control_takes_label = self.add_attribute('control_takes_label', IntTopic, 0)

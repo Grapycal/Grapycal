@@ -61,14 +61,14 @@ class BeforeNode(Node):
     def option_changed(self,value:str):
         self.out_port.push_data(value)
 
-class AfterNode(Node):
-    category = 'function'
+# class AfterNode(Node):
+#     category = 'function'
 
-    def create(self):
-        self.label.set('Select a fruit')
-        self.option_control = self.add_option_control(options=['apple','banana'],value='apple',name='opt')
-        self.out_port = self.add_out_port('out')
-        self.option_control.on_set += self.option_changed
+#     def create(self):
+#         self.label.set('Select a fruit')
+#         self.option_control = self.add_option_control(options=['apple','banana'],value='apple',name='opt')
+#         self.out_port = self.add_out_port('out')
+#         self.option_control.on_set += self.option_changed
 
-    def option_changed(self,value:str):
-        self.out_port.push_data(value)
+#     def option_changed(self,value:str):
+#         self.out_port.push_data(value)

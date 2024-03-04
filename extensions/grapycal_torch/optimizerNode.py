@@ -177,7 +177,7 @@ class TrainNode(Node):
 class SaveNode(Node):
     category = "torch/training"
 
-    def create(self):
+    def build_node(self):
         self.label.set("Save")
         self.network_port = self.add_in_port(
             "network", control_type=OptionControl, options=["net a", "net b"]
@@ -185,6 +185,7 @@ class SaveNode(Node):
         self.path_port = self.add_in_port("path", control_type=TextControl)
         self.save_port = self.add_in_port("save network", control_type=ButtonControl)
 
+    def init_node(self):
         self.to_unlink = setup_net_name_ctrl(self.network_port.default_control)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text

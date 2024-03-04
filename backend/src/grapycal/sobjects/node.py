@@ -486,6 +486,19 @@ class Node(SObject, metaclass=NodeMeta):
             **control_kwargs,
         )
         self.in_ports.insert(port)
+        if control_type is NullControl:
+            control_name = None
+        if control_name is not None:
+            if control_name in self.controls:
+                raise ValueError(f'Control with name {control_name} already exists')
+        else:
+            control_name = 'Control0'
+            i=0
+            while control_name in self.controls:
+                i+=1
+                control_name = f'Control{i}'
+
+        self.controls.add(control_name, port.default_control)
         if control_type is not NullControl:
             if restore_from is None:
                 self.restore_controls(name)

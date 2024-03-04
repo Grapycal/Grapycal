@@ -1,0 +1,9 @@
+services:
+  workspace:
+    image: docker.io/patrickuuuu/grapycal-backend:latest
+    ports:
+      - "8765:8765"
+  frontend:
+    image: docker.io/patrickuuuu/grapycal-frontend:latest
+    ports:
+      - "80:80"
