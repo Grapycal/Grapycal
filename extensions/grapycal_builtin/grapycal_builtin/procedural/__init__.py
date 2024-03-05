@@ -96,11 +96,11 @@ class SleepNode(FunctionNode):
 
     def build_node(self):
         super().build_node()
-        time_port = self.add_in_port('time',control_type=TextControl,display_name='time')
+        time_port = self.add_in_port('seconds',control_type=TextControl,display_name='time',text='1')
         self.shape.set('normal')
         self.label.set('Sleep')
         self.time_control = time_port.default_control
 
     def calculate(self, **inputs) -> Any:
         time.sleep(float(self.time_control.get_value()))
-        return None
+        return inputs['start']

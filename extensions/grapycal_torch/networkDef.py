@@ -27,14 +27,6 @@ class NetworkCallNode(Node):
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
         self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         self.restore_attributes('network name')
-
-        # manually restore in_ports and out_ports
-        if not self.is_new:
-            assert self.old_node_info is not None
-            for port in self.old_node_info.in_ports.values():
-                self.add_in_port(port.name, 1, display_name=port.name)
-            for port in self.old_node_info.out_ports.values():
-                self.add_out_port(port.name, display_name=port.name)
                 
         self.update_ports()
 
@@ -161,9 +153,11 @@ class NetworkInNode(Node):
 
         self.update_label()
 
+        if not self.is_new:
+            for out in self.outs.get():
+                self.add_out_port(out,display_name = out)
+
     def init_node(self):
-        for out in self.outs.get():
-            self.add_out_port(out,display_name = out)
         
         if not self.is_preview.get():
             M.net.ins[self.network_name.get()] = self         
@@ -201,6 +195,7 @@ class NetworkInNode(Node):
     def start_function(self,args:dict):
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
+        self.flash_running_indicator()
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
@@ -227,6 +222,10 @@ class NetworkOutNode(Node):
             
         self.network_name.set(find_next_valid_name(self.network_name.get(),M.net.outs))
 
+        if not self.is_new:
+            for in_ in self.ins.get():
+                self.add_in_port(in_,1,display_name = in_)
+
     def init_node(self):
         # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
@@ -237,9 +236,6 @@ class NetworkOutNode(Node):
         self.network_name.on_set.add_auto(self.on_network_name_changed_auto)
 
         self.update_label()
-
-        for inp in self.ins.get():
-            self.add_in_port(inp,1,display_name = inp)
         
         if not self.is_preview.get():
             M.net.outs[self.network_name.get()] = self         
@@ -280,6 +276,7 @@ class NetworkOutNode(Node):
                 return
         result = {key: self.get_in_port(key).get_one_data() for key in self.ins.get()}
         caller.push_result(result)
+        self.flash_running_indicator()
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():

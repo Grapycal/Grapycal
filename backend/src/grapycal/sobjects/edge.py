@@ -69,7 +69,8 @@ class Edge(SObject):
         if self.head.get():
             self.head.get().remove_edge(self)
         
-        self.editor.set_running(self, False)
+        if hasattr(self, 'editor'):
+            self.editor.set_running(self, False)
         return super().destroy()
 
     def get_data(self)->Any:

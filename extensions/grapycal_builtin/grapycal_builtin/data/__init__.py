@@ -40,6 +40,7 @@ class VariableNode(SourceNode):
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.in_port:
             self.workspace.vars()[self.variable_name.text.get()] = edge.get_data()
+        self.flash_running_indicator()
 
     def task(self):
         self.value = self.workspace.vars()[self.variable_name.text.get()]

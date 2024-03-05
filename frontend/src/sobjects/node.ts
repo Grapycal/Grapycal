@@ -180,7 +180,6 @@ export class Node extends CompSObject implements IControlHost {
 
         if (!this.isPreview){
             this.link(this.editor.runningChanged.slice(this), (running: boolean) => {
-                print('running changed',running)
                 if(running == true)
                     this.htmlItem.baseElement.classList.add('running')
                 else{
