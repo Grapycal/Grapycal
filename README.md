@@ -16,14 +16,18 @@ Grapycal is a general-purpose visual programming language based on Python. It pr
 
 The goal of this project is to make a programming language align with human perception at best, while being powerful with the help of Python, its backend.
 
+Compatibility: 
+-  Python 3.11
+-  Chrome browser (Grapycal is laggy on Safari; FireFox is not tested.)
+
 
 ## Documentation
 
 The full documentaition can be found [here](https://docs.grapycal.org/).
 
 ## Get Started
-
 ```bash
+# Requires python 3.11
 pip install grapycal grapycal-builtin
 grapycal # Grapycal will open at localhost:9001
 ```
@@ -35,12 +39,14 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To contribute, please refer to the [Contribution guide](https://docs.grapycal.org/contribution_guide/contribution.html) to get started. The [Discussion: Plans](https://github.com/Grapycal/Grapycal/discussions/categories/plans) forum contains the current plans for Grapycal and is a good place to start.
+To contribute, please refer to the [Contribution Guide](https://docs.grapycal.org/contribution_guide/contribution.html) to get started. The [Project Board](https://github.com/orgs/Grapycal/projects/2) contains the current plans for Grapycal and is a good place to start.
 
-To discuss, feel free to go to [Discussion](https://github.com/Grapycal/Grapycal/discussions) or join the [Discord server](https://discord.gg/adNQcS42CT).
+Feel free to join the [Discord Server](https://discord.gg/adNQcS42CT) to discuss with us.
 
 
-## Features:
+## Features
+
+![Image](https://i.imgur.com/yxT4nYB.png)
 
 - Interactive: On the GUI, users can run different parts of the graph in arbitrary order, watch variables in real-time, and easily track the active node while the program runs.
 
