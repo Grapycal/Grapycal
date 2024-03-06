@@ -6,6 +6,7 @@ export { Action } from "objectsync-client"
 // from 'typescript-cookie' doesn't work. Maybe a bug of the library?
 import { getCookie, removeCookie, setCookie } from '../node_modules/typescript-cookie'
 import { Topic } from "objectsync-client"
+import { Buffer } from 'buffer';
 
 export function defined<T>(value: T | undefined| null): T {
     if (value === undefined) {
@@ -355,4 +356,24 @@ export function getSelectionText(): string|null {
         return window.getSelection().toString();
     }
     return '';
+}
+
+
+export function getImageFromClipboard(e: ClipboardEvent, callback: (base64String: string) => void){
+    let items = e.clipboardData.items
+    if (items) {
+        for (let item of items) {
+            if (item.type.indexOf("image") !== -1) {
+                let blob = item.getAsFile()
+                let reader = new FileReader()
+                reader.onload = (event) => {
+                    let buf =Buffer.from( reader.result as ArrayBuffer)
+                    var base64String = buf.toString('base64')
+                    callback(base64String)
+                }
+                reader.readAsArrayBuffer(blob)
+                return
+            }
+        }
+    }
 }

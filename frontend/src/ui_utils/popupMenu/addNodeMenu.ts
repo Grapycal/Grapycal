@@ -58,13 +58,7 @@ export class AddNodeMenu extends AutoCompMenu{
                 key:(nodeTypeName.toLowerCase().split('.')[1].slice(0,-4)), // remove Node suffix
                 value:nodeTypeName,
                 callback:()=>{
-                    let translation = this.editor.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos)
-                    let snap = 17
-                    let snapped = new Vector2(
-                        Math.round(translation.x/snap)*snap,
-                        Math.round(translation.y/snap)*snap
-                    )
-                    this.editor.createNode(nodeTypeName,{translation:snapped.toString()})
+                    this.editor.createNode(nodeTypeName)
                 },
                 displayName:nodeTypeName.split('.')[1].slice(0,-4)
             })

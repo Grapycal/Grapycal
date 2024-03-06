@@ -9,7 +9,7 @@ import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
 import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
-import { ActionDict, Vector2, getSelectionText } from "../utils"
+import { ActionDict, Vector2, getImageFromClipboard, getSelectionText } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
 import { Edge } from "./edge"
@@ -90,7 +90,7 @@ export class Editor extends CompSObject{
     protected onStart(): void {
         new AddNodeMenu(this)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl c'),this.copy)
-        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl v'),this.paste)
+        this.link2(document, "paste", this.paste)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Delete'),this.delete)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl y'),this.preventDefault)
@@ -132,7 +132,14 @@ export class Editor extends CompSObject{
     }
 
     public createNode(type: string,args:any={}): void{
+        let translation = this.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos)
+        let snap = 17
+        let snapped = new Vector2(
+            Math.round(translation.x/snap)*snap,
+            Math.round(translation.y/snap)*snap
+        )
         args.node_type = type
+        args.translation = snapped.x+','+snapped.y
         this.makeRequest('create_node',args)
     }
 
@@ -234,20 +241,35 @@ export class Editor extends CompSObject{
         })
     }
 
-    private paste(){
+    private paste(e: ClipboardEvent) {
         if(document.activeElement != document.body) return;
         if(getSelectionText() != '') return;
+        
+        getImageFromClipboard(e, (base64String) => {
+            this.createNode('grapycal_builtin.ImagePasteNode',
+                {image:base64String}
+            )
+        })
+
         navigator.clipboard.readText().then(text=>{
             let data = null
-            try{
-                data = JSON.parse(text)
-            }catch(e){
-                print('clipboard data is not valid')
-                return;
+            if (text.startsWith('{"nodes":[')){
+                try{
+                    data = JSON.parse(text)
+                }catch(e){
+                    data = null
+                }
             }
-            let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
-            this.makeRequest('paste',{data,mouse_pos:mousePos})
-            Workspace.instance.selection.clearSelection()
+            if(data){
+
+                let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
+                this.makeRequest('paste',{data,mouse_pos:mousePos})
+                Workspace.instance.selection.clearSelection()
+            }else{
+                this.createNode('grapycal_builtin.ExecNode',
+                    {text:text}
+                )
+            }
         })
     }
 

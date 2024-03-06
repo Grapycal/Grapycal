@@ -37,7 +37,7 @@ except ImportError:
 class ImagePasteNode(SourceNode):
     category = "interaction"
 
-    def build_node(self):
+    def build_node(self,image: str|None = ''):
         super().build_node()
         self.shape.set("simple")
         self.label.set("Paste Image")
@@ -51,15 +51,12 @@ class ImagePasteNode(SourceNode):
         )
         self.out_port = self.add_out_port("img")
         self.icon_path.set("image")
-
-
-        
         self.format.add_validator(self.format_validator)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls("img")
-        self.restore_attributes("format")
+        self.preserve_alpha = self.add_attribute(
+            "preserve alpha", StringTopic, "no", editor_type="options", options=["yes", "no"]
+        )
+        if image:
+            self.img.set(image)
 
     def format_validator(self, format, _):
         if "torch" in format:
@@ -82,12 +79,12 @@ class ImagePasteNode(SourceNode):
         if self.format.get() == "torch":
             img = torch.from_numpy(np.array(img))
             img = img.permute(2, 0, 1).to(torch.float32) / 255
-            if img.shape[0] == 4:
+            if (self.preserve_alpha.get() == 'no') and img.shape[0] == 4:
                 img = img[:3]
         elif self.format.get() == "numpy":
             img = np.array(img).astype(np.float32).transpose(2, 0, 1) / 255
-            if img.shape[0] == 4:
-                img = img[:3]
+            if (self.preserve_alpha.get() == 'no') and img.shape[0] == 4:
+                img = img[:3] 
 
         self.out_port.push_data(img)
 

@@ -41,7 +41,7 @@ class ExecNode(SourceNode):
     '''
     category = 'interaction'
 
-    def build_node(self):
+    def build_node(self,text=''):
         super().build_node()
         self.out_port = self.add_out_port('done')
         self.text_control = self.add_text_control(name='text')
@@ -54,7 +54,9 @@ class ExecNode(SourceNode):
         self.print_last_expr = self.add_attribute('print last expr',StringTopic,editor_type='options',options=['yes','no'],init_value='yes')
         self.icon_path.set('python')
 
-        if not self.is_new:
+        if self.is_new:
+            self.text_control.set(text)
+        else:
             for name in self.inputs:
                 self.add_input(name,None)
             for name in self.outputs:
