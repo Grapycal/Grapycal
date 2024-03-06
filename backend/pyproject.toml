@@ -14,10 +14,10 @@ maintainers = [
 ]
 
 license = "BSD-3-Clause"
-readme = "../README.md"
+readme = "README.md"
 documentation = "https://docs.grapycal.org/"
 
-include = ["src/grapycal/webpage/**/*"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
+include = ["src/grapycal/webpage/**/*","src/grapycal/Welcome.grapycal"] # Have to explicitly include here because Poetry by default ignores all files in the .gitignore file.
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -51,6 +51,7 @@ version_files = [
     "../frontend/package.json:version",
     "../extensions/grapycal_builtin/pyproject.toml:version",
     "../extensions/grapycal_builtin/pyproject.toml:grapycal",
+    "../test_build.bat:pip",
 ]
 
 pre_bump_hooks = [

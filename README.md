@@ -25,7 +25,7 @@ The full documentaition can be found [here](https://docs.grapycal.org/).
 
 ```bash
 pip install grapycal grapycal-builtin
-grapycal # Grapycal is now avaliable at localhost:9001
+grapycal # Grapycal will open at localhost:9001
 ```
 
 If you have any questions or ideas to share, feel free to join the [Discord server](https://discord.gg/adNQcS42CT).
