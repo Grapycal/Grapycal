@@ -75,12 +75,14 @@ class GrapycalApp:
             print(f'Start browser at URL: http://localhost:{self._config["http_port"]}')
 
         while True:  # Restart workspace when it exits. Convenient for development
-            with self._run_workspace() as workspace:
+            import random
+            workspace_id = random.randint(0, 1000000) # used for exit message file
+            with self._run_workspace(workspace_id) as workspace:
                 self._waitForWorkspace(workspace)
 
             restart = self._config["restart"] and workspace.poll() == 0
 
-            exit_message_file = f"grapycal_exit_message_{workspace.pid}"
+            exit_message_file = f"grapycal_exit_message_{workspace_id}"
             if os.path.exists(exit_message_file):
                 with open(exit_message_file, "r") as f:
                     exit_message = f.read()
@@ -107,7 +109,7 @@ class GrapycalApp:
         return
 
     @contextlib.contextmanager
-    def _run_workspace(self):
+    def _run_workspace(self,workspace_id: int):
         """
         Run a workspace. Ensure that the workspace is terminated when the context is exited.
         """
@@ -127,6 +129,8 @@ class GrapycalApp:
                 self._config["host"],
                 "--path",
                 self._config["path"],
+                "--workspace_id",
+                str(workspace_id),
             ],
             start_new_session=True,
         )
