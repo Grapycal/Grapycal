@@ -52,6 +52,7 @@ version_files = [
     "../extensions/grapycal_builtin/pyproject.toml:version",
     "../extensions/grapycal_builtin/pyproject.toml:grapycal",
     "../test_build.bat:pip",
+    "../test_build_pypi.bat:pip",
 ]
 
 pre_bump_hooks = [
