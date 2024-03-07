@@ -11,6 +11,8 @@ class ListNode(Node):
         self.set_port = self.add_in_port('set')
         self.append_port = self.add_in_port('append')
         self.get_port = self.add_out_port('get')
+
+    def init_node(self):
         self.data = []
 
     def edge_activated(self, edge: Edge, port: InputPort):

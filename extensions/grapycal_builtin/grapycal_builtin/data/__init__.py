@@ -30,6 +30,9 @@ class VariableNode(SourceNode):
         self.label.set('Variable')
         self.shape.set('simple')
         self.css_classes.append('fit-content')
+
+    def init_node(self):
+        super().init_node()
         self.value = None
         self.has_value = False
 

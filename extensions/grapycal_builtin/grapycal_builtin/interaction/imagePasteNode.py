@@ -51,12 +51,15 @@ class ImagePasteNode(SourceNode):
         )
         self.out_port = self.add_out_port("img")
         self.icon_path.set("image")
-        self.format.add_validator(self.format_validator)
         self.preserve_alpha = self.add_attribute(
             "preserve alpha", StringTopic, "no", editor_type="options", options=["yes", "no"]
         )
         if image:
             self.img.set(image)
+            self.format.add_validator(self.format_validator)
+            
+    def init_node(self):
+        super().init_node()
 
     def format_validator(self, format, _):
         if "torch" in format:
@@ -428,6 +431,8 @@ class LinePlotNode(Node):
             editor_type="options",
             options=["from 0", "continue"],
         )
+
+    def init_node(self):
         
         self.x_coord = [0]
         self.line_plot.lines.on_insert.add_auto(self.add_line)

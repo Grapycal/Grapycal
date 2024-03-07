@@ -27,6 +27,13 @@ class NetworkCallNode(Node):
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value='My Network')
         self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         self.restore_attributes('network name')
+        # manually restore in_ports and out_ports
+        if not self.is_new:
+            assert self.old_node_info is not None
+            for port in self.old_node_info.in_ports.values():
+                self.add_in_port(port.name, 1, display_name=port.name)
+            for port in self.old_node_info.out_ports.values():
+                self.add_out_port(port.name, display_name=port.name)
                 
         self.update_ports()
 

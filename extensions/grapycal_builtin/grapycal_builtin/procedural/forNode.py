@@ -21,7 +21,7 @@ class ForNode(Node):
         self.shape.set('simple')
 
 
-        
+    def init_node(self):
         self.iterator:Iterable|None = None
 
     def edge_activated(self, edge: Edge, port: InputPort):
@@ -60,6 +60,8 @@ class RepeatNode(SourceNode):
         self.shape.set('simple')
         self.times = self.add_attribute('times',IntTopic,editor_type='int',init_value=10)
         
+    def init_node(self):
+        super().init_node()
         self.iterator:Iterable|None = None
         self.times.on_set += lambda times: self.label.set(f'⟳ Repeat {times}')
         self.label.set(f'⟳ Repeat {self.times.get()}')

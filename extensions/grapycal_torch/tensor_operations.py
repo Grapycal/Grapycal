@@ -13,19 +13,15 @@ class CatNode(FunctionNode):
     outputs = ['out']
     def build_node(self):
         super().build_node()
-        self.label.set('🐱0')
         self.shape.set('round')
         self.dim = self.add_attribute('dim',IntTopic,0,editor_type='int')
+        self.dim_changed(self.dim.get())
     
     def init_node(self):
         super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('🐱'+str(dim))
@@ -42,16 +38,13 @@ class StackNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('☰0')
         self.shape.set('round')
+        self.dim_changed(self.dim.get())
     
     def init_node(self):
         super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('☰'+str(dim))
@@ -69,16 +62,13 @@ class UnsqueezeNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('U0')
         self.shape.set('round')
+        self.dim_changed(self.dim.get())
     
     def init_node(self):
         super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('U'+str(dim))
@@ -96,16 +86,13 @@ class SqueezeNode(FunctionNode):
         self.dim = self.add_attribute('dim',IntTopic,editor_type='int')
         self.label.set('S0')
         self.shape.set('round')
+        self.dim_changed(self.dim.get())
     
     def init_node(self):
         super().init_node()
         self.dim.on_set.add_manual(self.dim_changed)
         if self.is_new:
             self.dim.set(0)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('dim')
 
     def dim_changed(self,dim):
         self.label.set('S'+str(dim))
