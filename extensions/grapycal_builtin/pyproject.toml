@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "grapycal-builtin"
-version = "0.11.1"
+version = "0.11.2"
 description = "Built-in nodes for Grapycal"
 authors = ["eri24816 <a931eric@gmail.com>"]
 license = "BSD-3-Clause"
