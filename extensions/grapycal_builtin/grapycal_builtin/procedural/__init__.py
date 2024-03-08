@@ -26,14 +26,11 @@ class InPortalNode(Node):
         self.in_port = self.add_in_port('jump',display_name='')
         self.out_port = self.add_out_port('then',display_name='')
         self.css_classes.append('fit-content')
+        self.label.set(f'{self.name.get()}')
     
     def init_node(self):
         PortalManager.ins.append(self.name.get(),self)
         self.name.on_set2.add_manual(self.on_name_set)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('name')
 
     def on_name_set(self, old, new):
         self.label.set(f'{new}')

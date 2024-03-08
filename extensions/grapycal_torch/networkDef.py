@@ -163,6 +163,8 @@ class NetworkInNode(Node):
         if not self.is_new:
             for out in self.outs.get():
                 self.add_out_port(out,display_name = out)
+        else:
+            self.add_out_port('x',display_name = 'x')
 
     def init_node(self):
         
@@ -232,6 +234,8 @@ class NetworkOutNode(Node):
         if not self.is_new:
             for in_ in self.ins.get():
                 self.add_in_port(in_,1,display_name = in_)
+        else:
+            self.add_in_port('x',1,display_name = 'x')
 
     def init_node(self):
         # add callbacks to attributes

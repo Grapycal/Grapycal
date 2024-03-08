@@ -261,7 +261,7 @@ class ExtensionManager:
             if obj.get_type_name() not in node_types: continue
             if obj.is_preview.get(): continue
             if obj.get_type_name() in skip_types: continue
-            raise Exception(f'Cannot unload extension {name}, there are still objects of this type in the workspace')
+            raise Exception(f'Cannot unload extension {name}, there are still {obj.__class__.__name__} in the workspace')
 
     def _unload_extension(self, name: str) -> None:
         node_types = self._extensions[name].node_types
