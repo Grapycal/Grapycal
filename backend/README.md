@@ -23,7 +23,7 @@ Compatibility:
 
 ## Documentation
 
-The full documentaition can be found [here](https://docs.grapycal.org/).
+Visit our [wiki page](https://wiki.grapycal.org/index.php?title=Grapycal_Wiki_ouO#Pages) for documentation.
 
 ## Get Started
 ```bash
