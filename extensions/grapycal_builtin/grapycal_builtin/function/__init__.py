@@ -13,10 +13,10 @@ class LambdaNode(Node):
     provides an input box for you to define the function with an expression.
 
     :inputs:
-        You can add any number of inputs to the node.
+        - *inputs: You can add any number of inputs to the node.
 
     :outputs:
-        You can add any number of outputs to the node.
+        - *outputs: You can add any number of outputs to the node.
         
     '''
     category = 'function'

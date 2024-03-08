@@ -34,10 +34,13 @@ class ExecNode(SourceNode):
 
     :inputs:
         - run: send in a signal to run the statements
-        
+        - *inputs: You can add any variable of inputs to the node and 
+                    Click the (+) in the inspector to plus the name of the variable.
 
     :outputs:
         - done: send out a signal when the statements are done
+        - *outputs: You can add any variable of outputs to the node.
+                    Click the (+) in the inspector to plus the name of the variable.
     '''
     category = 'interaction'
 

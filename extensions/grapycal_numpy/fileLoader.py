@@ -5,12 +5,13 @@ import json,numpy,pickle
 from grapycal import Node
 from objectsync.sobject import SObjectSerialized
 import os
+from PIL import Image
 from grapycal import Node
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort
 import numpy as np
 
-class FileLoader(Node):
+class FileLoaderNode(Node):
     '''
     To load file from your local storage
     Support File format is JSON, NPM, PKL, TXT
@@ -38,14 +39,13 @@ class FileLoader(Node):
         root.attributes("-topmost", True)
         root.focus_force()
         selected_files = None
-        match self.option_control.get_value():
-            case 'JSON': 
+        if self.option_control.get_value() == 'JSON': 
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("json files", "*.json")])
-            case 'NPY':
+        if self.option_control.get_value() == 'NPY':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("numpy files", "*.npy")])
-            case 'PKL':
+        if self.option_control.get_value() == 'PKL':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("pickle files", "*.pkl")])
-            case 'TXT':
+        if self.option_control.get_value() == 'TXT':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("text files", "*.txt")])
         
         root.destroy()
@@ -62,26 +62,29 @@ class FileLoader(Node):
         files = []
         for file in self.files_path:
             f = open(file)
-            match self.option_control.get_value():
-                case 'JSON':
+            format =  self.option_control.get_value()
+            if (format == 'JSON' ):
                     file = json.load(f)
-                    self.output_port.set_data_type('json')
-                case 'NPY':
+                 
+            if (format == 'NPY' ):
                     file = numpy.load(f)
-                    self.output_port.set_data_type('numpy')
-                case 'PKL':
+              
+            if (format == 'PKL' ):
                     file = pickle.load(f)
-                    self.output_port.set_data_type('pickle')
-                case 'TXT':
+                    
+            if (format == 'TXT'):
                     file = f.read()
-                    self.output_port.set_data_type('text')
+            if (format == 'JPG' ):
+                    file = Image.open(f) 
+                    file = np.array(file).astype(np.float32).transpose(2, 0, 1) / 255 
+                   
             files.append(file)
         self.output_port.push_data(files)
 
     def destroy(self) -> SObjectSerialized:
         return super().destroy()
     
-class FileFilter(Node):
+class FileFilterNode(Node):
     '''
     input : list of files
 
@@ -126,36 +129,17 @@ class FileFilter(Node):
         self.run(self.push_file)
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.files = self.input_port.get_one_data()
-        self.file_type = self.input_port.get_data_type()
-        self.file_num = len(self.files)
+        self.file_num = self.files.size()
         self.index = 0
         self.text.set(str(self.index + 1) + " / " + str(self.file_num))
         self.run(self.init_file)
 
     def init_file(self):
-        match self.file_type:
-            case 'jpg':
-                file = np.array(self.files[0]).astype(np.float32).transpose(2, 0, 1) / 255 #channels, height, width
-                file = file[::-1, :, :]
-                if image.shape[0] == 4:
-                    image = image[:3]
-                self.output_port.push_data(image)
-            case 'png':
-                file = np.array(self.files[0]).astype(np.float32).transpose(2, 0, 1) / 255 #channels, height, width
-                file = file[::-1, :, :]
-                if image.shape[0] == 4:
-                    image = image[:3]
-                self.output_port.push_data(image)
-            case 'json':
-            
-            case 'npy':
+        file = file[::-1, :, :]
+        self.output_port.push_data(file)
         
 
-    def push_image(self):
-        print(self.images[self.index].shape)
-        image = np.array(self.images[self.index]).astype(np.float32).transpose(2, 0, 1) / 255
-        image = image[::-1, :, :]
-        if image.shape[0] == 4:
-            image = image[:3]
-        self.output_port.push_data(image)
+    def push_file(self):
+        file = self.files[self.index]
+        file = file[::-1, :, :]
+        self.output_port.push_data(file)
