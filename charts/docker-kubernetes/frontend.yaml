@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: grapycal-frontend-container
-          image: docker.io/patrickuuuu/grapycal-frontend:latest
+#          image: docker.io/patrickuuuu/grapycal-frontend:latest
+          image: docker.io/grapycal/grapycal-frontend:latest
           imagePullPolicy: Always
           ports:
           - containerPort: 80

@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: grapycal-container
-          image: docker.io/patrickuuuu/grapycal-backend:latest
+#          image: docker.io/patrickuuuu/grapycal-backend:latest
+          image: docker.io/grapycal/grapycal-workspace:latest
           ports:
             - containerPort: 8765
 
@@ -30,7 +31,7 @@ metadata:
   namespace: default
 spec:
   selector:
-    app: grapycal
+    app: grapycal-backend
     env: docker-desktop
   ports:
     - protocol: TCP
