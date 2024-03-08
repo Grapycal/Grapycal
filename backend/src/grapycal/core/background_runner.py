@@ -92,7 +92,7 @@ class BackgroundRunner:
             except KeyboardInterrupt as e:
                 logger.info("Runner interrupted")
                 if self._exception_callback is None:
-                    orig_print('No exception callback',e)
+                    pass
                 else:
                     self._exception_callback(e)
 

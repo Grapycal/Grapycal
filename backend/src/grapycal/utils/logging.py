@@ -87,8 +87,9 @@ class NameTranslator(logging.Filter):
         "topicsync.server.server": "topicsync",
         "topicsync.topic": "topic",
         "topicsync.server.client_manager": "client",
+        "topicsync.state_machine.state_machine": "state machine",
         "workspace": "workspace",
-        "grapycal.extension.extensionManager": "ext_manager",
+        "grapycal.extension.extensionManager": "ext manager",
     }
 
     def filter(self, record):

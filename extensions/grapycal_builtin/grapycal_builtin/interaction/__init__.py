@@ -13,9 +13,6 @@ class LabelNode(Node):
         self.shape.set('simple')
         self.css_classes.append('fit-content')
         self.expose_attribute(self.label, editor_type='text')
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
         self.restore_attributes('label')
 
 class WebcamNode(Node):
@@ -36,13 +33,14 @@ class WebcamNode(Node):
                 if node != self:
                     node.print_exception(Exception('Only one webcam node is allowed per workspace'))
 
-    def create(self):
+    def build_node(self):
         self.label.set('Webcam')
         self.shape.set('simple')
         self.format = self.add_attribute('format',StringTopic,'numpy',editor_type='options',options=['torch','numpy'])
         self.out_port = self.add_out_port('img')
         self.button = self.add_button_control('Start streamimg','button')
 
+    def init_node(self):
         if self.is_preview.get():
             return
         self.webcam = self.workspace.webcam

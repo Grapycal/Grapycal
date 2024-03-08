@@ -1,8 +1,7 @@
 import { StringTopic } from "objectsync-client"
 import { Control } from "./control"
 import { print } from "../../devUtils"
-import { as } from "../../utils"
-import { Buffer } from 'buffer';
+import { as, getImageFromClipboard } from "../../utils"
 
 
 export class ImageControl extends Control {
@@ -50,24 +49,12 @@ export class ImageControl extends Control {
 
     }
 
+
     onPaste(e: ClipboardEvent) {
-        let items = e.clipboardData.items
-        if (items) {
-            for (let item of items) {
-                if (item.type.indexOf("image") !== -1) {
-                    let blob = item.getAsFile()
-                    let reader = new FileReader()
-                    reader.onload = (event) => {
-                        let imageTopic = this.getAttribute("image", StringTopic)
-                        let buf =Buffer.from( reader.result as ArrayBuffer)
-                        var base64String = buf.toString('base64')
-                        
-                        imageTopic.set(base64String)
-                    }
-                    reader.readAsArrayBuffer(blob)
-                }
-            }
-        }
+        getImageFromClipboard(e, (base64String) => {
+            let imageTopic = this.getAttribute("image", StringTopic)
+            imageTopic.set(base64String)
+        })
     }
 
 }

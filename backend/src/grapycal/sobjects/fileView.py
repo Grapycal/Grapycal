@@ -184,9 +184,8 @@ class RemoteFileView(FileView):
         for d in dir["dirs"]:
             result.append({"name": d["name"], "type": "dir", "path": d["name"]})
         return result
-
     async def get_workspace_metadata(self, path):
-        if not self.metadata.is_avaliable():
+        if not await self.metadata.is_avaliable():
             return {}
         metadata = await self.metadata.get()
         path = Path(path)

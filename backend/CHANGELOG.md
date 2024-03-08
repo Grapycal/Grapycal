@@ -1,3 +1,95 @@
+## v0.11.2 (2024-03-07)
+
+### Fix
+
+- fix node bugs
+
+## v0.11.1 (2024-03-06)
+
+### Fix
+
+- update build stuff
+
+## v0.11.0 (2024-03-06)
+
+### Feat
+
+- allow pasting images or code with ctrl v
+- better UI animation
+- add demo
+- docker compose demo
+- demo on docker desktop kubernetes
+- allow interrupting
+- notification
+- restore all attrs and ctrls by default
+- merge build_node and init_node into create()
+- network save and load
+- TrainNode and ConfigureNode
+- singleton node and expose attributes globally
+- add optionControl
+- let ValuedControl able to invoke edge_activated
+- display if ports accept more edges
+- placeholder
+- pass config from webpack; add login api
+
+### Fix
+
+- use generated workspace id instead of pid
+- fix node bugs
+- optimize node animation communication
+- fix bugs of nodes
+- fix lineplot performance issue
+- remove unused import
+- minor change
+- change when restore
+- change when restore
+- make ui text selectable
+- correctly propogate event for inactive ports
+- listen to keybindings in capture phase
+- fix reconnection
+- improve logging
+- improve logging
+- log correctly if no internet
+- fix new workspace bug
+- allow multi networks in train node
+- improve ui
+- fix deletion and selection bug
+- typo
+- clear edges' data on exception
+- option control select all
+- option control search bug
+- fix funcDef
+- input box bug
+- fix image paste node dimension
+- fix runtime bugs
+- parallel function call bug
+- inconsistent is_new value
+- device bug
+- refactor grapycal_torch
+- is_all_edge_ready returns False if 0 connected edges
+- add add_option_control
+- misc
+- unify looks of controls
+- improve autoCompMenu behavior
+- make UI better
+- fix control-in-port layout bug
+- css
+- let control take the label of the port
+- bump grapycal_torch version
+- add missing dep
+- improve edge apparance
+- fix ui bugs
+- distinguish mouse buttons when interact
+- make box selection and ctrl/shift compatible
+- inspector dragging
+- grapycal_torch
+- grapycal_torch
+- remove debugging prints
+- control name bug
+- minor css problem
+- fix ui alignment
+- make controls in input ports restorable
+
 ## v0.10.0 (2023-12-30)
 
 ### Feat

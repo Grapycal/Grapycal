@@ -54,10 +54,11 @@ class ClientMsgTypes:
 
 
 class Workspace:
-    def __init__(self, port, host, path) -> None:
+    def __init__(self, port, host, path, workspace_id) -> None:
         self.path = path
         self.port = port
         self.host = host
+        self.workspace_id = workspace_id # used for exit message file
         self.running_module = running_module
         """"""
 
@@ -330,8 +331,7 @@ class Workspace:
         logger.info(f"Opening workspace {path}...")
         self.send_message_to_all(f"Opening workspace {path}...")
 
-        pid = os.getpid()
-        exit_message_file = f"grapycal_exit_message_{pid}"
+        exit_message_file = f"grapycal_exit_message_{self.workspace_id}"
         with open(exit_message_file, "w") as f:
             f.write(f"open {path}")
         self.exit()
@@ -382,7 +382,8 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--host", type=str, default="localhost")
     parser.add_argument("--path", type=str, default="workspace.grapycal")
+    parser.add_argument("--workspace_id", type=int, default=0)
     args = parser.parse_args()
 
-    workspace = Workspace(args.port, args.host, args.path)
+    workspace = Workspace(args.port, args.host, args.path, args.workspace_id)
     workspace.run()

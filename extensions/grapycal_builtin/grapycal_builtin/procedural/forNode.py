@@ -21,7 +21,7 @@ class ForNode(Node):
         self.shape.set('simple')
 
 
-        
+    def init_node(self):
         self.iterator:Iterable|None = None
 
     def edge_activated(self, edge: Edge, port: InputPort):
@@ -48,6 +48,8 @@ class ForNode(Node):
 
 class RepeatNode(SourceNode):
     '''
+    𝄆 Repeatly push numbers from 0 to ``times``-1 to the ``item`` port. 𝄇
+
     Shortcut for ``For`` node with ``range`` as iterable.
     '''
     category = 'procedural'
@@ -55,18 +57,14 @@ class RepeatNode(SourceNode):
     def build_node(self):
         super().build_node()
         self.item_port = self.add_out_port('item')
-        self.label.set('Repeat 10 times')
         self.shape.set('simple')
         self.times = self.add_attribute('times',IntTopic,editor_type='int',init_value=10)
-
-
         
+    def init_node(self):
+        super().init_node()
         self.iterator:Iterable|None = None
-        self.times.on_set += lambda times: self.label.set(f'Repeat {times} times')
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('times')
+        self.times.on_set += lambda times: self.label.set(f'⟳ Repeat {times}')
+        self.label.set(f'⟳ Repeat {self.times.get()}')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.task)

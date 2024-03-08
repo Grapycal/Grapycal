@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from grapycal.utils.misc import as_type
 
@@ -11,7 +12,7 @@ from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node, NodeMeta
 from grapycal.sobjects.port import InputPort, OutputPort, Port
-from objectsync import SObject, SObjectSerialized
+from objectsync import ObjSetTopic, SObject, SObjectSerialized
 from itertools import count
 
 
@@ -24,14 +25,15 @@ class Editor(SObject):
         self.workspace: Workspace = self._server.globals.workspace
         self.node_types = self.workspace._extention_manager._node_types_topic
 
-        # when frontend calls paste service, we need to emit the paste_wrapper event and create the nodes and edges in the callback in manual mode
-        # this makes topicsync save the args of paste_wrapper in the history instead of the result of paste
-        self.on(
-            "restore_event", self._restore_callback, self._delete_callback, auto=False
-        )
-        self.on(
-            "delete_event", self._delete_callback, self._restore_callback, auto=False
-        )
+
+        # used by frontend
+        self._running_nodes = self.add_attribute("running_nodes", ObjSetTopic, is_stateful=False)
+        self._set_running_true = set()
+        self._set_running_true_2 = set()
+        self._running = set()
+        self._set_running_lock = threading.Lock()
+        
+        self.workspace.clock.on_tick += self.check_running_nodes
 
         if old is not None:
             # If the editor is loaded from a save, we need to recreate the nodes and edges.
@@ -58,11 +60,46 @@ class Editor(SObject):
         self.register_service("paste", self._paste, pass_sender=True)
         self.register_service("delete", self._delete)
 
+
+    def check_running_nodes(self):
+        with self._set_running_lock:
+            self._running_nodes.set(list(self._running | self._set_running_true | self._set_running_true_2))
+            self._set_running_true_2 = self._set_running_true
+            self._set_running_true = set()
+
+    def set_running(self, node: Node|Edge, running: bool):
+        with self._set_running_lock:
+            if running:
+                self._set_running_true.add(node)
+                self._running.add(node)
+            else:
+                self._running.discard(node)
+
     def restore(self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized]):
-        self.emit("restore_event", nodes=nodes, edges=edges)  # manual mode
-        for node in self._restored_nodes:
-            # the post_create method must called outside of the restore_event to be in auto mode
-            node.post_create()
+        # restore the nodes and edges
+        with self._server.record(allow_reentry=True):
+            new_node_ids, new_edge_ids = self._restore(nodes, edges)
+            for node in self._restored_nodes:
+                # the post_create method must called outside of the restore_event to be in auto mode
+                node.post_create()
+
+        self._new_node_ids = new_node_ids  # the _paste() method will use this
+        n_nodes = len(new_node_ids)
+        n_edges = len(new_edge_ids)
+        if n_nodes != 0 or n_edges != 0:
+            msg = "Restored "
+            if n_nodes > 0:
+                msg += f"{n_nodes} node"
+                if n_nodes > 1:
+                    msg += "s"  # english is hard :(
+            if n_edges > 0:
+                if n_nodes > 0:
+                    msg += " and "
+                msg += f"{n_edges} edge"
+                if n_edges > 1:
+                    msg += "s"
+            user_logger.info(msg)
+        
 
     def _restore(
         self, node_list: list[SObjectSerialized], edge_list: list[SObjectSerialized]
@@ -135,7 +172,6 @@ class Editor(SObject):
                     obj.type, id=new_node_id, is_new=False, old_node_info=old_node_info
                 )
                 assert isinstance(node, Node), f"Expected node, got {node}"
-                node._restore("", node.old_node_info)
             except Exception:
                 extension_name, type_name = obj.type.split(".")
                 warn_extension(
@@ -367,38 +403,65 @@ class Editor(SObject):
                 edge_ids.append(id)
             else:
                 raise Exception(f"Unknown object type {obj}")
+            
+        for id in node_ids:
+            obj = self._server.get_object(id)
+            
 
         if len(node_ids) == 0 and len(edge_ids) == 0:
             return
 
-        # use delete_event so the delete can be undone and redone correctly (with restore_callback)
-        self.emit("delete_event", node_ids=node_ids, edge_ids=edge_ids)
-
-    def _restore_callback(
-        self, nodes: list[SObjectSerialized], edges: list[SObjectSerialized], **kwargs
-    ):
-        # restore the nodes and edges
-        new_node_ids, new_edge_ids = self._restore(nodes, edges)
-
-        self._new_node_ids = new_node_ids  # the _paste() method will use this
-
-        if len(nodes) != 0 or len(edges) != 0:
-            msg = "Restored "
+        nodes: set[Node] = set()
+        edges: set[Edge] = set()
+        for id in node_ids:
+            obj = self._server.get_object(id)
+            if isinstance(obj, Node):
+                nodes.add(obj)
+            else:
+                raise Exception(f"{obj} is not a node")
+        for id in edge_ids:
+            obj = self._server.get_object(id)
+            if isinstance(obj, Edge):
+                edges.add(obj)
+            else:
+                raise Exception(f"{obj} is not an edge")
+        
+        # also include the edges connected to the nodes
+        for node in nodes:
+            for port in node.in_ports.get() + node.out_ports.get():
+                for edge in port.edges:
+                    edges.add(edge)
+        
+        # check for duplicate deletion
+        # this happens when the previous delete message are still flying to the client
+        for edge in edges:
+            if edge.is_destroyed():
+                raise Exception(f"Edge {edge} is already destroyed")
+        for node in nodes:
+            if node.is_destroyed():
+                raise Exception(f"Node {node} is already destroyed")
+        
+        with self._server.record():
+            # actually delete the nodes and edges
+            for edge in edges:
+                edge.remove()
+            for node in nodes:
+                node.remove()
+        
+        # log the deletion
+        # TODO: deleting nodes may need thread locking
+        msg = "Deleted "
+        if len(nodes) > 0:
+            msg += f"{len(nodes)} node"
+            if len(nodes) > 1:
+                msg += "s"  # english is hard :(
+        if len(edges) > 0:
             if len(nodes) > 0:
-                msg += f"{len(nodes)} node"
-                if len(nodes) > 1:
-                    msg += "s"  # english is hard :(
-            if len(edges) > 0:
-                if len(nodes) > 0:
-                    msg += " and "
-                msg += f"{len(edges)} edge"
-                if len(edges) > 1:
-                    msg += "s"
-            user_logger.info(msg)
-
-        # return the ids of the restored nodes and edges so when the event is undone,
-        # _delete_callback() can delete the nodes and edges
-        return {"node_ids": new_node_ids, "edge_ids": new_edge_ids}
+                msg += " and "
+            msg += f"{len(edges)} edge"
+            if len(edges) > 1:
+                msg += "s"
+        user_logger.info(msg)
 
     def _delete_callback(self, node_ids, edge_ids, **kwargs):
         # the opposite of _restore_callback

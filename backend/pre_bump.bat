@@ -1,5 +1,5 @@
 cd ../frontend
-CALL npm run build
+CALL npm run build:standalone
 cd ..
 rm -rf backend/src/grapycal/webpage
 mkdir "backend/src/grapycal/webpage" 

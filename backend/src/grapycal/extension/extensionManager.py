@@ -154,7 +154,7 @@ class ExtensionManager:
         extension = self._extensions[extension_name]
         for node_type_name, node_type in extension.singletonNodeTypes.items():
             if node_type._auto_instantiate and not hasattr(node_type,'instance'):
-                self._workspace.get_workspace_object().main_editor.create_node(node_type, translation='9999,9999')
+                self._workspace.get_workspace_object().main_editor.create_node(node_type, translation='9999,9999',is_new = True)
 
     def _update_available_extensions_topic(self) -> None:
         self._workspace.add_task_to_event_loop(self._update_available_extensions_topic_async())
@@ -276,7 +276,7 @@ class ExtensionManager:
         node_types = self._extensions[name].node_types
         for node_type in node_types.values():
             if not node_type.category == 'hidden' and not node_type._is_singleton:
-                self._objectsync.create_object(node_type,parent_id=self._workspace.get_workspace_object().sidebar.get_id(),is_preview=True)
+                self._objectsync.create_object(node_type,parent_id=self._workspace.get_workspace_object().sidebar.get_id(),is_preview=True,is_new=True)
  
     def _destroy_nodes(self, name: str) -> None:
         node_types = self._extensions[name].node_types

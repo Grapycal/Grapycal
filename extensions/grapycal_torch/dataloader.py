@@ -25,10 +25,6 @@ class DataLoaderNode(Node):
         self.dl_iterator: Iterator | None = None
         self.epoch_counter = 0
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('batch_size', 'shuffle', 'num_workers','repeats')
-
     def task(self):
         dataset = self.dataset.get_one_data()
         batch_size = self.batch_size.get()
