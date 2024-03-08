@@ -37,7 +37,7 @@ except ImportError:
 class ImagePasteNode(SourceNode):
     category = "interaction"
 
-    def build_node(self):
+    def build_node(self,image: str|None = ''):
         super().build_node()
         self.shape.set("simple")
         self.label.set("Paste Image")
@@ -51,15 +51,15 @@ class ImagePasteNode(SourceNode):
         )
         self.out_port = self.add_out_port("img")
         self.icon_path.set("image")
-
-
-        
-        self.format.add_validator(self.format_validator)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls("img")
-        self.restore_attributes("format")
+        self.preserve_alpha = self.add_attribute(
+            "preserve alpha", StringTopic, "no", editor_type="options", options=["yes", "no"]
+        )
+        if image:
+            self.img.set(image)
+            self.format.add_validator(self.format_validator)
+            
+    def init_node(self):
+        super().init_node()
 
     def format_validator(self, format, _):
         if "torch" in format:
@@ -82,12 +82,12 @@ class ImagePasteNode(SourceNode):
         if self.format.get() == "torch":
             img = torch.from_numpy(np.array(img))
             img = img.permute(2, 0, 1).to(torch.float32) / 255
-            if img.shape[0] == 4:
+            if (self.preserve_alpha.get() == 'no') and img.shape[0] == 4:
                 img = img[:3]
         elif self.format.get() == "numpy":
             img = np.array(img).astype(np.float32).transpose(2, 0, 1) / 255
-            if img.shape[0] == 4:
-                img = img[:3]
+            if (self.preserve_alpha.get() == 'no') and img.shape[0] == 4:
+                img = img[:3] 
 
         self.out_port.push_data(img)
 
@@ -211,11 +211,6 @@ class ImageDisplayNode(Node):
         self.in_port = self.add_in_port("data", 1, "")
         self.icon_path.set("image")
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls("img", "slice")
-        self.restore_attributes("cmap", "vmin", "vmax")
-
     def edge_activated(self, edge: Edge, port: InputPort):
         self.run(self.update_image, data=self.in_port.get_one_data())
 
@@ -281,7 +276,6 @@ class ImageDisplayNode(Node):
 
     def update_image(self, data):
         data = self.preprocess_data(data)
-        self.print(data.shape)
         # use plt to convert to jpg
         buf = io.BytesIO()
         fig = plt.figure(figsize=(10, 10))
@@ -438,13 +432,16 @@ class LinePlotNode(Node):
             options=["from 0", "continue"],
         )
 
-
+    def init_node(self):
         
         self.x_coord = [0]
         self.line_plot.lines.on_insert.add_auto(self.add_line)
         self.line_plot.lines.on_pop.add_auto(self.remove_line)
         if self.is_new:
             self.line_plot.lines.insert("line", 0)
+        else:
+            for name in self.line_plot.lines:
+                self.add_line(name, None)
 
     def add_line(self, name, _):
         self.add_in_port(name, 1)
@@ -452,10 +449,6 @@ class LinePlotNode(Node):
     def remove_line(self, name, _):
         self.remove_in_port(name)
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes("x coord mode")
-        self.restore_controls("lineplot")
 
     def edge_activated(self, edge: Edge, port: InputPort):
         match port:

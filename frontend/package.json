@@ -1,6 +1,6 @@
 {
   "name": "grapycal-client",
-  "version": "0.10.0",
+  "version": "0.11.2",
   "main": "app.ts",
   "license": "BSD-3-Clause",
   "devDependencies": {
@@ -20,7 +20,9 @@
     "build": "npx webpack --mode development",
     "build:standalone": "npx webpack --mode development --config webpack.config.standalone.js",
     "build:service": "npx webpack --mode development --config webpack.config.service.js",
-    "postbuild": "python ./postbuild.py"
+    "postbuild": "python ./postbuild.py",
+    "postbuild:standalone": "python ./postbuild.py",
+    "postbuild:service": "python ./postbuild.py"
   },
   "dependencies": {
     "@sentry/node": "^7.85.0",

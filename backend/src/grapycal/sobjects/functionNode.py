@@ -25,7 +25,7 @@ class FunctionNode(Node):
         self.shape.set('round')
 
     def edge_activated(self, edge: Edge, port):
-        for port in self.in_ports:
+        for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
         self.run(self.task)
@@ -34,19 +34,18 @@ class FunctionNode(Node):
         if self.is_destroyed():
             return
         inputs = {}
-        for port in self.in_ports:
+        for port in self._get_func_ins():
             if port.max_edges.get() == 1:
                 inputs[port.get_name()] = port.edges[0].get_data()
             else:
                 inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
         result = self.calculate(**inputs)
 
-        if result is None:
-            return
-
-        if len(self.out_ports) == 1:
-            self.out_ports[0].push_data(result)
+        if len(self._get_func_outs()) == 1:
+            self._get_func_outs()[0].push_data(result)
         else:
+            if result is None:
+                return
             for k,v in result.items():
                 self.get_out_port(k).push_data(v)
 
@@ -72,16 +71,32 @@ class FunctionNode(Node):
         raise NotImplementedError
 
     def input_edge_added(self, edge: Edge, port):
-        for port in self.in_ports:
+        for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
         self.run(self.task)
 
     def input_edge_removed(self, edge: Edge, port):
-        for port in self.in_ports:
+        for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
         self.run(self.task)
 
     def remove(self):
         return super().remove()
+    
+    def _get_func_ins(self):
+        res = []
+        for port in self.in_ports:
+            if port.get_name() in self.inputs:
+                res.append(port)
+
+        return res
+    
+    def _get_func_outs(self):
+        res = []
+        for port in self.out_ports:
+            if port.get_name() in self.outputs:
+                res.append(port)
+
+        return res

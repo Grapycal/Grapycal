@@ -47,18 +47,44 @@ Define styles for different node categories
     border-width: 10px;
 }
 
-
-
-.node.running .node-label{
-    background-color: var(--t1);
+.node-label-underlay{
+    background: linear-gradient(330deg, var(--cate-color) 10%, transparent 75%);
+    background-size: 200%;
+    opacity: 0;
 }
 
-
-
-.node:not(.running) .node-label{
-
-    transition: background-color 0.2s ease-out;
+.node.running .node-label-underlay{
+    opacity: 0.8;
 }
+
+.node:not(.running) .node-label-underlay{
+    transition: opacity 0.2s ease-out;
+}
+
+/* an animation to make the underlay move from 100% to 0% */
+.node.running .node-label-underlay{
+    animation: underlay 2s infinite linear;
+}
+
+@keyframes underlay {
+    0% {
+        background-position-x: 50%;
+    }
+    30% {
+            background-position-x: 25%;
+        }
+    50% {
+        
+        background-position-x: 0%;
+    }
+    70% {
+            background-position-x: 25%;
+        }
+    100% {
+        background-position-x: 50%;
+    }
+}
+
 
 .hierarchy-node{
     border-color: var(--cate-color);
@@ -121,7 +147,9 @@ Define styles for different node categories
 .cate-torch-neural-network .node-label{
     --cate-color: #61abff;
 }
-
+.cate-numpy{
+    --cate-color: #EE82EE;
+}
 
 /* 
 .cate-function-math{

@@ -1,12 +1,16 @@
 from collections import defaultdict
+from typing import Any
 from grapycal.extension.utils import NodeInfo
+from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
+from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.port import InputPort
 from objectsync.sobject import SObjectSerialized
 from .forNode import *
 from .procedureNode import ProcedureNode
 from .limiterNode import LimiterNode
 from .funcDef import *
+import time
 
 class PortalManager:
     ins = ListDict['InPortalNode']()
@@ -23,7 +27,7 @@ class InPortalNode(Node):
         self.out_port = self.add_out_port('then',display_name='')
         self.css_classes.append('fit-content')
     
-
+    def init_node(self):
         PortalManager.ins.append(self.name.get(),self)
         self.name.on_set2.add_manual(self.on_name_set)
 
@@ -65,13 +69,10 @@ class OutPortalNode(Node):
         self.out_port = self.add_out_port('do',display_name='')
         self.css_classes.append('fit-content')
     
-
+    def init_node(self):
         PortalManager.outs.append(self.name.get(),self)
+        self.label.set(f'{self.name.get()}')
         self.name.on_set2.add_manual(self.on_name_set)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('name')
         
     def on_name_set(self, old, new):
         self.label.set(f'{new}')
@@ -88,3 +89,19 @@ class OutPortalNode(Node):
     def destroy(self) -> SObjectSerialized:
         PortalManager.outs.remove(self.name.get(),self)
         return super().destroy()
+    
+class SleepNode(FunctionNode):
+    category = 'procedural'
+    inputs = ['start']
+    outputs = ['done']
+
+    def build_node(self):
+        super().build_node()
+        time_port = self.add_in_port('seconds',control_type=TextControl,display_name='time',text='1')
+        self.shape.set('normal')
+        self.label.set('Sleep')
+        self.time_control = time_port.default_control
+
+    def calculate(self, **inputs) -> Any:
+        time.sleep(float(self.time_control.get_value()))
+        return inputs['start']

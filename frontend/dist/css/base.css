@@ -69,6 +69,10 @@ input{
     border-radius: 2px;
 }
 
+.control textarea:not([disabled]){
+    min-height: 15px;
+}
+
 button{
     
     color: inherit;
@@ -162,11 +166,21 @@ footer{
 }
 
 .node-label{
+    position: relative;
     height: 20.5px;
     
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     z-index: -1;
+}
+
+.node-label-underlay{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: -2;
 }
 
 .simple-node .node-label{
@@ -188,6 +202,13 @@ footer{
 }
 
 .round-node .node-label{
+    
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.round-node .node-label-underlay{
     
     width: 30px;
     height: 30px;
@@ -614,6 +635,7 @@ input:enabled, textarea:enabled{
 .sidebar-tab-btn{
     width: 100%;
     height: 45px;
+    user-select: none;
 }
 
 .sidebar-tab-btn-icon{
@@ -631,6 +653,8 @@ input:enabled, textarea:enabled{
     right: 0px;
     width: 300px;
     overflow-y: scroll;
+    /* initially hidden */
+    display: none; 
 }
 
 .sidebar-resize-handle {

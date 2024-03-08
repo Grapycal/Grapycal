@@ -23,7 +23,6 @@ class Edge(SObject):
         self.tail = self.add_attribute('tail', ObjTopic[OutputPort], tail)
         self.head = self.add_attribute('head', ObjTopic[InputPort], head)
         self.label = self.add_attribute('label', StringTopic, is_stateful=False)
-        self.data_ready_topic = self.add_attribute('data_ready',IntTopic,1,is_stateful=False) # 0 for running, other for not running
 
     def init(self):                
         self._data = None
@@ -31,13 +30,16 @@ class Edge(SObject):
         self._data_ready = False
         self.reaquirable = False
 
-        self.data_ready_topic.set(1) # prevent a restored edge to show data ready
-
         self.tail.on_set2 += self.on_tail_set
         self.head.on_set2 += self.on_head_set
 
         self.on_tail_set(None, self.tail.get())
         self.on_head_set(None, self.head.get())
+
+        parent = self.get_parent()
+        from grapycal.sobjects.editor import Editor
+        assert isinstance(parent, Editor)
+        self.editor = parent
         
 
     def on_tail_set(self, old_tail:Port|None, new_tail:Port|None):
@@ -66,6 +68,9 @@ class Edge(SObject):
             self.tail.get().remove_edge(self)
         if self.head.get():
             self.head.get().remove_edge(self)
+        
+        if hasattr(self, 'editor'):
+            self.editor.set_running(self, False)
         return super().destroy()
 
     def get_data(self)->Any:
@@ -76,9 +81,7 @@ class Edge(SObject):
         if not self.reaquirable:
             self._data_ready = False
             
-            with self._server.record(allow_reentry=True): # aquire a lock to prevent calling set while destroying
-                if not self.is_destroyed():
-                    self.data_ready_topic.set(random.randint(0,10000))
+            self.editor.set_running(self, False)
             self._data = None # reloase memory
         return temp
     
@@ -94,7 +97,7 @@ class Edge(SObject):
         with self._server.record(allow_reentry=True): # aquire a lock to prevent calling set while destroying
             if self.is_destroyed():
                 return
-            self.data_ready_topic.set(0)
+            self.editor.set_running(self, True)
         if label:
             self.label.set(label)
         else:
@@ -134,5 +137,4 @@ class Edge(SObject):
         head = self.head.get()
         assert head is not None
         return head
-    
     

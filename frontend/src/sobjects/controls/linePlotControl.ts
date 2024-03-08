@@ -39,7 +39,8 @@ export class LinePlotControl extends Control{
     private renderer: THREE.WebGLRenderer
     private baseObject: THREE.Object3D
     private objectsDirty = false;
-    private renderDirty = false;
+    private renderDirty = -1;
+    private hasRequestedRender = false;
 
     private linesTopic = this.getAttribute('lines', ListTopic<string>)
     disc: THREE.Texture
@@ -180,7 +181,7 @@ export class LinePlotControl extends Control{
 
         this.link(this.node.editor.transform.scaleChanged,(scale:number)=>{
             //this.updateGrid();
-            this.setRenderDirty();
+            this.setRenderDirty(0.1);
         })
         this.link(this.eventDispatcher.onDoubleClick,()=>{
             this.fitting = true;
@@ -344,13 +345,28 @@ export class LinePlotControl extends Control{
         this.boundary.set(name,new THREE.Box3());
     }
 
-    setRenderDirty(): void {
-        if(this.renderDirty) return;
-        this.renderDirty = true;
-        requestAnimationFrame(()=>{
-            this.render();
-            this.renderDirty = false;
-        });
+    private setRenderDirtyTimeout: NodeJS.Timeout;
+    setRenderDirty(dirtyness:number=0): void {
+        if(this.hasRequestedRender) return;
+        this.renderDirty = Math.min(this.renderDirty,dirtyness);
+        if (this.renderDirty <= 0){
+            requestAnimationFrame(()=>{
+                this.render();
+                this.hasRequestedRender = false;
+                this.renderDirty = 1000000;
+                if (this.setRenderDirtyTimeout){
+                    clearTimeout(this.setRenderDirtyTimeout);
+                    this.setRenderDirtyTimeout = null;
+                }
+            });
+            this.hasRequestedRender = true;
+        }
+        else{
+            if(!this.setRenderDirtyTimeout)
+                this.setRenderDirtyTimeout = setTimeout(()=>{
+                    this.setRenderDirty(this.renderDirty-0.1);
+                },100);
+        }
     }
 
     private render(): void {

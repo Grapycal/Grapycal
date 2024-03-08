@@ -30,6 +30,9 @@ class VariableNode(SourceNode):
         self.label.set('Variable')
         self.shape.set('simple')
         self.css_classes.append('fit-content')
+
+    def init_node(self):
+        super().init_node()
         self.value = None
         self.has_value = False
 
@@ -40,6 +43,7 @@ class VariableNode(SourceNode):
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.in_port:
             self.workspace.vars()[self.variable_name.text.get()] = edge.get_data()
+        self.flash_running_indicator()
 
     def task(self):
         self.value = self.workspace.vars()[self.variable_name.text.get()]
@@ -70,12 +74,14 @@ class SplitNode(Node):
         self.shape.set('normal')
         self.keys = self.add_attribute('keys', ListTopic, editor_type='list')
         self.key_mode = self.add_attribute('key mode', StringTopic, 'string', editor_type='options', options=['string','eval']) 
+        
+        if not self.is_new:
+            for key in self.keys:
+                self.add_out_port(key)
+
+    def init_node(self):
         self.keys.on_insert.add_auto(self.add_key)
         self.keys.on_pop.add_auto(self.remove_key)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('keys','key mode')
 
     def add_key(self, key, position):
         self.add_out_port(key)

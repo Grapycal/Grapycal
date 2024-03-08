@@ -29,7 +29,6 @@ export class Edge extends CompSObject {
     tail: ObjectTopic<Port> = this.getAttribute('tail', ObjectTopic<Port>)
     head: ObjectTopic<Port> = this.getAttribute('head', ObjectTopic<Port>)
     labelTopic: StringTopic = this.getAttribute('label', StringTopic)
-    data_ready: IntTopic = this.getAttribute('data_ready', IntTopic)
 
     editor: Editor
     htmlItem: HtmlItem
@@ -51,7 +50,7 @@ export class Edge extends CompSObject {
             <g>
                 <path class="edge-path" id="path" d=""  fill="none"></path>
                 <path class="edge-path-hit-box" id="path_hit_box" d=""  fill="none"></path>
-                <circle class="edge-dot" id="dot" cx="0" cy="0" r="3" fill="white"></circle>
+                <circle class="edge-dot" id="dot" cx="0" cy="0" r="2" fill="none"></circle>
             </g>
         </svg>
     </div>
@@ -163,30 +162,7 @@ export class Edge extends CompSObject {
         })
 
         this.updateSVG()
-        this.link(this.data_ready.onSet2, (_:number,data_ready: number) => {
-            if(data_ready == 0){
-                this.svg.classList.add('data-ready')
-                this.dotAnimation.start()
-            }
-            else{
-                this.svg.classList.add('data-ready')
-                this.dotAnimation.start()
-                let tmp =  data_ready
-                setTimeout(() => {
-                    try{
-                    if(tmp == this.data_ready.getValue())
-                        this.svg.classList.remove('data-ready')
-                        this.dotAnimation.stop()
-                    }catch{}
-                }, 200); //delay of chatrooom sending buffer is 200ms
-            }
-        })
 
-        // initialize data ready
-        if(this.data_ready.getValue() == 0){
-            this.svg.classList.add('data-ready')
-            this.dotAnimation.start()
-        }
 
         this.link(this.eventDispatcher.onMouseDown, (e: MouseEvent) => {
             // pass the event to the editor to box select
@@ -216,6 +192,24 @@ export class Edge extends CompSObject {
         super.onParentChangedTo(newValue)
         this.htmlItem.setParent(this.getComponentInAncestors(HtmlItem) || this.editor.htmlItem) //>????????????
         this.updateSVG()
+        this.editor = as(newValue, Editor)
+        this.link(this.editor.runningChanged.slice(this), (data_ready: boolean) => {
+            if(data_ready){
+                this.svg.classList.add('data-ready')
+                this.dotAnimation.start()
+            }
+            else{
+                
+                this.svg.classList.remove('data-ready')
+                this.dotAnimation.stop()
+            }
+        })
+        
+        // initialize data ready
+        if(this.editor.isRunning(this)){
+            this.svg.classList.add('data-ready')
+            this.dotAnimation.start()
+        }
     }
 
     private onDragStart(event: MouseEvent, mousePos: Vector2) {
@@ -567,7 +561,7 @@ class DotAnimation{
             this.dot.setAttribute('opacity',opacity.toString())
         }
 
-        this.progress += dt/1000*2
+        this.progress += dt/1000*100/this.pathResult.length
         if(this.progress > 1) this.progress = 0
         let [tail,mp1,mp2,head] = this.pathResult.points // A bezier curve of 4 points
 

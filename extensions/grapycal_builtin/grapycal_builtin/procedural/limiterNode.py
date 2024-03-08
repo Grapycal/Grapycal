@@ -18,8 +18,7 @@ class LimiterNode(Node):
         self.reduce_factor = self.add_attribute('reduce_factor', IntTopic, 10, editor_type='int')
         self.time_span = self.add_attribute('time_span', FloatTopic, 0.2, editor_type='float')
 
-
-        
+    def init_node(self):
         self.value = None
         self.has_value = False
         self.lock = Lock()
@@ -27,9 +26,6 @@ class LimiterNode(Node):
         self.last_push_time = 0
         self.workspace.clock.on_tick += (self.tick)
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_attributes('reduce_factor', 'time_span')
 
     def edge_activated(self, edge: Edge, port: InputPort):
         with self.lock:

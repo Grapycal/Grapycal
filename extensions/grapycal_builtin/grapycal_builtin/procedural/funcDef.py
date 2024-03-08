@@ -45,23 +45,23 @@ class FuncCallNode(Node):
     '''
 
     category = 'function'
-    def create(self):
+    def build_node(self):
         self.label.set('')
         self.shape.set('normal')
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
-        self.restore_attributes('func_name')
 
         # manually restore in_ports and out_ports
         if not self.is_new:
             assert self.old_node_info is not None
-            for port in self.old_node_info.in_ports:
+            for port in self.old_node_info.in_ports.values():
                 self.add_in_port(port.name, 1, display_name=port.name)
-            for port in self.old_node_info.out_ports:
+            for port in self.old_node_info.out_ports.values():
                 self.add_out_port(port.name, display_name=port.name)
-                
+
         self.update_ports()
-        
+                
+    def init_node(self):
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
         FuncDefManager.calls.append(self.func_name.get(),self)
@@ -155,7 +155,7 @@ class FuncCallNode(Node):
 class FuncInNode(Node):
     category = 'function'
 
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -173,6 +173,11 @@ class FuncInNode(Node):
             
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.ins))
 
+        if not self.is_new:
+            for out in self.outs.get():
+                self.add_out_port(out,display_name = out)
+
+    def init_node(self):
         # add callbacks to attributes
         self.outs.on_insert.add_auto(self.on_output_added)
         self.outs.on_pop.add_auto(self.on_output_removed)
@@ -182,9 +187,6 @@ class FuncInNode(Node):
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
 
         self.update_label()
-
-        for out in self.outs.get():
-            self.add_out_port(out,display_name = out)
         
         if not self.is_preview.get():
             FuncDefManager.ins[self.func_name.get()] = self         
@@ -222,6 +224,7 @@ class FuncInNode(Node):
     def start_function(self,args:dict):
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
+        self.flash_running_indicator()
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
@@ -231,7 +234,7 @@ class FuncInNode(Node):
 class FuncOutNode(Node):
     category = 'function'
     
-    def create(self):
+    def build_node(self):
         self.shape.set('normal')
 
         # setup attributes
@@ -249,6 +252,11 @@ class FuncOutNode(Node):
 
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.outs))
 
+        if not self.is_new:
+            for in_ in self.ins.get():
+                self.add_in_port(in_,1,display_name = in_)
+
+    def init_node(self):
         # add callbacks to attributes
         self.ins.on_insert.add_auto(self.on_input_added)
         self.ins.on_pop.add_auto(self.on_input_removed)
@@ -258,9 +266,6 @@ class FuncOutNode(Node):
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
 
         self.update_label()
-
-        for inp in self.ins.get():
-            self.add_in_port(inp,1,display_name = inp)
 
         if not self.is_preview.get():
             FuncDefManager.outs[self.func_name.get()] = self
@@ -302,6 +307,7 @@ class FuncOutNode(Node):
                 return
         result = {key: self.get_in_port(key).get_one_data() for key in self.ins.get()}
         caller.push_result(result)
+        self.flash_running_indicator()
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():

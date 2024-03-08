@@ -18,14 +18,18 @@ class ImageControl(Control):
         super().restore_from(old)
         self.image.set(old['image'])
     
-    def set(self,image:bytes|io.BytesIO|None):
+    def set(self,image:bytes|io.BytesIO|None|str):
         if image is None:
             self.image.set(smallest_jpg)
             return
         if isinstance(image,io.BytesIO):
             image.seek(0)
             image = image.read()
-        self.image.set_from_binary(image)
+            self.image.set_from_binary(image)
+        elif isinstance(image,bytes):
+            self.image.set_from_binary(image)
+        elif isinstance(image,str):
+            self.image.set(image)
 
     def get(self) -> bytes:
         return self.image.to_binary()

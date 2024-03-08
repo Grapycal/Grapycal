@@ -40,7 +40,7 @@ export class Settings extends CompSObject{
     }
     
     private addFrontendSettings(){
-        let editor = new OptionsEditor('theme',{'options':['light','simple','purple','fire','blocks']})
+        let editor = new OptionsEditor('theme',{'options':['blocks','light','simple','purple','fire']})
         this.inspector.addEditor(editor,'Appearance')
         bindTopicCookie(editor.topic,'theme','blocks')
         editor.topic.onSet.add((value)=>{

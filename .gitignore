@@ -2,7 +2,6 @@
 2_frontend_run.bat
 
 *.grapycal
-!backend/src/grapycal/Welcome.grapycal
 *.pyc
 
 # For early development, the grapycal_torch extension is included in this repo.
@@ -21,3 +20,5 @@ test_working_dirs/working_dir_2/pose_landmarker_heavy.task
 
 *.whl
 *.gz
+
+/ignore
