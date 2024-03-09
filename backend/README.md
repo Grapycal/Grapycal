@@ -23,7 +23,7 @@ Compatibility:
 
 ## Documentation
 
-The full documentaition can be found [here](https://docs.grapycal.org/).
+Visit our [wiki page](https://wiki.grapycal.org/index.php?title=Grapycal_Wiki_ouO#Pages) for documentation.
 
 ## Get Started
 ```bash
@@ -39,7 +39,7 @@ If you have any questions or ideas to share, feel free to join the [Discord serv
 
 Grapycal is still in its early stage. Any contribution is welcome! Currently, most of our efforts are on the backend (the core of Grapycal) and extensions (nodes with various functionalities), but it's also helpful to improve the frontend and the documentation.
 
-To contribute, please refer to the [Contribution Guide](https://docs.grapycal.org/contribution_guide/contribution.html) to get started. The [Project Board](https://github.com/orgs/Grapycal/projects/2) contains the current plans for Grapycal and is a good place to start.
+To contribute, please refer to the [Contribution Guide](https://wiki.grapycal.org/index.php?title=Contribution) to get started. The [Project Board](https://github.com/orgs/Grapycal/projects/2) contains the current plans for Grapycal and is a good place to start.
 
 Feel free to join the [Discord Server](https://discord.gg/adNQcS42CT) to discuss with us.
 
