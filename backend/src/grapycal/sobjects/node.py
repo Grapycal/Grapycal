@@ -1,4 +1,5 @@
 from abc import ABCMeta
+import asyncio
 import enum
 import io
 from itertools import count
@@ -17,7 +18,7 @@ from grapycal.utils.logging import error_extension, user_logger, warn_extension
 from contextlib import contextmanager
 import functools
 import traceback
-from typing import TYPE_CHECKING, Any, Callable, Generator, Literal, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Literal, Self, TypeVar
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.control import Control, ValuedControl
 from grapycal.sobjects.edge import Edge
@@ -174,6 +175,7 @@ class Node(SObject, metaclass=NodeMeta):
         self._already_restored_controls = set()
         self.old_node_info = NodeInfo(serialized) if serialized is not None else None
         self.is_building = False
+        self._n_running_tasks = 0
 
         super().initialize(serialized, *args, **kwargs)
 
@@ -875,14 +877,14 @@ class Node(SObject, metaclass=NodeMeta):
             self.workspace.clear_edges()
 
         def wrapped():
-            self.set_running(True)
+            self.incr_n_running_tasks()
             self.workspace.background_runner.set_exception_callback(exception_callback)
             if redirect_output:
                 with self._redirect_output():
                     ret = task()
             else:
                 ret = task()
-            self.set_running(False)
+            self.decr_n_running_tasks()
             self.workspace.background_runner.set_exception_callback(None)
             return ret
 
@@ -892,7 +894,7 @@ class Node(SObject, metaclass=NodeMeta):
         """
         Run a task in the current thread.
         """
-        self.set_running(True)
+        self.incr_n_running_tasks()
         try:
             if redirect_output:
                 with self._redirect_output():
@@ -901,8 +903,32 @@ class Node(SObject, metaclass=NodeMeta):
                 task()
         except Exception as e:
             self.print_exception(e, truncate=1)
-        self.set_running(False)
+        self.decr_n_running_tasks()
 
+    def _run_async(self, task: Callable[[], Awaitable[None]]):
+        """
+        Run an async task.
+        """
+        async def wrapped():
+            self.incr_n_running_tasks()
+            try:
+                await task()
+            except Exception as e:
+                self.print_exception(e, truncate=1)
+            self.decr_n_running_tasks()
+
+        self.workspace.get_communication_event_loop().create_task(wrapped())
+
+    def incr_n_running_tasks(self):
+        self._n_running_tasks += 1
+        if self._n_running_tasks == 1:
+            self.set_running(True)
+
+    def decr_n_running_tasks(self):
+        self._n_running_tasks -= 1
+        if self._n_running_tasks == 0:
+            self.set_running(False)
+            
     def run(
         self,
         task: Callable,
@@ -923,8 +949,11 @@ class Node(SObject, metaclass=NodeMeta):
             - to_queue: This argument is used only when `background` is True. If set to True, the task will be pushed to the :class:`.BackgroundRunner`'s queue.\
             If set to False, the task will be pushed to its stack. See :class:`.BackgroundRunner` for more details.
         """
+        is_async = asyncio.iscoroutinefunction(task)
         task = functools.partial(task, *args, **kwargs)
-        if background:
+        if is_async:
+            self._run_async(task)
+        elif background:
             self._run_in_background(task, to_queue, redirect_output=False)
         else:
             self._run_directly(task, redirect_output=False)
@@ -936,15 +965,15 @@ class Node(SObject, metaclass=NodeMeta):
                 f"Exception occured in a destroyed node {self.get_id()}: {message}"
             )
         else:
-            self.set_running(False)
+            self.decr_n_running_tasks()
             if len(self.output) > 100:
                 self.output.set([])
                 self.output.insert(["error", "Too many output lines. Cleared.\n"])
             self.output.insert(["error", message])
 
     def flash_running_indicator(self):
-        self.set_running(True)
-        self.set_running(False)
+        self.incr_n_running_tasks()
+        self.decr_n_running_tasks()
 
     def set_running(self, running: bool):
         with self._server.record(

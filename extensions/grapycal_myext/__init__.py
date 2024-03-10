@@ -1,8 +1,10 @@
+import asyncio
 from grapycal import Node, Edge, InputPort
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.optionControl import OptionControl
 from grapycal.sobjects.controls.textControl import TextControl
+from grapycal.sobjects.functionNode import FunctionNode
 
 class IsEvenNode(Node):
     category = 'function'
@@ -60,6 +62,18 @@ class BeforeNode(Node):
 
     def option_changed(self,value:str):
         self.out_port.push_data(value)
+
+class AsyncTestNode(FunctionNode):
+    category = 'test'
+    inputs = ['in_']
+    outputs = ['out']
+
+    async def calculate(self, in_: str):
+        print('Running async test node')
+        await asyncio.sleep(2)
+        print('Done')
+        return in_
+
 
 # class AfterNode(Node):
 #     category = 'function'

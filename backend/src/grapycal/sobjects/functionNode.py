@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
@@ -28,19 +29,18 @@ class FunctionNode(Node):
         for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
-        self.run(self.task)
+        self.run(self._task)
 
-    def task(self):
-        if self.is_destroyed():
-            return
+    def _pre_task(self) -> dict:
         inputs = {}
         for port in self._get_func_ins():
             if port.max_edges.get() == 1:
                 inputs[port.get_name()] = port.edges[0].get_data()
             else:
                 inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
-        result = self.calculate(**inputs)
-
+        return inputs
+    
+    def _post_task(self, result):
         if len(self._get_func_outs()) == 1:
             self._get_func_outs()[0].push_data(result)
         else:
@@ -48,6 +48,28 @@ class FunctionNode(Node):
                 return
             for k,v in result.items():
                 self.get_out_port(k).push_data(v)
+        
+    def _task(self):
+        if asyncio.iscoroutinefunction(self.calculate):
+            self.run(self.task_async)
+        else:
+            self.run(self._task_sync)
+
+    def _task_sync(self):
+        if self.is_destroyed():
+            return
+        inputs = self._pre_task()
+        result = self.calculate(**inputs)
+        self._post_task(result)
+
+    async def task_async(self):
+        if self.is_destroyed():
+            return
+        inputs = self._pre_task()
+        result = await self.calculate(**inputs)
+        self._post_task(result)
+
+        
 
     def calculate(self, **inputs)->Any:
         '''
@@ -74,13 +96,13 @@ class FunctionNode(Node):
         for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
-        self.run(self.task)
+        self.run(self._task)
 
     def input_edge_removed(self, edge: Edge, port):
         for port in self._get_func_ins():
             if not port.is_all_edge_ready():
                 return
-        self.run(self.task)
+        self.run(self._task)
 
     def remove(self):
         return super().remove()
