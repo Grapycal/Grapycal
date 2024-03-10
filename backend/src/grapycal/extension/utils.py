@@ -146,7 +146,10 @@ def get_package_version(package_name:str)->str:
         return '0.0.0'
 
 def get_package_version_from_pyproject(package_name:str)->str|None:
-    init_location = importlib.util.find_spec(package_name).origin
+    spec = importlib.util.find_spec(package_name)
+    if spec is None:
+        return None
+    init_location = spec.origin
     if init_location is None:
         return None
     package_location = Path(init_location).parent
