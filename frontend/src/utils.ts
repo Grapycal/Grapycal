@@ -359,8 +359,9 @@ export function getSelectionText(): string|null {
 }
 
 
-export function getImageFromClipboard(e: ClipboardEvent, callback: (base64String: string) => void){
+export function getImageFromClipboard(e: ClipboardEvent, callback: (base64String: string) => void, no_image_callback: () => void=()=>{}) {
     let items = e.clipboardData.items
+    let result = null
     if (items) {
         for (let item of items) {
             if (item.type.indexOf("image") !== -1) {
@@ -376,4 +377,5 @@ export function getImageFromClipboard(e: ClipboardEvent, callback: (base64String
             }
         }
     }
+    no_image_callback()
 }

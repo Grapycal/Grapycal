@@ -246,30 +246,37 @@ export class Editor extends CompSObject{
         if(getSelectionText() != '') return;
         
         getImageFromClipboard(e, (base64String) => {
+            // ws message must < 4MB
+            // but we will limit it to 2MB because change of StringTopic also sends old value
+            if (base64String.length > 2000000) {
+                Workspace.instance.appNotif.add("Image is too large. Max size is 2MB")
+                return
+            }
             this.createNode('grapycal_builtin.ImagePasteNode',
                 {image:base64String}
             )
-        })
+        },()=>{
 
-        navigator.clipboard.readText().then(text=>{
-            let data = null
-            if (text.startsWith('{"nodes":[')){
-                try{
-                    data = JSON.parse(text)
-                }catch(e){
-                    data = null
+            navigator.clipboard.readText().then(text=>{
+                let data = null
+                if (text.startsWith('{"nodes":[')){
+                    try{
+                        data = JSON.parse(text)
+                    }catch(e){
+                        data = null
+                    }
                 }
-            }
-            if(data){
+                if(data){
 
-                let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
-                this.makeRequest('paste',{data,mouse_pos:mousePos})
-                Workspace.instance.selection.clearSelection()
-            }else{
-                this.createNode('grapycal_builtin.ExecNode',
-                    {text:text}
-                )
-            }
+                    let mousePos = this.transform.worldToLocal(this.eventDispatcher.mousePos)
+                    this.makeRequest('paste',{data,mouse_pos:mousePos})
+                    Workspace.instance.selection.clearSelection()
+                }else{
+                    this.createNode('grapycal_builtin.ExecNode',
+                        {text:text}
+                    )
+                }
+            })
         })
     }
 
