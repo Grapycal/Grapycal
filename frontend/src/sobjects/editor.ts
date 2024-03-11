@@ -8,7 +8,7 @@ import { CompSObject } from "./compSObject"
 import { Linker } from "../component/linker"
 import { Port } from "./port"
 import { print } from "../devUtils"
-import { AddNodeMenu } from "../ui_utils/popupMenu/addNodeMenu"
+import { AddNodeMenu, SlashCommandMenu } from "../ui_utils/popupMenu/addNodeMenu"
 import { ActionDict, Vector2, getImageFromClipboard, getSelectionText } from "../utils"
 import { Node } from "./node"
 import { Workspace } from "./workspace"
@@ -88,6 +88,7 @@ export class Editor extends CompSObject{
     }
 
     protected onStart(): void {
+        new SlashCommandMenu(this)
         new AddNodeMenu(this)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl c'),this.copy)
         this.link2(document, "paste", this.paste)

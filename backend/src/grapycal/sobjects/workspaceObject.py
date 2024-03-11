@@ -72,7 +72,6 @@ class WorkspaceObject(SObject):
         # read by frontend
         self.add_attribute("main_editor", ObjTopic).set(self.main_editor)
 
-
 class WebcamStream(SObject):
     frontend_type = "WebcamStream"
 

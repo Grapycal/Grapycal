@@ -24,6 +24,7 @@ export class Workspace extends CompSObject{
     readonly inspector = new NodeInspector()
     readonly record: ObjectSyncClient['record']
     readonly nodeTypesTopic = this.objectsync.getTopic('node_types',DictTopic<string,any>)
+    readonly slashCommandsTopic = this.objectsync.getTopic('slash_commands',DictTopic<string,any>)
     readonly popupMenu = new PopupMenu()
     appNotif: AppNotification
 
@@ -68,6 +69,10 @@ export class Workspace extends CompSObject{
 
     public openWorkspace(path:string){
         this.objectsync.emit('open_workspace',{path:path})
+    }
+
+    public callSlashCommand(name:string){
+        this.objectsync.makeRequest('slash_command',{name:name})
     }
 }
 

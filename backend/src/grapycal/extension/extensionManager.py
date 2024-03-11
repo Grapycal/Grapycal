@@ -56,6 +56,8 @@ class ExtensionManager:
                 raise
             self._instantiate_singletons(extension_name)
         self._update_available_extensions_topic()
+        self._workspace.slash.register(f'reload: {extension_name}',lambda: self.update_extension(extension_name),source=extension_name)
+        self._workspace.slash.register(f'unimport: {extension_name}',lambda: self.unimport_extension(extension_name),source=extension_name)
         self._objectsync.clear_history_inclusive()
         return extension
 
@@ -129,7 +131,7 @@ class ExtensionManager:
         # Unimport old version
         self._destroy_nodes(old_version.name)
         self.unimport_extension(old_version.name)
-        self._load_extension(new_version.name)
+        self.import_extension(new_version.name,create_nodes=False)
 
         self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
 
@@ -145,6 +147,7 @@ class ExtensionManager:
         self._destroy_nodes(extension_name)
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
+        self._workspace.slash.unregister_source(extension_name)
         self._objectsync.clear_history_inclusive() 
 
     def _instantiate_singletons(self, extension_name: str) -> None:
@@ -165,6 +168,10 @@ class ExtensionManager:
         '''
         available_extensions = self._scan_available_extensions()
         self._avaliable_extensions_topic.set(list_to_dict(available_extensions,'name'))
+        self._workspace.slash.unregister_source('import_extension')
+        for extension in available_extensions:
+            extension_name = extension['name']+''
+            self._workspace.slash.register(f'import: {extension_name}',lambda n=extension_name: self.import_extension(n),source='import_extension')
         not_installed_extensions = await get_remote_extensions()
         not_installed_extensions = [info for info in not_installed_extensions 
                                         if (info['name'] not in self._avaliable_extensions_topic and 

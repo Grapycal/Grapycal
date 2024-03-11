@@ -2,6 +2,7 @@ from enum import Enum
 import os
 import time
 import grapycal
+from grapycal.core.slash_command import SlashCommandManager
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
@@ -23,7 +24,7 @@ import logging
 
 logger = logging.getLogger("workspace")
 
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 import threading
 import objectsync
@@ -81,7 +82,9 @@ class Workspace:
         self.clock = Clock(0.1)
 
         self.webcam: WebcamStream | None = None
-
+        self._slash_commands_topic = self._objectsync.create_topic("slash_commands", objectsync.DictTopic)
+        self.slash = SlashCommandManager(self._slash_commands_topic)
+        
         self.data_yaml = HttpResource(
             "https://github.com/Grapycal/grapycal_data/raw/main/data.yaml", dict
         )
@@ -183,6 +186,8 @@ class Workspace:
         self._objectsync.on(
             "open_workspace", self._open_workspace_callback, is_stateful=False
         )
+
+        self._objectsync.register_service("slash_command", self.slash.call)
 
         self.background_runner.run()
 

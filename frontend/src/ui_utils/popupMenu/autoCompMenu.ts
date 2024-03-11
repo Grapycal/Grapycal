@@ -226,6 +226,7 @@ export class AutoCompMenu extends PopupMenu{
         `
     }
     protected search:HTMLInputElement
+    protected closeWhenEmpty = false
     private substringSearchIndex:SubstringSearchIndex = new SubstringSearchIndex()
     private valueToCallback:Map<string,()=>void> = new Map()
     private valueToDisplayName:Map<string,string> = new Map()
@@ -278,6 +279,9 @@ export class AutoCompMenu extends PopupMenu{
     }
     private onInput(){
         this.onSearch()
+        if(this.closeWhenEmpty && this.value == ''){
+            this.close()
+        }
     }
     openAt(x:number,y:number){
         super.openAt(x,y)
