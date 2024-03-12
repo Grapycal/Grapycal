@@ -46,7 +46,7 @@ class ExtensionManager:
         '''
         self._update_available_extensions_topic()
 
-    def import_extension(self, extension_name: str, create_nodes=True) -> Extension:
+    def import_extension(self, extension_name: str, create_nodes=True, log=True) -> Extension:
         extension = self._load_extension(extension_name)
         if create_nodes:
             try:
@@ -58,6 +58,9 @@ class ExtensionManager:
         self._update_available_extensions_topic()
         self._workspace.slash.register(f'reload: {extension_name}',lambda: self.update_extension(extension_name),source=extension_name)
         self._workspace.slash.register(f'unimport: {extension_name}',lambda: self.unimport_extension(extension_name),source=extension_name)
+        if log:
+            logger.info(f'Imported extension {extension_name}')
+            self._workspace.send_message_to_all(f'Imported extension {extension_name}')
         self._objectsync.clear_history_inclusive()
         return extension
 
@@ -130,8 +133,8 @@ class ExtensionManager:
 
         # Unimport old version
         self._destroy_nodes(old_version.name)
-        self.unimport_extension(old_version.name)
-        self.import_extension(new_version.name,create_nodes=False)
+        self.unimport_extension(old_version.name,log=False)
+        self.import_extension(new_version.name,create_nodes=False,log=False)
 
         self._workspace.get_workspace_object().main_editor.restore(nodes_to_recover,edges_to_recover)
 
@@ -139,15 +142,19 @@ class ExtensionManager:
         self._instantiate_singletons(new_version.name)
         self._update_available_extensions_topic()
 
-        logger.info(f'Updated extension {extension_name}')
+        logger.info(f'Reloaded extension {extension_name}')
+        self._workspace.send_message_to_all(f'Reloaded extension {extension_name} {new_version.version}')
         self._objectsync.clear_history_inclusive()
 
-    def unimport_extension(self, extension_name: str) -> None:
+    def unimport_extension(self, extension_name: str, log=True) -> None:
         self._check_extension_not_used(extension_name)
         self._destroy_nodes(extension_name)
         self._unload_extension(extension_name)
         self._update_available_extensions_topic()
         self._workspace.slash.unregister_source(extension_name)
+        if log:
+            logger.info(f'Unimported extension {extension_name}')
+            self._workspace.send_message_to_all(f'Unimported extension {extension_name}')
         self._objectsync.clear_history_inclusive() 
 
     def _instantiate_singletons(self, extension_name: str) -> None:
@@ -255,6 +262,7 @@ class ExtensionManager:
     def _register_extension(self, name: str) -> None:
         for node_type_name, node_type in self._extensions[name].node_types.items():
             self._objectsync.register(node_type,node_type_name)
+            self._workspace.slash.register(node_type_name,lambda n=node_type_name: self._workspace.get_workspace_object().main_editor.create_node(n),source=name)
     
     def _check_extension_not_used(self, name: str) -> None:
         extension = self._extensions[name]

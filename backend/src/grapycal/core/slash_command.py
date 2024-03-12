@@ -4,20 +4,32 @@ from typing import Callable, Dict
 from objectsync import DictTopic
 
 
-@dataclass
-class SlashCommand:
-    name: str
-    callback: Callable
-    source: str
+# @dataclass
+# class SlashCommand:
+#     name: str
+#     callback: Callable
+#     source: str
+#     key: str
+#     display_name: str
+
+class Command:
+    def __init__(self, name: str, callback: Callable, source: str, key: str, display_name: str):
+        self.name = name
+        self.callback = callback
+        self.source = source
+
+    def __repr__(self):
+        return f"<SlashCommand {self.name}>"
+
 
 
 class SlashCommandManager:
     def __init__(self, topic:DictTopic):
-        self._commands: Dict[str, SlashCommand] = {}
+        self._commands: Dict[str, Command] = {}
         self._topic = topic
     
     def register(self, name: str, callback: Callable, source: str=""):
-        command = SlashCommand(name, callback, source)
+        command = Command(name, callback, source)
         if command.name in self._commands:
             raise ValueError(f"Command {command.name} already exists")
         self._commands[command.name] = command

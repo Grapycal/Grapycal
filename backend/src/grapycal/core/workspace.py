@@ -84,12 +84,15 @@ class Workspace:
         self.webcam: WebcamStream | None = None
         self._slash_commands_topic = self._objectsync.create_topic("slash_commands", objectsync.DictTopic)
         self.slash = SlashCommandManager(self._slash_commands_topic)
+
+        self.slash.register("save workspace", lambda: self.save_workspace(self.path))
         
         self.data_yaml = HttpResource(
             "https://github.com/Grapycal/grapycal_data/raw/main/data.yaml", dict
         )
 
         self.grapycal_id_count = 0
+        self.is_running = False
 
     def _communication_thread(self, event_loop_set_event: threading.Event):
         asyncio.run(self._async_communication_thread(event_loop_set_event))
@@ -188,6 +191,8 @@ class Workspace:
         )
 
         self._objectsync.register_service("slash_command", self.slash.call)
+
+        self.is_running = True
 
         self.background_runner.run()
 
@@ -345,6 +350,8 @@ class Workspace:
         self._communication_event_loop.create_task(task)
 
     def send_message_to_all(self, message, type=ClientMsgTypes.NOTIFICATION):
+        if not self.is_running:
+            return
         if type == ClientMsgTypes.BOTH:
             self.send_message_to_all(message, ClientMsgTypes.NOTIFICATION)
             self.send_message_to_all(message, ClientMsgTypes.STATUS)
@@ -352,6 +359,8 @@ class Workspace:
         self._objectsync.emit("status_message", message=message, type=type)
 
     def send_message(self, message, client_id=None, type=ClientMsgTypes.NOTIFICATION):
+        if not self.is_running:
+            return
         if type == ClientMsgTypes.BOTH:
             self.send_message(message, ClientMsgTypes.NOTIFICATION)
             self.send_message(message, ClientMsgTypes.STATUS)
