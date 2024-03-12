@@ -59,7 +59,7 @@ export class SlashCommandMenu extends AutoCompMenu{
                 callback:()=>{
                     Workspace.instance.callSlashCommand(commandName)
                 },
-                displayName:'/'+command.display_name
+                displayName:command.display_name
             })
         })
         this.setOptions(options)

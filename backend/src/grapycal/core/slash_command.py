@@ -13,13 +13,26 @@ from objectsync import DictTopic
 #     display_name: str
 
 class Command:
-    def __init__(self, name: str, callback: Callable, source: str, key: str, display_name: str):
+    def __init__(self, name: str, callback: Callable, source: str, key: str|None=None, display_name: str|None=None,prefix='/'):
         self.name = name
         self.callback = callback
         self.source = source
+        self.key = key or name
+        self.display_name = display_name or name
+
+        self.key = prefix + self.key
+        self.display_name = prefix + self.display_name
 
     def __repr__(self):
         return f"<SlashCommand {self.name}>"
+    
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "source": self.source,
+            "key": self.key,
+            "display_name": self.display_name
+        }
 
 
 
@@ -33,7 +46,7 @@ class SlashCommandManager:
         if command.name in self._commands:
             raise ValueError(f"Command {command.name} already exists")
         self._commands[command.name] = command
-        self._topic.add(name,{})
+        self._topic.add(name, command.to_dict())
 
     def unregister(self, name: str):
         if name not in self._commands:
