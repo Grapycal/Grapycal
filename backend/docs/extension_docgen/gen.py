@@ -1,6 +1,6 @@
 import argparse
 from typing import List
-from grapycal.extension.extension import Extension
+from grapycal.extension.extension import Extension, get_extension
 from collections import defaultdict
 import re
 
@@ -74,9 +74,9 @@ args = parser.parse_args()
 name = args.extension
 out = args.out
 
-ext = Extension(name)
+ext = get_extension(name)
 
-node_types =  ext.node_types_without_extension_name.values()
+node_types =  ext.node_types_d_without_extension_name.values()
 
 # categorize with category
 

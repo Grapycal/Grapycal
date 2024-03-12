@@ -11,8 +11,8 @@ import pkg_resources
 
 logger = logging.getLogger(__name__)
 
-Input = TypeVar("I")
-Output = TypeVar("O")
+Input = TypeVar("Input")
+Output = TypeVar("Output")
 
 
 class LazyDict(Generic[Input, Output]):
@@ -218,3 +218,6 @@ def get_extension_info(name) -> dict:
         "name": name,
         "version": get_package_version(name),
     }
+
+def snap_node(value: float, grid_size: float=17) -> float:
+    return round(value / grid_size) * grid_size

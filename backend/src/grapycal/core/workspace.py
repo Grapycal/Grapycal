@@ -3,6 +3,7 @@ import os
 import time
 import grapycal
 from grapycal.core.slash_command import SlashCommandManager
+from grapycal.extension.extension import SlashCommandCtx
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
@@ -85,7 +86,7 @@ class Workspace:
         self._slash_commands_topic = self._objectsync.create_topic("slash_commands", objectsync.DictTopic)
         self.slash = SlashCommandManager(self._slash_commands_topic)
 
-        self.slash.register("save workspace", lambda: self.save_workspace(self.path))
+        self.slash.register("save workspace", lambda ctx: self.save_workspace(self.path))
         
         self.data_yaml = HttpResource(
             "https://github.com/Grapycal/grapycal_data/raw/main/data.yaml", dict
@@ -190,7 +191,7 @@ class Workspace:
             "open_workspace", self._open_workspace_callback, is_stateful=False
         )
 
-        self._objectsync.register_service("slash_command", self.slash.call)
+        self._objectsync.register_service("slash_command", lambda name,ctx: self.slash.call(name,SlashCommandCtx(**ctx)))
 
         self.is_running = True
 

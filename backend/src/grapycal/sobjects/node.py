@@ -204,7 +204,7 @@ class Node(SObject, metaclass=NodeMeta):
         self.label_offset = self.add_attribute(
             "label_offset", FloatTopic, 0, restore_from=None
         )
-        self.translation = self.add_attribute("translation", StringTopic, translation)
+        self.translation = self.add_attribute("translation", StringTopic, translation if isinstance(translation, str) else ",".join(map(str, translation)))
         self.is_preview = self.add_attribute(
             "is_preview", IntTopic, 1 if is_preview else 0, restore_from=None
         )

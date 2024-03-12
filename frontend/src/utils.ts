@@ -118,6 +118,10 @@ export class Vector2 {
         return `${this.x},${this.y}`;
     }
 
+    toList(): [number, number]{
+        return [this.x, this.y];
+    }
+
     equals(another:Vector2){
         return this.x == another.x && this.y == another.y
     }

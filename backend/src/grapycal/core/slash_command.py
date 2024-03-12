@@ -12,7 +12,7 @@ from objectsync import DictTopic
 #     key: str
 #     display_name: str
 
-class Command:
+class SlashCommand:
     def __init__(self, name: str, callback: Callable, source: str, key: str|None=None, display_name: str|None=None,prefix='/'):
         self.name = name
         self.callback = callback
@@ -38,11 +38,11 @@ class Command:
 
 class SlashCommandManager:
     def __init__(self, topic:DictTopic):
-        self._commands: Dict[str, Command] = {}
+        self._commands: Dict[str, SlashCommand] = {}
         self._topic = topic
     
-    def register(self, name: str, callback: Callable, source: str=""):
-        command = Command(name, callback, source)
+    def register(self, name: str, callback: Callable, source: str="", key: str|None=None, display_name: str|None=None, prefix: str='/'):
+        command = SlashCommand(name, callback, source, key, display_name, prefix=prefix)
         if command.name in self._commands:
             raise ValueError(f"Command {command.name} already exists")
         self._commands[command.name] = command
@@ -54,10 +54,10 @@ class SlashCommandManager:
         del self._commands[name]
         self._topic.pop(name)
 
-    def call(self, name: str, *args, **kwargs):
+    def call(self, name: str, ctx):
         if name not in self._commands:
             raise ValueError(f"Command {name} does not exist")
-        self._commands[name].callback(*args, **kwargs)
+        self._commands[name].callback(ctx)
     
     def unregister_source(self, source: str):
         for name, command in self._commands.copy().items():

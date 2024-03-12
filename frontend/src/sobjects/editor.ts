@@ -132,6 +132,14 @@ export class Editor extends CompSObject{
         this.makeRequest('create_edge',{tail_id:tailId,head_id:headId})
     }
 
+    /**
+     * Get the mouse position in the editor's local space
+     * @returns the mouse position in the editor's local space
+     */
+    public getMousePos(): Vector2{
+        return this.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos)
+    }
+
     public createNode(type: string,args:any={}): void{
         let translation = this.transform.worldToLocal(GlobalEventDispatcher.instance.mousePos)
         let snap = 17

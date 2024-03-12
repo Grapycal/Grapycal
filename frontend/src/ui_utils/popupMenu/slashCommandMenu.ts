@@ -34,7 +34,7 @@ export class SlashCommandMenu extends AutoCompMenu{
         super()
         this.link(GlobalEventDispatcher.instance.onAnyKeyDown,this.onKeyDown_)
         this.slashCommandsTopic = Workspace.instance.slashCommandsTopic
-        this.link(this.slashCommandsTopic.onSet,this.updateNodeTypes)
+        this.link(this.slashCommandsTopic.onSet,this.updateCommands)
         this.hideWhenClosed = true
         this.closeWhenEmpty = true
     }
@@ -43,21 +43,27 @@ export class SlashCommandMenu extends AutoCompMenu{
         if(!MouseOverDetector.objectsUnderMouse.includes(this.editor)){
             return
         }
-        if(document.activeElement==document.body && !this.opened && e.key.length == 1 && e.key == '/' &&!e.ctrlKey && !e.altKey && !e.metaKey
+        if(document.activeElement==document.body && !this.opened && e.key.length == 1 &&
+             (e.key == '/' || e.key.match(/[a-zA-Z0-9_]/))
+             &&!e.ctrlKey && !e.altKey && !e.metaKey
         ){
             this.openAt(GlobalEventDispatcher.instance.mousePos.x,GlobalEventDispatcher.instance.mousePos.y)
             this.value = ''
         }
     }
 
-    protected updateNodeTypes(commands:Map<string,any>){
+    protected updateCommands(commands:Map<string,any>){
         let options :{key:string,value:string,callback:()=>void,displayName:string}[] = []
         commands.forEach((command,commandName)=>{
             options.push({
                 key:command.key,
                 value:commandName,
                 callback:()=>{
-                    Workspace.instance.callSlashCommand(commandName)
+                    let ctx = {
+                        editor_id:this.editor.id,
+                        mouse_pos:this.editor.getMousePos().toList(),
+                    }
+                    Workspace.instance.callSlashCommand(commandName,ctx)
                 },
                 displayName:command.display_name
             })

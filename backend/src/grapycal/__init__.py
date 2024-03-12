@@ -1,6 +1,7 @@
 __version__ = '0.11.3'
 from grapycal.app import GrapycalApp
 from grapycal.extension_api.utils import Bus
+from grapycal.extension.extension import Extension, slash_command
 from grapycal.sobjects.sourceNode import SourceNode
 from grapycal.utils.config import load_config
 from grapycal.sobjects.controls import TextControl, ButtonControl, ImageControl, OptionControl, LinePlotControl, ThreeControl
