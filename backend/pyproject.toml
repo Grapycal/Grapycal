@@ -21,7 +21,7 @@ include = ["src/grapycal/webpage/**/*","src/grapycal/Welcome.grapycal"] # Have t
 
 [tool.poetry.dependencies]
 python = "^3.11"
-objectsync = ">=0.9.2"
+objectsync = ">=0.10.0"
 pyyaml = "^6.0"
 dacite = "^1.8.1"
 usersettings = "^1.1.5"
