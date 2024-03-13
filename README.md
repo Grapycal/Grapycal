@@ -78,9 +78,9 @@ In this back-and-forth process between humans and machines, using traditional Py
 
 Grapycal and its dependences consist of the following 6 packages:
 
-- [Grapycal/backend](https://github.com/Grapycal/Grapycal): Included in this repo, including the backend code of the Grapycal main application
+- [Grapycal/backend](https://github.com/Grapycal/Grapycal/tree/main/backend): Included in this repo, including the backend code of the Grapycal main application
 
-- [Grapycal/frontend](https://github.com/Grapycal/Grapycal): Included in this repo, including the frontend code of the Grapycal main application
+- [Grapycal/frontend](https://github.com/Grapycal/Grapycal/tree/main/frontend): Included in this repo, including the frontend code of the Grapycal main application
 
 - [Topicsync](https://github.com/eri24816/Topicsync) and [ObjectSync](https://github.com/eri24816/ObjectSync): Backend dependencies. Python packages.
 
