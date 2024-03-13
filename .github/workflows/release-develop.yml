@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'dev'
-      - 'push-ci'
 
 jobs:
   push:
