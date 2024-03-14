@@ -1,9 +1,7 @@
----
-name: Developer image
+name: Workspace CI - Dev
 on:
   push:
-    branches:
-      - 'dev'
+      branches: [main]
 
 jobs:
   push:
@@ -36,13 +34,17 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
+            ${{ github.repository }}-workspace
+            ghcr.io/${{ github.repository }}-workspace
           tags: type=raw,value=dev
           flavor: latest=false
 
       - name: Docker - Build / Push
         uses: docker/build-push-action@v5
         with:
+          context: .
+          file: ./Dockerfile.workspace
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

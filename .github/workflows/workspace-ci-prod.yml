@@ -1,12 +1,10 @@
----
-name: Release
+name: Workspace CI - Prod
 on:
   release:
     types: [published]
 
 jobs:
   release:
-    name: Release - Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,9 +34,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
-          # generate Docker tags based on the following events/attributes
+            ghcr.io/${{ github.repository }}-workspace
           tags: |
             type=semver,pattern=v{{version}}
             type=semver,pattern=v{{major}}.{{minor}}
@@ -46,17 +42,10 @@ jobs:
           flavor: latest=true
 
       - name: Docker - Build / Push
-        id: docker_build
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile.workspace
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-
-      # - name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v4
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: Grapycal/Grapycal
-      #     readme-filepath: ./README.md
