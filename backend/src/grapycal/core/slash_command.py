@@ -42,13 +42,19 @@ class SlashCommandManager:
         self._topic = topic
     
     def register(self, name: str, callback: Callable, source: str="", key: str|None=None, display_name: str|None=None, prefix: str='/'):
+        if display_name is None:
+            display_name = name
+        if key is None:
+            key = name
+        name = f'{source}.{name}'
         command = SlashCommand(name, callback, source, key, display_name, prefix=prefix)
-        if command.name in self._commands:
-            raise ValueError(f"Command {command.name} already exists")
-        self._commands[command.name] = command
+        if name in self._commands:
+            raise ValueError(f"Command {name} already exists")
+        self._commands[name] = command
         self._topic.add(name, command.to_dict())
 
-    def unregister(self, name: str):
+    def unregister(self, name: str, source: str=""):
+        name = f'{source}.{name}'
         if name not in self._commands:
             raise ValueError(f"Command {name} does not exist")
         del self._commands[name]
@@ -64,3 +70,7 @@ class SlashCommandManager:
             if command.source == source:
                 del self._commands[name]
                 self._topic.pop(name)
+
+    def has_command(self, name: str, source: str=""):
+        name = f'{source}.{name}'
+        return name in self._commands

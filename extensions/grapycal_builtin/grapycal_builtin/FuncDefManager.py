@@ -1,17 +1,40 @@
 from typing import TYPE_CHECKING, Dict, Iterable
 
+from grapycal import CommandCtx
 from grapycal_builtin.utils import find_next_valid_name
 from grapycal_torch.manager import ListDict
 
 if TYPE_CHECKING:
     from grapycal_builtin.procedural.funcDef import FuncCallNode, FuncInNode, FuncOutNode
+    from grapycal_builtin import GrapycalBuiltin
 
 class FuncDefManager:
-    calls: ListDict['FuncCallNode'] = ListDict()
-    ins: Dict[str,'FuncInNode'] = {}
-    outs: Dict[str,'FuncOutNode'] = {}
+    def __init__(self,ext:'GrapycalBuiltin') -> None:
+        self.calls: ListDict['FuncCallNode'] = ListDict()
+        self.ins: Dict[str,'FuncInNode'] = {}
+        self.outs: Dict[str,'FuncOutNode'] = {}
+        self.ext: 'GrapycalBuiltin' = ext
 
-    @classmethod
-    def next_func_name(cls,name:str):
-        invalids = cls.ins.keys() | cls.outs.keys()
+    def next_func_name(self,name:str):
+        invalids = self.ins.keys() | self.outs.keys()
         return find_next_valid_name(name, invalids)
+
+    def add_in(self, name:str, node:'FuncInNode'):
+        if not self.ext.has_command(f'Call: {name}'):
+            self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
+        self.ins[name] = node
+
+    def remove_in(self, name:str):
+        del self.ins[name]
+
+    def add_out(self, name:str, node:'FuncOutNode'):
+        if not self.ext.has_command(f'Call: {name}'):
+            self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
+        self.outs[name] = node
+        
+    def remove_out(self, name:str):
+        del self.outs[name]
+
+    def _create_call(self, ctx:CommandCtx, name:str):
+        from grapycal_builtin.procedural.funcDef import FuncCallNode # avoid circular import
+        self.ext.create_node(FuncCallNode, ctx.mouse_pos, name=name)

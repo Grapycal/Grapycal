@@ -3,7 +3,7 @@ import os
 import time
 import grapycal
 from grapycal.core.slash_command import SlashCommandManager
-from grapycal.extension.extension import SlashCommandCtx
+from grapycal.extension.extension import CommandCtx
 from grapycal.extension.extensionManager import ExtensionManager
 from grapycal.extension.utils import Clock
 from grapycal.sobjects.controls.linePlotControl import LinePlotControl
@@ -191,7 +191,7 @@ class Workspace:
             "open_workspace", self._open_workspace_callback, is_stateful=False
         )
 
-        self._objectsync.register_service("slash_command", lambda name,ctx: self.slash.call(name,SlashCommandCtx(**ctx)))
+        self._objectsync.register_service("slash_command", lambda name,ctx: self.slash.call(name,CommandCtx(**ctx)))
 
         self.is_running = True
 

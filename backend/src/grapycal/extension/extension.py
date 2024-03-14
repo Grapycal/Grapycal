@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 def command(name: str):
-    def decorator(func: Callable[[Any, SlashCommandCtx], None]):
+    def decorator(func: Callable[[Any, CommandCtx], None]):
         func._slash_command_name = name
         return func
     return decorator
 
-class SlashCommandCtx:
+class CommandCtx:
     def __init__(self, editor_id: int, mouse_pos: List[float], client_id:int) -> None:
         self.editor_id = editor_id
         self.mouse_pos = mouse_pos
@@ -50,7 +50,7 @@ class Extension(metaclass=ExtensionMeta):
         self.name = extension_name
         self.version = module.__version__ if hasattr(module,'__version__') else get_extension_info(extension_name)['version']
         self._workspace = workspace
-        self._ctx:SlashCommandCtx|None = None
+        self._ctx:CommandCtx|None = None
         
         self.node_types_d:Dict[str,type[Node]] = {}
         self.node_types_d_without_extension_name:Dict[str,type[Node]] = {}
@@ -77,6 +77,7 @@ class Extension(metaclass=ExtensionMeta):
             type_name = f'{self.name}.{obj.__name__}'
             self.node_types_d[type_name] = obj
             self.node_types_d_without_extension_name[obj.__name__] = obj
+            obj.set_extension(self) # so they can reference the extension
 
         self.singletonNodeTypes:Dict[str,type[Node]] = {}
         for name, t in self.node_types_d.items():
@@ -92,7 +93,7 @@ class Extension(metaclass=ExtensionMeta):
             'version': self.version,
         }
     def _wrap(self,callback):
-        def wrapper(ctx:SlashCommandCtx):
+        def wrapper(ctx:CommandCtx):
             self._ctx = ctx
             with self._workspace._objectsync.record():
                 callback(ctx)
@@ -137,7 +138,15 @@ class Extension(metaclass=ExtensionMeta):
     
     def create_edge(self, tail:OutputPort, head:InputPort):
         self._workspace.get_workspace_object().main_editor.create_edge(tail, head)
-    
+
+    def register_command(self, name:str, callback:Callable[[CommandCtx],None]):
+        self._workspace.slash.register(name, self._wrap(callback), source=self.name)
+
+    def unregister_command(self, name:str):
+        self._workspace.slash.unregister(name, source=self.name)
+
+    def has_command(self, name:str):
+        return self._workspace.slash.has_command(name, source=self.name)
 
 def load_or_reload_module(module_name:str):
     if module_name not in sys.modules:

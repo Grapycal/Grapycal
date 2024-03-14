@@ -1,6 +1,6 @@
 from collections import defaultdict
 from os import remove
-from typing import Dict, Generic, List, TypeVar
+from typing import TYPE_CHECKING, Dict, Generic, List, TypeVar
 from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
@@ -8,6 +8,9 @@ from grapycal.sobjects.port import InputPort, OutputPort
 from grapycal_builtin.FuncDefManager import FuncDefManager
 from ..utils import find_next_valid_name
 from objectsync.sobject import SObjectSerialized
+
+if TYPE_CHECKING:
+    from grapycal_builtin import GrapycalBuiltin
 
 T = TypeVar('T')
 class ListDict(Generic[T]):
@@ -39,7 +42,7 @@ class FuncCallNode(Node):
     in the workspace with the same function name. Then, its ports will be updated accroding to the function
     definition.
     '''
-
+    ext:'GrapycalBuiltin'
     category = 'function'
     def build_node(self,name:str='Function'):
         self.label.set('')
@@ -60,13 +63,13 @@ class FuncCallNode(Node):
     def init_node(self):
         self.func_name.on_set2.add_manual(self.on_func_name_changed)
         self.func_name.on_set.add_auto(self.on_func_name_changed_auto)
-        FuncDefManager.calls.append(self.func_name.get(),self)
+        self.ext.func_def_manager.calls.append(self.func_name.get(),self)
         self.label.set(f' {self.func_name.get()}')
 
     def on_func_name_changed(self, old, new):
         self.label.set(f' {new}')
-        FuncDefManager.calls.remove(old,self)
-        FuncDefManager.calls.append(new,self)
+        self.ext.func_def_manager.calls.remove(old,self)
+        self.ext.func_def_manager.calls.append(new,self)
 
     def on_func_name_changed_auto(self,new):
         self.update_ports()
@@ -76,9 +79,9 @@ class FuncCallNode(Node):
         self.update_output_ports()
 
     def update_input_ports(self):
-        if self.func_name.get() not in FuncDefManager.ins:
+        if self.func_name.get() not in self.ext.func_def_manager.ins:
             return
-        names = FuncDefManager.ins[self.func_name.get()].outs.get()
+        names = self.ext.func_def_manager.ins[self.func_name.get()].outs.get()
 
         edgesd = defaultdict[str,list[OutputPort]](list)
 
@@ -97,9 +100,9 @@ class FuncCallNode(Node):
                 self.editor.create_edge(tail,port)
                 
     def update_output_ports(self):
-        if self.func_name.get() not in FuncDefManager.outs:
+        if self.func_name.get() not in self.ext.func_def_manager.outs:
             return
-        names = FuncDefManager.outs[self.func_name.get()].ins.get()
+        names = self.ext.func_def_manager.outs[self.func_name.get()].ins.get()
     
         edgesd = defaultdict[str,list[InputPort]](list)
     
@@ -131,24 +134,25 @@ class FuncCallNode(Node):
         for port in self.in_ports:
             inputs[port.name.get()] = port.get_one_data()
 
-        FuncDefManager.ins[self.func_name.get()].start_function(inputs)
+        self.ext.func_def_manager.ins[self.func_name.get()].start_function(inputs)
 
     def end_function(self):
         if self.is_destroyed():
             return
-        if self.func_name.get() not in FuncDefManager.outs:
+        if self.func_name.get() not in self.ext.func_def_manager.outs:
             return # assume its intended to be a void function
-        FuncDefManager.outs[self.func_name.get()].end_function(self)
+        self.ext.func_def_manager.outs[self.func_name.get()].end_function(self)
 
     def push_result(self, result:dict):
         for key, value in result.items():
             self.get_out_port(key).push_data(value)
 
     def destroy(self) -> SObjectSerialized:
-        FuncDefManager.calls.remove(self.func_name.get(),self)
+        self.ext.func_def_manager.calls.remove(self.func_name.get(),self)
         return super().destroy()
 
 class FuncInNode(Node):
+    ext:'GrapycalBuiltin'
     category = 'function'
 
     def build_node(self,name:str='Function'):
@@ -160,14 +164,14 @@ class FuncInNode(Node):
         self.restore_attributes('outs')
         
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value=name)
-        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.ins) # function name must be unique
+        self.func_name.add_validator(lambda x,_: x not in self.ext.func_def_manager.ins) # function name must be unique
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         try:
             self.restore_attributes('func_name')
         except:
             self.func_name.set(name)
             
-        self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.ins))
+        self.func_name.set(find_next_valid_name(self.func_name.get(),self.ext.func_def_manager.ins))
 
         if not self.is_new:
             for out in self.outs.get():
@@ -187,21 +191,21 @@ class FuncInNode(Node):
         self.update_label()
         
         if not self.is_preview.get():
-            FuncDefManager.ins[self.func_name.get()] = self         
+            self.ext.func_def_manager.add_in(self.func_name.get(),self)        
 
     def post_create(self):
-        for call in FuncDefManager.calls.get(self.func_name.get()):
+        for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
             call.update_ports()
 
     def on_func_name_changed(self, old, new):
         if not self.is_preview.get():
-            FuncDefManager.ins[new] = self
-            FuncDefManager.ins.pop(old)
+            self.ext.func_def_manager.remove_in(old)
+            self.ext.func_def_manager.add_in(new,self)
         self.update_label()
 
     def on_func_name_changed_auto(self,new):
         if not self.is_preview.get():
-            for call in FuncDefManager.calls.get(self.func_name.get()):
+            for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
                 call.update_ports()
 
     def update_label(self):
@@ -215,8 +219,8 @@ class FuncInNode(Node):
 
     def on_output_set(self, new):
         if not self.is_preview.get():
-            print(FuncDefManager.calls.get(self.func_name.get()),self.func_name.get())
-            for call in FuncDefManager.calls.get(self.func_name.get()):
+            print(self.ext.func_def_manager.calls.get(self.func_name.get()),self.func_name.get())
+            for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
                 call.update_input_ports()
 
     def start_function(self,args:dict):
@@ -226,10 +230,11 @@ class FuncInNode(Node):
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
-            FuncDefManager.ins.pop(self.func_name.get())
+            self.ext.func_def_manager.remove_in(self.func_name.get())
         return super().destroy()
 
 class FuncOutNode(Node):
+    ext:'GrapycalBuiltin'
     category = 'function'
     
     def build_node(self,name:str='Function'):
@@ -241,14 +246,14 @@ class FuncOutNode(Node):
         self.restore_attributes('ins')
         
         self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value=name)
-        self.func_name.add_validator(lambda x,_: x not in FuncDefManager.outs)
+        self.func_name.add_validator(lambda x,_: x not in self.ext.func_def_manager.outs)
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         try:
             self.restore_attributes('func_name')
         except:
             self.func_name.set(name)
 
-        self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.outs))
+        self.func_name.set(find_next_valid_name(self.func_name.get(),self.ext.func_def_manager.outs))
 
         if not self.is_new:
             for in_ in self.ins.get():
@@ -268,22 +273,22 @@ class FuncOutNode(Node):
         self.update_label()
 
         if not self.is_preview.get():
-            FuncDefManager.outs[self.func_name.get()] = self
+            self.ext.func_def_manager.add_out(self.func_name.get(),self)
 
     def post_create(self):
         if not self.is_preview.get():
-            for call in FuncDefManager.calls.get(self.func_name.get()):
+            for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
                 call.update_ports()
 
     def on_func_name_changed(self, old, new):
         if not self.is_preview.get():
-            FuncDefManager.outs[new] = self
-            FuncDefManager.outs.pop(old)
+            self.ext.func_def_manager.remove_out(old)
+            self.ext.func_def_manager.add_out(new,self)
         self.update_label()
 
     def on_func_name_changed_auto(self,new):
         if not self.is_preview.get():
-            for call in FuncDefManager.calls.get(self.func_name.get()):
+            for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
                 call.update_ports()
 
     def update_label(self):
@@ -297,7 +302,7 @@ class FuncOutNode(Node):
 
     def on_input_set(self, new):
         if not self.is_preview.get():
-            for call in FuncDefManager.calls.get(self.func_name.get()):
+            for call in self.ext.func_def_manager.calls.get(self.func_name.get()):
                 call.update_output_ports()
 
     def end_function(self,caller:FuncCallNode):
@@ -311,5 +316,5 @@ class FuncOutNode(Node):
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
-            FuncDefManager.outs.pop(self.func_name.get())
+            self.ext.func_def_manager.remove_out(self.func_name.get())
         return super().destroy()

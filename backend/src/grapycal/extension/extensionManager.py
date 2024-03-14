@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Dict, List, Tuple
 import sys
 from os.path import join, dirname
 import shutil
-from grapycal.extension.extension import Extension, SlashCommandCtx, get_extension
+from grapycal.extension.extension import Extension, CommandCtx, get_extension
 from grapycal.sobjects.node import Node
 from grapycal.sobjects.port import Port
 import objectsync
@@ -271,7 +271,7 @@ class ExtensionManager:
         for slash in self._extensions[name].get_slash_commands().values():
             self._workspace.slash.register(slash['name'],slash['callback'],source=name)
 
-    def _create_node_slash_listener(self, ctx:SlashCommandCtx, node_type_name: str) -> None:
+    def _create_node_slash_listener(self, ctx:CommandCtx, node_type_name: str) -> None:
         x = snap_node(ctx.mouse_pos[0])
         y = snap_node(ctx.mouse_pos[1])
         translation = [x,y]

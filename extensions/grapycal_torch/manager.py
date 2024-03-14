@@ -151,7 +151,7 @@ class MNManager:
 
 class Manager:
     '''
-    A static class that holds all the networks, configure nodes, and network calls etc.-+
+    A static class that holds all the networks, configure nodes, and network calls etc.
     '''
     mn = MNManager()
     net = NetManager()

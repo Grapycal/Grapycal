@@ -40,6 +40,7 @@ from objectsync.sobject import SObjectSerialized, WrappedTopic
 
 if TYPE_CHECKING:
     from grapycal.core.workspace import Workspace
+    from grapycal.extension.extension import Extension
 
 
 def warn_no_control_name(control_type, node):
@@ -164,6 +165,11 @@ class Node(SObject, metaclass=NodeMeta):
     category = "hidden"
     instance: Self  # The singleton instance. Used by singleton nodes.
     _deprecated = False  # TODO: If set to True, the node will be marked as deprecated in the inspector.
+    ext: "Extension"
+
+    @classmethod
+    def set_extension(cls, ext: "Extension"):
+        cls.ext = ext
 
     @classmethod
     def get_def_order(cls):

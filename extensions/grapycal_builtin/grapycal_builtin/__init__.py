@@ -1,5 +1,5 @@
 from grapycal import command
-from grapycal.extension.extension import SlashCommandCtx
+from grapycal import CommandCtx
 from .interaction import *
 from .data import *
 from .function import *
@@ -12,12 +12,16 @@ from grapycal import Extension
 
 class GrapycalBuiltin(Extension):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.func_def_manager = FuncDefManager(self)
+
     @command('Create function')
-    def create_function(self,ctx:SlashCommandCtx):
+    def create_function(self,ctx:CommandCtx):
         x = ctx.mouse_pos[0]
         y = ctx.mouse_pos[1]
 
-        name = FuncDefManager.next_func_name('Function')
+        name = self.func_def_manager.next_func_name('Function')
 
         in_node = self.create_node(FuncInNode, [x-150, y], name=name)
         out_node = self.create_node(FuncOutNode, [x+150, y], name=name)
