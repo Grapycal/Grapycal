@@ -5,16 +5,16 @@ from torch import nn
 
 class Conv2dNode(ModuleNode):
     category = 'torch/neural network'
-    def build_node(self):
+    def build_node(self,in_channels=1,out_channels=1,kernel_size=3,padding=1,stride=1):
         super().build_node()
         self.label.set('Conv2d')
         self.add_in_port('in',1)
         self.add_out_port('out')
-        self.in_channels = self.add_attribute('in_channels',IntTopic , editor_type='int',init_value=1)
-        self.out_channels = self.add_attribute('out_channels',IntTopic , editor_type='int',init_value=1)
-        self.kernal_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value='3')
-        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value='1')
-        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value='1')
+        self.in_channels = self.add_attribute('in_channels',IntTopic , editor_type='int',init_value=in_channels)
+        self.out_channels = self.add_attribute('out_channels',IntTopic , editor_type='int',init_value=out_channels)
+        self.kernel_size = self.add_attribute('kernel_size',StringTopic , editor_type='text', init_value=str(kernel_size))
+        self.padding = self.add_attribute('padding',StringTopic , editor_type='text', init_value=str(padding))
+        self.stride = self.add_attribute('stride',StringTopic , editor_type='text', init_value=str(stride))
         self.icon_path.set('cnn')
 
     def init_node(self):
@@ -29,7 +29,7 @@ class Conv2dNode(ModuleNode):
         return nn.Conv2d(
             in_channels=self.in_channels.get(),
             out_channels=self.out_channels.get(),
-            kernel_size=eval(self.kernal_size.get()),
+            kernel_size=eval(self.kernel_size.get()),
             padding=eval(self.padding.get()),
             stride=eval(self.stride.get())
         )

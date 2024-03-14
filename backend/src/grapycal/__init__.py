@@ -1,4 +1,5 @@
 __version__ = '0.11.3'
+GRID = 17
 from grapycal.app import GrapycalApp
 from grapycal.extension_api.utils import Bus
 from grapycal.extension.extension import Extension, command, CommandCtx

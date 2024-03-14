@@ -134,11 +134,14 @@ class NetworkInNode(Node):
     ext: 'GrapycalTorch'
     category = 'torch/neural network'
 
-    def build_node(self,name:str="Network"):
+    def build_node(self,name:str="Network",inputs:List[str]|None=None):
+        if inputs is None:
+            inputs = ['x']
+            
         self.shape.set('normal')
 
         # setup attributes
-        self.outs = self.add_attribute('outs',ListTopic,editor_type='list',init_value=['x'])
+        self.outs = self.add_attribute('outs',ListTopic,editor_type='list',init_value=inputs)
         self.outs.add_validator(ListTopic.unique_validator)
         self.restore_attributes('outs')
         
@@ -162,11 +165,8 @@ class NetworkInNode(Node):
 
         self.update_label()
 
-        if not self.is_new:
-            for out in self.outs.get():
-                self.add_out_port(out,display_name = out)
-        else:
-            self.add_out_port('x',display_name = 'x')
+        for out in self.outs.get():
+            self.add_out_port(out,display_name = out)
 
     def init_node(self):
         
@@ -216,11 +216,13 @@ class NetworkInNode(Node):
 class NetworkOutNode(Node):
     ext: 'GrapycalTorch'
     category = 'torch/neural network'
-    def build_node(self,name:str="Network"):
+    def build_node(self,name:str="Network",outputs:List[str]|None=None):
+        if outputs is None:
+            outputs = ['y']
         self.shape.set('normal')
 
         # setup attributes
-        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=['y'])
+        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=outputs)
         self.ins.add_validator(ListTopic.unique_validator)
         self.restore_attributes('ins')
         
@@ -234,11 +236,8 @@ class NetworkOutNode(Node):
             
         self.network_name.set(find_next_valid_name(self.network_name.get(),self.ext.net.outs))
 
-        if not self.is_new:
-            for in_ in self.ins.get():
-                self.add_in_port(in_,1,display_name = in_)
-        else:
-            self.add_in_port('y',1,display_name = 'y')
+        for in_ in self.ins.get():
+            self.add_in_port(in_,1,display_name = in_)
 
     def init_node(self):
         # add callbacks to attributes

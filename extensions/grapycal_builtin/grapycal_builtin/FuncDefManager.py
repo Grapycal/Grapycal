@@ -25,7 +25,9 @@ class FuncDefManager:
         self.ins[name] = node
 
     def remove_in(self, name:str):
-        del self.ins[name]
+            del self.ins[name]
+            if name not in self.outs:
+                self.ext.unregister_command(f'Call: {name}')
 
     def add_out(self, name:str, node:'FuncOutNode'):
         if not self.ext.has_command(f'Call: {name}'):
@@ -34,6 +36,8 @@ class FuncDefManager:
         
     def remove_out(self, name:str):
         del self.outs[name]
+        if name not in self.ins:
+            self.ext.unregister_command(f'Call: {name}')
 
     def _create_call(self, ctx:CommandCtx, name:str):
         from grapycal_builtin.procedural.funcDef import FuncCallNode # avoid circular import

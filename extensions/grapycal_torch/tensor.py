@@ -13,8 +13,7 @@ class ZeroesNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Zeroes')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl,'shape_text')
-        self.shape_text.text.set('2,2')
+        self.shape_text = self.add_control(TextControl,'shape_text',text='2,2')
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
 
@@ -33,8 +32,7 @@ class OnesNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Ones')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl,'shape_text')
-        self.shape_text.text.set('2,2')
+        self.shape_text = self.add_control(TextControl,'shape_text',text='2,2')
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
 
@@ -53,17 +51,12 @@ class RandNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Rand')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl,'shape_text')
-        self.shape_text.text.set('2,2')
+        self.shape_text = self.add_control(TextControl,'shape_text',text='2,2')
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
         self.min = self.add_attribute('min',FloatTopic,0,editor_type='float')
         self.max = self.add_attribute('max',FloatTopic,1,editor_type='float')
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls('shape_text')
-        self.restore_attributes('device','min','max')
 
     def task(self):
         self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
@@ -75,15 +68,10 @@ class RandnNode(SourceNode):
         self.shape.set('simple')
         self.label.set('Randn')
         self.out = self.add_out_port('tensor')
-        self.shape_text = self.add_control(TextControl,'shape_text')
-        self.shape_text.text.set('2,2')
+        self.shape_text = self.add_control(TextControl,'shape_text',text='2,2')
         self.shape_text.label.set('Shape')
         self.device = self.add_attribute('device',StringTopic,'cpu',editor_type='text')
         
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls('shape_text')
-        self.restore_attributes('device')
 
     def task(self):
         self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
