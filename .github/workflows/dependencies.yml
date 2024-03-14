@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd backend && poetry install
+          cd backend && poetry lock --no-update && poetry install
 
       - name: Update objectsync
         run: |
