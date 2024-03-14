@@ -1,4 +1,4 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.controls.buttonControl import ButtonControl
 from grapycal.sobjects.controls.optionControl import OptionControl
@@ -15,11 +15,13 @@ from torch import nn
 from .utils import setup_net_name_ctrl
 from .moduleNode import ModuleNode
 
-from .manager import Manager as M
+if TYPE_CHECKING:
+    from grapycal_torch import GrapycalTorch
 
 
 @deprecated("Use TrainNode instead.", "0.3.0", "0.4.0")
 class TrainerNode(Node):
+    ext: "GrapycalTorch"
     category = "torch/training"
 
     def build_node(self):
@@ -53,7 +55,7 @@ class TrainerNode(Node):
     def get_module_nodes(self) -> List[ModuleNode]:
         result: List[ModuleNode] = []
         for name in self.network_names.get_one_data().split(","):
-            mn = M.net.get_module_nodes(name)
+            mn = self.ext.net.get_module_nodes(name)
             result += mn
         return result
 
@@ -113,6 +115,7 @@ class TrainerNode(Node):
 
 
 class TrainNode(Node):
+    ext: "GrapycalTorch"
     category = "torch/training"
 
     def build_node(self):
@@ -126,7 +129,7 @@ class TrainNode(Node):
     def init_node(self):
         self.network_name = self.network_port.default_control.value
         self.to_unlink = setup_net_name_ctrl(
-            self.network_port.default_control, multi=True, set_value=self.is_new
+            self.network_port.default_control,self.ext, multi=True, set_value=self.is_new
         )
         self.optimizing_modules: set[nn.Module] = set()
         self.optimizer_device = None
@@ -142,8 +145,8 @@ class TrainNode(Node):
         names = self.network_name.get()
         res = []
         for name in names.split(","):
-            if M.net.has_network(name):
-                res += M.net.get_module_nodes(name)
+            if self.ext.net.has_network(name):
+                res += self.ext.net.get_module_nodes(name)
             else:
                 raise Exception(f"Network {name} does not exist.")
         return res
@@ -175,6 +178,7 @@ class TrainNode(Node):
 
 
 class SaveNode(Node):
+    ext: "GrapycalTorch"
     category = "torch/training"
 
     def build_node(self):
@@ -186,7 +190,7 @@ class SaveNode(Node):
         self.save_port = self.add_in_port("save network", control_type=ButtonControl)
 
     def init_node(self):
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, self.ext,set_value=self.is_new)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
 
@@ -201,7 +205,7 @@ class SaveNode(Node):
     def save(self):
         network_name = self.network_name.get()
         path = self.path.get()
-        M.net.save_network(network_name, path)
+        self.ext.net.save_network(network_name, path)
         self.workspace.send_message_to_all(f"Saved {network_name} to {path}.")
 
     def destroy(self):
@@ -210,6 +214,7 @@ class SaveNode(Node):
 
 
 class LoadNode(Node):
+    ext: "GrapycalTorch"
     category = "torch/training"
 
     def build_node(self):
@@ -221,7 +226,7 @@ class LoadNode(Node):
         self.load_port = self.add_in_port("load network", control_type=ButtonControl)
 
     def init_node(self):
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, self.ext,set_value=self.is_new)
         self.network_name = self.network_port.default_control.value
         self.path = self.path_port.default_control.text
 
@@ -236,7 +241,7 @@ class LoadNode(Node):
     def load(self):
         network_name = self.network_name.get()
         path = self.path.get()
-        M.net.load_network(network_name, path)
+        self.ext.net.load_network(network_name, path)
         self.workspace.send_message_to_all(f"Loaded {network_name} from {path}.")
 
     def destroy(self):

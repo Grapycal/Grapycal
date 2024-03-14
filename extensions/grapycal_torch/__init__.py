@@ -1,10 +1,9 @@
 import asyncio
 from pathlib import Path
-from grapycal.core.workspace import Workspace
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
-from grapycal.sobjects.node import singletonNode
 from grapycal.sobjects.port import InputPort
+from grapycal_torch.manager import ConfManager, MNManager, NetManager
 from .basic import *
 from .cnn import *
 from .activation import *
@@ -26,7 +25,7 @@ from torch import nn
 import torchvision
 from torchvision import transforms
 
-from grapycal import ImageControl, Node, TextControl, ButtonControl, Edge, InputPort
+from grapycal import Node, Edge, InputPort, Extension, command, CommandCtx
 
 import io
 import matplotlib
@@ -35,6 +34,28 @@ matplotlib.use("agg")  # use non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 
+class GrapycalTorch(Extension):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mn = MNManager()
+        self.net = NetManager(self)
+        self.conf = ConfManager()
+
+    @command('Create network')
+    def create_network(self,ctx:CommandCtx):
+        x = ctx.mouse_pos[0]
+        y = ctx.mouse_pos[1]
+
+        name = self.net.next_name('Network')
+
+        in_node = self.create_node(NetworkInNode, [x-150, y], name=name)
+        out_node = self.create_node(NetworkOutNode, [x+150, y], name=name)
+        tail = in_node.get_out_port('x')
+        head = out_node.get_in_port('y')
+        self.create_edge(tail, head)
+
+        self.create_node(NetworkCallNode, [x-150, y+100], name=name)
 
 class MnistDatasetNode(SourceNode):
     category = "torch/dataset"
@@ -50,6 +71,7 @@ class MnistDatasetNode(SourceNode):
 
 
 import aiofiles
+
 
 
 class ImageDataset(torch.utils.data.Dataset): # type: ignore

@@ -1,14 +1,17 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 from grapycal.extension.utils import NodeInfo
 from grapycal import Node, Edge, InputPort, ButtonControl, OptionControl
 
 from .utils import setup_net_name_ctrl
 
 from .moduleNode import ModuleNode
-from .manager import Manager as M
+
+if TYPE_CHECKING:
+    from grapycal_torch import GrapycalTorch
 
 
 class ConfigureNode(Node):
+    ext: "GrapycalTorch"
     category='torch/training'
 
     def build_node(self):
@@ -29,7 +32,7 @@ class ConfigureNode(Node):
         self.label.set('Configure '+self.network_name.get())
         self.network_name.on_set += lambda value: self.label.set('Configure '+value)
 
-        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, set_value=self.is_new)
+        self.to_unlink = setup_net_name_ctrl(self.network_port.default_control,self.ext, set_value=self.is_new)
         
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
@@ -37,9 +40,9 @@ class ConfigureNode(Node):
 
     def on_network_name_changed(self,old,new):
         if old != '':
-            M.conf.remove(old,self)
+            self.ext.conf.remove(old,self)
         if new != '':
-            M.conf.add(new,self)
+            self.ext.conf.add(new,self)
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.reset_port:
@@ -62,12 +65,12 @@ class ConfigureNode(Node):
 
     def get_module_nodes(self)->List[ModuleNode]:
         name = self.network_name.get()
-        if not M.net.has_network(name):
+        if not self.ext.net.has_network(name):
             return []
-        return M.net.get_module_nodes(name)
+        return self.ext.net.get_module_nodes(name)
     
     def destroy(self):
         self.to_unlink()
         if self.network_name.get() != '':
-            M.conf.remove(self.network_name.get(),self)
+            self.ext.conf.remove(self.network_name.get(),self)
         return super().destroy()

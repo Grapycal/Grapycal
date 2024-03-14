@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.node import Node
@@ -9,7 +9,9 @@ from torch import nn
 from grapycal import EventTopic
 
 from .settings import SettingsNode
-from .manager import Manager as M
+
+if TYPE_CHECKING:
+    from grapycal_torch import GrapycalTorch
 
 class ModuleMover:
     '''
@@ -44,6 +46,7 @@ class ModuleMover:
         return False
 
 class ModuleNode(Node):
+    ext: 'GrapycalTorch'
     category = 'torch/neural network'
     def build_node(self):
         #TODO: save and load
@@ -61,7 +64,7 @@ class ModuleNode(Node):
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
         self.module_mover = ModuleMover()
         self.mode.on_set.add_manual(self.on_mode_changed)
-        M.mn.add(self)
+        self.ext.mn.add(self)
 
     def restore_from_version(self, version: str, old: NodeInfo):
         super().restore_from_version(version, old)
@@ -76,7 +79,7 @@ class ModuleNode(Node):
         self.label.set(self.generate_label())
         num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
         if num_params >= 1000000:
-            param_str = f'{num_params/1000000:.1f}M'
+            param_str = f'{num_params/1000000:.1f}self.ext'
         elif num_params >= 1000:
             param_str = f'{num_params/1000:.1f}K'
         else:
@@ -148,7 +151,7 @@ class ModuleNode(Node):
         self.module.load_state_dict(state_dict)
 
     def destroy(self):
-        M.mn.remove(self)
+        self.ext.mn.remove(self)
         return super().destroy()
 
 class SimpleModuleNode(ModuleNode):

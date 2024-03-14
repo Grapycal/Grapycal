@@ -121,7 +121,8 @@ class Extension(metaclass=ExtensionMeta):
         translation = [x, y]
         node = self._workspace.get_workspace_object().main_editor.create_node(node_type, translation=translation,**kwargs)
         assert isinstance(node, node_type)
-        node.add_tag(f"pasted_by_{self._ctx.client_id}")
+        if self._ctx is not None:
+            node.add_tag(f"pasted_by_{self._ctx.client_id}")
         return node
     
     def create_node_with_name(self, node_type: str, translation: list[float] = [0, 0], snap:bool = True, **kwargs) -> Node:
@@ -133,7 +134,8 @@ class Extension(metaclass=ExtensionMeta):
         translation = [x, y]
         node = self._workspace.get_workspace_object().main_editor.create_node(node_type, translation=translation,**kwargs)
         assert isinstance(node, Node)
-        node.add_tag(f"pasted_by_{self._ctx.client_id}")
+        if self._ctx is not None:
+            node.add_tag(f"pasted_by_{self._ctx.client_id}")
         return node
     
     def create_edge(self, tail:OutputPort, head:InputPort):

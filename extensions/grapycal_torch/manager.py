@@ -2,15 +2,19 @@
 import os
 from typing import Dict, Generic, List, TypeVar
 from grapycal import Bus
+from grapycal.extension.extension import CommandCtx
 from grapycal.utils.misc import Action
 
 from grapycal import Node
+from grapycal_torch.networkDef import NetworkCallNode
+from grapycal_torch.utils import find_next_valid_name
 from objectsync import Topic
 import torch
 
-from . import moduleNode
+from . import  moduleNode
 if 1+1==3: # smart way to avoid circular imports
-    from . import networkDef, configureNode
+    from . import GrapycalTorch, networkDef, configureNode
+    from grapycal_torch.networkDef import NetworkInNode, NetworkOutNode
 
 
 T = TypeVar('T')
@@ -85,7 +89,8 @@ class ConfManager:
         return self.mode_buses[name][0].get()
         
 class NetManager:
-    def __init__(self):
+    def __init__(self,ext:'GrapycalTorch'):
+        self.ext = ext
         self.calls:ListDict['networkDef.NetworkCallNode'] = ListDict()
         self.ins:Dict[str,'networkDef.NetworkInNode'] = {}
         self.outs:Dict[str,'networkDef.NetworkOutNode'] = {}
@@ -139,6 +144,30 @@ class NetManager:
             else:
                 mn.print_exception(f'State dict missing for this module in file {path}')
 
+    def next_name(self,name:str):
+        invalids = self.ins.keys() | self.outs.keys()
+        return find_next_valid_name(name, invalids)
+
+    def add_in(self, name:str, node:'NetworkInNode'):
+        if not self.ext.has_command(f'Call: {name}'):
+            self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
+        self.ins[name] = node
+
+    def remove_in(self, name:str):
+        del self.ins[name]
+
+    def add_out(self, name:str, node:'NetworkOutNode'):
+        if not self.ext.has_command(f'Call: {name}'):
+            self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
+        self.outs[name] = node
+        
+    def remove_out(self, name:str):
+        del self.outs[name]
+
+    def _create_call(self, ctx:CommandCtx, name:str):
+        from grapycal_torch.networkDef import NetworkCallNode # avoid circular imports
+        self.ext.create_node(NetworkCallNode, ctx.mouse_pos, name=name)
+
 class MNManager:
     def __init__(self):
         self.mns:set['moduleNode.ModuleNode'] = set()
@@ -148,11 +177,3 @@ class MNManager:
 
     def remove(self, mn:'moduleNode.ModuleNode'):
         self.mns.remove(mn)
-
-class Manager:
-    '''
-    A static class that holds all the networks, configure nodes, and network calls etc.
-    '''
-    mn = MNManager()
-    net = NetManager()
-    conf = ConfManager()

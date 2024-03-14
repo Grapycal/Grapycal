@@ -1,9 +1,13 @@
 
 from grapycal import OptionControl
-def setup_net_name_ctrl(control:OptionControl,multi=False,set_value=True):
-    from .manager import Manager as M
+
+from typing import TYPE_CHECKING, Iterable
+if TYPE_CHECKING:
+    from grapycal_torch import GrapycalTorch
+
+def setup_net_name_ctrl(control:OptionControl,ext:'GrapycalTorch',multi=False,set_value=True):
     def on_network_names_changed():
-        existing_networks = M.net.get_network_names()
+        existing_networks = ext.net.get_network_names()
         options = []
         if not multi:
             options = existing_networks
@@ -18,18 +22,17 @@ def setup_net_name_ctrl(control:OptionControl,multi=False,set_value=True):
                     options.append(','.join(c))
                     
         control.options.set(options)
-    M.net.on_network_names_changed += on_network_names_changed
+    ext.net.on_network_names_changed += on_network_names_changed
     on_network_names_changed()
 
-    existing_networks = M.net.get_network_names()
+    existing_networks = ext.net.get_network_names()
     if len(existing_networks) > 0 and set_value:
         control.value.set(existing_networks[0])
 
     def unlink():
-        M.net.on_network_names_changed -= on_network_names_changed
+        ext.net.on_network_names_changed -= on_network_names_changed
     return unlink
 
-from typing import Iterable
 
 
 def find_next_valid_name(name:str, invalids:Iterable[str]):
