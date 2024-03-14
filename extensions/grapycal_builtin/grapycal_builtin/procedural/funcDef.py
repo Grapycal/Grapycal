@@ -5,6 +5,7 @@ from grapycal import Node, ListTopic, StringTopic
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, OutputPort
+from grapycal_builtin.FuncDefManager import FuncDefManager
 from ..utils import find_next_valid_name
 from objectsync.sobject import SObjectSerialized
 
@@ -31,11 +32,6 @@ class ListDict(Generic[T]):
             return []
         return self.d[key]
 
-class FuncDefManager:
-    calls: ListDict['FuncCallNode'] = ListDict()
-    ins: Dict[str,'FuncInNode'] = {}
-    outs: Dict[str,'FuncOutNode'] = {}
-
 class FuncCallNode(Node):
     '''
     A FuncCallNode represents a call to a specific function.
@@ -45,10 +41,10 @@ class FuncCallNode(Node):
     '''
 
     category = 'function'
-    def build_node(self):
+    def build_node(self,name:str='Function'):
         self.label.set('')
         self.shape.set('normal')
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value=name)
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
 
         # manually restore in_ports and out_ports
@@ -155,7 +151,7 @@ class FuncCallNode(Node):
 class FuncInNode(Node):
     category = 'function'
 
-    def build_node(self):
+    def build_node(self,name:str='Function'):
         self.shape.set('normal')
 
         # setup attributes
@@ -163,13 +159,13 @@ class FuncInNode(Node):
         self.outs.add_validator(ListTopic.unique_validator)
         self.restore_attributes('outs')
         
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value=name)
         self.func_name.add_validator(lambda x,_: x not in FuncDefManager.ins) # function name must be unique
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         try:
             self.restore_attributes('func_name')
         except:
-            self.func_name.set('MyFunc')
+            self.func_name.set(name)
             
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.ins))
 
@@ -236,21 +232,21 @@ class FuncInNode(Node):
 class FuncOutNode(Node):
     category = 'function'
     
-    def build_node(self):
+    def build_node(self,name:str='Function'):
         self.shape.set('normal')
 
         # setup attributes
-        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=['x'])
+        self.ins = self.add_attribute('ins',ListTopic,editor_type='list',init_value=['y'])
         self.ins.add_validator(ListTopic.unique_validator)
         self.restore_attributes('ins')
         
-        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value='MyFunc')
+        self.func_name = self.add_attribute('func_name',StringTopic,editor_type='text',init_value=name)
         self.func_name.add_validator(lambda x,_: x not in FuncDefManager.outs)
         self.func_name.add_validator(lambda x,_: x != '') # empty name may confuse users
         try:
             self.restore_attributes('func_name')
         except:
-            self.func_name.set('MyFunc')
+            self.func_name.set(name)
 
         self.func_name.set(find_next_valid_name(self.func_name.get(),FuncDefManager.outs))
 
@@ -258,7 +254,7 @@ class FuncOutNode(Node):
             for in_ in self.ins.get():
                 self.add_in_port(in_,1,display_name = in_)
         else:
-            self.add_in_port('x',1,display_name = 'x')
+            self.add_in_port('y',1,display_name = 'y')
 
     def init_node(self):
         # add callbacks to attributes

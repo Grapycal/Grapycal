@@ -4,6 +4,8 @@ import inspect
 import sys
 from types import ModuleType
 from typing import Any, Callable, Dict, List, TypeVar
+
+from grapycal.sobjects.port import InputPort, OutputPort, Port
 if 1+1==3:
     from grapycal.core.workspace import Workspace
 from grapycal.extension.utils import get_extension_info, snap_node
@@ -14,16 +16,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def slash_command(name: str):
+def command(name: str):
     def decorator(func: Callable[[Any, SlashCommandCtx], None]):
         func._slash_command_name = name
         return func
     return decorator
 
 class SlashCommandCtx:
-    def __init__(self, editor_id: int, mouse_pos: List[float]) -> None:
+    def __init__(self, editor_id: int, mouse_pos: List[float], client_id:int) -> None:
         self.editor_id = editor_id
         self.mouse_pos = mouse_pos
+        self.client_id = client_id
 
 class ExtensionMeta(type):
     # find all slash commands
@@ -47,6 +50,7 @@ class Extension(metaclass=ExtensionMeta):
         self.name = extension_name
         self.version = module.__version__ if hasattr(module,'__version__') else get_extension_info(extension_name)['version']
         self._workspace = workspace
+        self._ctx:SlashCommandCtx|None = None
         
         self.node_types_d:Dict[str,type[Node]] = {}
         self.node_types_d_without_extension_name:Dict[str,type[Node]] = {}
@@ -87,13 +91,21 @@ class Extension(metaclass=ExtensionMeta):
             'name': self.name,
             'version': self.version,
         }
+    def _wrap(self,callback):
+        def wrapper(ctx:SlashCommandCtx):
+            self._ctx = ctx
+            with self._workspace._objectsync.record():
+                callback(ctx)
+            self._ctx = None
+        return wrapper
     
     def get_slash_commands(self)->Dict[str,dict]:
         # return self._slash_commands
         slash_commands = {}
         for name, obj in inspect.getmembers(self):
             if hasattr(obj, '_slash_command_name'):
-                slash_commands[obj._slash_command_name] = {'name': obj._slash_command_name, 'callback': obj}
+                callback = self._wrap(obj)
+                slash_commands[obj._slash_command_name] = {'name': obj._slash_command_name, 'callback': callback}
         return slash_commands
     
     ''' some interfaces for the extension to interact with the app'''
@@ -108,6 +120,7 @@ class Extension(metaclass=ExtensionMeta):
         translation = [x, y]
         node = self._workspace.get_workspace_object().main_editor.create_node(node_type, translation=translation,**kwargs)
         assert isinstance(node, node_type)
+        node.add_tag(f"pasted_by_{self._ctx.client_id}")
         return node
     
     def create_node_with_name(self, node_type: str, translation: list[float] = [0, 0], snap:bool = True, **kwargs) -> Node:
@@ -119,7 +132,11 @@ class Extension(metaclass=ExtensionMeta):
         translation = [x, y]
         node = self._workspace.get_workspace_object().main_editor.create_node(node_type, translation=translation,**kwargs)
         assert isinstance(node, Node)
+        node.add_tag(f"pasted_by_{self._ctx.client_id}")
         return node
+    
+    def create_edge(self, tail:OutputPort, head:InputPort):
+        self._workspace.get_workspace_object().main_editor.create_edge(tail, head)
     
 
 def load_or_reload_module(module_name:str):

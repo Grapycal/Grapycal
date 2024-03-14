@@ -16,6 +16,9 @@ export class SlashCommandMenu extends AutoCompMenu{
                 background-color: var(--z2);
                 border: 1px solid var(--text-low);
                 box-shadow: 0px 0px 5px 0px black;
+
+                max-height: 700px;
+                overflow-y: auto;
             }
             .search-container{
                 border-bottom: 1px solid var(--text-low);
@@ -62,6 +65,7 @@ export class SlashCommandMenu extends AutoCompMenu{
                     let ctx = {
                         editor_id:this.editor.id,
                         mouse_pos:this.editor.getMousePos().toList(),
+                        client_id:this.editor.objectsync.clientId
                     }
                     Workspace.instance.callSlashCommand(commandName,ctx)
                 },

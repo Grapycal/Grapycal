@@ -335,7 +335,7 @@ export class Node extends CompSObject implements IControlHost {
         if(this.hasTag(`pasted_by_${this.objectsync.clientId}`))
         {
             this.removeTag(`pasted_by_${this.objectsync.clientId}`)
-            this.selectable.click()
+            this.selectable.select()
         }
 
         if(this.isPreview){
