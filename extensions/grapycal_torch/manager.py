@@ -164,21 +164,25 @@ class NetManager:
         if not self.ext.has_command(f'Call: {name}'):
             self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
         self.ins[name] = node
+        self.on_network_names_changed.invoke()
 
     def remove_in(self, name:str):
         del self.ins[name]
         if name not in self.outs:
             self.ext.unregister_command(f'Call: {name}')
+        self.on_network_names_changed.invoke()
 
     def add_out(self, name:str, node:'NetworkOutNode'):
         if not self.ext.has_command(f'Call: {name}'):
             self.ext.register_command(f'Call: {name}', lambda ctx: self._create_call(ctx,name))
         self.outs[name] = node
+        self.on_network_names_changed.invoke()
         
     def remove_out(self, name:str):
         del self.outs[name]
         if name not in self.ins:
             self.ext.unregister_command(f'Call: {name}')
+        self.on_network_names_changed.invoke()
 
     def _create_call(self, ctx:CommandCtx, name:str):
         from grapycal_torch.networkDef import NetworkCallNode # avoid circular imports
