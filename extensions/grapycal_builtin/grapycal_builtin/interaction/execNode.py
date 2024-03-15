@@ -107,7 +107,11 @@ class ExecNode(SourceNode):
             if port.is_all_edge_ready():
                 self.workspace.vars().update({name:port.get_one_data()})
         self.workspace.vars().update({'print':self.print,'self':self})
-        result = exec_(stmt,self.workspace.vars(),print_=self.print if self.print_last_expr.get()=='yes' else None)
+        try:
+            result = exec_(stmt,self.workspace.vars(),print_=self.print if self.print_last_expr.get()=='yes' else None)
+        except Exception as e:
+            self.print_exception(e,-3)
+            return
         self.out_port.push_data(result)
         for name in self.outputs:
             self.get_out_port(name).push_data(self.workspace.vars()[name])

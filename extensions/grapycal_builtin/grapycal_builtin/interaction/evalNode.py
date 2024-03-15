@@ -27,13 +27,13 @@ class EvalNode(SourceNode):
         self.css_classes.append('fit-content')
         self.expose_attribute(self.expr_control.text,'text',display_name='expression')
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls('expr_control')
-
     def task(self):
         expression = self.expr_control.text.get()
         self.workspace.vars().update({'print':self.print,'self':self})
-        value = eval(expression,self.workspace.vars())
+        try:
+            value = eval(expression,self.workspace.vars())
+        except Exception as e:
+            self.print_exception(e,-1)
+            return
         for edge in self.out_port.edges:
             edge.push_data(value)

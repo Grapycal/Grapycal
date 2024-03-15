@@ -36,16 +36,15 @@ class VariableNode(SourceNode):
         self.value = None
         self.has_value = False
 
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        self.restore_controls('variable_name')
-
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.in_port:
             self.workspace.vars()[self.variable_name.text.get()] = edge.get_data()
         self.flash_running_indicator()
 
     def task(self):
+        if self.variable_name.text.get() not in self.workspace.vars():
+            self.print_exception(f'Variable "{self.variable_name.text.get()}" does not exist')
+            return
         self.value = self.workspace.vars()[self.variable_name.text.get()]
         self.has_value = True
         for edge in self.out_port.edges:

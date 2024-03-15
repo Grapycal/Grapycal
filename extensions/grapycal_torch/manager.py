@@ -138,7 +138,11 @@ class NetManager:
         state_dicts:dict = torch.load(path)
         for mn in self.get_module_nodes(name):
             if mn.state_dict_id.get() in state_dicts:
-                mn.load_state_dict(state_dicts.pop(mn.state_dict_id.get()))
+                try:
+                    mn.load_state_dict(state_dicts.pop(mn.state_dict_id.get()))
+                except Exception as e:
+                    mn.print_exception(e,-1)
+                    raise Exception(f'Failed to load the network')
             else:
                 mn.print_exception(f'Warning: parameter for {mn.state_dict_id.get()} is missing in file {path}')
         if len(state_dicts) > 0:

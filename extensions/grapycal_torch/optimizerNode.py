@@ -115,6 +115,9 @@ class TrainerNode(Node):
 
 
 class TrainNode(Node):
+    '''
+    Train a network using a loss value. Pass in the loss to train for one step.
+    '''
     ext: "GrapycalTorch"
     category = "torch/training"
 
