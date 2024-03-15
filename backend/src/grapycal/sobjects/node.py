@@ -964,8 +964,11 @@ class Node(SObject, metaclass=NodeMeta):
         else:
             self._run_directly(task, redirect_output=False)
 
-    def print_exception(self, e, truncate=0):
-        message = "".join(traceback.format_exception(e)[truncate:])
+    def print_exception(self, e:Exception|str, truncate=0):
+        if isinstance(e, str):
+            message = e
+        else:
+            message = "".join(traceback.format_exception(e)[truncate:])
         if self.is_destroyed():
             logger.warning(
                 f"Exception occured in a destroyed node {self.get_id()}: {message}"

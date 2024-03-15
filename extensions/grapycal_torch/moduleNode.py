@@ -46,6 +46,9 @@ class ModuleMover:
         return False
 
 class ModuleNode(Node):
+    '''
+    state_dict_id is used to identify the module when saving and loading state dicts. When loading from file, its value must match what it was when the state dict was saved.
+    '''
     ext: 'GrapycalTorch'
     category = 'torch/neural network'
     def build_node(self):
@@ -54,28 +57,20 @@ class ModuleNode(Node):
         self.label.set('Module')
         self.create_module_topic = self.add_attribute('create_module',EventTopic,editor_type='button',is_stateful=False)
         self.icon_path.set('nn')
-        self.mode = self.add_attribute('mode',StringTopic,'train')
         
         # the node's id changes when it's loaded from a file, so it needs another id to identify the state dict
-        self.state_dict_id = self.add_attribute('state_dict_id',StringTopic,self.get_id())
+        # initialized by manager and can be modified by the user
+        self.state_dict_id = self.add_attribute('state_dict_id',StringTopic,'',editor_type='text')
 
     def init_node(self):
         self.module: nn.Module|None = None
         self.create_module_topic.on_emit.add_manual(lambda:self.run(self.create_module_and_update_name))
         self.module_mover = ModuleMover()
-        self.mode.on_set.add_manual(self.on_mode_changed)
         self.ext.mn.add(self)
-
-    def restore_from_version(self, version: str, old: NodeInfo):
-        super().restore_from_version(version, old)
-        # TODO: avoid duplicate state_dict_id
-        self.restore_attributes('state_dict_id')
-        self.restore_attributes('mode')
 
     def create_module_and_update_name(self):
         self.module = self.create_module()
         self.module_mover.set_actual_device('cpu')
-        self.on_mode_changed(self.mode.get())
         self.label.set(self.generate_label())
         num_params = sum(p.numel() for p in self.module.parameters() if p.requires_grad)
         if num_params >= 1000000:
@@ -88,9 +83,6 @@ class ModuleNode(Node):
 
     def to(self,device):
         self.module_mover.set_target_device(device)
-
-    def set_mode(self,mode):
-        self.mode.set(mode)
         
     @abstractmethod
     def create_module(self)->nn.Module:
@@ -130,7 +122,7 @@ class ModuleNode(Node):
     def get_device(self)->str:
         return self.module_mover.get_target_device()
     
-    def on_mode_changed(self,mode):
+    def set_mode(self,mode):
         if self.module is None:
             return
         if mode == 'train':

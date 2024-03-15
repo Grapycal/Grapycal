@@ -4,7 +4,7 @@ from typing import Literal, Sequence, Tuple, Type, cast
 from grapycal.extension.utils import NodeInfo
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.port import InputPort, Port
-from grapycal_torch.manager import ConfManager, MNManager, NetManager
+from grapycal_torch.manager import MNManager, NetManager
 from .basic import *
 from .cnn import *
 from .activation import *
@@ -42,7 +42,6 @@ class GrapycalTorch(Extension):
         super().__init__(*args, **kwargs)
         self.mn = MNManager()
         self.net = NetManager(self)
-        self.conf = ConfManager()
 
     @command('Create network: empty')
     def create_network(self,ctx:CommandCtx):

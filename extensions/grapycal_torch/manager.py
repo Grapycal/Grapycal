@@ -13,7 +13,7 @@ import torch
 
 from . import  moduleNode
 if 1+1==3: # smart way to avoid circular imports
-    from . import GrapycalTorch, networkDef, configureNode
+    from . import GrapycalTorch, networkDef
     from grapycal_torch.networkDef import NetworkInNode, NetworkOutNode
 
 
@@ -62,31 +62,31 @@ class DefaultBusDict:
     def __getitem__(self, key:str):
         return self.d[key]._topics
     
-class ConfManager:
-    def __init__(self):
-        self.confs:ListDict['configureNode.ConfigureNode'] = ListDict()
-        self.device_buses:DefaultBusDict = DefaultBusDict()
-        self.mode_buses:DefaultBusDict = DefaultBusDict()
+# class ConfManager:
+#     def __init__(self):
+#         self.confs:ListDict['configureNode.ConfigureNode'] = ListDict()
+#         self.device_buses:DefaultBusDict = DefaultBusDict()
+#         self.mode_buses:DefaultBusDict = DefaultBusDict()
 
-    def add(self, name, conf:'configureNode.ConfigureNode'):
-        self.confs.append(name,conf)
-        self.device_buses += name,conf.device
-        self.mode_buses += name,conf.mode
+#     def add(self, name, conf:'configureNode.ConfigureNode'):
+#         self.confs.append(name,conf)
+#         self.device_buses += name,conf.device
+#         self.mode_buses += name,conf.mode
 
-    def remove(self, name, conf:'configureNode.ConfigureNode'):
-        self.confs.remove(name,conf)
-        self.device_buses -= name,conf.device
-        self.mode_buses -= name,conf.mode
+#     def remove(self, name, conf:'configureNode.ConfigureNode'):
+#         self.confs.remove(name,conf)
+#         self.device_buses -= name,conf.device
+#         self.mode_buses -= name,conf.mode
 
-    def get_device(self, name):
-        if name not in self.device_buses:
-            return None
-        return self.device_buses[name][0].get()
+#     def get_device(self, name):
+#         if name not in self.device_buses:
+#             return None
+#         return self.device_buses[name][0].get()
     
-    def get_mode(self, name):
-        if name not in self.mode_buses:
-            return None
-        return self.mode_buses[name][0].get()
+#     def get_mode(self, name):
+#         if name not in self.mode_buses:
+#             return None
+#         return self.mode_buses[name][0].get()
         
 class NetManager:
     def __init__(self,ext:'GrapycalTorch'):
@@ -97,19 +97,16 @@ class NetManager:
         self.on_network_names_changed = Action()
 
     def get_module_nodes(self, name)->list['moduleNode.ModuleNode']:
-        def _get_modules_after(node:Node,res:set['moduleNode.ModuleNode'])->None:
+        def _get_modules_after(node:Node,res:list['moduleNode.ModuleNode'])->None:
             if node in res:
                 return 
             if isinstance(node,moduleNode.ModuleNode):
-                res.add(node)
+                res.append(node)
             output_edges = [edge for port in node.out_ports for edge in port.edges]
-            if isinstance(node,moduleNode.ModuleNode):
-                if node.module is not None:
-                    res.add(node)
             for edge in output_edges:
                 _get_modules_after(edge.head.get().node,res)
 
-        res = set()
+        res = []
         _get_modules_after(self.ins[name],res)
         return list(res)
     
@@ -126,23 +123,38 @@ class NetManager:
     def save_network(self, name, path):
         if name not in self.ins:
             raise Exception(f'Network {name} does not exist')
+        self.make_id_valid(name)
         state_dicts = {}
         for mn in self.get_module_nodes(name):
             state_dicts[mn.state_dict_id.get()] = mn.get_state_dict()
         torch.save(state_dicts,path)
 
-    def load_network(self, name, path):
+    def load_network(self, name, path, load_node):
         if name not in self.ins:
             raise Exception(f'Network {name} does not exist')
         if not os.path.exists(path):
             raise Exception(f'File {path} does not exist')
-        
-        state_dicts = torch.load(path)
+        self.make_id_valid(name)
+        state_dicts:dict = torch.load(path)
         for mn in self.get_module_nodes(name):
             if mn.state_dict_id.get() in state_dicts:
-                mn.load_state_dict(state_dicts[mn.state_dict_id.get()])
+                mn.load_state_dict(state_dicts.pop(mn.state_dict_id.get()))
             else:
-                mn.print_exception(f'State dict missing for this module in file {path}')
+                mn.print_exception(f'Warning: parameter for {mn.state_dict_id.get()} is missing in file {path}')
+        if len(state_dicts) > 0:
+            load_node.print_exception(f'Warning: layers {list(state_dicts.keys())} are absent in the current network architecture, so they are not loaded')
+
+    def make_id_valid(self, name):
+        # make sure state dict ids are set and unique
+        existing_ids = set()
+        for mn in self.get_module_nodes(name):
+            if mn.state_dict_id.get() in existing_ids or mn.state_dict_id.get() == '':
+                base = mn.__class__.__name__[:-4]
+                i=0
+                while f'{base}_{i}' in existing_ids:
+                    i+=1
+                mn.state_dict_id.set(f'{base}_{i}')
+            existing_ids.add(mn.state_dict_id.get())
 
     def next_name(self,name:str):
         invalids = self.ins.keys() | self.outs.keys()
@@ -171,6 +183,14 @@ class NetManager:
     def _create_call(self, ctx:CommandCtx, name:str):
         from grapycal_torch.networkDef import NetworkCallNode # avoid circular imports
         self.ext.create_node(NetworkCallNode, ctx.mouse_pos, name=name)
+
+    def set_mode(self, name, mode):
+        for mn in self.get_module_nodes(name):
+            mn.set_mode(mode)
+
+    def set_device(self, name, device):
+        for mn in self.get_module_nodes(name):
+            mn.to(device)
 
 class MNManager:
     def __init__(self):

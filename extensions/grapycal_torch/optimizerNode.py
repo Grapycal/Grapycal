@@ -182,12 +182,12 @@ class SaveNode(Node):
     category = "torch/training"
 
     def build_node(self):
-        self.label.set("Save")
+        self.label.set("Save Network")
         self.network_port = self.add_in_port(
             "network", control_type=OptionControl, options=["net a", "net b"]
         )
-        self.path_port = self.add_in_port("path", control_type=TextControl)
-        self.save_port = self.add_in_port("save network", control_type=ButtonControl)
+        self.path_port = self.add_in_port("file", control_type=TextControl)
+        self.save_port = self.add_in_port("save", control_type=ButtonControl)
 
     def init_node(self):
         self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, self.ext,set_value=self.is_new)
@@ -218,12 +218,12 @@ class LoadNode(Node):
     category = "torch/training"
 
     def build_node(self):
-        self.label.set("Load")
+        self.label.set("Load Network")
         self.network_port = self.add_in_port(
             "network", control_type=OptionControl, options=["net a", "net b"]
         )
-        self.path_port = self.add_in_port("path", control_type=TextControl)
-        self.load_port = self.add_in_port("load network", control_type=ButtonControl)
+        self.path_port = self.add_in_port("file", control_type=TextControl)
+        self.load_port = self.add_in_port("load", control_type=ButtonControl)
 
     def init_node(self):
         self.to_unlink = setup_net_name_ctrl(self.network_port.default_control, self.ext,set_value=self.is_new)
@@ -241,7 +241,11 @@ class LoadNode(Node):
     def load(self):
         network_name = self.network_name.get()
         path = self.path.get()
-        self.ext.net.load_network(network_name, path)
+        try:
+            self.ext.net.load_network(network_name, path, self)
+        except Exception as e:
+            self.print_exception(e,-1)
+            return
         self.workspace.send_message_to_all(f"Loaded {network_name} from {path}.")
 
     def destroy(self):

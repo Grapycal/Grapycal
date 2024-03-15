@@ -5,7 +5,7 @@ from torch import nn
 class ReLUNode(SimpleModuleNode):
     category = 'torch/neural network'
     inputs = ['inp']
-    max_in_degree = [None]
+    max_in_degree = [1]
     outputs = ['out']
     display_port_names = False
 
@@ -23,7 +23,7 @@ class ReLUNode(SimpleModuleNode):
 class LeakyReLUNode(SimpleModuleNode):
     category = 'torch/neural network'
     inputs = ['inp']
-    max_in_degree = [None]
+    max_in_degree = [1]
     outputs = ['out']
     display_port_names = False
 
@@ -45,7 +45,7 @@ class LeakyReLUNode(SimpleModuleNode):
 class SigmoidNode(SimpleModuleNode):
     category = 'torch/neural network'
     inputs = ['inp']
-    max_in_degree = [None]
+    max_in_degree = [1]
     outputs = ['out']
     display_port_names = False
 

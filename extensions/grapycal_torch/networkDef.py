@@ -27,7 +27,7 @@ class NetworkCallNode(Node):
         self.shape.set('normal')
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value=name)
         self.network_name.add_validator(lambda x,_: x != '') # empty name may confuse users
-        self.restore_attributes('network name')
+        self.mode_control = self.add_option_control(name='mode',options=['train','eval'],value='train',label='Mode')
         # manually restore in_ports and out_ports
         if not self.is_new:
             assert self.old_node_info is not None
@@ -44,7 +44,6 @@ class NetworkCallNode(Node):
         self.ext.net.calls.append(self.network_name.get(),self)
         self.label.set(f' {self.network_name.get()}')
     
-
     def on_network_name_changed(self, old, new):
         self.label.set(f'{new}')
         self.ext.net.calls.remove(old,self)
@@ -102,6 +101,9 @@ class NetworkCallNode(Node):
         for port in self.in_ports:
             if not port.is_all_edge_ready():
                 return
+            
+        if self.network_name.get() not in self.ext.net.ins:
+            return
                     
         self.run(self.end_function, to_queue=False)
         self.run(self.start_function, to_queue=False)
@@ -109,6 +111,9 @@ class NetworkCallNode(Node):
     def start_function(self):
         if self.is_destroyed():
             return
+
+        self.ext.net.set_mode(self.network_name.get(),self.mode_control.get())
+
         inputs = {}
         for port in self.in_ports:
             inputs[port.name.get()] = port.get_one_data()
@@ -143,7 +148,7 @@ class NetworkInNode(Node):
         # setup attributes
         self.outs = self.add_attribute('outs',ListTopic,editor_type='list',init_value=inputs)
         self.outs.add_validator(ListTopic.unique_validator)
-        self.restore_attributes('outs')
+        self.device_control = self.add_option_control(name='device',options=['default','cpu','cuda'],value='default',label='Device')
         
         self.network_name = self.add_attribute('network name',StringTopic,editor_type='text',init_value=name)
         self.network_name.add_validator(lambda x,_: x not in self.ext.net.ins) # function name must be unique
@@ -204,6 +209,7 @@ class NetworkInNode(Node):
                 call.update_input_ports()
 
     def start_function(self,args:dict):
+        self.ext.net.set_device(self.network_name.get(),self.device_control.get())
         for key, value in args.items():
             self.get_out_port(key).push_data(value)
         self.flash_running_indicator()

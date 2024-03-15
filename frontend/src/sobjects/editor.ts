@@ -94,6 +94,7 @@ export class Editor extends CompSObject{
         this.link2(document, "paste", this.paste)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl x'),this.cut)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Delete'),this.delete)
+        this.link(GlobalEventDispatcher.instance.onKeyDown.slice('Backspace'),this.delete)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl y'),this.preventDefault)
         this.link(GlobalEventDispatcher.instance.onKeyDown.slice('ctrl z'),this.preventDefault)
     }
