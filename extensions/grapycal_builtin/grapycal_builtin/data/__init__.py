@@ -38,7 +38,7 @@ class VariableNode(SourceNode):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.in_port:
-            self.workspace.vars()[self.variable_name.text.get()] = edge.get_data()
+            self.workspace.vars()[self.variable_name.text.get()] = edge.get()
         self.flash_running_indicator()
 
     def task(self):
@@ -48,7 +48,7 @@ class VariableNode(SourceNode):
         self.value = self.workspace.vars()[self.variable_name.text.get()]
         self.has_value = True
         for edge in self.out_port.edges:
-            edge.push_data(self.value)
+            edge.push(self.value)
 
 class SplitNode(Node):
     '''
@@ -92,12 +92,12 @@ class SplitNode(Node):
         self.run(self.task,background=False)
         
     def task(self):
-        data = self.in_port.get_one_data()
+        data = self.in_port.get()
         for out_port in self.out_ports:
             key = out_port.name.get()
             if self.key_mode.get() == 'eval':
-                out_port.push_data(eval(f'_data[{key}]',self.workspace.vars(),{'_data':data}))
+                out_port.push(eval(f'_data[{key}]',self.workspace.vars(),{'_data':data}))
             else:
-                out_port.push_data(data[key])
+                out_port.push(data[key])
 
         

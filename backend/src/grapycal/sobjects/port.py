@@ -74,41 +74,46 @@ class InputPort(Port, typing.Generic[T]):
         self.node.input_edge_removed(edge, self)
         self.use_default = len(self.edges) == 0 and not isinstance(self.default_control, NullControl)
 
-    def is_all_edge_ready(self):
+    def is_all_ready(self):
         return (self.use_default and self.default_control.value_ready()) or \
             (all(edge.is_data_ready() for edge in self.edges) and len(self.edges) > 0)
 
-    def get_data(self):
+    def get_all(self):
+        '''
+        If not using default control, return data from all connected edges.
+        If using default control, return data from the default control.
+        '''
         return [self.default_control.get_value()] if self.use_default else \
-            [edge.get_data() for edge in self.edges]
+            [edge.get() for edge in self.edges]
 
-    def get_one_data(self, allow_no_data=False) -> Any:
+    def get(self, allow_no_data=False) -> Any:
+        '''
+        If not using default control, return data from the first connected edge.
+        If using default control, return data from the default control.
+        '''
         if self.use_default:
             return self.default_control.get_value()
-        elif allow_no_data and not self.is_all_edge_ready():
+        elif allow_no_data and not self.is_all_ready():
             return None
-        return self.edges[0].get_data()
+        return self.edges[0].get()
 
     def activated_by_edge(self, edge:'Edge'):
         try:
-            self.default_control.set_with_value_from_edge(edge.peek_data())
+            self.default_control.set_with_value_from_edge(edge.peek())
         except Exception as e:
             # The control doesn't accept the value from the edge. We respect that and abandon the data.
             self.node.print_exception(e)
-            edge.get_data() # to clear the data from the edge
+            edge.get() # to clear the data from the edge
             return
-        self.activated(edge)
+        self.node.edge_activated(edge,self)
+        self.node.port_activated(self)
+        self.on_activate.invoke(self)
 
     def activated_by_control(self, control:'ValuedControl'):
-        self.activated(control)
-
-    def activated(self, source: 'Edge|ValuedControl'):
-        self.on_activate.invoke(self, source)
-        self.node.edge_activated(source, self)
+        self.node.port_activated(self)
+        self.on_activate.invoke(self)
 
     # TODO remove control from node when port is removed
-        
-    
 
 class OutputPort(Port):
     def build(self, name='port', max_edges=64, display_name=None):
@@ -123,14 +128,14 @@ class OutputPort(Port):
     def add_edge(self, edge:'Edge'):
         super().add_edge(edge)
         if self._retain:
-            edge.push_data(self._retained_data)
+            edge.push(self._retained_data)
         self.node.output_edge_added(edge, self)
 
     def remove_edge(self, edge:'Edge'):
         super().remove_edge(edge)
         self.node.output_edge_removed(edge, self)
 
-    def push_data(self, data:Any=None,label:str|None=None, retain: bool = False):
+    def push(self, data:Any=None,label:str|None=None, retain: bool = False):
         '''
         Push data to all connected edges.
         If retain is True, the data will be pushed to all future edges when they're connected as well.
@@ -139,7 +144,7 @@ class OutputPort(Port):
             self._retain = True
             self._retained_data = data
         for edge in self.edges:
-            edge.push_data(data,label=label)
+            edge.push(data,label=label)
 
     def disable_retain(self):
         '''

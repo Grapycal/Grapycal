@@ -80,7 +80,7 @@ class WebcamNode(Node):
             if img.shape[0] == 4:
                 img = img[:3]
 
-        self.out_port.push_data(img)
+        self.out_port.push(img)
 
     def destroy(self) -> SObjectSerialized:
         if not self.is_preview.get():
@@ -97,4 +97,4 @@ class TriggerNode(Node):
         self.add_out_port('Trigger',display_name='')
 
     def double_click(self):
-        self.out_ports[0].push_data(None)
+        self.out_ports[0].push(None)

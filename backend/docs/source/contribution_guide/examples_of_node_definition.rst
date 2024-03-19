@@ -34,7 +34,7 @@ A simple node that displays the data received from the input edge.
             self.flash_running_indicator()
 
             # get the data from the edge
-            data = edge.get_data()
+            data = edge.get()
 
             # display the data
             self.text_control.text.set(str(data))
@@ -42,7 +42,7 @@ A simple node that displays the data received from the input edge.
         def input_edge_added(self, edge: Edge, port: InputPort):
             if edge.is_data_ready():
                 self.flash_running_indicator()
-                data = edge.get_data()
+                data = edge.get()
                 self.text_control.text.set(str(data))
     
         def input_edge_removed(self, edge: Edge, port: InputPort):
@@ -104,5 +104,5 @@ A node that outputs a tensor of zeros.
             self.restore_attributes('device')
     
         def task(self):
-            self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
+            self.out.push(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
     

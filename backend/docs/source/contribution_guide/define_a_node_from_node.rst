@@ -156,7 +156,7 @@ For example:
         def task(self): # will be called from execution thread no matter where edge_activated is called from
             x = self.in_port.get_one_data()
             y = self.cnn.forward(x) # this line may take a long time or raise an exception
-            self.out_port.push_data(y)
+            self.out_port.push(y)
 
 ``edge_activated()``
 ------------------------

@@ -47,7 +47,7 @@ class ImageLoader(Node):
         for file in self.files_path:
             image = cv2.imread(file)
             images.append(image)
-        self.output_port.push_data(images)
+        self.output_port.push(images)
 
     def destroy(self) -> SObjectSerialized:
         return super().destroy()

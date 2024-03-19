@@ -529,6 +529,7 @@ class Node(SObject, metaclass=NodeMeta):
 
         # remove the port
         self.in_ports.remove(port)
+        self.controls.remove(port.default_control)
         port.remove()
 
     def remove_out_port(self, name: str):
@@ -999,9 +1000,17 @@ class Node(SObject, metaclass=NodeMeta):
     Node events
     """
 
-    def edge_activated(self, edge: Edge | ValuedControl, port: InputPort):
+    def edge_activated(self, edge: Edge, port: InputPort):
         """
         Called when an edge on an input port is activated.
+        """
+        pass
+
+    def port_activated(self, port: InputPort):
+        """
+        Called when an input port is activated, which means either 
+        1. an connected edge is activated 
+        2. or the control on the port is activated.
         """
         pass
 

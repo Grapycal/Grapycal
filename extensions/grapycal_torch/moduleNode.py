@@ -104,7 +104,7 @@ class ModuleNode(Node):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         for port_ in self.in_ports:
-            if not port_.is_all_edge_ready():
+            if not port_.is_all_ready():
                 return
         self.run(self.task)
 
@@ -175,15 +175,15 @@ class SimpleModuleNode(ModuleNode):
 
         inputs = {}
         for port in self.in_ports:
-            inputs[port.name.get()] = port.get_one_data()
+            inputs[port.name.get()] = port.get()
 
         result = self.forward(**inputs)
 
         if len(self.out_ports) == 1:
-            self.out_ports[0].push_data(result)
+            self.out_ports[0].push(result)
         else:
             for port, data in zip(self.out_ports, result):
-                port.push_data(data)
+                port.push(data)
 
     @abstractmethod
     def forward(self,**inputs)->Any:

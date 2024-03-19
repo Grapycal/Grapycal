@@ -89,7 +89,7 @@ class ImagePasteNode(SourceNode):
             if (self.preserve_alpha.get() == 'no') and img.shape[0] == 4:
                 img = img[:3] 
 
-        self.out_port.push_data(img)
+        self.out_port.push(img)
 
 
 class ImageDisplayNode(Node):
@@ -212,7 +212,7 @@ class ImageDisplayNode(Node):
         self.icon_path.set("image")
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.run(self.update_image, data=self.in_port.get_one_data())
+        self.run(self.update_image, data=self.in_port.get())
 
     def find_valid_slice(self, data: np.ndarray) -> str | None:
         if data.ndim == 2:
@@ -317,8 +317,8 @@ class ScatterPlotNode(Node):
         self.restore_controls("img", "slice")
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        if self.in_port.is_all_edge_ready():
-            self.run(self.update_image, data=self.in_port.get_data())
+        if self.in_port.is_all_ready():
+            self.run(self.update_image, data=self.in_port.get_all())
 
     def find_valid_slice(self, data: np.ndarray) -> str | None:
         if data.ndim == 2:
@@ -453,12 +453,12 @@ class LinePlotNode(Node):
     def edge_activated(self, edge: Edge, port: InputPort):
         match port:
             case self.clear_port:
-                port.get_one_data()
+                port.get()
                 self.line_plot.clear_all()
             case self.x_coord_port:
-                self.x_coord = to_list(port.get_one_data())
+                self.x_coord = to_list(port.get())
             case _:
-                self.run(self.update_plot, ys=port.get_one_data(), name=port.name.get())
+                self.run(self.update_plot, ys=port.get(), name=port.name.get())
 
     def gen_x_coord(self, ys):
         if self.x_gen_mode.get() == "from 0":

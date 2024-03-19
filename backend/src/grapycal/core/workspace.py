@@ -387,7 +387,7 @@ class Workspace:
     def clear_edges(self):
         edges = self.get_workspace_object().top_down_search(type=Edge)
         for edge in edges:
-            edge.clear_data()
+            edge.clear()
 
 
 if __name__ == "__main__":

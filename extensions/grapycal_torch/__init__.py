@@ -225,7 +225,7 @@ class MnistDatasetNode(SourceNode):
 
     def task(self):
         ds = torchvision.datasets.mnist.MNIST("data", download=True)
-        self.out.push_data(ds)
+        self.out.push(ds)
 
 
 import aiofiles
@@ -306,7 +306,7 @@ class ImageDatasetNode(SourceNode):
         if self.ds is None or self.ds.directory != self.dir.get():
             self.ds = ImageDataset(self.dir.get(), max_size=int(self.max_size.get()))
 
-        self.out.push_data(self.ds)
+        self.out.push(self.ds)
 
 
 class EmaNode(Node):
@@ -333,14 +333,14 @@ class EmaNode(Node):
             self.ema = None
             return
         if port == self.in_port:
-            self.run(self.task, data=edge.get_data())
+            self.run(self.task, data=edge.get())
 
     def task(self, data):
         if self.ema is None:
             self.ema = data
         else:
             self.ema = self.alpha.get() * data + (1 - self.alpha.get()) * self.ema
-        self.out_port.push_data(self.ema)
+        self.out_port.push(self.ema)
 
 
 class AverageNode(Node):
@@ -368,12 +368,12 @@ class AverageNode(Node):
             self.num = 0
             return
         if port == self.in_port:
-            self.run(self.task, data=edge.get_data())
+            self.run(self.task, data=edge.get())
 
     def task(self, data):
         self.sum += data
         self.num += 1
-        self.out_port.push_data(self.sum / self.num)
+        self.out_port.push(self.sum / self.num)
 
 
 del ModuleNode, SimpleModuleNode, Node, SourceNode, FunctionNode

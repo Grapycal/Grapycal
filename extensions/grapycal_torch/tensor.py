@@ -23,7 +23,7 @@ class ZeroesNode(SourceNode):
         self.restore_attributes('device')
 
     def task(self):
-        self.out.push_data(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
+        self.out.push(torch.zeros(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class OnesNode(SourceNode):
     category = 'torch/generative'
@@ -42,7 +42,7 @@ class OnesNode(SourceNode):
         self.restore_attributes('device')
 
     def task(self):
-        self.out.push_data(torch.ones(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
+        self.out.push(torch.ones(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class RandNode(SourceNode):
     category = 'torch/generative'
@@ -59,7 +59,7 @@ class RandNode(SourceNode):
 
 
     def task(self):
-        self.out.push_data(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
+        self.out.push(torch.rand(*map(int, self.shape_text.text.get().split(',')),device=self.device.get())*(self.max.get()-self.min.get())+self.min.get())
 
 class RandnNode(SourceNode):
     category = 'torch/generative'
@@ -74,7 +74,7 @@ class RandnNode(SourceNode):
         
 
     def task(self):
-        self.out.push_data(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
+        self.out.push(torch.randn(*map(int, self.shape_text.text.get().split(',')),device=self.device.get()))
 
 class GridNode(SourceNode):
     category = 'torch/generative'
@@ -128,8 +128,8 @@ class GridNode(SourceNode):
         x_axis = torch.linspace(self.x_start.get(),self.x_end.get(),self.x_steps.get(),device=self.device.get())
         y_axis = torch.linspace(self.y_start.get(),self.y_end.get(),self.y_steps.get(),device=self.device.get())
         yy, xx = torch.meshgrid(y_axis,x_axis)
-        self.out_x.push_data(xx)
-        self.out_y.push_data(yy)
+        self.out_x.push(xx)
+        self.out_y.push(yy)
 
 class RandnLikeNode(FunctionNode):
     category = 'torch/generative'

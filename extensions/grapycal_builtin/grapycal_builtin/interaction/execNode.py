@@ -95,7 +95,7 @@ class ExecNode(SourceNode):
             return
         for name in self.inputs:
             port = self.get_in_port(name)
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 return
         self.run(self.task)
 
@@ -104,17 +104,17 @@ class ExecNode(SourceNode):
         stmt = self.text_control.text.get()
         for name in self.inputs:
             port = self.get_in_port(name)
-            if port.is_all_edge_ready():
-                self.workspace.vars().update({name:port.get_one_data()})
+            if port.is_all_ready():
+                self.workspace.vars().update({name:port.get()})
         self.workspace.vars().update({'print':self.print,'self':self})
         try:
             result = exec_(stmt,self.workspace.vars(),print_=self.print if self.print_last_expr.get()=='yes' else None)
         except Exception as e:
             self.print_exception(e,-3)
             return
-        self.out_port.push_data(result)
+        self.out_port.push(result)
         for name in self.outputs:
-            self.get_out_port(name).push_data(self.workspace.vars()[name])
+            self.get_out_port(name).push(self.workspace.vars()[name])
 
     def print(self, *args, **kwargs):
         output = io.StringIO()

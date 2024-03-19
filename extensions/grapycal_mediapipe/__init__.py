@@ -91,7 +91,7 @@ class PoseEstimateNode(Node):
         self.load_detector_button.label.set('detector loaded')
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.run(self.task,image=edge.get_data())
+        self.run(self.task,image=edge.get())
 
     def task(self,image):
         if self.detector is None:
@@ -123,8 +123,8 @@ class PoseEstimateNode(Node):
             point[1]-=centery
             point[2]-=centerz
 
-        self.points_port.push_data(points)
-        self.annotated_img_port.push_data(annotated_image.transpose(2,0,1)/255)
+        self.points_port.push(points)
+        self.annotated_img_port.push(annotated_image.transpose(2,0,1)/255)
 
 class ThreeNode(Node):
     category = 'mediapipe'
@@ -138,9 +138,9 @@ class ThreeNode(Node):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port is self.points_port:
-            self.three.points.set(edge.get_data())
+            self.three.points.set(edge.get())
         elif port is self.lines_port:
-            self.three.lines.set(edge.get_data())
+            self.three.lines.set(edge.get())
 
 
 del Node,FunctionNode

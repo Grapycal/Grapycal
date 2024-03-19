@@ -39,9 +39,9 @@ class Conv2dNode(ModuleNode):
         return f'Conv2d {self.module.in_channels} → {self.module.out_channels} {self.module.kernel_size}'
     
     def forward(self):
-        inp = self.get_in_port('in').get_one_data()
+        inp = self.get_in_port('in').get()
         out = self.module(inp)
-        self.get_out_port('out').push_data(out)
+        self.get_out_port('out').push(out)
 
 class ConvTranspose2dNode(ModuleNode):
     category = 'torch/neural network'
@@ -79,6 +79,6 @@ class ConvTranspose2dNode(ModuleNode):
         return f'ConvTr2d {self.module.in_channels} → {self.module.out_channels} {self.module.kernel_size}'
     
     def forward(self):
-        inp = self.get_in_port('in').get_one_data()
+        inp = self.get_in_port('in').get()
         out = self.module(inp)
-        self.get_out_port('out').push_data(out)
+        self.get_out_port('out').push(out)

@@ -36,4 +36,4 @@ class EvalNode(SourceNode):
             self.print_exception(e,-1)
             return
         for edge in self.out_port.edges:
-            edge.push_data(value)
+            edge.push(value)

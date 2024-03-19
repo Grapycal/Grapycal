@@ -69,11 +69,11 @@ Grapycal supports hot reloading of extensions i.e. you can edit the extension co
         def edge_activated(self, edge: Edge, port: InputPort):
 
             # Compute the result
-            result = edge.get_data() % 2 == 0
+            result = edge.get() % 2 == 0
 
             # Feed the result to each edge connected to the output port
             for e in self.out_port.edges:
-                e.push_data(result)
+                e.push(result)
 
 2. Go back to the GUI, right click on the extension card, and select `Reload ↻`
 

@@ -95,7 +95,7 @@ class PerlinNoiseNode(SourceNode):
 
     def task(self):
         noise = rand_perlin_2d_octaves((256, 256), (8, 8), 5)
-        self.out_port.push_data(noise)
+        self.out_port.push(noise)
 
 
 class ConvolutionKernelNode(SourceNode):
@@ -152,7 +152,7 @@ class ConvolutionKernelNode(SourceNode):
 
     def task(self):
         k, factor = self.kernels[self.kernel.get()]
-        self.out_port.push_data(k.to(torch.float32) * factor)
+        self.out_port.push(k.to(torch.float32) * factor)
 
     def get_preview(self, tensor: torch.Tensor):
         res = ""
@@ -197,7 +197,7 @@ class ArangeNode(SourceNode):
         stop = float(self.stop.get())
         step = float(self.step.get())
         device = SettingsNode.instance.default_device.get()
-        self.out_port.push_data(torch.arange(start, stop, step, device=device))
+        self.out_port.push(torch.arange(start, stop, step, device=device))
 
 
 from grapycal import FunctionNode

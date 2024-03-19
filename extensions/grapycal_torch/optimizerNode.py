@@ -54,7 +54,7 @@ class TrainerNode(Node):
 
     def get_module_nodes(self) -> List[ModuleNode]:
         result: List[ModuleNode] = []
-        for name in self.network_names.get_one_data().split(","):
+        for name in self.network_names.get().split(","):
             mn = self.ext.net.get_module_nodes(name)
             result += mn
         return result
@@ -72,9 +72,9 @@ class TrainerNode(Node):
             )
             self.print("recreated optimizer, ", len(self.tracked_modules), " modules")
 
-    def edge_activated(self, edge: Edge, port: InputPort):
+    def port_activated(self, port: InputPort):
         if port == self.train_port:
-            self.run(self.train_step, loss=edge.get_data())
+            self.run(self.train_step, loss=port.get())
             return
 
         if port == self.init_modules_port:
@@ -83,7 +83,7 @@ class TrainerNode(Node):
             self.run(self.eval_mode)
         elif port == self.train_mode_port:
             self.run(self.train_mode)
-        port.get_data()  # deactivates the edge
+        port.get_all()  # deactivates the edge
 
     def init_modules(self):
         for mn in self.get_module_nodes():
@@ -139,7 +139,7 @@ class TrainNode(Node):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.loss_port:
-            self.run(self.train_step, loss=edge.get_data())
+            self.run(self.train_step, loss=edge.get())
             return
         if port == self.network_port:
             self.label.set("Train " + self.network_name.get())
@@ -203,7 +203,7 @@ class SaveNode(Node):
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.save_port:
             self.run(self.save)
-            port.get_one_data()
+            port.get()
 
     def save(self):
         network_name = self.network_name.get()
@@ -239,7 +239,7 @@ class LoadNode(Node):
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.load_port:
             self.run(self.load)
-            port.get_one_data()
+            port.get()
 
     def load(self):
         network_name = self.network_name.get()

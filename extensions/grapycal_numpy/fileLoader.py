@@ -79,7 +79,7 @@ class FileLoaderNode(Node):
                     file = np.array(file).astype(np.float32).transpose(2, 0, 1) / 255 
                    
             files.append(file)
-        self.output_port.push_data(files)
+        self.output_port.push(files)
 
     def destroy(self) -> SObjectSerialized:
         return super().destroy()
@@ -136,10 +136,10 @@ class FileFilterNode(Node):
 
     def init_file(self):
         file = file[::-1, :, :]
-        self.output_port.push_data(file)
+        self.output_port.push(file)
         
 
     def push_file(self):
         file = self.files[self.index]
         file = file[::-1, :, :]
-        self.output_port.push_data(file)
+        self.output_port.push(file)

@@ -50,7 +50,7 @@ class ProcedureNode(Node):
         self.run(self.task)
 
     def task(self):
-        self.data = self.in_port.get_one_data(allow_no_data=True)
+        self.data = self.in_port.get(allow_no_data=True)
         self.iterator = iter(self.steps.get()) #type: ignore
         self.run(self.next)
         
@@ -65,4 +65,4 @@ class ProcedureNode(Node):
         self.run(self.next,to_queue=False)
 
         port = self.get_out_port(step)
-        port.push_data(self.data)
+        port.push(self.data)

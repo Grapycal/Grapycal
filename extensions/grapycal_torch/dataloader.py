@@ -27,7 +27,7 @@ class DataLoaderNode(Node):
 
     def task(self):
         self.double_clicked = False
-        dataset = self.dataset.get_one_data()
+        dataset = self.dataset.get()
         batch_size = self.batch_size.get()
         shuffle = self.shuffle.get() == 1
         num_workers = self.num_workers.get()
@@ -40,7 +40,7 @@ class DataLoaderNode(Node):
                     self.status_control.set('[idle]')
                     self.workspace.send_message_to_all('DataLoader interrupted at epoch ' + str(i))
                     return
-                self.out.push_data(batch)
+                self.out.push(batch)
                 self.flash_running_indicator()
                 yield
         self.status_control.set('[idle]')

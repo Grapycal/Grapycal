@@ -20,24 +20,26 @@ class CommandNode(Node):
 
         self.environment = self.add_attribute('environment',StringTopic,editor_type='options',options=['default','git bash'])
 
-    def edge_activated(self, edge: Edge, port: InputPort):
+    def port_activated(self, port: InputPort):
         if port == self.run_port or port == self.stdin_port:
-            self.run(self.task)
+            if self.command_port.is_all_ready() and self.cwd_port.is_all_ready() and self.stdin_port.is_all_ready():
+                self.run(self.task)
         
     def task(self):
-        command = self.command_port.get_one_data()
-        cwd = self.cwd_port.get_one_data()
-        stdin = self.stdin_port.get_one_data()
+        command = self.command_port.get()
+        cwd = self.cwd_port.get()
+        stdin = self.stdin_port.get()
         environment = self.environment.get()
         commands = [command]
         if environment == 'git bash' and WINDOWS:
             commands.insert(0, 'C:\\Program Files\\Git\\bin\\bash.exe')
             commands.insert(1, '-c')
         result = subprocess.run(commands, shell=True, capture_output=True, text=True,cwd=cwd, input=stdin)
-        self.stdout_port.push_data(result.stdout)
+        self.stdout_port.push(result.stdout)
         if result.stderr:
-            self.stderr_port.push_data(result.stderr)
+            self.stderr_port.push(result.stderr)
             self.print_exception(Exception(result.stderr))
 
     def double_click(self):
-        self.run(self.task)
+        if self.command_port.is_all_ready() and self.cwd_port.is_all_ready() and self.stdin_port.is_all_ready():
+            self.run(self.task)

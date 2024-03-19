@@ -26,7 +26,7 @@ class TrigonometricNode(FunctionNode):
         return numpy.sin(inp)
     
     def option_changed(self,value:str):
-        self.out_port.push_data(value)
+        self.out_port.push(value)
 class CosNode(FunctionNode):
     '''
     Calculate the cosines of an array of values or one value. The array must be must NumPy arrays,

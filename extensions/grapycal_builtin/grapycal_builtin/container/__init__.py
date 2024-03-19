@@ -17,10 +17,10 @@ class ListNode(Node):
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.run_port:
-            edge.get_data()
-            self.get_port.push_data(self.data)
+            edge.get()
+            self.get_port.push(self.data)
         elif port == self.set_port:
-            data = edge.get_data()
+            data = edge.get()
             if data is None:
                 self.data = []
                 self.label.set('List (0)')
@@ -28,6 +28,6 @@ class ListNode(Node):
                 self.data = data
                 self.label.set(f'List ({len(data)})')
         elif port == self.append_port:
-            self.data.append(edge.get_data())
+            self.data.append(edge.get())
             self.label.set(f'List ({len(self.data)})')
 

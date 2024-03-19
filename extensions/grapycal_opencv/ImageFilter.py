@@ -48,7 +48,7 @@ class ImageFilter(Node):
         self.run(self.push_image)
 
     def edge_activated(self, edge: Edge, port: InputPort):
-        self.images = self.input_port.get_one_data()
+        self.images = self.input_port.get()
         self.image_num = len(self.images)
         self.index = 0
         print()
@@ -60,7 +60,7 @@ class ImageFilter(Node):
         image = image[::-1, :, :]
         if image.shape[0] == 4:
             image = image[:3]
-        self.output_port.push_data(image)
+        self.output_port.push(image)
 
     def push_image(self):
         print(self.images[self.index].shape)
@@ -68,4 +68,4 @@ class ImageFilter(Node):
         image = image[::-1, :, :]
         if image.shape[0] == 4:
             image = image[:3]
-        self.output_port.push_data(image)
+        self.output_port.push(image)

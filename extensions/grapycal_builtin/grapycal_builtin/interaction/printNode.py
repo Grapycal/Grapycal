@@ -23,13 +23,13 @@ class PrintNode(Node):
 
     def edge_activated(self, edge, port):
         self.flash_running_indicator()
-        data = edge.get_data()
+        data = edge.get()
         self.text_control.text.set(str(data))
 
     def input_edge_added(self, edge: Edge, port: InputPort):
         if edge.is_data_ready():
             self.flash_running_indicator()
-            data = edge.get_data()
+            data = edge.get()
             self.text_control.text.set(str(data))
 
     def input_edge_removed(self, edge: Edge, port: InputPort):

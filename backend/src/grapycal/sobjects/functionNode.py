@@ -27,7 +27,7 @@ class FunctionNode(Node):
 
     def edge_activated(self, edge: Edge, port):
         for port in self._get_func_ins():
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 return
         self.run(self._task)
 
@@ -35,19 +35,19 @@ class FunctionNode(Node):
         inputs = {}
         for port in self._get_func_ins():
             if port.max_edges.get() == 1:
-                inputs[port.get_name()] = port.edges[0].get_data()
+                inputs[port.get_name()] = port.edges[0].get()
             else:
-                inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
+                inputs[port.get_name()] = [edge.get() for edge in port.edges]
         return inputs
     
     def _post_task(self, result):
         if len(self._get_func_outs()) == 1:
-            self._get_func_outs()[0].push_data(result)
+            self._get_func_outs()[0].push(result)
         else:
             if result is None:
                 return
             for k,v in result.items():
-                self.get_out_port(k).push_data(v)
+                self.get_out_port(k).push(v)
         
     def _task(self):
         if asyncio.iscoroutinefunction(self.calculate):
@@ -94,13 +94,13 @@ class FunctionNode(Node):
 
     def input_edge_added(self, edge: Edge, port):
         for port in self._get_func_ins():
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 return
         self.run(self._task)
 
     def input_edge_removed(self, edge: Edge, port):
         for port in self._get_func_ins():
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 return
         self.run(self._task)
 

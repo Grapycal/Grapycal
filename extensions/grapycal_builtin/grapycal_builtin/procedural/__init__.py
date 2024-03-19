@@ -38,7 +38,7 @@ class InPortalNode(Node):
         PortalManager.ins.append(new,self)
     
     def edge_activated(self, edge: Edge, port: InputPort):
-        data = edge.get_data()
+        data = edge.get()
         self.run(self.after_jump,to_queue=False,data=data)
         for node in PortalManager.outs.get(self.name.get()):
             node.jump(data)
@@ -50,7 +50,7 @@ class InPortalNode(Node):
             node.jump(data)
 
     def after_jump(self,data):
-        self.out_port.push_data(data)
+        self.out_port.push(data)
 
     def destroy(self) -> SObjectSerialized:
         PortalManager.ins.remove(self.name.get(),self)
@@ -81,7 +81,7 @@ class OutPortalNode(Node):
             node.jump(None)
 
     def jump(self,data):
-        self.run(self.out_port.push_data,data=data)
+        self.run(self.out_port.push,data=data)
     
     def destroy(self) -> SObjectSerialized:
         PortalManager.outs.remove(self.name.get(),self)

@@ -55,7 +55,7 @@ class DVfunctionNode(Node):
     def check_ready(self):
         for port in self.in_ports:
             if port.edges:
-                if not port.is_all_edge_ready():
+                if not port.is_all_ready():
                     return False
             else:
                 if not port.get_name() in self._default_value:
@@ -77,9 +77,9 @@ class DVfunctionNode(Node):
         inputs = {}
         for port in self.in_ports:
             if port.max_edges.get() == 1:
-                inputs[port.get_name()] = port.edges[0].get_data()
+                inputs[port.get_name()] = port.edges[0].get()
             else:
-                inputs[port.get_name()] = [edge.get_data() for edge in port.edges]
+                inputs[port.get_name()] = [edge.get() for edge in port.edges]
         for key, value in self.inputs_attribute.get().items():
             if self.get_in_port(key).edges:
                 continue
@@ -90,10 +90,10 @@ class DVfunctionNode(Node):
             return
 
         if len(self.out_ports) == 1:
-            self.out_ports[0].push_data(result)
+            self.out_ports[0].push(result)
         else:
             for k,v in result.items():
-                self.get_out_port(k).push_data(v)
+                self.get_out_port(k).push(v)
 
     def calculate(self, **inputs)->Any:
         '''

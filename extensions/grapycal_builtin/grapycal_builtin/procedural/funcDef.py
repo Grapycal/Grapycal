@@ -121,7 +121,7 @@ class FuncCallNode(Node):
 
     def edge_activated(self, edge: Edge, port):
         for port in self.in_ports:
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 return
             
         self.run(self.end_function, to_queue=False)
@@ -132,7 +132,7 @@ class FuncCallNode(Node):
             return
         inputs = {}
         for port in self.in_ports:
-            inputs[port.name.get()] = port.get_one_data()
+            inputs[port.name.get()] = port.get()
 
         self.ext.func_def_manager.ins[self.func_name.get()].start_function(inputs)
 
@@ -145,7 +145,7 @@ class FuncCallNode(Node):
 
     def push_result(self, result:dict):
         for key, value in result.items():
-            self.get_out_port(key).push_data(value)
+            self.get_out_port(key).push(value)
 
     def destroy(self) -> SObjectSerialized:
         self.ext.func_def_manager.calls.remove(self.func_name.get(),self)
@@ -225,7 +225,7 @@ class FuncInNode(Node):
 
     def start_function(self,args:dict):
         for key, value in args.items():
-            self.get_out_port(key).push_data(value)
+            self.get_out_port(key).push(value)
         self.flash_running_indicator()
 
     def destroy(self) -> SObjectSerialized:
@@ -307,10 +307,10 @@ class FuncOutNode(Node):
 
     def end_function(self,caller:FuncCallNode):
         for port in self.in_ports:
-            if not port.is_all_edge_ready():
+            if not port.is_all_ready():
                 self.print_exception(RuntimeError(f'Output data missing for {port.name.get()}'))
                 return
-        result = {key: self.get_in_port(key).get_one_data() for key in self.ins.get()}
+        result = {key: self.get_in_port(key).get() for key in self.ins.get()}
         caller.push_result(result)
         self.flash_running_indicator()
 

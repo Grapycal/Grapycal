@@ -132,20 +132,20 @@ class RosbridgeNode(Node):
             self.on_recv_msg(msg)
         
     def on_recv_msg(self, msg_str: str):
-        self.recv_port.push_data(msg_str)
+        self.recv_port.push(msg_str)
         self.flash_running_indicator()
 
         msg = json.loads(msg_str)
         if msg['op'] == 'publish':
             topic_name = msg['topic']
             if self.has_out_port(topic_name):
-                self.get_out_port(topic_name).push_data(msg['msg'])
+                self.get_out_port(topic_name).push(msg['msg'])
 
     def edge_activated(self, edge: Edge, port: InputPort):
         if port == self.send_port:
             if self.status != RosbridgeNode.Status.CONNECTED:
                 return
-            msg = edge.get_data()
+            msg = edge.get()
             if not isinstance(msg, str):
                 msg = json.dumps(msg)
             self.ws.send(msg)

@@ -28,7 +28,7 @@ class ForNode(Node):
         self.run(self.task)
 
     def task(self):
-        self.iterator = iter(self.iterable_port.get_one_data()) #type: ignore
+        self.iterator = iter(self.iterable_port.get()) #type: ignore
         self.run(self.next,to_queue=False)
 
     def next(self):
@@ -40,7 +40,7 @@ class ForNode(Node):
             return
         self.run(self.next,to_queue=False)
         for edge in self.item_port.edges:
-            edge.push_data(item)
+            edge.push(item)
 
     def double_click(self):
         self.iterator = None
@@ -83,7 +83,7 @@ class RepeatNode(SourceNode):
             return
         self.run(self.next,to_queue=False)
         for edge in self.item_port.edges:
-            edge.push_data(item)
+            edge.push(item)
 
     def double_click(self):
         if self.iterator is None:
