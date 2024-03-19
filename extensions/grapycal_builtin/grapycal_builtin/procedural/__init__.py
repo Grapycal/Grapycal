@@ -100,5 +100,5 @@ class SleepNode(FunctionNode):
         self.time_control = time_port.default_control
 
     def calculate(self, **inputs) -> Any:
-        time.sleep(float(self.time_control.get_value()))
+        time.sleep(float(self.time_control.get()))
         return inputs['start']

@@ -25,9 +25,6 @@ class OptionControl(ValuedControl[str]):
     def get(self):
         return self.value.get()
 
-    def get_value(self) -> str:
-        return self.get()
-
     def value_ready(self) -> bool:
         return True
     

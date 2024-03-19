@@ -1,4 +1,4 @@
-import { IntTopic, StringTopic } from "objectsync-client"
+import { EventTopic, IntTopic, StringTopic } from "objectsync-client"
 import { Control } from "./control"
 import { print } from "../../devUtils"
 import { BindInputBoxAndTopic } from "../../ui_utils/interaction"
@@ -40,6 +40,10 @@ export class TextControl extends Control {
         
         new BindInputBoxAndTopic(this,this.textBox, this.text,this.objectsync,true)
 
+        this.link2(this.textBox as any, "blur", () => { 
+            this.makeRequest('finish')
+        })
+        
         let labelEl = this.htmlItem.getEl("label", HTMLDivElement)
         this.link(this.label.onSet, (label) => {
             if (label == '') {

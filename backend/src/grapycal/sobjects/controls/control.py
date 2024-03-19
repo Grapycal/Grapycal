@@ -21,14 +21,13 @@ class Control(SObject):
 T = TypeVar('T')
 class ValuedControl(abc.ABC, Control, Generic[T]):
     @abc.abstractmethod
-    def get_value(self) -> T:
+    def get(self) -> T:
         pass
 
     @abc.abstractmethod
     def value_ready(self) -> bool:
         pass
 
-    @abc.abstractmethod
     def set_activation_callback(self, callback:Callable[[],None]):
         '''
         By invoking the callback, the control notifies the node for events such as a button click, a text change, etc.

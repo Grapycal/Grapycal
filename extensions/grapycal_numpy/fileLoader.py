@@ -39,13 +39,13 @@ class FileLoaderNode(Node):
         root.attributes("-topmost", True)
         root.focus_force()
         selected_files = None
-        if self.option_control.get_value() == 'JSON': 
+        if self.option_control.get() == 'JSON': 
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("json files", "*.json")])
-        if self.option_control.get_value() == 'NPY':
+        if self.option_control.get() == 'NPY':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("numpy files", "*.npy")])
-        if self.option_control.get_value() == 'PKL':
+        if self.option_control.get() == 'PKL':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("pickle files", "*.pkl")])
-        if self.option_control.get_value() == 'TXT':
+        if self.option_control.get() == 'TXT':
                 selected_files = filedialog.askopenfilenames(parent=root, initialdir="./", filetypes=[("text files", "*.txt")])
         
         root.destroy()
@@ -62,7 +62,7 @@ class FileLoaderNode(Node):
         files = []
         for file in self.files_path:
             f = open(file)
-            format =  self.option_control.get_value()
+            format =  self.option_control.get()
             if (format == 'JSON' ):
                     file = json.load(f)
                  

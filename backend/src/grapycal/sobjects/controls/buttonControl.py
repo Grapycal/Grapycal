@@ -20,7 +20,7 @@ class ButtonControl(ValuedControl[None]):
     def set_activation_callback(self, callback):
         self.on_click += callback
     
-    def get_value(self) -> None:
+    def get(self) -> None:
         return None
     
     def value_ready(self) -> bool:

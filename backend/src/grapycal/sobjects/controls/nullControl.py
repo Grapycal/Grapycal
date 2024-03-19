@@ -2,7 +2,7 @@ from grapycal.sobjects.controls.control import ValuedControl
 
 
 class NullControl(ValuedControl):
-    def get_value(self):
+    def get(self):
         raise Exception('Data not available')
 
     def value_ready(self) -> bool:
