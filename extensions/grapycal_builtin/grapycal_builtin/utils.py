@@ -1,4 +1,31 @@
 from typing import Iterable
+from typing import Dict
+from typing import List
+from typing import TypeVar
+from typing import Generic
+
+T = TypeVar('T')
+class ListDict(Generic[T]):
+    def __init__(self):
+        self.d:Dict[str,List[T]] = {}
+
+    def append(self, key:str, value:T):
+        if key not in self.d:
+            self.d[key] = []
+        self.d[key].append(value)
+
+    def remove(self, key:str, value:T):
+        self.d[key].remove(value)
+        if len(self.d[key]) == 0:
+            self.d.pop(key)
+
+    def has(self, key:str):
+        return key in self.d
+    
+    def get(self, key:str):
+        if key not in self.d:
+            return []
+        return self.d[key]
 
 
 def find_next_valid_name(name:str, invalids:Iterable[str]):

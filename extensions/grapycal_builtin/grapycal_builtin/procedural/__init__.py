@@ -5,6 +5,7 @@ from grapycal.sobjects.controls.textControl import TextControl
 from grapycal.sobjects.edge import Edge
 from grapycal.sobjects.functionNode import FunctionNode
 from grapycal.sobjects.port import InputPort
+from grapycal_builtin.utils import ListDict
 from objectsync.sobject import SObjectSerialized
 from .forNode import *
 from .procedureNode import ProcedureNode
