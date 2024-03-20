@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Dict, Iterable
 
 from grapycal import CommandCtx
+from grapycal_builtin.procedural.funcDef import ListDict
 from grapycal_builtin.utils import find_next_valid_name
-from grapycal_torch.manager import ListDict
 
 if TYPE_CHECKING:
     from grapycal_builtin.procedural.funcDef import FuncCallNode, FuncInNode, FuncOutNode
