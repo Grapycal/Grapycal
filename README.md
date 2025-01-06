@@ -1,3 +1,4 @@
+* This project is currently unmaintained. *
 
 ![Image](https://i.imgur.com/hEnU3MI.png)
 
